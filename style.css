@@ -3,8 +3,10 @@
     --sidebar-bg: #1e1e1e;
     --card-bg: #2d2d2d;
     --accent: #bb86fc;
-    --mage-blue: #1976d2; /* Azul do Mago */
-    --mage-beard: #eeeeee;
+    --mage-blue: #1976d2;
+    --mage-dark-blue: #0d47a1;
+    --mage-skin: #ffcc80;
+    --mage-beard: #f5f5f5;
     --text-main: #ffffff;
     --text-dim: #b0b0b0;
     --success: #03dac6;
@@ -24,15 +26,31 @@ body {
     display: flex;
 }
 
-/* --- MODO MOBILE --- */
-body.mobile-mode { flex-direction: column; overflow-y: auto; }
-body.mobile-mode .app-container { flex-direction: column; height: auto; min-height: 100vh; }
-body.mobile-mode .sidebar { width: 100%; order: 2; padding-bottom: 90px; border-right: none; border-top: 1px solid #333; }
-body.mobile-mode .game-area { width: 100%; order: 1; padding: 10px; height: auto; }
-body.mobile-mode .mage-container { position: fixed; bottom: 10px; right: 10px; left: auto; }
-body.mobile-mode .notepad-container { display: none; }
+/* --- TELA DE BOAS VINDAS (FULLSCREEN) --- */
+.welcome-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #121212; z-index: 5000;
+    display: flex; justify-content: center; align-items: center;
+}
+.app-container.hidden-app { display: none; } /* Esconde o jogo no início */
 
-/* --- ESTRUTURA GERAL --- */
+.modal-content {
+    background: #1e1e1e; padding: 40px; border-radius: 15px;
+    border: 2px solid var(--accent); max-width: 600px; text-align: center;
+    box-shadow: 0 0 50px rgba(187, 134, 252, 0.15);
+}
+.highlight-text {
+    background: rgba(255, 183, 77, 0.1); border-left: 4px solid var(--warning);
+    padding: 15px; text-align: left; font-size: 1rem; margin-top: 20px; border-radius: 4px;
+}
+#start-game-btn {
+    background: var(--accent); color: #000; border: none; padding: 15px 40px;
+    font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer;
+    margin-top: 30px; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;
+}
+#start-game-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--accent); }
+
+/* --- ESTRUTURA DO JOGO --- */
 .app-container { display: flex; width: 100%; height: 100%; position: relative; }
 
 /* --- SIDEBAR --- */
@@ -40,7 +58,26 @@ body.mobile-mode .notepad-container { display: none; }
     width: 320px; background: var(--sidebar-bg); padding: 20px;
     border-right: 1px solid #333; display: flex; flex-direction: column;
     gap: 15px; z-index: 20; position: relative; flex-shrink: 0;
+    transition: width 0.3s ease;
 }
+.sidebar-content {
+    transition: opacity 0.2s; opacity: 1; display: flex; flex-direction: column; height: 100%;
+}
+
+/* Estado Minimizado da Sidebar */
+.sidebar.collapsed { width: 80px; padding: 20px 5px; }
+.sidebar.collapsed .sidebar-content { opacity: 0; pointer-events: none; position: absolute; }
+.sidebar.collapsed .mage-container { transform: scale(0.7); bottom: 10px; } /* Mago fica pequeno mas visível */
+
+/* Botão Toggle da Sidebar */
+.sidebar-toggle {
+    position: absolute; top: 50%; right: -15px; width: 30px; height: 30px;
+    background: var(--accent); color: #000; border: none; border-radius: 50%;
+    cursor: pointer; z-index: 50; display: flex; align-items: center; justify-content: center;
+    font-weight: bold; box-shadow: 0 0 10px rgba(0,0,0,0.5); transition: 0.3s;
+}
+.sidebar-toggle:hover { transform: scale(1.1); }
+
 .brand-container h2 { color: var(--accent); margin: 0; font-size: 2rem; text-align: center; }
 
 .collapsible-header {
@@ -71,86 +108,86 @@ body.mobile-mode .notepad-container { display: none; }
     margin-top: 10px; padding: 8px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 0.8rem;
 }
 
-/* --- MAGO PIXEL ART (CSS PURO) --- */
+/* --- MAGO PIXEL ART (O Fofo) --- */
 .mage-container {
     margin-top: auto; display: flex; justify-content: center; align-items: flex-end;
-    padding-bottom: 10px; position: relative; height: 140px;
+    padding-bottom: 20px; position: relative; height: 160px; transition: all 0.3s;
 }
 .pixel-mage {
-    position: relative; width: 100px; height: 120px;
-    transition: transform 0.2s;
-}
-
-/* Corpo e Manto */
-.mage-body {
-    position: absolute; bottom: 0; left: 20px; width: 60px; height: 70px;
-    background: var(--mage-blue); border-radius: 10px 10px 0 0; z-index: 5;
-    box-shadow: inset 5px 0 rgba(0,0,0,0.2); /* Sombra do pixel art */
-}
-.mage-arm {
-    position: absolute; width: 15px; height: 40px; background: var(--mage-blue);
-    top: 10px; border-radius: 10px; transition: transform 0.3s;
-}
-.mage-arm.left { left: -10px; transform-origin: top right; }
-.mage-arm.right { right: -10px; transform-origin: top left; }
-
-/* Cabeça */
-.mage-head {
-    position: absolute; top: 20px; left: 25px; width: 50px; height: 50px;
-    background: #ffcc80; border-radius: 8px; z-index: 6;
-}
-.mage-beard {
-    position: absolute; bottom: -10px; left: 0; width: 100%; height: 35px;
-    background: var(--mage-beard); border-radius: 0 0 20px 20px;
-    clip-path: polygon(0 0, 100% 0, 50% 100%);
-}
-.mage-eyes {
-    display: flex; justify-content: space-around; padding: 15px 8px 0;
-}
-.eye {
-    width: 8px; height: 8px; background: #000;
-    animation: blink 4s infinite;
+    position: relative; width: 100px; height: 120px; transition: transform 0.2s;
+    image-rendering: pixelated; 
 }
 
 /* Chapéu */
-.mage-hat {
-    position: absolute; top: -30px; left: 15px; width: 0; height: 0;
-    border-left: 35px solid transparent; border-right: 35px solid transparent;
-    border-bottom: 60px solid var(--mage-blue); z-index: 10;
-    filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.3));
-    transform: rotate(-5deg);
+.hat-tip {
+    position: absolute; top: -35px; left: 35px; width: 0; height: 0;
+    border-left: 15px solid transparent; border-right: 15px solid transparent;
+    border-bottom: 40px solid var(--mage-blue); transform: rotate(-10deg); z-index: 10;
 }
-
+.hat-base {
+    position: absolute; top: 0; left: 10px; width: 80px; height: 15px;
+    background: var(--mage-dark-blue); border-radius: 4px; z-index: 9;
+}
+/* Cabeça */
+.head {
+    position: absolute; top: 10px; left: 25px; width: 50px; height: 45px;
+    background: var(--mage-skin); border-radius: 6px; z-index: 5;
+}
+.eyes { display: flex; justify-content: space-around; padding: 12px 6px 0; }
+.eye { width: 6px; height: 6px; background: #000; animation: blink 4s infinite; }
+.beard {
+    position: absolute; bottom: -15px; left: 0; width: 100%; height: 35px;
+    background: var(--mage-beard); border-radius: 0 0 20px 20px;
+    clip-path: polygon(0 0, 100% 0, 50% 100%); z-index: 6;
+}
+/* Corpo */
+.body {
+    position: absolute; bottom: 0; left: 25px; width: 50px; height: 60px;
+    background: var(--mage-blue); border-radius: 8px 8px 0 0; z-index: 4;
+}
+.arm {
+    position: absolute; top: 15px; width: 15px; height: 35px;
+    background: var(--mage-dark-blue); border-radius: 4px; transition: 0.3s;
+}
+.arm.left { left: -10px; transform-origin: top right; }
+.arm.right { right: -10px; transform-origin: top left; }
+.feet { display: flex; justify-content: space-between; position: absolute; bottom: -5px; width: 100%; }
+.foot { width: 18px; height: 10px; background: #000; border-radius: 4px; }
 /* Cajado */
-.mage-staff {
-    position: absolute; right: 0px; bottom: 0; width: 8px; height: 110px;
-    background: #795548; z-index: 7; transform-origin: bottom center;
+.staff {
+    position: absolute; right: 0; bottom: 0; width: 6px; height: 110px;
+    background: #795548; z-index: 8; transform-origin: bottom center; transition: 0.3s;
 }
-.staff-gem {
-    width: 20px; height: 20px; background: #00e5ff; border-radius: 50%;
-    position: absolute; top: -10px; left: -6px;
-    box-shadow: 0 0 10px #00e5ff; border: 2px solid #fff;
+.staff-head {
+    position: absolute; top: -10px; left: -7px; width: 20px; height: 20px;
+    background: #5d4037; border-radius: 50%;
+}
+.gem {
+    width: 14px; height: 14px; background: #00e5ff; border-radius: 50%;
+    margin: 3px; box-shadow: 0 0 8px #00e5ff; animation: pulseGem 2s infinite;
 }
 
-/* Animações Mago */
-@keyframes blink { 0%, 96%, 100% { height: 8px; } 98% { height: 2px; } }
+/* Animações */
+@keyframes blink { 0%, 96%, 100% { height: 6px; } 98% { height: 2px; } }
+@keyframes pulseGem { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; box-shadow: 0 0 15px #00e5ff; } }
 
-.pixel-mage.cast .mage-arm.right { transform: rotate(-130deg); } /* Levanta cajado */
-.pixel-mage.cast .staff-gem { box-shadow: 0 0 30px #fff; }
+.pixel-mage.cast .arm.right { transform: rotate(-140deg); }
+.pixel-mage.cast .staff { transform: rotate(-15deg) translateY(-5px); }
+.pixel-mage.cast .gem { background: #fff; box-shadow: 0 0 20px #fff; }
 
-.pixel-mage.win { animation: jumpHappy 0.6s infinite alternate; }
-.pixel-mage.win .mage-arm.left { transform: rotate(130deg); }
-.pixel-mage.win .mage-arm.right { transform: rotate(-130deg); }
+.pixel-mage.win { animation: jumpHappy 0.5s infinite alternate; }
+.pixel-mage.win .arm.left { transform: rotate(130deg); }
+.pixel-mage.win .arm.right { transform: rotate(-130deg); }
 
-.pixel-mage.sad .mage-head { background: #cfd8dc; } /* Fica pálido */
-.pixel-mage.sad .eye { background: var(--mage-blue); height: 4px; margin-top: 4px; } /* Olhos tristes */
+.pixel-mage.sad .head { background: #cfd8dc; }
+.pixel-mage.sad .eye { background: var(--mage-blue); height: 2px; margin-top: 4px; }
 .pixel-mage.sad { animation: shakeSad 0.5s; }
 
-@keyframes jumpHappy { 0% { transform: translateY(0); } 100% { transform: translateY(-20px); } }
+@keyframes jumpHappy { 0% { transform: translateY(0); } 100% { transform: translateY(-15px); } }
 @keyframes shakeSad { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
 .mage-effect {
-    position: absolute; top: -30px; font-size: 3rem; opacity: 0; pointer-events: none;
+    position: absolute; top: -40px; font-size: 3rem; opacity: 0; pointer-events: none;
 }
 .mage-effect.active { animation: spellEffect 1s forwards; }
 @keyframes spellEffect { 0% { opacity: 1; transform: translateY(20px) scale(0.5); } 100% { opacity: 0; transform: translateY(-60px) scale(1.5); } }
@@ -158,7 +195,7 @@ body.mobile-mode .notepad-container { display: none; }
 /* --- GAME AREA --- */
 .game-area {
     flex: 1; display: flex; flex-direction: column; align-items: center;
-    padding: 20px; height: 100vh;
+    padding: 20px 40px; height: 100vh; overflow: hidden;
 }
 .challenge-header { text-align: center; margin-bottom: 10px; width: 100%; max-width: 800px; flex-shrink: 0; }
 .challenge-instruction { color: var(--warning); font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
@@ -170,7 +207,7 @@ body.mobile-mode .notepad-container { display: none; }
 .hint-text { font-size: 1.4rem; color: #fff; font-style: italic; }
 .fade-out { opacity: 0; transition: 0.2s; } .fade-in { opacity: 1; transition: 0.2s; }
 
-/* BLOCO DE NOTAS (Compacto e Centralizado) */
+/* BLOCO DE NOTAS */
 .notepad-container {
     width: 100%; max-width: 500px; background: #222; border: 1px solid var(--accent);
     border-radius: 8px; margin-bottom: 10px; flex-shrink: 0; transition: all 0.3s;
@@ -179,42 +216,40 @@ body.mobile-mode .notepad-container { display: none; }
     background: var(--accent); color: #000; padding: 5px; font-weight: bold; font-size: 0.9rem;
     text-align: center; cursor: pointer;
 }
-.notepad-body { padding: 0; height: 90px; transition: height 0.3s; overflow: hidden; }
+.notepad-body { padding: 0; height: 80px; transition: height 0.3s; overflow: hidden; }
 .notepad-body.minimized { height: 0; }
 .notepad-body textarea {
     width: 100%; height: 100%; background: #1a1a1a; border: none; color: #fff; padding: 10px;
     font-family: 'Segoe UI', sans-serif; resize: none; outline: none; font-size: 1rem;
 }
 
-/* TABULEIRO (Área Expansiva) */
+/* TABULEIRO */
 .board-wrapper {
-    flex-grow: 1; /* Cresce para ocupar espaço */
-    display: flex; justify-content: center; align-items: center;
-    width: 100%; min-height: 150px;
+    flex-grow: 1; display: flex; justify-content: center; align-items: center;
+    width: 100%;
 }
 .word-grid {
     display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
-    gap: 15px; width: 100%; max-width: 900px;
+    gap: 12px; width: 100%; max-width: 900px;
 }
 .letter-box {
-    width: 70px; height: 90px; background: var(--card-bg); border: 3px solid #444; color: white;
+    width: 60px; height: 80px; background: var(--card-bg); border: 3px solid #444; color: white;
     display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: bold;
     border-radius: 12px; cursor: default; user-select: none; transition: all 0.2s;
 }
 .letter-box.next-to-change { border-color: var(--warning); box-shadow: 0 0 15px var(--warning); }
 
-/* TUTORIAL BOX */
 .tutorial-message {
     font-size: 1.2rem; color: var(--text-dim); border: 2px dashed #444; padding: 30px; 
     border-radius: 15px; background: rgba(0,0,0,0.3); width: 100%; text-align: center;
 }
 
-/* ÁREA DE INPUT E AVISOS */
-.input-section { width: 100%; display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; position: relative; }
-.input-controls { display: flex; gap: 15px; }
+/* INPUTS */
+.input-section { width: 100%; display: flex; flex-direction: column; align-items: center; margin-bottom: 15px; flex-shrink: 0; }
+.input-controls { display: flex; gap: 15px; margin-bottom: 10px; }
 input {
     background: #000; border: 2px solid #444; color: white; padding: 10px; border-radius: 8px;
-    width: 80px; text-align: center; font-size: 1.8rem; outline: none;
+    width: 70px; text-align: center; font-size: 1.8rem; outline: none;
 }
 input:focus { border-color: var(--accent); }
 button#validate-btn {
@@ -223,20 +258,20 @@ button#validate-btn {
 }
 button#validate-btn:active { transform: scale(0.95); }
 
-/* NOTIFICAÇÕES CENTRALIZADAS */
-.notification-area { min-height: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 10px; }
+/* NOTIFICAÇÕES */
+.notification-area { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 40px; }
 .inline-message {
-    background: var(--warning); color: #000; padding: 5px 15px; border-radius: 20px;
-    font-weight: bold; font-size: 1rem; margin-bottom: 5px; animation: popIn 0.3s;
+    background: var(--warning); color: #000; padding: 8px 20px; border-radius: 20px;
+    font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; animation: popIn 0.3s;
 }
 .inline-message.hidden { display: none; }
-.feedback { font-weight: bold; font-size: 1.2rem; }
+.feedback { font-weight: bold; font-size: 1.3rem; margin-bottom: 5px; }
 .meaning-display { color: var(--text-dim); font-style: italic; font-size: 1rem; }
 .meaning-display.hidden { opacity: 0; }
 
 @keyframes popIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
-/* ALFABETO (Fixo e Largo) */
+/* ALFABETO */
 .alphabet-wrapper {
     width: 100%; max-width: 800px; background: rgba(30, 30, 30, 0.5); 
     border: 1px solid #444; border-radius: 8px; flex-shrink: 0;
@@ -249,14 +284,17 @@ button#validate-btn:active { transform: scale(0.95); }
 .mini-char { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: #555; font-weight: bold; border-radius: 4px; background: #222; }
 .mini-char.active { color: #000; background-color: var(--accent); }
 
+/* TOOLTIP & EXTRAS */
 .tooltip, .tooltip-inline {
     background: #333; color: #fff; border-radius: 50%; width: 16px; height: 16px;
     display: inline-flex; align-items: center; justify-content: center;
     font-size: 11px; cursor: help; margin-left: 5px; border: 1px solid #555;
 }
-
-.modal-overlay { z-index: 3000; background: rgba(0,0,0,0.95); }
-.success-flash { box-shadow: inset 0 0 60px rgba(3, 218, 198, 0.3); }
-.error-flash { box-shadow: inset 0 0 60px rgba(207, 102, 121, 0.3); }
 .confetti { position: fixed; top: -10px; width: 10px; height: 10px; z-index: 9999; pointer-events: none; animation: fall linear forwards; }
 @keyframes fall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+.success-flash { box-shadow: inset 0 0 60px rgba(3, 218, 198, 0.3); }
+.error-flash { box-shadow: inset 0 0 60px rgba(207, 102, 121, 0.3); }
+
+/* MODO MOBILE FIX */
+body.mobile-mode .sidebar.collapsed { width: 100%; height: 50px; overflow: hidden; padding: 0; }
+body.mobile-mode .sidebar-toggle { top: 10px; right: 10px; transform: rotate(90deg); }

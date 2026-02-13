@@ -8,15 +8,15 @@
 </head>
 <body>
 
-    <div id="welcome-modal" class="modal-overlay">
+    <div id="welcome-screen" class="welcome-container">
         <div class="modal-content">
-            <h2 style="color: var(--accent);">Grimório de MagicLexis</h2>
-            <p>Você precisa acertar a palavra proposta pelo algoritmo, seguindo as regras do jogo, preste bem atenção nas dicas e boa sorte.</p>
+            <h2 style="color: var(--accent); font-size: 2.5rem; margin-bottom: 20px;">Grimório de MagicLexis</h2>
+            <p style="font-size: 1.1rem; line-height: 1.6;">Você precisa acertar a palavra proposta pelo algoritmo, seguindo as regras do jogo, preste bem atenção nas dicas e boa sorte.</p>
             
-            <ul style="text-align: left; margin: 15px 0; color: var(--text-dim); font-size: 0.9rem;">
-                <li>Uma <strong>Vogal</strong> transforma a próxima letra na sua sucessora (A vira B).</li>
-                <li>Uma <strong>Consoante</strong> pode espelhar a letra anterior.</li>
-                <li>Letras repetidas (A...A) invertem o que está no meio.</li>
+            <ul style="text-align: left; margin: 25px 0; color: var(--text-dim); font-size: 1rem; padding-left: 20px;">
+                <li style="margin-bottom: 10px;">Uma <strong>Vogal</strong> transforma a próxima letra na sua sucessora (A vira B).</li>
+                <li style="margin-bottom: 10px;">Uma <strong>Consoante</strong> pode espelhar a letra anterior.</li>
+                <li style="margin-bottom: 10px;">Letras repetidas (A...A) invertem o que está no meio.</li>
             </ul>
             <p class="highlight-text">
                 ⚠️ <strong>O Ciclo Infinito:</strong> O tamanho da palavra é oculto. Se você preencher tudo, o cursor volta ao início e substitui a primeira letra.
@@ -25,59 +25,73 @@
         </div>
     </div>
 
-    <div class="app-container">
-        <aside class="sidebar">
-            <div class="brand-container">
-                <h2>MagicLexis</h2>
-            </div>
-            
-            <div class="collapsible-section">
-                <div class="collapsible-header" onclick="toggleSection('rules-content', this)">
-                    Regras (Hard)
-                    <span class="tooltip" title="Leis mágicas que alteram o que você digita.">?</span>
+    <div id="app-container" class="app-container hidden-app">
+        <aside class="sidebar" id="sidebar">
+            <button id="toggle-sidebar-btn" class="sidebar-toggle" title="Expandir/Recolher Menu">◀</button>
+
+            <div class="sidebar-content">
+                <div class="brand-container">
+                    <h2>MagicLexis</h2>
                 </div>
-                <div id="rules-content" class="collapsible-content">
-                    <div style="padding-top: 10px;">
-                        <div id="rule-vowel" class="rule-card">
-                            <strong>Vogal (+1):</strong><br>Se anterior é vogal, a nova letra avança 1 no alfabeto (Ex: A vira B).
-                        </div>
-                        <div id="rule-consonant" class="rule-card">
-                            <strong>Consoante (Espelho):</strong><br>Consoante faz a anterior virar oposto.<br><em>Ex: A↔Z, B↔Y, C↔X</em>
-                        </div>
-                        <div id="rule-repeat" class="rule-card">
-                            <strong>Sanduíche:</strong><br>Repetidas invertem o meio.<br><em>Ex: MARATONA vira MARANOTA</em>
+                
+                <div class="collapsible-section">
+                    <div class="collapsible-header" onclick="toggleSection('rules-content', this)">
+                        Regras (Hard)
+                        <span class="tooltip" title="Leis mágicas que alteram o que você digita. Clique para minimizar!">?</span>
+                    </div>
+                    <div id="rules-content" class="collapsible-content">
+                        <div style="padding-top: 10px;">
+                            <div id="rule-vowel" class="rule-card">
+                                <strong>Vogal (+1):</strong><br>Se anterior é vogal, a nova letra avança 1 no alfabeto (Ex: A vira B).
+                            </div>
+                            <div id="rule-consonant" class="rule-card">
+                                <strong>Consoante (Espelho):</strong><br>Consoante faz a anterior virar oposto.<br><em>Ex: A↔Z, B↔Y, C↔X</em>
+                            </div>
+                            <div id="rule-repeat" class="rule-card">
+                                <strong>Sanduíche:</strong><br>Repetidas invertem o meio.<br><em>Ex: MARATONA vira MARANOTA</em>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="collapsible-section" style="margin-top: 10px; flex-grow: 1; display: flex; flex-direction: column;">
-                <div class="collapsible-header" onclick="toggleSection('history-content', this)">
-                    Histórico
-                    <span class="tooltip" title="Registro das teclas apertadas.">?</span>
-                </div>
-                <div id="history-content" class="collapsible-content" style="flex-grow: 1;">
-                    <div id="input-history" class="history-list"></div>
-                    <button id="clear-history">Limpar</button>
+                <div class="collapsible-section" style="margin-top: 10px; flex-grow: 1; display: flex; flex-direction: column;">
+                    <div class="collapsible-header" onclick="toggleSection('history-content', this)">
+                        Histórico
+                        <span class="tooltip" title="Registro das teclas apertadas. Clique para minimizar!">?</span>
+                    </div>
+                    <div id="history-content" class="collapsible-content" style="flex-grow: 1;">
+                        <div id="input-history" class="history-list"></div>
+                        <button id="clear-history">Limpar</button>
+                    </div>
                 </div>
             </div>
 
             <div class="mage-container">
                 <div id="mage-character" class="pixel-mage">
-                    <div class="mage-hat"></div>
-                    <div class="mage-head">
-                        <div class="mage-beard"></div>
-                        <div class="mage-eyes">
-                            <div class="eye"></div>
-                            <div class="eye"></div>
+                    <div class="hat-tip"></div>
+                    <div class="hat-base"></div>
+                    
+                    <div class="head">
+                        <div class="eyes">
+                            <div class="eye left"></div>
+                            <div class="eye right"></div>
+                        </div>
+                        <div class="beard"></div>
+                    </div>
+                    
+                    <div class="body">
+                        <div class="arm left"></div>
+                        <div class="arm right"></div>
+                        <div class="feet">
+                            <div class="foot left"></div>
+                            <div class="foot right"></div>
                         </div>
                     </div>
-                    <div class="mage-body">
-                        <div class="mage-arm left"></div>
-                        <div class="mage-arm right"></div>
-                    </div>
-                    <div class="mage-staff">
-                        <div class="staff-gem"></div>
+
+                    <div class="staff">
+                        <div class="staff-head">
+                            <div class="gem"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="mage-effect">✨</div>
@@ -99,7 +113,7 @@
             
             <div class="notepad-container" id="notepad">
                 <div class="notepad-header" onclick="toggleNotepad()">
-                    <span>📝 Rascunho <span class="tooltip-inline" title="Clique para minimizar">?</span></span>
+                    <span>📝 Rascunho <span class="tooltip-inline" title="Rascunho para ajudar vc a planejar a jogada. Clique para minimizar!">?</span></span>
                 </div>
                 <div class="notepad-body">
                     <textarea placeholder="Anote suas ideias aqui..."></textarea>
@@ -125,7 +139,7 @@
 
             <div class="alphabet-wrapper">
                 <div class="alphabet-header">
-                    <span>Mapa de Letras</span> 
+                    <span>Mapa de Letras <span class="tooltip-inline" title="Mapa para ajudá-lo a identificar letras espelhadas. Clique para minimizar!">?</span></span>
                 </div>
                 <div id="mini-alphabet" class="alphabet-content"></div>
             </div>

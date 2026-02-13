@@ -2,20 +2,37 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Detecta mobile
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 800;
-    
     if (isMobile) {
         document.body.classList.add('mobile-mode');
-        toggleSection('history-content', document.querySelector('.collapsible-header')); 
+        // No mobile, a lógica de toggle pode ser diferente, mas vamos manter o padrão desktop first
     }
     
-    // Inicia o Mago
     startMageIdle();
     initChallenge();
 });
 
+// LÓGICA DO BOTÃO DE BOAS-VINDAS
 document.getElementById('start-game-btn').onclick = () => {
-    document.getElementById('welcome-modal').style.display = 'none';
+    // Some com o modal
+    document.getElementById('welcome-screen').style.display = 'none';
+    // Mostra o jogo
+    document.getElementById('app-container').classList.remove('hidden-app');
+    
     if (audioCtx.state === 'suspended') audioCtx.resume();
+};
+
+/* --- TOGGLE SIDEBAR --- */
+const sidebar = document.getElementById('sidebar');
+const toggleBtn = document.getElementById('toggle-sidebar-btn');
+
+toggleBtn.onclick = () => {
+    sidebar.classList.toggle('collapsed');
+    // Alterna seta
+    if (sidebar.classList.contains('collapsed')) {
+        toggleBtn.innerText = "▶";
+    } else {
+        toggleBtn.innerText = "◀";
+    }
 };
 
 /* --- MAGE LOGIC (CSS CUSTOM) --- */
@@ -23,7 +40,7 @@ const mageEl = document.getElementById('mage-character');
 const mageEffect = document.querySelector('.mage-effect');
 
 function startMageIdle() {
-    // A animação de piscar está no CSS (eye)
+    // Idle state handled by CSS
 }
 
 function animateMage(action) {
@@ -119,6 +136,9 @@ function toggleNotepad() {
     const body = document.querySelector('.notepad-body');
     body.classList.toggle('minimized');
 }
+function toggleAlphabet() {
+    document.getElementById('mini-alphabet').classList.toggle('hidden');
+}
 
 function showFloatingMessage(text, duration = 2000) {
     const msg = document.getElementById('floating-msg');
@@ -127,7 +147,7 @@ function showFloatingMessage(text, duration = 2000) {
     setTimeout(() => { msg.classList.add('hidden'); }, duration);
 }
 
-/* --- DADOS --- */
+/* --- DADOS (300 PALAVRAS) --- */
 const allChallenges = [
     { word: "SOL", hints: ["Astro rei.", "Aquece o dia.", "Estrela.", "Luz natural.", "Calor."], meaning: "Estrela central do sistema solar." },
     { word: "LUA", hints: ["Satélite.", "Noite.", "Fases.", "Marés.", "Branca."], meaning: "Satélite natural da Terra." },
