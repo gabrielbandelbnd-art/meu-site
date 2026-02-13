@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MagicLex - Hardcore Audio Edition</title>
+    <title>MagicLex - Final Version</title>
     <style>
         /* --- ESTILOS (CSS) --- */
         :root {
@@ -15,6 +15,7 @@
             --text-dim: #b0b0b0;
             --success: #03dac6;
             --error: #cf6679;
+            --warning: #ffb74d;
         }
 
         * { box-sizing: border-box; }
@@ -53,11 +54,12 @@
             border-radius: 8px;
             margin-bottom: 8px;
             border-left: 4px solid #444;
-            opacity: 0.6;
-            transition: 0.3s;
+            opacity: 0.5; /* Um pouco mais apagado por padrão para dar contraste */
+            transition: all 0.3s ease;
             font-size: 0.9rem;
         }
 
+        /* Classe ativa - Agora persistente */
         .rule-active {
             opacity: 1;
             border-left-color: var(--accent);
@@ -98,10 +100,61 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             padding: 40px;
             position: relative;
         }
+
+        /* --- ESTILOS DO DESAFIO (Auto) --- */
+        .challenge-header {
+            text-align: center;
+            margin-bottom: 20px;
+            z-index: 5;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .challenge-instruction {
+            color: var(--warning);
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+            line-height: 1.4;
+        }
+
+        .hint-box {
+            background: rgba(45, 45, 45, 0.9);
+            border: 1px solid var(--accent);
+            padding: 20px 25px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            min-width: 350px;
+            position: relative;
+        }
+
+        .hint-counter {
+            font-size: 0.75rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .hint-text {
+            font-size: 1.3rem;
+            color: #fff;
+            font-style: italic;
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .fade-out { opacity: 0; }
+        .fade-in { opacity: 1; }
+
+        /* --------------------------- */
 
         .word-grid {
             display: flex;
@@ -111,6 +164,7 @@
             gap: 15px;
             width: 100%;
             max-width: 900px;
+            margin-top: 30px;
             margin-bottom: 50px;
             min-height: 100px;
             z-index: 5;
@@ -171,7 +225,7 @@
         .success-flash { box-shadow: inset 0 0 60px rgba(3, 218, 198, 0.3); }
         .error-flash { box-shadow: inset 0 0 60px rgba(207, 102, 121, 0.3); }
 
-        /* --- CUBO 3D (Wireframe Branco) --- */
+        /* --- CUBO 3D --- */
         .scene {
             width: 120px;
             height: 120px;
@@ -203,7 +257,6 @@
             grid-template-rows: repeat(3, 1fr);
         }
 
-        /* Linhas internas do cubo */
         .cube__face::before, .cube__face::after {
             content: '';
             position: absolute;
@@ -261,6 +314,22 @@
             background-color: var(--accent);
             box-shadow: 0 0 5px var(--accent);
         }
+
+        /* --- CONFETE (CSS) --- */
+        .confetti {
+            position: fixed;
+            top: -10px;
+            width: 10px;
+            height: 10px;
+            z-index: 9999;
+            pointer-events: none;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -299,6 +368,15 @@
 
         <main class="game-area">
             
+            <div class="challenge-header">
+                <div class="challenge-instruction">
+                    "Você precisa acertar a palvra proposta pelo algoritimo, seguindo as regras do jogo, preste bem atenção nas dicas e boa sorte."
+                </div>
+                <div class="hint-box">
+                    <div id="hint-counter" class="hint-counter">Dica 1/5</div>
+                    <div id="current-hint" class="hint-text fade-in">Carregando desafio...</div>
+                </div>
+            </div>
             <div class="scene">
                 <div class="cube" id="magic-cube">
                     <div class="cube__face cube__face--front"></div>
@@ -325,7 +403,7 @@
     <audio id="success-sound" src="https://actions.google.com/sounds/v1/cartoon/clap_and_cheer_one_person.ogg"></audio>
 
     <script>
-        /* --- SISTEMA DE ÁUDIO (SINTETIZADOR WEB AUDIO API) --- */
+        /* --- SISTEMA DE ÁUDIO --- */
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioCtx = new AudioContext();
 
@@ -341,7 +419,6 @@
             const now = audioCtx.currentTime;
 
             if (type === 'type') {
-                // Clique simples
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(800, now);
                 osc.frequency.exponentialRampToValueAtTime(1200, now + 0.05);
@@ -350,8 +427,24 @@
                 osc.start(now);
                 osc.stop(now + 0.05);
             } 
+            else if (type === 'victory') {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                const times = [0, 0.1, 0.2, 0.4];
+                notes.forEach((freq, i) => {
+                    const oscV = audioCtx.createOscillator();
+                    const gainV = audioCtx.createGain();
+                    oscV.type = 'triangle';
+                    oscV.frequency.setValueAtTime(freq, now + times[i]);
+                    oscV.connect(gainV);
+                    gainV.connect(audioCtx.destination);
+                    gainV.gain.setValueAtTime(0, now + times[i]);
+                    gainV.gain.linearRampToValueAtTime(0.2, now + times[i] + 0.05);
+                    gainV.gain.exponentialRampToValueAtTime(0.01, now + times[i] + 0.6);
+                    oscV.start(now + times[i]);
+                    oscV.stop(now + times[i] + 0.6);
+                });
+            }
             else if (type === 'mirror') {
-                // Som Sci-Fi de espelho (descendo e distorcendo)
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(400, now);
                 osc.frequency.exponentialRampToValueAtTime(100, now + 0.3);
@@ -361,7 +454,6 @@
                 osc.stop(now + 0.3);
             }
             else if (type === 'shift') {
-                // Som Mágico de Vogal (subindo)
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(300, now);
                 osc.frequency.linearRampToValueAtTime(600, now + 0.1);
@@ -371,7 +463,6 @@
                 osc.stop(now + 0.2);
             }
             else if (type === 'reverse') {
-                // Som de "Rebobinar" (Sanduíche)
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(200, now);
                 osc.frequency.linearRampToValueAtTime(800, now + 0.2);
@@ -382,7 +473,6 @@
                 osc.stop(now + 0.4);
             }
             else if (type === 'prune') {
-                // Som de corte (ruído curto)
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(150, now);
                 osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
@@ -392,7 +482,6 @@
                 osc.stop(now + 0.1);
             }
             else if (type === 'error') {
-                // Som de erro (grave)
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(100, now);
                 osc.frequency.linearRampToValueAtTime(50, now + 0.3);
@@ -400,6 +489,21 @@
                 gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
                 osc.start(now);
                 osc.stop(now + 0.3);
+            }
+        }
+
+        function triggerConfetti() {
+            const colors = ['#bb86fc', '#03dac6', '#cf6679', '#ffffff', '#ffb74d'];
+            for (let i = 0; i < 150; i++) {
+                const conf = document.createElement('div');
+                conf.classList.add('confetti');
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                conf.style.width = (Math.random() * 10 + 5) + 'px';
+                conf.style.height = conf.style.width;
+                setTimeout(() => { document.body.appendChild(conf); }, Math.random() * 500);
+                setTimeout(() => { conf.remove(); }, 5000);
             }
         }
 
@@ -413,14 +517,66 @@
         const successSound = document.getElementById('success-sound');
         const miniAlphabetContainer = document.getElementById('mini-alphabet');
         const magicCube = document.getElementById('magic-cube');
+        const hintText = document.getElementById('current-hint');
+        const hintCounter = document.getElementById('hint-counter');
 
         let currentWord = [];
         let lastChar = '';
         let cCombo = 0; 
+        
+        const challenges = [
+            { word: "SOL", hints: ["Astro rei que ilumina o dia.", "Aquece a Terra.", "Contrário de chuva ou sombra.", "É uma estrela amarela.", "Tem apenas 3 letras."] },
+            { word: "LUZ", hints: ["Oposto de escuridão.", "Sai da lâmpada.", "Claridade.", "Necessária para ver.", "Rima com capuz."] },
+            { word: "MAR", hints: ["Grande extensão de água salgada.", "Lugar onde vivem tubarões.", "Tem ondas.", "Azul e profundo.", "Rima com amar."] },
+            { word: "SIM", hints: ["Oposto de não.", "Afirmação positiva.", "Aceitação de um pedido.", "Três letras, confirmação.", "Usado em casamentos."] },
+            { word: "COR", hints: ["O que pinta o mundo.", "Vermelho, azul ou verde.", "Arco-íris tem várias.", "Tinta dá isso à parede.", "Palavra curta que define matiz."] }
+        ];
+
+        let targetChallenge = null;
+        let hintIndex = 0;
+        let hintInterval = null;
+
+        function clearAllHighlights() {
+            document.querySelectorAll('.rule-card').forEach(card => card.classList.remove('rule-active'));
+        }
+
+        function initChallenge() {
+            clearAllHighlights(); // Limpa as regras ao iniciar novo jogo
+            targetChallenge = challenges[Math.floor(Math.random() * challenges.length)];
+            hintIndex = 0;
+            updateHintDisplay();
+            startHintCycle();
+            console.log("Alvo (Dev):", targetChallenge.word); 
+        }
+
+        function updateHintDisplay() {
+            if (!targetChallenge) return;
+            hintText.classList.remove('fade-in');
+            hintText.classList.add('fade-out');
+            setTimeout(() => {
+                hintText.innerText = targetChallenge.hints[hintIndex];
+                hintCounter.innerText = `Dica ${hintIndex + 1}/${targetChallenge.hints.length}`;
+                hintText.classList.remove('fade-out');
+                hintText.classList.add('fade-in');
+            }, 200);
+        }
+
+        function startHintCycle() {
+            if (hintInterval) clearInterval(hintInterval);
+            hintInterval = setInterval(() => {
+                if (!targetChallenge) return;
+                hintIndex++;
+                if (hintIndex >= targetChallenge.hints.length) hintIndex = 0;
+                updateHintDisplay();
+            }, 5000);
+        }
+
+        function stopHintCycle() {
+            if (hintInterval) clearInterval(hintInterval);
+        }
 
         const isVowel = (c) => 'AEIOUaeiou'.includes(c);
 
-        // Inicializa Mini Alfabeto
         const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
         alphabet.forEach(letter => {
             const div = document.createElement('div');
@@ -460,10 +616,18 @@
             return isUpper ? mirrored.toUpperCase() : mirrored;
         }
 
+        /* --- LÓGICA DE DESTAQUE ATUALIZADA (PERSISTENTE) --- */
         function highlight(id) {
+            // 1. Remove destaque de TODAS as regras
+            clearAllHighlights();
+
+            // 2. Adiciona destaque apenas na regra atual (sem timer)
             const el = document.getElementById(id);
-            if (el) { el.classList.add('rule-active'); setTimeout(() => el.classList.remove('rule-active'), 800); }
+            if (el) {
+                el.classList.add('rule-active');
+            }
         }
+        /* -------------------------------------------------- */
 
         function render() {
             wordGrid.innerHTML = '';
@@ -475,7 +639,7 @@
                     currentWord.splice(i, 1); 
                     render(); 
                     rotateCube(); 
-                    playSoundEffect('prune'); // Som de remover
+                    playSoundEffect('prune'); 
                 };
                 wordGrid.appendChild(div);
             });
@@ -487,20 +651,20 @@
             if (!/^[a-zA-Z]$/.test(char) || currentWord.length >= 52) return;
 
             rotateCube();
-            playSoundEffect('type'); // Som básico de digitação
+            playSoundEffect('type'); 
 
             historyList.innerHTML += char.toUpperCase() + ' ';
             historyList.scrollTop = historyList.scrollHeight;
 
             let charToAdd = char.toUpperCase();
 
-            // REGRA 1: Poda (3x Consoantes)
+            // REGRA 1: Poda
             if (!isVowel(charToAdd)) {
                 if (charToAdd === lastChar) cCombo++;
                 else cCombo = 1;
 
                 if (cCombo === 3) {
-                    highlight('rule-pruning');
+                    highlight('rule-pruning'); // Acende e fica
                     playSoundEffect('prune');
                     currentWord.shift();
                     cCombo = 0;
@@ -508,21 +672,19 @@
             } else { cCombo = 0; }
             lastChar = charToAdd;
 
-            // REGRA 2: Espelhamento (Consoante afeta ANTERIOR)
-            // Se a letra atual for Consoante e houver letra antes, a anterior espelha.
+            // REGRA 2: Espelhamento
             if (!isVowel(charToAdd) && currentWord.length > 0) {
-                highlight('rule-consonant');
+                highlight('rule-consonant'); // Acende e fica
                 playSoundEffect('mirror');
                 currentWord[currentWord.length - 1] = mirrorAlphabet(currentWord[currentWord.length - 1]);
             }
 
-            // Adiciona a nova letra (após espelhar a anterior)
             const firstIdx = currentWord.indexOf(charToAdd);
             currentWord.push(charToAdd);
 
-            // REGRA 3: Inversão (Sanduíche)
+            // REGRA 3: Sanduíche
             if (firstIdx !== -1 && firstIdx < currentWord.length - 1) {
-                highlight('rule-repeat');
+                highlight('rule-repeat'); // Acende e fica
                 playSoundEffect('reverse');
                 const start = firstIdx + 1;
                 const end = currentWord.length - 1;
@@ -530,11 +692,9 @@
                 currentWord.splice(start, mid.length, ...mid);
             }
 
-            // REGRA 4: Vogal Shift (+1)
-            // Se a letra ANTERIOR (que pode ter sido espelhada!) for vogal, a ATUAL avança.
-            // Precisamos checar a penúltima letra de novo, pois ela pode ter mudado.
+            // REGRA 4: Vogal Shift
             if (currentWord.length > 1 && isVowel(currentWord[currentWord.length - 2])) {
-                highlight('rule-vowel');
+                highlight('rule-vowel'); // Acende e fica
                 playSoundEffect('shift');
                 const lastIdx = currentWord.length - 1;
                 currentWord[lastIdx] = shiftAlphabet(currentWord[lastIdx]);
@@ -544,28 +704,52 @@
         }
 
         async function validate() {
-            const word = currentWord.join('').toLowerCase();
+            const word = currentWord.join('').toUpperCase();
             if (word.length < 2) return;
-            feedback.innerText = "Consultando...";
+            
+            feedback.innerText = "Verificando...";
+            
+            if (targetChallenge && word === targetChallenge.word) {
+                feedback.innerText = "🏆 ACERTOU O DESAFIO!";
+                feedback.style.color = "var(--success)";
+                
+                document.body.classList.add('success-flash');
+                successSound.play();
+                playSoundEffect('victory'); 
+                triggerConfetti();
+                
+                rotateCube();
+                stopHintCycle();
+                clearAllHighlights(); // Limpa destaques na vitória
+                
+                setTimeout(() => {
+                    document.body.classList.remove('success-flash');
+                    currentWord = [];
+                    historyList.innerHTML = '';
+                    render();
+                    feedback.innerText = "Novo desafio iniciado!";
+                    initChallenge();
+                }, 4000);
+                return;
+            }
+
             try {
-                const res = await fetch(`https://api.dicionario-aberto.net/word/${word}`);
+                const res = await fetch(`https://api.dicionario-aberto.net/word/${word.toLowerCase()}`);
                 const data = await res.json();
                 if (data.length > 0) {
-                    feedback.innerText = "✅ Palavra Válida!";
-                    feedback.style.color = "var(--success)";
-                    document.body.classList.add('success-flash');
-                    successSound.play(); // Som externo
-                    rotateCube();
+                    feedback.innerText = "⚠️ Palavra existe, mas não é a do desafio.";
+                    feedback.style.color = "var(--warning)";
                 } else {
-                    feedback.innerText = "❌ Inexistente";
+                    feedback.innerText = "❌ Tente novamente";
                     feedback.style.color = "var(--error)";
                     document.body.classList.add('error-flash');
-                    playSoundEffect('error'); // Som sintetizado
+                    playSoundEffect('error');
                 }
             } catch { feedback.innerText = "Erro na API"; }
+
             setTimeout(() => { 
                 document.body.classList.remove('success-flash', 'error-flash'); 
-                feedback.innerText = ""; 
+                if(!feedback.innerText.includes("Novo")) feedback.innerText = ""; 
             }, 2000);
         }
 
@@ -577,17 +761,16 @@
         });
 
         validateBtn.addEventListener('click', validate);
-        document.getElementById('clear-history').onclick = () => { historyList.innerHTML = ''; };
+        document.getElementById('clear-history').onclick = () => { historyList.innerHTML = ''; clearAllHighlights(); };
         
         document.body.onclick = (e) => { 
-            // Resume o contexto de áudio se estiver suspenso (exigência do navegador)
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            
             if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && !e.target.classList.contains('letter-box')) {
                 charInput.focus(); 
             }
         };
 
+        initChallenge();
         render();
     </script>
 </body>
