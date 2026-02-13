@@ -3,775 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MagicLex - Final Version</title>
-    <style>
-        /* --- ESTILOS (CSS) --- */
-        :root {
-            --bg-dark: #121212;
-            --sidebar-bg: #1e1e1e;
-            --card-bg: #2d2d2d;
-            --accent: #bb86fc;
-            --text-main: #ffffff;
-            --text-dim: #b0b0b0;
-            --success: #03dac6;
-            --error: #cf6679;
-            --warning: #ffb74d;
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-        }
-
-        .app-container { display: flex; width: 100%; height: 100%; position: relative; }
-
-        /* BARRA LATERAL */
-        .sidebar {
-            width: 300px;
-            background: var(--sidebar-bg);
-            padding: 20px;
-            border-right: 1px solid #333;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            overflow-y: auto;
-            z-index: 10;
-        }
-
-        .sidebar h2 { color: var(--accent); margin: 0; font-size: 1.8rem; }
-        .sidebar h3 { font-size: 0.8rem; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; }
-
-        .rule-card {
-            background: var(--card-bg);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            border-left: 4px solid #444;
-            opacity: 0.5; /* Um pouco mais apagado por padrão para dar contraste */
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-        }
-
-        /* Classe ativa - Agora persistente */
-        .rule-active {
-            opacity: 1;
-            border-left-color: var(--accent);
-            background: #383838;
-            transform: translateX(5px);
-            box-shadow: 0 0 15px rgba(187, 134, 252, 0.4);
-        }
-
-        .history-section { flex-grow: 1; display: flex; flex-direction: column; min-height: 100px; }
-        .history-list {
-            background: #000;
-            border-radius: 6px;
-            padding: 10px;
-            flex-grow: 1;
-            overflow-y: auto;
-            font-family: monospace;
-            color: var(--accent);
-            border: 1px solid #333;
-            font-size: 0.85rem;
-        }
-
-        #clear-history {
-            background: transparent;
-            border: 1px solid var(--error);
-            color: var(--error);
-            margin-top: 10px;
-            padding: 5px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
-        .status-info { margin-top: auto; padding-top: 10px; border-top: 1px solid #333; color: var(--text-dim); }
-
-        /* ÁREA CENTRALIZADA */
-        .game-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 40px;
-            position: relative;
-        }
-
-        /* --- ESTILOS DO DESAFIO (Auto) --- */
-        .challenge-header {
-            text-align: center;
-            margin-bottom: 20px;
-            z-index: 5;
-            max-width: 800px;
-            width: 100%;
-        }
-
-        .challenge-instruction {
-            color: var(--warning);
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            text-shadow: 0 0 5px rgba(0,0,0,0.5);
-            line-height: 1.4;
-        }
-
-        .hint-box {
-            background: rgba(45, 45, 45, 0.9);
-            border: 1px solid var(--accent);
-            padding: 20px 25px;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            min-width: 350px;
-            position: relative;
-        }
-
-        .hint-counter {
-            font-size: 0.75rem;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-
-        .hint-text {
-            font-size: 1.3rem;
-            color: #fff;
-            font-style: italic;
-            transition: opacity 0.5s ease-in-out;
-        }
-        
-        .fade-out { opacity: 0; }
-        .fade-in { opacity: 1; }
-
-        /* --------------------------- */
-
-        .word-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            width: 100%;
-            max-width: 900px;
-            margin-top: 30px;
-            margin-bottom: 50px;
-            min-height: 100px;
-            z-index: 5;
-        }
-
-        .letter-box {
-            width: 65px;
-            height: 80px;
-            background: var(--card-bg);
-            border: 2px solid #444;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2rem;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            user-select: none;
-        }
-
-        .letter-box:hover {
-            border-color: var(--error);
-            color: var(--error);
-            background: rgba(207, 102, 121, 0.1);
-            transform: translateY(-10px);
-        }
-
-        .input-controls { display: flex; gap: 15px; z-index: 5; }
-
-        input {
-            background: #000;
-            border: 2px solid #444;
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            width: 80px;
-            text-align: center;
-            font-size: 1.5rem;
-            outline: none;
-        }
-        input:focus { border-color: var(--accent); }
-
-        button#validate-btn {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 0 30px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.1s;
-        }
-        button#validate-btn:active { transform: scale(0.95); }
-
-        .feedback { margin-top: 25px; font-weight: bold; font-size: 1.2rem; height: 30px; z-index: 5; }
-        .success-flash { box-shadow: inset 0 0 60px rgba(3, 218, 198, 0.3); }
-        .error-flash { box-shadow: inset 0 0 60px rgba(207, 102, 121, 0.3); }
-
-        /* --- CUBO 3D --- */
-        .scene {
-            width: 120px;
-            height: 120px;
-            perspective: 600px;
-            position: absolute;
-            top: 40px;
-            right: 60px;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .cube {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transform: translateZ(-100px);
-            transition: transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .cube__face {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            background: rgba(255, 255, 255, 0.05);
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-        }
-
-        .cube__face::before, .cube__face::after {
-            content: '';
-            position: absolute;
-            background: rgba(255, 255, 255, 0.3);
-        }
-        .cube__face::before {
-            top: 0; bottom: 0; left: 33.33%; width: 33.33%;
-            border-left: 1px solid rgba(255,255,255,0.3);
-            border-right: 1px solid rgba(255,255,255,0.3);
-            background: transparent;
-        }
-        .cube__face::after {
-            left: 0; right: 0; top: 33.33%; height: 33.33%;
-            border-top: 1px solid rgba(255,255,255,0.3);
-            border-bottom: 1px solid rgba(255,255,255,0.3);
-            background: transparent;
-        }
-
-        .cube__face--front  { transform: rotateY(  0deg) translateZ(60px); }
-        .cube__face--right  { transform: rotateY( 90deg) translateZ(60px); }
-        .cube__face--back   { transform: rotateY(180deg) translateZ(60px); }
-        .cube__face--left   { transform: rotateY(-90deg) translateZ(60px); }
-        .cube__face--top    { transform: rotateX( 90deg) translateZ(60px); }
-        .cube__face--bottom { transform: rotateX(-90deg) translateZ(60px); }
-
-        /* --- MINI ALFABETO --- */
-        .mini-alphabet {
-            position: absolute;
-            bottom: 30px;
-            right: 40px;
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 4px;
-            background: rgba(30, 30, 30, 0.9);
-            padding: 10px;
-            border: 1px solid #444;
-            border-radius: 8px;
-            z-index: 10;
-        }
-
-        .mini-char {
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            color: #555;
-            font-weight: bold;
-            border-radius: 3px;
-        }
-
-        .mini-char.active {
-            color: #000;
-            background-color: var(--accent);
-            box-shadow: 0 0 5px var(--accent);
-        }
-
-        /* --- CONFETE (CSS) --- */
-        .confetti {
-            position: fixed;
-            top: -10px;
-            width: 10px;
-            height: 10px;
-            z-index: 9999;
-            pointer-events: none;
-            animation: fall linear forwards;
-        }
-
-        @keyframes fall {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-    </style>
+    <title>MagicLexis - Master Edition</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+    <div id="welcome-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="color: var(--accent);">Grimório de MagicLexis</h2>
+            <p>Você precisa acertar a palavra proposta pelo algoritmo, seguindo as regras do jogo, preste bem atenção nas dicas e boa sorte.</p>
+            
+            <ul style="text-align: left; margin: 15px 0; color: var(--text-dim); font-size: 0.9rem;">
+                <li>Uma <strong>Vogal</strong> transforma a próxima letra na sua sucessora (A vira B).</li>
+                <li>Uma <strong>Consoante</strong> pode espelhar a letra anterior.</li>
+                <li>Letras repetidas (A...A) invertem o que está no meio.</li>
+            </ul>
+            <p class="highlight-text">
+                ⚠️ <strong>O Ciclo Infinito:</strong> O tamanho da palavra é oculto. Se você preencher tudo, o cursor volta ao início e substitui a primeira letra.
+            </p>
+            <button id="start-game-btn">Entendi, vamos conjurar!</button>
+        </div>
+    </div>
+
     <div class="app-container">
         <aside class="sidebar">
-            <h2>MagicLex</h2>
-            <div class="rules-section">
-                <h3>Regras Ativas (Hard)</h3>
-                <div id="rule-vowel" class="rule-card">
-                    <strong>Vogal (+1):</strong><br>
-                    Se anterior é vogal, a nova avança 1 letra.
+            <div class="brand-container">
+                <h2>MagicLexis</h2>
+            </div>
+            
+            <div class="collapsible-section">
+                <div class="collapsible-header" onclick="toggleSection('rules-content', this)">
+                    Regras (Hard)
+                    <span class="tooltip" title="Leis mágicas que alteram o que você digita.">?</span>
                 </div>
-                <div id="rule-consonant" class="rule-card">
-                    <strong>Consoante (Espelho):</strong><br>
-                    Se digitar consoante, a <em>anterior</em> vira seu oposto (A↔Z).
-                </div>
-                <div id="rule-repeat" class="rule-card">
-                    <strong>Sanduíche:</strong><br>
-                    Letras repetidas (A...A) invertem o meio.
-                </div>
-                <div id="rule-pruning" class="rule-card">
-                    <strong>Poda (3x):</strong><br>
-                    3 consoantes iguais apagam a mais antiga.
+                <div id="rules-content" class="collapsible-content">
+                    <div style="padding-top: 10px;">
+                        <div id="rule-vowel" class="rule-card">
+                            <strong>Vogal (+1):</strong><br>Se anterior é vogal, a nova letra avança 1 no alfabeto (Ex: A vira B).
+                        </div>
+                        <div id="rule-consonant" class="rule-card">
+                            <strong>Consoante (Espelho):</strong><br>Consoante faz a anterior virar oposto.<br><em>Ex: A↔Z, B↔Y, C↔X</em>
+                        </div>
+                        <div id="rule-repeat" class="rule-card">
+                            <strong>Sanduíche:</strong><br>Repetidas invertem o meio.<br><em>Ex: MARATONA vira MARANOTA</em>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="history-section">
-                <h3>Histórico</h3>
-                <div id="input-history" class="history-list"></div>
-                <button id="clear-history">Limpar</button>
+            <div class="collapsible-section" style="margin-top: 10px; flex-grow: 1; display: flex; flex-direction: column;">
+                <div class="collapsible-header" onclick="toggleSection('history-content', this)">
+                    Histórico
+                    <span class="tooltip" title="Registro das teclas apertadas.">?</span>
+                </div>
+                <div id="history-content" class="collapsible-content" style="flex-grow: 1;">
+                    <div id="input-history" class="history-list"></div>
+                    <button id="clear-history">Limpar</button>
+                </div>
             </div>
 
-            <div class="status-info">Tamanho: <span id="char-count">0</span> / 52</div>
+            <div class="mage-container">
+                <div id="mage-character" class="pixel-mage">
+                    <div class="mage-hat"></div>
+                    <div class="mage-head">
+                        <div class="mage-beard"></div>
+                        <div class="mage-eyes">
+                            <div class="eye"></div>
+                            <div class="eye"></div>
+                        </div>
+                    </div>
+                    <div class="mage-body">
+                        <div class="mage-arm left"></div>
+                        <div class="mage-arm right"></div>
+                    </div>
+                    <div class="mage-staff">
+                        <div class="staff-gem"></div>
+                    </div>
+                </div>
+                <div class="mage-effect">✨</div>
+            </div>
+
         </aside>
 
         <main class="game-area">
             
             <div class="challenge-header">
                 <div class="challenge-instruction">
-                    "Você precisa acertar a palvra proposta pelo algoritimo, seguindo as regras do jogo, preste bem atenção nas dicas e boa sorte."
+                    Você precisa acertar a palavra proposta pelo algoritmo, seguindo as regras do jogo, preste bem atenção nas dicas e boa sorte.
                 </div>
                 <div class="hint-box">
                     <div id="hint-counter" class="hint-counter">Dica 1/5</div>
-                    <div id="current-hint" class="hint-text fade-in">Carregando desafio...</div>
+                    <div id="current-hint" class="hint-text fade-in">...</div>
                 </div>
             </div>
-            <div class="scene">
-                <div class="cube" id="magic-cube">
-                    <div class="cube__face cube__face--front"></div>
-                    <div class="cube__face cube__face--back"></div>
-                    <div class="cube__face cube__face--right"></div>
-                    <div class="cube__face cube__face--left"></div>
-                    <div class="cube__face cube__face--top"></div>
-                    <div class="cube__face cube__face--bottom"></div>
+            
+            <div class="notepad-container" id="notepad">
+                <div class="notepad-header" onclick="toggleNotepad()">
+                    <span>📝 Rascunho <span class="tooltip-inline" title="Clique para minimizar">?</span></span>
+                </div>
+                <div class="notepad-body">
+                    <textarea placeholder="Anote suas ideias aqui..."></textarea>
                 </div>
             </div>
 
-            <div id="word-grid" class="word-grid"></div>
-
-            <div class="input-controls">
-                <input type="text" id="char-input" maxlength="1" autofocus placeholder="?">
-                <button id="validate-btn">Validar</button>
+            <div class="board-wrapper">
+                <div id="word-grid" class="word-grid"></div>
             </div>
-            <div id="feedback-message" class="feedback"></div>
 
-            <div id="mini-alphabet" class="mini-alphabet"></div>
+            <div class="input-section">
+                <div class="input-controls">
+                    <input type="text" id="char-input" maxlength="1" autofocus placeholder="?">
+                    <button id="validate-btn">Validar</button>
+                </div>
+                
+                <div class="notification-area">
+                    <div id="floating-msg" class="inline-message hidden"></div>
+                    <div id="feedback-message" class="feedback"></div>
+                    <div id="meaning-box" class="meaning-display hidden"></div>
+                </div>
+            </div>
+
+            <div class="alphabet-wrapper">
+                <div class="alphabet-header">
+                    <span>Mapa de Letras</span> 
+                </div>
+                <div id="mini-alphabet" class="alphabet-content"></div>
+            </div>
+
         </main>
     </div>
 
     <audio id="success-sound" src="https://actions.google.com/sounds/v1/cartoon/clap_and_cheer_one_person.ogg"></audio>
 
-    <script>
-        /* --- SISTEMA DE ÁUDIO --- */
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioContext();
-
-        function playSoundEffect(type) {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            
-            const osc = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            
-            osc.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            const now = audioCtx.currentTime;
-
-            if (type === 'type') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(800, now);
-                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.05);
-                gainNode.gain.setValueAtTime(0.1, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-                osc.start(now);
-                osc.stop(now + 0.05);
-            } 
-            else if (type === 'victory') {
-                const notes = [523.25, 659.25, 783.99, 1046.50];
-                const times = [0, 0.1, 0.2, 0.4];
-                notes.forEach((freq, i) => {
-                    const oscV = audioCtx.createOscillator();
-                    const gainV = audioCtx.createGain();
-                    oscV.type = 'triangle';
-                    oscV.frequency.setValueAtTime(freq, now + times[i]);
-                    oscV.connect(gainV);
-                    gainV.connect(audioCtx.destination);
-                    gainV.gain.setValueAtTime(0, now + times[i]);
-                    gainV.gain.linearRampToValueAtTime(0.2, now + times[i] + 0.05);
-                    gainV.gain.exponentialRampToValueAtTime(0.01, now + times[i] + 0.6);
-                    oscV.start(now + times[i]);
-                    oscV.stop(now + times[i] + 0.6);
-                });
-            }
-            else if (type === 'mirror') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.exponentialRampToValueAtTime(100, now + 0.3);
-                gainNode.gain.setValueAtTime(0.1, now);
-                gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.3);
-            }
-            else if (type === 'shift') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.linearRampToValueAtTime(600, now + 0.1);
-                gainNode.gain.setValueAtTime(0.1, now);
-                gainNode.gain.linearRampToValueAtTime(0, now + 0.2);
-                osc.start(now);
-                osc.stop(now + 0.2);
-            }
-            else if (type === 'reverse') {
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(200, now);
-                osc.frequency.linearRampToValueAtTime(800, now + 0.2);
-                osc.frequency.linearRampToValueAtTime(200, now + 0.4);
-                gainNode.gain.setValueAtTime(0.05, now);
-                gainNode.gain.linearRampToValueAtTime(0, now + 0.4);
-                osc.start(now);
-                osc.stop(now + 0.4);
-            }
-            else if (type === 'prune') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, now);
-                osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
-                gainNode.gain.setValueAtTime(0.2, now);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-                osc.start(now);
-                osc.stop(now + 0.1);
-            }
-            else if (type === 'error') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(100, now);
-                osc.frequency.linearRampToValueAtTime(50, now + 0.3);
-                gainNode.gain.setValueAtTime(0.2, now);
-                gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.3);
-            }
-        }
-
-        function triggerConfetti() {
-            const colors = ['#bb86fc', '#03dac6', '#cf6679', '#ffffff', '#ffb74d'];
-            for (let i = 0; i < 150; i++) {
-                const conf = document.createElement('div');
-                conf.classList.add('confetti');
-                conf.style.left = Math.random() * 100 + 'vw';
-                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                conf.style.width = (Math.random() * 10 + 5) + 'px';
-                conf.style.height = conf.style.width;
-                setTimeout(() => { document.body.appendChild(conf); }, Math.random() * 500);
-                setTimeout(() => { conf.remove(); }, 5000);
-            }
-        }
-
-        /* --- LÓGICA DO JOGO --- */
-        const wordGrid = document.getElementById('word-grid');
-        const charInput = document.getElementById('char-input');
-        const validateBtn = document.getElementById('validate-btn');
-        const charCountLabel = document.getElementById('char-count');
-        const feedback = document.getElementById('feedback-message');
-        const historyList = document.getElementById('input-history');
-        const successSound = document.getElementById('success-sound');
-        const miniAlphabetContainer = document.getElementById('mini-alphabet');
-        const magicCube = document.getElementById('magic-cube');
-        const hintText = document.getElementById('current-hint');
-        const hintCounter = document.getElementById('hint-counter');
-
-        let currentWord = [];
-        let lastChar = '';
-        let cCombo = 0; 
-        
-        const challenges = [
-            { word: "SOL", hints: ["Astro rei que ilumina o dia.", "Aquece a Terra.", "Contrário de chuva ou sombra.", "É uma estrela amarela.", "Tem apenas 3 letras."] },
-            { word: "LUZ", hints: ["Oposto de escuridão.", "Sai da lâmpada.", "Claridade.", "Necessária para ver.", "Rima com capuz."] },
-            { word: "MAR", hints: ["Grande extensão de água salgada.", "Lugar onde vivem tubarões.", "Tem ondas.", "Azul e profundo.", "Rima com amar."] },
-            { word: "SIM", hints: ["Oposto de não.", "Afirmação positiva.", "Aceitação de um pedido.", "Três letras, confirmação.", "Usado em casamentos."] },
-            { word: "COR", hints: ["O que pinta o mundo.", "Vermelho, azul ou verde.", "Arco-íris tem várias.", "Tinta dá isso à parede.", "Palavra curta que define matiz."] }
-        ];
-
-        let targetChallenge = null;
-        let hintIndex = 0;
-        let hintInterval = null;
-
-        function clearAllHighlights() {
-            document.querySelectorAll('.rule-card').forEach(card => card.classList.remove('rule-active'));
-        }
-
-        function initChallenge() {
-            clearAllHighlights(); // Limpa as regras ao iniciar novo jogo
-            targetChallenge = challenges[Math.floor(Math.random() * challenges.length)];
-            hintIndex = 0;
-            updateHintDisplay();
-            startHintCycle();
-            console.log("Alvo (Dev):", targetChallenge.word); 
-        }
-
-        function updateHintDisplay() {
-            if (!targetChallenge) return;
-            hintText.classList.remove('fade-in');
-            hintText.classList.add('fade-out');
-            setTimeout(() => {
-                hintText.innerText = targetChallenge.hints[hintIndex];
-                hintCounter.innerText = `Dica ${hintIndex + 1}/${targetChallenge.hints.length}`;
-                hintText.classList.remove('fade-out');
-                hintText.classList.add('fade-in');
-            }, 200);
-        }
-
-        function startHintCycle() {
-            if (hintInterval) clearInterval(hintInterval);
-            hintInterval = setInterval(() => {
-                if (!targetChallenge) return;
-                hintIndex++;
-                if (hintIndex >= targetChallenge.hints.length) hintIndex = 0;
-                updateHintDisplay();
-            }, 5000);
-        }
-
-        function stopHintCycle() {
-            if (hintInterval) clearInterval(hintInterval);
-        }
-
-        const isVowel = (c) => 'AEIOUaeiou'.includes(c);
-
-        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
-        alphabet.forEach(letter => {
-            const div = document.createElement('div');
-            div.className = 'mini-char';
-            div.id = `mini-${letter}`;
-            div.innerText = letter;
-            miniAlphabetContainer.appendChild(div);
-        });
-
-        function updateMiniAlphabet() {
-            document.querySelectorAll('.mini-char').forEach(el => el.classList.remove('active'));
-            currentWord.forEach(char => {
-                const el = document.getElementById(`mini-${char.toUpperCase()}`);
-                if(el) el.classList.add('active');
-            });
-        }
-
-        function rotateCube() {
-            const rX = Math.floor(Math.random() * 360);
-            const rY = Math.floor(Math.random() * 360);
-            magicCube.style.transform = `rotateX(${rX}deg) rotateY(${rY}deg)`;
-        }
-
-        function shiftAlphabet(char) {
-            const code = char.charCodeAt(0);
-            const start = char === char.toUpperCase() ? 65 : 97;
-            const limit = char === char.toUpperCase() ? 90 : 122;
-            return String.fromCharCode(code + 1 > limit ? start : code + 1);
-        }
-
-        function mirrorAlphabet(char) {
-            const alpha = "abcdefghijklmnopqrstuvwxyz";
-            const isUpper = char === char.toUpperCase();
-            const idx = alpha.indexOf(char.toLowerCase());
-            if (idx === -1) return char;
-            const mirrored = alpha[25 - idx];
-            return isUpper ? mirrored.toUpperCase() : mirrored;
-        }
-
-        /* --- LÓGICA DE DESTAQUE ATUALIZADA (PERSISTENTE) --- */
-        function highlight(id) {
-            // 1. Remove destaque de TODAS as regras
-            clearAllHighlights();
-
-            // 2. Adiciona destaque apenas na regra atual (sem timer)
-            const el = document.getElementById(id);
-            if (el) {
-                el.classList.add('rule-active');
-            }
-        }
-        /* -------------------------------------------------- */
-
-        function render() {
-            wordGrid.innerHTML = '';
-            currentWord.forEach((c, i) => {
-                const div = document.createElement('div');
-                div.className = 'letter-box';
-                div.innerText = c;
-                div.onclick = () => { 
-                    currentWord.splice(i, 1); 
-                    render(); 
-                    rotateCube(); 
-                    playSoundEffect('prune'); 
-                };
-                wordGrid.appendChild(div);
-            });
-            charCountLabel.innerText = currentWord.length;
-            updateMiniAlphabet();
-        }
-
-        function addChar(char) {
-            if (!/^[a-zA-Z]$/.test(char) || currentWord.length >= 52) return;
-
-            rotateCube();
-            playSoundEffect('type'); 
-
-            historyList.innerHTML += char.toUpperCase() + ' ';
-            historyList.scrollTop = historyList.scrollHeight;
-
-            let charToAdd = char.toUpperCase();
-
-            // REGRA 1: Poda
-            if (!isVowel(charToAdd)) {
-                if (charToAdd === lastChar) cCombo++;
-                else cCombo = 1;
-
-                if (cCombo === 3) {
-                    highlight('rule-pruning'); // Acende e fica
-                    playSoundEffect('prune');
-                    currentWord.shift();
-                    cCombo = 0;
-                }
-            } else { cCombo = 0; }
-            lastChar = charToAdd;
-
-            // REGRA 2: Espelhamento
-            if (!isVowel(charToAdd) && currentWord.length > 0) {
-                highlight('rule-consonant'); // Acende e fica
-                playSoundEffect('mirror');
-                currentWord[currentWord.length - 1] = mirrorAlphabet(currentWord[currentWord.length - 1]);
-            }
-
-            const firstIdx = currentWord.indexOf(charToAdd);
-            currentWord.push(charToAdd);
-
-            // REGRA 3: Sanduíche
-            if (firstIdx !== -1 && firstIdx < currentWord.length - 1) {
-                highlight('rule-repeat'); // Acende e fica
-                playSoundEffect('reverse');
-                const start = firstIdx + 1;
-                const end = currentWord.length - 1;
-                const mid = currentWord.slice(start, end).reverse();
-                currentWord.splice(start, mid.length, ...mid);
-            }
-
-            // REGRA 4: Vogal Shift
-            if (currentWord.length > 1 && isVowel(currentWord[currentWord.length - 2])) {
-                highlight('rule-vowel'); // Acende e fica
-                playSoundEffect('shift');
-                const lastIdx = currentWord.length - 1;
-                currentWord[lastIdx] = shiftAlphabet(currentWord[lastIdx]);
-            }
-            
-            render();
-        }
-
-        async function validate() {
-            const word = currentWord.join('').toUpperCase();
-            if (word.length < 2) return;
-            
-            feedback.innerText = "Verificando...";
-            
-            if (targetChallenge && word === targetChallenge.word) {
-                feedback.innerText = "🏆 ACERTOU O DESAFIO!";
-                feedback.style.color = "var(--success)";
-                
-                document.body.classList.add('success-flash');
-                successSound.play();
-                playSoundEffect('victory'); 
-                triggerConfetti();
-                
-                rotateCube();
-                stopHintCycle();
-                clearAllHighlights(); // Limpa destaques na vitória
-                
-                setTimeout(() => {
-                    document.body.classList.remove('success-flash');
-                    currentWord = [];
-                    historyList.innerHTML = '';
-                    render();
-                    feedback.innerText = "Novo desafio iniciado!";
-                    initChallenge();
-                }, 4000);
-                return;
-            }
-
-            try {
-                const res = await fetch(`https://api.dicionario-aberto.net/word/${word.toLowerCase()}`);
-                const data = await res.json();
-                if (data.length > 0) {
-                    feedback.innerText = "⚠️ Palavra existe, mas não é a do desafio.";
-                    feedback.style.color = "var(--warning)";
-                } else {
-                    feedback.innerText = "❌ Tente novamente";
-                    feedback.style.color = "var(--error)";
-                    document.body.classList.add('error-flash');
-                    playSoundEffect('error');
-                }
-            } catch { feedback.innerText = "Erro na API"; }
-
-            setTimeout(() => { 
-                document.body.classList.remove('success-flash', 'error-flash'); 
-                if(!feedback.innerText.includes("Novo")) feedback.innerText = ""; 
-            }, 2000);
-        }
-
-        charInput.addEventListener('input', (e) => { 
-            if(e.target.value) {
-                addChar(e.target.value); 
-                e.target.value = ''; 
-            }
-        });
-
-        validateBtn.addEventListener('click', validate);
-        document.getElementById('clear-history').onclick = () => { historyList.innerHTML = ''; clearAllHighlights(); };
-        
-        document.body.onclick = (e) => { 
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && !e.target.classList.contains('letter-box')) {
-                charInput.focus(); 
-            }
-        };
-
-        initChallenge();
-        render();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
