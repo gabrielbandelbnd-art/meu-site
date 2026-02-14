@@ -331,7 +331,12 @@ charInput.addEventListener('input', (e) => {
     if(e.target.value) { addChar(e.target.value); e.target.value = ''; }
 });
 validateBtn.addEventListener('click', validate);
-document.getElementById('clear-history').onclick = () => { historyList.innerHTML = ''; clearAllHighlights(); };
+
+// BOTÃO LIMPAR HISTÓRICO - RESTAURADO A LÓGICA ORIGINAL
+document.getElementById('clear-history').onclick = () => { 
+    historyList.innerHTML = ''; 
+    clearAllHighlights(); 
+};
 
 /* --- TOGGLE SIDEBAR (DESKTOP) --- */
 const toggleBtn = document.getElementById('toggle-sidebar-btn');

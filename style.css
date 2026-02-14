@@ -112,9 +112,25 @@ body {
     overflow-y: auto; font-family: monospace; color: var(--accent);
     border: 1px solid #333; font-size: 0.9rem;
 }
+
+/* BOTÃO LIMPAR HISTÓRICO - ESTILO ORIGINAL RESTAURADO */
 #clear-history {
-    background: transparent; border: 1px solid var(--error); color: var(--error);
-    margin-top: 10px; padding: 8px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 0.8rem;
+    background: transparent;
+    border: 1px solid var(--error);
+    color: var(--error);
+    margin-top: 10px;
+    padding: 8px;
+    width: 100%;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s, color 0.2s;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+#clear-history:hover {
+    background: var(--error);
+    color: #fff;
 }
 
 /* --- MAGO PIXEL ART --- */
@@ -307,12 +323,9 @@ button#validate-btn:active { transform: scale(0.95); }
 
 
 /* ==========================================================================
-   BOLHA DE PROTEÇÃO MOBILE (AQUI ESTÁ A MÁGICA)
-   Tudo aqui dentro só roda se a tela for menor que 768px (Celular/Tablet)
+   BOLHA DE PROTEÇÃO MOBILE
    ========================================================================== */
 @media (max-width: 768px) {
-    
-    /* 1. Botão Hamburguer visível e fixo */
     .mobile-menu-btn {
         display: flex;
         align-items: center; justify-content: center;
@@ -320,24 +333,21 @@ button#validate-btn:active { transform: scale(0.95); }
         width: 45px; height: 45px;
         background: var(--accent); color: #000;
         border: none; border-radius: 8px;
-        font-size: 1.5rem; z-index: 6000; /* Acima de tudo */
+        font-size: 1.5rem; z-index: 6000;
         box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
 
-    /* 2. Sidebar vira Menu de Gaveta (Drawer) */
     .sidebar {
-        position: fixed; top: 0; left: -100%; /* Escondido na esquerda */
+        position: fixed; top: 0; left: -100%;
         width: 85%; height: 100vh;
         z-index: 5001;
         box-shadow: 5px 0 20px rgba(0,0,0,0.5);
         transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .sidebar.mobile-open { left: 0; } /* Quando aberto */
+    .sidebar.mobile-open { left: 0; }
 
-    /* Esconde o botão de minimizar original do desktop */
     .sidebar-toggle { display: none; }
 
-    /* Fundo escuro quando menu abre */
     .mobile-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0,0,0,0.7); z-index: 5000;
@@ -346,9 +356,8 @@ button#validate-btn:active { transform: scale(0.95); }
     }
     .mobile-overlay.active { display: block; opacity: 1; pointer-events: all; }
 
-    /* 3. Ajustes na Área de Jogo */
     .game-area {
-        padding: 70px 15px 10px 15px; /* Mais espaço no topo para o botão */
+        padding: 70px 15px 10px 15px;
         width: 100%;
     }
 
@@ -357,15 +366,6 @@ button#validate-btn:active { transform: scale(0.95); }
     .letter-box { width: 45px; height: 60px; font-size: 1.8rem; border-width: 2px; }
     .word-grid { gap: 8px; }
 
-    .alphabet-wrapper { display: none; } /* Opcional: Esconder alfabeto no mobile se faltar espaço, ou reduzir */
-    
-    /* Se quiser manter o alfabeto, use esse CSS para torná-lo menor: */
-    /*
-    .alphabet-wrapper { display: block; width: 100%; }
-    .alphabet-content { gap: 2px; }
-    .mini-char { font-size: 0.7rem; }
-    */
-
-    /* Ajuste do Mago dentro do menu */
+    .alphabet-wrapper { display: none; } 
     .mage-container { transform: scale(0.9); }
 }
