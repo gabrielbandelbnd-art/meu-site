@@ -79,17 +79,46 @@ const sidebar = document.getElementById('sidebar');
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
 const mobileOverlay = document.getElementById('mobile-overlay');
 
+// NOVO: Menu do Alfabeto
+const alphabetDrawer = document.getElementById('alphabet-drawer');
+const mobileAlphabetBtn = document.getElementById('mobile-alphabet-btn');
+
 function toggleMobileMenu() {
     sidebar.classList.toggle('mobile-open');
-    mobileOverlay.classList.toggle('active');
+    // Se abrir o menu esquerdo, fecha o direito se estiver aberto
+    alphabetDrawer.classList.remove('mobile-open');
+    
+    // Toggle overlay baseado se ALGUM menu está aberto
+    checkOverlay();
+}
+
+function toggleAlphabetMenu() {
+    alphabetDrawer.classList.toggle('mobile-open');
+    // Se abrir o menu direito, fecha o esquerdo se estiver aberto
+    sidebar.classList.remove('mobile-open');
+    
+    checkOverlay();
+}
+
+function checkOverlay() {
+    if (sidebar.classList.contains('mobile-open') || alphabetDrawer.classList.contains('mobile-open')) {
+        mobileOverlay.classList.add('active');
+    } else {
+        mobileOverlay.classList.remove('active');
+    }
 }
 
 // Eventos Mobile
-if(mobileMenuBtn) {
-    mobileMenuBtn.onclick = toggleMobileMenu;
-}
+if(mobileMenuBtn) mobileMenuBtn.onclick = toggleMobileMenu;
+if(mobileAlphabetBtn) mobileAlphabetBtn.onclick = toggleAlphabetMenu;
+
 if(mobileOverlay) {
-    mobileOverlay.onclick = toggleMobileMenu; // Fecha ao clicar fora
+    mobileOverlay.onclick = () => {
+        // Fecha tudo ao clicar fora
+        sidebar.classList.remove('mobile-open');
+        alphabetDrawer.classList.remove('mobile-open');
+        mobileOverlay.classList.remove('active');
+    }; 
 }
 
 
@@ -356,7 +385,7 @@ if(toggleBtn) {
 document.body.onclick = (e) => { 
     if (audioCtx.state === 'suspended') audioCtx.resume();
     // Ajuste para não roubar foco se clicar no sidebar mobile
-    if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.classList.contains('letter-box') && !sidebar.contains(e.target)) {
+    if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.classList.contains('letter-box') && !sidebar.contains(e.target) && !alphabetDrawer.contains(e.target)) {
         charInput.focus(); 
     }
 };
