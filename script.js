@@ -1,152 +1,3 @@
-/* --- INICIALIZAÇÃO --- */
-document.addEventListener("DOMContentLoaded", () => {
-    // Detecta mobile
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 800;
-    if (isMobile) {
-        document.body.classList.add('mobile-mode');
-        // No mobile, a lógica de toggle pode ser diferente, mas vamos manter o padrão desktop first
-    }
-    
-    startMageIdle();
-    initChallenge();
-});
-
-// LÓGICA DO BOTÃO DE BOAS-VINDAS
-document.getElementById('start-game-btn').onclick = () => {
-    // Some com o modal
-    document.getElementById('welcome-screen').style.display = 'none';
-    // Mostra o jogo
-    document.getElementById('app-container').classList.remove('hidden-app');
-    
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-};
-
-/* --- TOGGLE SIDEBAR --- */
-const sidebar = document.getElementById('sidebar');
-const toggleBtn = document.getElementById('toggle-sidebar-btn');
-
-toggleBtn.onclick = () => {
-    sidebar.classList.toggle('collapsed');
-    // Alterna seta
-    if (sidebar.classList.contains('collapsed')) {
-        toggleBtn.innerText = "▶";
-    } else {
-        toggleBtn.innerText = "◀";
-    }
-};
-
-/* --- MAGE LOGIC (CSS CUSTOM) --- */
-const mageEl = document.getElementById('mage-character');
-const mageEffect = document.querySelector('.mage-effect');
-
-function startMageIdle() {
-    // Idle state handled by CSS
-}
-
-function animateMage(action) {
-    mageEl.className = 'pixel-mage'; // Reset
-    mageEffect.classList.remove('active');
-
-    if (action === 'cast') {
-        mageEl.classList.add('cast');
-        setTimeout(() => mageEl.classList.remove('cast'), 600);
-    } 
-    else if (action === 'win') {
-        mageEl.classList.add('win');
-        mageEffect.classList.add('active');
-    } 
-    else if (action === 'sad') {
-        mageEl.classList.add('sad');
-    }
-}
-
-/* --- ÁUDIO --- */
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioCtx = new AudioContext();
-
-function playSoundEffect(type) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    const now = audioCtx.currentTime;
-
-    if (type === 'type') {
-        osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.05);
-        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-        osc.start(now); osc.stop(now + 0.05);
-    } else if (type === 'victory') {
-        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-            const oscV = audioCtx.createOscillator(); const gainV = audioCtx.createGain();
-            oscV.type = 'triangle'; oscV.frequency.setValueAtTime(freq, now + i*0.1);
-            oscV.connect(gainV); gainV.connect(audioCtx.destination);
-            gainV.gain.setValueAtTime(0, now + i*0.1); gainV.gain.linearRampToValueAtTime(0.2, now + i*0.1 + 0.05);
-            gainV.gain.exponentialRampToValueAtTime(0.01, now + i*0.1 + 0.6);
-            oscV.start(now + i*0.1); oscV.stop(now + i*0.1 + 0.6);
-        });
-    } else if (type === 'mirror') {
-        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.3);
-        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
-        osc.start(now); osc.stop(now + 0.3);
-    } else if (type === 'shift') {
-        osc.type = 'triangle'; osc.frequency.setValueAtTime(300, now); osc.frequency.linearRampToValueAtTime(600, now + 0.1);
-        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.2);
-        osc.start(now); osc.stop(now + 0.2);
-    } else if (type === 'reverse') {
-        osc.type = 'square'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(800, now + 0.2); osc.frequency.linearRampToValueAtTime(200, now + 0.4);
-        gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.4);
-        osc.start(now); osc.stop(now + 0.4);
-    } else if (type === 'error') {
-        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.linearRampToValueAtTime(50, now + 0.3);
-        gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
-        osc.start(now); osc.stop(now + 0.3);
-    } else if (type === 'overwrite') {
-        osc.type = 'square'; osc.frequency.setValueAtTime(600, now); osc.frequency.linearRampToValueAtTime(200, now + 0.1);
-        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-        osc.start(now); osc.stop(now + 0.1);
-    } else if (type === 'alert') {
-        osc.type = 'sine'; osc.frequency.setValueAtTime(440, now); 
-        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.5);
-        osc.start(now); osc.stop(now + 0.5);
-    }
-}
-
-function triggerConfetti() {
-    const colors = ['#bb86fc', '#03dac6', '#cf6679', '#ffffff', '#ffb74d'];
-    for (let i = 0; i < 150; i++) {
-        const conf = document.createElement('div');
-        conf.classList.add('confetti');
-        conf.style.left = Math.random() * 100 + 'vw';
-        conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
-        conf.style.width = (Math.random() * 10 + 5) + 'px';
-        conf.style.height = conf.style.width;
-        setTimeout(() => { document.body.appendChild(conf); }, Math.random() * 500);
-        setTimeout(() => { conf.remove(); }, 5000);
-    }
-}
-
-/* --- UTILITÁRIOS --- */
-function toggleSection(contentId, headerEl) {
-    const content = document.getElementById(contentId);
-    content.classList.toggle('hidden');
-}
-function toggleNotepad() {
-    const body = document.querySelector('.notepad-body');
-    body.classList.toggle('minimized');
-}
-function toggleAlphabet() {
-    document.getElementById('mini-alphabet').classList.toggle('hidden');
-}
-
-function showFloatingMessage(text, duration = 2000) {
-    const msg = document.getElementById('floating-msg');
-    msg.innerText = text;
-    msg.classList.remove('hidden');
-    setTimeout(() => { msg.classList.add('hidden'); }, duration);
-}
-
 /* --- DADOS (300 PALAVRAS) --- */
 const allChallenges = [
     { word: "SOL", hints: ["Astro rei.", "Aquece o dia.", "Estrela.", "Luz natural.", "Calor."], meaning: "Estrela central do sistema solar." },
@@ -216,14 +67,31 @@ const hintText = document.getElementById('current-hint');
 const hintCounter = document.getElementById('hint-counter');
 
 let currentWord = [];
-let lastChar = '';
-let cCombo = 0;
 let replaceIndex = 0;
 let isFirstRound = true; 
 let targetChallenge = null;
 let hintIndex = 0;
 let hintInterval = null;
 let maxWordLength = 0;
+
+/* --- MOBILE MENU LOGIC --- */
+const sidebar = document.getElementById('sidebar');
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const mobileOverlay = document.getElementById('mobile-overlay');
+
+function toggleMobileMenu() {
+    sidebar.classList.toggle('mobile-open');
+    mobileOverlay.classList.toggle('active');
+}
+
+// Eventos Mobile
+if(mobileMenuBtn) {
+    mobileMenuBtn.onclick = toggleMobileMenu;
+}
+if(mobileOverlay) {
+    mobileOverlay.onclick = toggleMobileMenu; // Fecha ao clicar fora
+}
+
 
 function clearAllHighlights() {
     document.querySelectorAll('.rule-card').forEach(card => card.classList.remove('rule-active'));
@@ -403,13 +271,13 @@ function processNewChar(char, indexToInsert) {
     const lastIdxFound = currentWord.lastIndexOf(charToAdd);
     
     if (firstIdx !== -1 && lastIdxFound !== -1 && firstIdx !== lastIdxFound) {
-         const start = firstIdx + 1;
-         const end = lastIdxFound;
-         if (end > start) {
-             highlight('rule-repeat'); playSoundEffect('reverse');
-             const mid = currentWord.slice(start, end).reverse();
-             currentWord.splice(start, mid.length, ...mid);
-         }
+            const start = firstIdx + 1;
+            const end = lastIdxFound;
+            if (end > start) {
+                highlight('rule-repeat'); playSoundEffect('reverse');
+                const mid = currentWord.slice(start, end).reverse();
+                currentWord.splice(start, mid.length, ...mid);
+            }
     }
     
     render();
@@ -465,9 +333,159 @@ charInput.addEventListener('input', (e) => {
 validateBtn.addEventListener('click', validate);
 document.getElementById('clear-history').onclick = () => { historyList.innerHTML = ''; clearAllHighlights(); };
 
+/* --- TOGGLE SIDEBAR (DESKTOP) --- */
+const toggleBtn = document.getElementById('toggle-sidebar-btn');
+if(toggleBtn) {
+    toggleBtn.onclick = () => {
+        sidebar.classList.toggle('collapsed');
+        // Alterna seta
+        if (sidebar.classList.contains('collapsed')) {
+            toggleBtn.innerText = "▶";
+        } else {
+            toggleBtn.innerText = "◀";
+        }
+    };
+}
+
+
 document.body.onclick = (e) => { 
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.classList.contains('letter-box')) {
+    // Ajuste para não roubar foco se clicar no sidebar mobile
+    if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.classList.contains('letter-box') && !sidebar.contains(e.target)) {
         charInput.focus(); 
     }
+};
+
+/* --- MAGE LOGIC (CSS CUSTOM) --- */
+const mageEl = document.getElementById('mage-character');
+const mageEffect = document.querySelector('.mage-effect');
+
+function startMageIdle() {
+    // Idle state handled by CSS
+}
+
+function animateMage(action) {
+    mageEl.className = 'pixel-mage'; // Reset
+    mageEffect.classList.remove('active');
+
+    if (action === 'cast') {
+        mageEl.classList.add('cast');
+        setTimeout(() => mageEl.classList.remove('cast'), 600);
+    } 
+    else if (action === 'win') {
+        mageEl.classList.add('win');
+        mageEffect.classList.add('active');
+    } 
+    else if (action === 'sad') {
+        mageEl.classList.add('sad');
+    }
+}
+
+/* --- ÁUDIO --- */
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioCtx = new AudioContext();
+
+function playSoundEffect(type) {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    const now = audioCtx.currentTime;
+
+    if (type === 'type') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.05);
+        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+        osc.start(now); osc.stop(now + 0.05);
+    } else if (type === 'victory') {
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+            const oscV = audioCtx.createOscillator(); const gainV = audioCtx.createGain();
+            oscV.type = 'triangle'; oscV.frequency.setValueAtTime(freq, now + i*0.1);
+            oscV.connect(gainV); gainV.connect(audioCtx.destination);
+            gainV.gain.setValueAtTime(0, now + i*0.1); gainV.gain.linearRampToValueAtTime(0.2, now + i*0.1 + 0.05);
+            gainV.gain.exponentialRampToValueAtTime(0.01, now + i*0.1 + 0.6);
+            oscV.start(now + i*0.1); oscV.stop(now + i*0.1 + 0.6);
+        });
+    } else if (type === 'mirror') {
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.3);
+        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
+        osc.start(now); osc.stop(now + 0.3);
+    } else if (type === 'shift') {
+        osc.type = 'triangle'; osc.frequency.setValueAtTime(300, now); osc.frequency.linearRampToValueAtTime(600, now + 0.1);
+        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.2);
+        osc.start(now); osc.stop(now + 0.2);
+    } else if (type === 'reverse') {
+        osc.type = 'square'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(800, now + 0.2); osc.frequency.linearRampToValueAtTime(200, now + 0.4);
+        gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.4);
+        osc.start(now); osc.stop(now + 0.4);
+    } else if (type === 'error') {
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.linearRampToValueAtTime(50, now + 0.3);
+        gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
+        osc.start(now); osc.stop(now + 0.3);
+    } else if (type === 'overwrite') {
+        osc.type = 'square'; osc.frequency.setValueAtTime(600, now); osc.frequency.linearRampToValueAtTime(200, now + 0.1);
+        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+        osc.start(now); osc.stop(now + 0.1);
+    } else if (type === 'alert') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(440, now); 
+        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.5);
+        osc.start(now); osc.stop(now + 0.5);
+    }
+}
+
+function triggerConfetti() {
+    const colors = ['#bb86fc', '#03dac6', '#cf6679', '#ffffff', '#ffb74d'];
+    for (let i = 0; i < 150; i++) {
+        const conf = document.createElement('div');
+        conf.classList.add('confetti');
+        conf.style.left = Math.random() * 100 + 'vw';
+        conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        conf.style.width = (Math.random() * 10 + 5) + 'px';
+        conf.style.height = conf.style.width;
+        setTimeout(() => { document.body.appendChild(conf); }, Math.random() * 500);
+        setTimeout(() => { conf.remove(); }, 5000);
+    }
+}
+
+/* --- UTILITÁRIOS --- */
+function toggleSection(contentId, headerEl) {
+    const content = document.getElementById(contentId);
+    content.classList.toggle('hidden');
+}
+function toggleNotepad() {
+    const body = document.querySelector('.notepad-body');
+    body.classList.toggle('minimized');
+}
+function toggleAlphabet() {
+    document.getElementById('mini-alphabet').classList.toggle('hidden');
+}
+
+function showFloatingMessage(text, duration = 2000) {
+    const msg = document.getElementById('floating-msg');
+    msg.innerText = text;
+    msg.classList.remove('hidden');
+    setTimeout(() => { msg.classList.add('hidden'); }, duration);
+}
+
+/* --- INICIALIZAÇÃO --- */
+document.addEventListener("DOMContentLoaded", () => {
+    // Detecta mobile (apenas para logs ou classes extras se precisar)
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 800;
+    if (isMobile) {
+        document.body.classList.add('mobile-mode');
+    }
+    
+    startMageIdle();
+    initChallenge();
+});
+
+// LÓGICA DO BOTÃO DE BOAS-VINDAS
+document.getElementById('start-game-btn').onclick = () => {
+    // Some com o modal
+    document.getElementById('welcome-screen').style.display = 'none';
+    // Mostra o jogo
+    document.getElementById('app-container').classList.remove('hidden-app');
+    
+    if (audioCtx.state === 'suspended') audioCtx.resume();
 };

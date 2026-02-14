@@ -2,11 +2,13 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MagicLexis - Master Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
 
     <div id="welcome-screen" class="welcome-container">
         <div class="modal-content">
@@ -26,6 +28,8 @@
     </div>
 
     <div id="app-container" class="app-container hidden-app">
+        <div id="mobile-overlay" class="mobile-overlay"></div>
+
         <aside class="sidebar" id="sidebar">
             <button id="toggle-sidebar-btn" class="sidebar-toggle" title="Expandir/Recolher Menu">◀</button>
 
