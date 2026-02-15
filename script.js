@@ -1,4 +1,25 @@
-/* --- DADOS (LOTE 1 - 120 PALAVRAS) --- */
+// --- IMPORTAR FIREBASE ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// --- SUAS CREDENCIAIS DO FIREBASE ---
+const firebaseConfig = {
+  apiKey: "AIzaSyC1QWteo4EFrWokdry-EVS38Dj7J1AhGjI",
+  authDomain: "magiclexis.firebaseapp.com",
+  projectId: "magiclexis",
+  storageBucket: "magiclexis.firebasestorage.app",
+  messagingSenderId: "1018035751895",
+  appId: "1:1018035751895:web:a6817a7bec70e7672e1992"
+};
+
+// INICIALIZAR FIREBASE
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
+
+/* --- LISTA DE PALAVRAS (SEU BANCO DE QUESTÕES - 120 Palavras) --- */
 const allChallenges = [
     // --- 3 LETRAS ---
     { word: "SOL", hints: ["Astro rei.", "Aquece o dia.", "Estrela.", "Luz natural.", "Calor."], meaning: "Estrela central do sistema solar." },
@@ -144,501 +165,375 @@ const allChallenges = [
     { word: "REVOLUCIONARIO", hints: ["Mudança.", "Guerra.", "Novo.", "Líder.", "Transformar."], meaning: "Que causa revolução." },
     { word: "EXTRAORDINARIO", hints: ["Incrível.", "Fora do comum.", "Especial.", "Raro.", "Ótimo."], meaning: "Que não é ordinário ou comum." },
     { word: "INTERNACIONALIZACAO", hints: ["Mundo.", "Global.", "Países.", "Exterior.", "Expandir."], meaning: "Tornar algo internacional." }
-];;
+];
 
-let usedIndices = [];
+/* --- VARIÁVEIS GLOBAIS DO JOGO --- */
+let userData = { nickname: "Mago Iniciante", avatar: "https://ui-avatars.com/api/?name=Mago&background=random&color=fff", level: 1, solvedWords: [] };
+let currentChallenge = null;
+let currentWord = [];
+let hintIndex = 0;
+let hintInterval = null;
+let replaceIndex = 0;
+let maxWordLength = 0;
 
-/* --- VARIAVEIS --- */
+/* --- ELEMENTOS HTML --- */
+const authScreen = document.getElementById('auth-screen');
+const appContainer = document.getElementById('app-container');
+const profileModal = document.getElementById('profile-modal');
 const wordGrid = document.getElementById('word-grid');
 const charInput = document.getElementById('char-input');
-const validateBtn = document.getElementById('validate-btn');
 const feedback = document.getElementById('feedback-message');
 const meaningBox = document.getElementById('meaning-box');
 const historyList = document.getElementById('input-history');
-const successSound = document.getElementById('success-sound');
-const miniAlphabetContainer = document.getElementById('mini-alphabet');
-const hintText = document.getElementById('current-hint');
-const hintCounter = document.getElementById('hint-counter');
 const lengthSelector = document.getElementById('length-selector');
+const authMsg = document.getElementById('auth-msg');
 
-let currentWord = [];
-let replaceIndex = 0;
-let isFirstRound = true; 
-let targetChallenge = null;
-let hintIndex = 0;
-let hintInterval = null;
-let maxWordLength = 0;
+/* ==========================================================================
+   1. SISTEMA DE LOGIN E CADASTRO
+   ========================================================================== */
 
-/* --- MOBILE MENU LOGIC --- */
-const sidebar = document.getElementById('sidebar');
-const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-const mobileOverlay = document.getElementById('mobile-overlay');
-
-// MENU DO ALFABETO
-const alphabetDrawer = document.getElementById('alphabet-drawer');
-const mobileAlphabetBtn = document.getElementById('mobile-alphabet-btn');
-
-function toggleMobileMenu() {
-    sidebar.classList.toggle('mobile-open');
-    alphabetDrawer.classList.remove('mobile-open'); // Fecha o outro
-    checkOverlay();
-}
-
-function toggleAlphabetMenu() {
-    alphabetDrawer.classList.toggle('mobile-open');
-    sidebar.classList.remove('mobile-open'); // Fecha o outro
-    checkOverlay();
-}
-
-function checkOverlay() {
-    if (sidebar.classList.contains('mobile-open') || alphabetDrawer.classList.contains('mobile-open')) {
-        mobileOverlay.classList.add('active');
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        authScreen.style.display = 'none';
+        appContainer.classList.remove('hidden-app');
+        await loadUserData(user.uid);
+        initGameInterface();
     } else {
-        mobileOverlay.classList.remove('active');
+        authScreen.style.display = 'flex';
+        appContainer.classList.add('hidden-app');
+    }
+});
+
+// LOGIN COM E-MAIL
+document.getElementById('btn-login').onclick = async () => {
+    const email = document.getElementById('auth-email').value;
+    const pass = document.getElementById('auth-pass').value;
+    authMsg.innerText = "Entrando...";
+    try {
+        await signInWithEmailAndPassword(auth, email, pass);
+    } catch (error) {
+        authMsg.innerText = "Erro: Verifique e-mail e senha.";
+    }
+};
+
+// LOGIN COM GOOGLE
+document.getElementById('btn-google').onclick = async () => {
+    authMsg.innerText = "Conectando ao Google...";
+    try {
+        await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+        authMsg.innerText = "Erro no Google: " + error.message;
+    }
+};
+
+// CADASTRO
+document.getElementById('btn-signup').onclick = async () => {
+    const email = document.getElementById('auth-email').value;
+    const pass = document.getElementById('auth-pass').value;
+    if(pass.length < 6) { authMsg.innerText = "Senha deve ter 6+ caracteres"; return; }
+    authMsg.innerText = "Criando conta mágica...";
+    try {
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+        await setDoc(doc(db, "users", cred.user.uid), userData);
+        authMsg.innerText = "Sucesso! Entrando...";
+    } catch (error) {
+        authMsg.innerText = "Erro ao criar conta: " + error.message;
+    }
+};
+
+document.getElementById('btn-logout').onclick = () => signOut(auth);
+
+/* ==========================================================================
+   2. BANCO DE DADOS (FIRESTORE)
+   ========================================================================== */
+
+async function loadUserData(uid) {
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        const data = docSnap.data();
+        userData = { ...userData, ...data };
+    } else {
+        await setDoc(docRef, userData);
+    }
+    updateUserDisplay();
+}
+
+async function saveProgress(word) {
+    if (!auth.currentUser) return;
+    if (!userData.solvedWords.includes(word)) {
+        userData.solvedWords.push(word);
+        const newLevel = Math.floor(userData.solvedWords.length / 5) + 1;
+        if(newLevel > userData.level) {
+            userData.level = newLevel;
+            showFloatingMessage(`SUBIU PARA O NÍVEL ${newLevel}! 🎉`, 3000);
+        }
+        const userRef = doc(db, "users", auth.currentUser.uid);
+        await updateDoc(userRef, {
+            solvedWords: arrayUnion(word),
+            level: userData.level
+        });
+        updateUserDisplay();
     }
 }
 
-// Eventos Mobile
-if(mobileMenuBtn) mobileMenuBtn.onclick = toggleMobileMenu;
-if(mobileAlphabetBtn) mobileAlphabetBtn.onclick = toggleAlphabetMenu;
+/* ==========================================================================
+   3. PERFIL E AVATAR
+   ========================================================================== */
 
-if(mobileOverlay) {
-    mobileOverlay.onclick = () => {
-        sidebar.classList.remove('mobile-open');
-        alphabetDrawer.classList.remove('mobile-open');
-        mobileOverlay.classList.remove('active');
-    }; 
+function updateUserDisplay() {
+    document.getElementById('user-name-display').innerText = userData.nickname;
+    document.getElementById('user-level-display').innerText = `Nível ${userData.level} (${userData.solvedWords.length} palavras)`;
+    document.getElementById('user-avatar-display').src = userData.avatar;
+    document.getElementById('profile-preview-img').src = userData.avatar;
+    document.getElementById('profile-nickname').value = userData.nickname;
 }
 
+document.getElementById('user-profile-trigger').onclick = () => { profileModal.classList.remove('hidden'); };
+document.getElementById('btn-close-profile').onclick = () => profileModal.classList.add('hidden');
 
-function clearAllHighlights() {
-    document.querySelectorAll('.rule-card').forEach(card => card.classList.remove('rule-active'));
-}
+document.getElementById('avatar-file-input').onchange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        if (file.size > 2000000) { alert("A imagem é muito grande! Escolha uma menor que 2MB."); return; }
+        const reader = new FileReader();
+        reader.onloadend = () => { document.getElementById('profile-preview-img').src = reader.result; };
+        reader.readAsDataURL(file);
+    }
+};
 
-/* NOVO: PREENCHE O SELETOR COM OPÇÕES DISPONÍVEIS */
+document.getElementById('btn-save-profile').onclick = async () => {
+    const newNick = document.getElementById('profile-nickname').value;
+    const newAvatar = document.getElementById('profile-preview-img').src;
+    if (!newNick) return;
+    document.getElementById('btn-save-profile').innerText = "Salvando...";
+    userData.nickname = newNick;
+    userData.avatar = newAvatar;
+    const userRef = doc(db, "users", auth.currentUser.uid);
+    await updateDoc(userRef, { nickname: newNick, avatar: newAvatar });
+    updateUserDisplay();
+    profileModal.classList.add('hidden');
+    document.getElementById('btn-save-profile').innerText = "Salvar";
+};
+
+/* ==========================================================================
+   4. LÓGICA DO JOGO
+   ========================================================================== */
+
+function initGameInterface() { populateLengthOptions(); initChallenge(); }
+
 function populateLengthOptions() {
-    // Descobre quais tamanhos de palavra existem no banco de dados
+    lengthSelector.innerHTML = "";
     const lengths = [...new Set(allChallenges.map(c => c.word.length))].sort((a,b) => a-b);
-    
     lengths.forEach(len => {
+        const total = allChallenges.filter(c => c.word.length === len).length;
+        const solved = allChallenges.filter(c => c.word.length === len && userData.solvedWords.includes(c.word)).length;
         const option = document.createElement('option');
         option.value = len;
-        option.innerText = `${len} Letras`;
+        const check = solved >= total ? '✅' : '';
+        option.innerText = `${len} Letras (${solved}/${total}) ${check}`;
         lengthSelector.appendChild(option);
     });
 }
 
+lengthSelector.onchange = () => initChallenge();
+
 function initChallenge() {
     clearAllHighlights();
     animateMage('reset');
+    const selectedLen = parseInt(lengthSelector.value) || allChallenges[0].word.length;
+    const pool = allChallenges.filter(c => c.word.length === selectedLen);
+    let availableWords = pool.filter(c => !userData.solvedWords.includes(c.word));
     
-    // FILTRAGEM PELA ESCOLHA DO USUÁRIO
-    const selectedLen = lengthSelector.value;
-    let pool = allChallenges;
-    
-    if (selectedLen !== 'any') {
-        pool = allChallenges.filter(c => c.word.length === parseInt(selectedLen));
+    if (availableWords.length === 0) {
+        availableWords = pool;
+        showFloatingMessage("Você já dominou este nível! Revisando...", 3000);
     }
 
-    if (pool.length === 0) pool = allChallenges; // Fallback se der erro
-
-    // Sorteio
-    const randIdx = Math.floor(Math.random() * pool.length);
-    targetChallenge = pool[randIdx];
-    
-    maxWordLength = targetChallenge.word.length;
+    const randIdx = Math.floor(Math.random() * availableWords.length);
+    currentChallenge = availableWords[randIdx];
+    maxWordLength = currentChallenge.word.length;
     currentWord = [];
     replaceIndex = 0;
-    
     hintIndex = 0;
     updateHintDisplay();
     startHintCycle();
-    
     feedback.innerText = "";
-    meaningBox.innerText = "";
     meaningBox.classList.add('hidden');
-    
-    // Reseta placeholder
     charInput.placeholder = "?";
-    
-    render(true); 
+    render();
 }
 
+// ... FUNÇÕES AUXILIARES ...
 function updateHintDisplay() {
-    if (!targetChallenge) return;
-    hintText.classList.remove('fade-in'); hintText.classList.add('fade-out');
+    if (!currentChallenge) return;
+    const hintEl = document.getElementById('current-hint');
+    hintEl.classList.remove('fade-in'); hintEl.classList.add('fade-out');
     setTimeout(() => {
-        hintText.innerText = targetChallenge.hints[hintIndex];
-        hintCounter.innerText = `Dica ${hintIndex + 1}/${targetChallenge.hints.length}`;
-        hintText.classList.remove('fade-out'); hintText.classList.add('fade-in');
+        hintEl.innerText = currentChallenge.hints[hintIndex] || "Sem dica.";
+        document.getElementById('hint-counter').innerText = `Dica ${hintIndex + 1}/${currentChallenge.hints.length}`;
+        hintEl.classList.remove('fade-out'); hintEl.classList.add('fade-in');
     }, 200);
 }
 
 function startHintCycle() {
     if (hintInterval) clearInterval(hintInterval);
     hintInterval = setInterval(() => {
-        if (!targetChallenge) return;
-        hintIndex++; if (hintIndex >= targetChallenge.hints.length) hintIndex = 0;
+        if (!currentChallenge) return;
+        hintIndex++; if (hintIndex >= currentChallenge.hints.length) hintIndex = 0;
         updateHintDisplay();
     }, 5000);
 }
 
 function stopHintCycle() { if (hintInterval) clearInterval(hintInterval); }
-
 const isVowel = (c) => 'AEIOUaeiou'.includes(c);
 
-const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
-alphabet.forEach(letter => {
-    const div = document.createElement('div');
-    div.className = 'mini-char'; div.id = `mini-${letter}`; div.innerText = letter;
-    miniAlphabetContainer.appendChild(div);
-});
-
-function updateMiniAlphabet() {
-    document.querySelectorAll('.mini-char').forEach(el => el.classList.remove('active'));
-    currentWord.forEach(char => {
-        const el = document.getElementById(`mini-${char.toUpperCase()}`);
-        if(el) el.classList.add('active');
-    });
-}
-
-function shiftAlphabet(char) {
-    const code = char.charCodeAt(0);
-    const start = char === char.toUpperCase() ? 65 : 97;
-    const limit = char === char.toUpperCase() ? 90 : 122;
-    let nextCode = code + 1;
-    if (nextCode > limit) nextCode = start;
-    return String.fromCharCode(nextCode);
-}
-
-function mirrorAlphabet(char) {
-    const alpha = "abcdefghijklmnopqrstuvwxyz";
-    const isUpper = char === char.toUpperCase();
-    const idx = alpha.indexOf(char.toLowerCase());
-    if (idx === -1) return char;
-    const mirrored = alpha[25 - idx];
-    return isUpper ? mirrored.toUpperCase() : mirrored;
-}
-
-function highlight(id) {
-    clearAllHighlights();
-    const el = document.getElementById(id);
-    if (el) el.classList.add('rule-active');
-    animateMage('cast');
-}
-
-function render(showTutorial = false) {
+function render() {
     wordGrid.innerHTML = '';
-    
-    if (isFirstRound && currentWord.length === 0 && showTutorial) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = 'tutorial-message';
-        msgDiv.innerHTML = 'Digite uma letra no campo abaixo onde tem uma interrogação para começar';
-        wordGrid.appendChild(msgDiv);
-        return;
-    }
-
     currentWord.forEach((c, i) => {
         const div = document.createElement('div');
         div.className = 'letter-box'; div.innerText = c;
-        if (currentWord.length >= maxWordLength && i === replaceIndex) {
-            div.classList.add('next-to-change');
-        }
+        if (currentWord.length >= maxWordLength && i === replaceIndex) { div.classList.add('next-to-change'); }
         wordGrid.appendChild(div);
     });
-
     updateMiniAlphabet();
 }
 
 function addChar(char) {
     if (!/^[a-zA-Z]$/.test(char)) return;
-
-    if (isFirstRound) {
-        isFirstRound = false; 
-        showFloatingMessage("Perfeito");
-    }
-
-    // Atualiza placeholder com a letra digitada
     charInput.placeholder = char.toUpperCase();
-
     historyList.innerHTML += char.toUpperCase() + ' ';
     historyList.scrollTop = historyList.scrollHeight;
-
     if (currentWord.length >= maxWordLength) {
-        playSoundEffect('overwrite');
         currentWord.splice(replaceIndex, 1);
         let insertionIndex = replaceIndex;
         replaceIndex++;
         if (replaceIndex >= maxWordLength) replaceIndex = 0;
         processNewChar(char, insertionIndex);
     } else {
-        playSoundEffect('type');
         processNewChar(char, currentWord.length);
-        
-        // AVISO NA PENÚLTIMA LETRA (N-1)
-        if (currentWord.length === maxWordLength - 1) {
-            showFloatingMessage("Próxima letra é a última! O ciclo vai reiniciar.", 2500);
-            playSoundEffect('alert');
-        }
-        
-        if (currentWord.length >= maxWordLength) {
-            replaceIndex = 0;
-        }
+        if (currentWord.length >= maxWordLength) replaceIndex = 0;
     }
 }
 
 function processNewChar(char, indexToInsert) {
     let charToAdd = char.toUpperCase();
-
-    // REGRA 1: Vogal (+1)
     if (indexToInsert > 0 && isVowel(currentWord[indexToInsert - 1])) {
-        highlight('rule-vowel'); playSoundEffect('shift');
-        charToAdd = shiftAlphabet(charToAdd);
+        highlight('rule-vowel');
+        charToAdd = String.fromCharCode(charToAdd.charCodeAt(0) + 1);
+        if (charToAdd > 'Z') charToAdd = 'A';
     }
-    
-    // REGRA 2: Espelhamento
     if (!isVowel(charToAdd) && indexToInsert > 0 && currentWord.length > 0) {
-        highlight('rule-consonant'); playSoundEffect('mirror');
-        currentWord[indexToInsert - 1] = mirrorAlphabet(currentWord[indexToInsert - 1]);
+        highlight('rule-consonant');
+        const alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const idx = alpha.indexOf(charToAdd);
+        if (idx !== -1) charToAdd = alpha[25 - idx];
     }
-
     currentWord.splice(indexToInsert, 0, charToAdd);
-
-    // REGRA 3: Sanduíche
     const firstIdx = currentWord.indexOf(charToAdd);
     const lastIdxFound = currentWord.lastIndexOf(charToAdd);
-    
     if (firstIdx !== -1 && lastIdxFound !== -1 && firstIdx !== lastIdxFound) {
-            const start = firstIdx + 1;
-            const end = lastIdxFound;
-            if (end > start) {
-                highlight('rule-repeat'); playSoundEffect('reverse');
-                const mid = currentWord.slice(start, end).reverse();
-                currentWord.splice(start, mid.length, ...mid);
-            }
+        const start = firstIdx + 1;
+        const end = lastIdxFound;
+        if (end > start) {
+            highlight('rule-repeat');
+            const mid = currentWord.slice(start, end).reverse();
+            currentWord.splice(start, mid.length, ...mid);
+        }
     }
-    
     render();
 }
 
 async function validate() {
     const word = currentWord.join('').toUpperCase();
     if (word.length < 2) return;
-    
     feedback.innerText = "Verificando...";
-    
-    if (targetChallenge && word === targetChallenge.word) {
+    if (currentChallenge && word === currentChallenge.word) {
         feedback.innerText = "🏆 ACERTOU!"; feedback.style.color = "var(--success)";
-        meaningBox.innerText = targetChallenge.meaning;
+        meaningBox.innerText = currentChallenge.meaning;
         meaningBox.classList.remove('hidden');
         document.body.classList.add('success-flash');
-        
-        successSound.play(); playSoundEffect('victory'); triggerConfetti();
+        document.getElementById('success-sound').play();
+        triggerConfetti();
         animateMage('win');
-        
-        stopHintCycle(); clearAllHighlights();
-        
+        stopHintCycle();
+        await saveProgress(word);
+        populateLengthOptions();
         setTimeout(() => {
             document.body.classList.remove('success-flash');
             initChallenge();
             feedback.innerText = "Novo desafio iniciado!";
-            
-            // --- LINHA NOVA PARA APAGAR A MENSAGEM DEPOIS DE 2 SEGUNDOS ---
-            setTimeout(() => { feedback.innerText = ""; }, 2000); 
-            
-        }, 5000);
+            setTimeout(() => { feedback.innerText = ""; }, 2000);
+        }, 4000);
         return;
     }
-
     try {
         const res = await fetch(`https://api.dicionario-aberto.net/word/${word.toLowerCase()}`);
         const data = await res.json();
         if (data.length > 0) {
-            feedback.innerText = "⚠️ Palavra existe, mas não é a do desafio."; feedback.style.color = "var(--warning)";
+            feedback.innerText = "⚠️ Palavra existe, mas não é a mágica."; feedback.style.color = "var(--warning)";
             animateMage('reset');
         } else {
             feedback.innerText = "❌ Tente novamente"; feedback.style.color = "var(--error)";
-            document.body.classList.add('error-flash'); playSoundEffect('error');
+            document.body.classList.add('error-flash');
             animateMage('sad');
         }
     } catch { feedback.innerText = "Erro na API"; }
-
-    setTimeout(() => { 
-        document.body.classList.remove('success-flash', 'error-flash'); 
-        if(!feedback.innerText.includes("Novo")) feedback.innerText = ""; 
-    }, 2000);
+    setTimeout(() => { document.body.classList.remove('success-flash', 'error-flash'); if(!feedback.innerText.includes("Novo")) feedback.innerText = ""; }, 2000);
 }
 
-charInput.addEventListener('input', (e) => { 
-    if(e.target.value) { addChar(e.target.value); e.target.value = ''; }
-});
-validateBtn.addEventListener('click', validate);
-
-// BOTÃO LIMPAR HISTÓRICO - RESTAURADO A LÓGICA ORIGINAL
-document.getElementById('clear-history').onclick = () => { 
-    historyList.innerHTML = ''; 
-    clearAllHighlights(); 
-};
-
-/* --- TOGGLE SIDEBAR (DESKTOP) --- */
-const toggleBtn = document.getElementById('toggle-sidebar-btn');
-if(toggleBtn) {
-    toggleBtn.onclick = () => {
-        sidebar.classList.toggle('collapsed');
-        // Alterna seta
-        if (sidebar.classList.contains('collapsed')) {
-            toggleBtn.innerText = "▶";
-        } else {
-            toggleBtn.innerText = "◀";
-        }
-    };
-}
-
-
-document.body.onclick = (e) => { 
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    // Ajuste para não roubar foco se clicar no sidebar mobile
-    if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.classList.contains('letter-box') && !sidebar.contains(e.target) && !alphabetDrawer.contains(e.target)) {
-        charInput.focus(); 
-    }
-};
-
-/* --- MAGE LOGIC (CSS CUSTOM) --- */
-const mageEl = document.getElementById('mage-character');
-const mageEffect = document.querySelector('.mage-effect');
-
-function startMageIdle() {
-    // Idle state handled by CSS
+function highlight(id) {
+    document.querySelectorAll('.rule-card').forEach(c => c.classList.remove('rule-active'));
+    const el = document.getElementById(id);
+    if(el) el.classList.add('rule-active');
+    animateMage('cast');
 }
 
 function animateMage(action) {
-    mageEl.className = 'pixel-mage'; // Reset
-    mageEffect.classList.remove('active');
-
-    if (action === 'cast') {
-        mageEl.classList.add('cast');
-        setTimeout(() => mageEl.classList.remove('cast'), 600);
-    } 
-    else if (action === 'win') {
-        mageEl.classList.add('win');
-        mageEffect.classList.add('active');
-    } 
-    else if (action === 'sad') {
-        mageEl.classList.add('sad');
-    }
+    const mage = document.getElementById('mage-character');
+    mage.className = 'pixel-mage';
+    if(action === 'cast') { mage.classList.add('cast'); setTimeout(()=>mage.classList.remove('cast'), 500); }
+    if(action === 'win') mage.classList.add('win');
+    if(action === 'sad') mage.classList.add('sad');
 }
 
-/* --- ÁUDIO --- */
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioCtx = new AudioContext();
-
-function playSoundEffect(type) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    const now = audioCtx.currentTime;
-
-    if (type === 'type') {
-        osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(1200, now + 0.05);
-        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
-        osc.start(now); osc.stop(now + 0.05);
-    } else if (type === 'victory') {
-        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-            const oscV = audioCtx.createOscillator(); const gainV = audioCtx.createGain();
-            oscV.type = 'triangle'; oscV.frequency.setValueAtTime(freq, now + i*0.1);
-            oscV.connect(gainV); gainV.connect(audioCtx.destination);
-            gainV.gain.setValueAtTime(0, now + i*0.1); gainV.gain.linearRampToValueAtTime(0.2, now + i*0.1 + 0.05);
-            gainV.gain.exponentialRampToValueAtTime(0.01, now + i*0.1 + 0.6);
-            oscV.start(now + i*0.1); oscV.stop(now + i*0.1 + 0.6);
-        });
-    } else if (type === 'mirror') {
-        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.3);
-        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
-        osc.start(now); osc.stop(now + 0.3);
-    } else if (type === 'shift') {
-        osc.type = 'triangle'; osc.frequency.setValueAtTime(300, now); osc.frequency.linearRampToValueAtTime(600, now + 0.1);
-        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.2);
-        osc.start(now); osc.stop(now + 0.2);
-    } else if (type === 'reverse') {
-        osc.type = 'square'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(800, now + 0.2); osc.frequency.linearRampToValueAtTime(200, now + 0.4);
-        gainNode.gain.setValueAtTime(0.05, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.4);
-        osc.start(now); osc.stop(now + 0.4);
-    } else if (type === 'error') {
-        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.linearRampToValueAtTime(50, now + 0.3);
-        gainNode.gain.setValueAtTime(0.2, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.3);
-        osc.start(now); osc.stop(now + 0.3);
-    } else if (type === 'overwrite') {
-        osc.type = 'square'; osc.frequency.setValueAtTime(600, now); osc.frequency.linearRampToValueAtTime(200, now + 0.1);
-        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-        osc.start(now); osc.stop(now + 0.1);
-    } else if (type === 'alert') {
-        osc.type = 'sine'; osc.frequency.setValueAtTime(440, now); 
-        gainNode.gain.setValueAtTime(0.1, now); gainNode.gain.linearRampToValueAtTime(0, now + 0.5);
-        osc.start(now); osc.stop(now + 0.5);
-    }
-}
-
-function triggerConfetti() {
-    const colors = ['#bb86fc', '#03dac6', '#cf6679', '#ffffff', '#ffb74d'];
-    for (let i = 0; i < 150; i++) {
-        const conf = document.createElement('div');
-        conf.classList.add('confetti');
-        conf.style.left = Math.random() * 100 + 'vw';
-        conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
-        conf.style.width = (Math.random() * 10 + 5) + 'px';
-        conf.style.height = conf.style.width;
-        setTimeout(() => { document.body.appendChild(conf); }, Math.random() * 500);
-        setTimeout(() => { conf.remove(); }, 5000);
-    }
-}
-
-/* --- UTILITÁRIOS --- */
-function toggleSection(contentId, headerEl) {
-    const content = document.getElementById(contentId);
-    content.classList.toggle('hidden');
-}
-function toggleNotepad() {
-    const body = document.querySelector('.notepad-body');
-    body.classList.toggle('minimized');
-}
-function toggleAlphabet() {
-    document.getElementById('mini-alphabet').classList.toggle('hidden');
-}
-
-function showFloatingMessage(text, duration = 2000) {
+function showFloatingMessage(text, time=2000) {
     const msg = document.getElementById('floating-msg');
     msg.innerText = text;
     msg.classList.remove('hidden');
-    setTimeout(() => { msg.classList.add('hidden'); }, duration);
+    setTimeout(() => msg.classList.add('hidden'), time);
 }
 
-/* --- INICIALIZAÇÃO --- */
-document.addEventListener("DOMContentLoaded", () => {
-    // Detecta mobile (apenas para logs ou classes extras se precisar)
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 800;
-    if (isMobile) {
-        document.body.classList.add('mobile-mode');
-    }
-    
-    // NOVO: Preenche as opções de dificuldade
-    populateLengthOptions();
+charInput.addEventListener('input', (e) => { if(e.target.value) { addChar(e.target.value); e.target.value=''; }});
+document.getElementById('validate-btn').onclick = validate;
+document.getElementById('clear-history').onclick = () => { historyList.innerHTML = ''; };
 
-    startMageIdle();
-    // initChallenge é chamado apenas quando clica em START agora
+const sidebar = document.getElementById('sidebar');
+const alphaDrawer = document.getElementById('alphabet-drawer');
+const overlay = document.getElementById('mobile-overlay');
+document.getElementById('mobile-menu-btn').onclick = () => { sidebar.classList.add('mobile-open'); overlay.classList.add('active'); };
+document.getElementById('mobile-alphabet-btn').onclick = () => { alphaDrawer.classList.add('mobile-open'); overlay.classList.add('active'); };
+overlay.onclick = () => { sidebar.classList.remove('mobile-open'); alphaDrawer.classList.remove('mobile-open'); overlay.classList.remove('active'); };
+
+const alphaContainer = document.getElementById('mini-alphabet');
+"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(l => {
+    const d = document.createElement('div'); d.className='mini-char'; d.id=`mini-${l}`; d.innerText=l;
+    alphaContainer.appendChild(d);
 });
+function updateMiniAlphabet() {
+    document.querySelectorAll('.mini-char').forEach(el => el.classList.remove('active'));
+    currentWord.forEach(char => { const el = document.getElementById(`mini-${char}`); if(el) el.classList.add('active'); });
+}
 
-// LÓGICA DO BOTÃO DE BOAS-VINDAS
-document.getElementById('start-game-btn').onclick = () => {
-    // Some com o modal
-    document.getElementById('welcome-screen').style.display = 'none';
-    // Mostra o jogo
-    document.getElementById('app-container').classList.remove('hidden-app');
-    
-    // Inicia o jogo agora com a dificuldade selecionada
-    initChallenge();
+function triggerConfetti() {
+    const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff'];
+    for(let i=0; i<100; i++) {
+        const c = document.createElement('div'); c.className='confetti';
+        c.style.left = Math.random()*100+'vw'; c.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+        c.style.animationDuration = (Math.random()*2+2)+'s';
+        document.body.appendChild(c); setTimeout(()=>c.remove(), 4000);
+    }
+}
 
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-};
+function startMageIdle() { }
+document.addEventListener("DOMContentLoaded", startMageIdle);
