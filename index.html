@@ -5,96 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MagicLexis - Master Edition</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <div id="auth-screen" class="auth-container">
-        <div class="auth-box">
-            <h1 style="color: var(--accent); margin-bottom: 10px;">MagicLexis</h1>
-            <p style="color: #ccc; margin-bottom: 20px;">Salve seu progresso mágico!</p>
-            
-            <button id="btn-google" class="google-btn">
-                <i class="fab fa-google"></i> Entrar com Google
-            </button>
+    <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
 
-            <div class="divider">ou use e-mail</div>
-            
-            <input type="email" id="auth-email" placeholder="Seu E-mail" autocomplete="email">
-            <input type="password" id="auth-pass" placeholder="Sua Senha" autocomplete="current-password">
-            
-            <button id="btn-login" class="auth-btn">Entrar</button>
-            <button id="btn-signup" class="auth-btn outline">Criar Conta</button>
-            
-            <p id="auth-msg" class="error-text"></p>
-        </div>
-    </div>
+    <button id="mobile-alphabet-btn" class="mobile-alphabet-btn">A-Z</button>
 
-    <div id="profile-modal" class="modal-overlay hidden">
-        <div class="modal-box">
-            <h3 style="color: var(--accent);">Editar Mago</h3>
-            <div class="avatar-upload-container">
-                <img id="profile-preview-img" src="" alt="Avatar">
-                <label for="avatar-file-input" class="avatar-btn">📸 Trocar Foto</label>
-                <input type="file" id="avatar-file-input" accept="image/*">
+    <div id="welcome-screen" class="welcome-container">
+        <div class="modal-content">
+            <h2 style="color: var(--accent); font-size: 2.5rem; margin-bottom: 20px;">Grimório de MagicLexis</h2>
+            <p style="font-size: 1.1rem; line-height: 1.6;">Você precisa acertar a palavra proposta pelo algoritmo, seguindo as regras do jogo.</p>
+            
+            <div class="difficulty-box">
+                <label for="length-selector">Escolha o desafio:</label>
+                <select id="length-selector">
+                    <option value="any">🎲 Aleatório (Qualquer tamanho)</option>
+                    </select>
             </div>
-            <label style="text-align: left; display: block; margin-top: 15px;">Seu Nome:</label>
-            <input type="text" id="profile-nickname" placeholder="Nome do Mago">
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button id="btn-save-profile" class="auth-btn">Salvar</button>
-                <button id="btn-close-profile" class="auth-btn outline">Cancelar</button>
-            </div>
+
+            <ul style="text-align: left; margin: 25px 0; color: var(--text-dim); font-size: 1rem; padding-left: 20px;">
+                <li style="margin-bottom: 10px;">Uma <strong>Vogal</strong> transforma a próxima letra na sua sucessora (A vira B).</li>
+                <li style="margin-bottom: 10px;">Uma <strong>Consoante</strong> pode espelhar a letra anterior.</li>
+                <li style="margin-bottom: 10px;">Letras repetidas (A...A) invertem o que está no meio.</li>
+            </ul>
+            <p class="highlight-text">
+                ⚠️ <strong>O Ciclo Infinito:</strong> Se preencher tudo, o cursor volta ao início.
+            </p>
+            <button id="start-game-btn">ENTENDI, VAMOS CONJURAR!</button>
         </div>
     </div>
 
     <div id="app-container" class="app-container hidden-app">
-        <div class="user-bar">
-            <div class="user-info" id="user-profile-trigger">
-                <img id="user-avatar-display" src="" alt="Avatar">
-                <div class="user-details">
-                    <span id="user-name-display">Carregando...</span>
-                    <small id="user-level-display">Nível 1</small>
-                </div>
-            </div>
-            <button id="btn-logout" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
-        </div>
-
-        <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
-        <button id="mobile-alphabet-btn" class="mobile-alphabet-btn">A-Z</button>
         <div id="mobile-overlay" class="mobile-overlay"></div>
 
         <aside class="sidebar" id="sidebar">
-            <button id="toggle-sidebar-btn" class="sidebar-toggle">◀</button>
+            <button id="toggle-sidebar-btn" class="sidebar-toggle" title="Expandir/Recolher Menu">◀</button>
+
             <div class="sidebar-content">
-                <div class="brand-container"><h2>MagicLexis</h2></div>
-                <div class="difficulty-box">
-                    <label for="length-selector" style="color: var(--accent); font-size: 0.9rem;">Escolha o Desafio:</label>
-                    <select id="length-selector"></select>
+                <div class="brand-container">
+                    <h2>MagicLexis</h2>
                 </div>
+                
                 <div class="collapsible-section">
-                    <div class="collapsible-header" onclick="toggleSection('rules-content', this)">Regras (Hard) <span class="tooltip">?</span></div>
+                    <div class="collapsible-header" onclick="toggleSection('rules-content', this)">
+                        Regras (Hard)
+                        <span class="tooltip" title="Leis mágicas que alteram o que você digita. Clique para minimizar!">?</span>
+                    </div>
                     <div id="rules-content" class="collapsible-content">
                         <div style="padding-top: 10px;">
-                            <div id="rule-vowel" class="rule-card"><strong>Vogal (+1):</strong> A vira B</div>
-                            <div id="rule-consonant" class="rule-card"><strong>Consoante (Espelho):</strong> A ↔ Z</div>
-                            <div id="rule-repeat" class="rule-card"><strong>Sanduíche:</strong> Inverte meio</div>
+                            <div id="rule-vowel" class="rule-card">
+                                <strong>Vogal (+1):</strong><br>Se anterior é vogal, a nova letra avança 1 no alfabeto (Ex: A vira B).
+                            </div>
+                            <div id="rule-consonant" class="rule-card">
+                                <strong>Consoante (Espelho):</strong><br>Consoante faz a anterior virar oposto.<br><em>Ex: A↔Z, B↔Y, C↔X</em>
+                            </div>
+                            <div id="rule-repeat" class="rule-card">
+                                <strong>Sanduíche:</strong><br>Repetidas invertem o meio.<br><em>Ex: MARATONA vira MARANOTA</em>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="collapsible-section" style="margin-top: 10px; flex-grow: 1; display: flex; flex-direction: column;">
-                    <div class="collapsible-header">Histórico</div>
+                    <div class="collapsible-header" onclick="toggleSection('history-content', this)">
+                        Histórico
+                        <span class="tooltip" title="Registro das teclas apertadas. Clique para minimizar!">?</span>
+                    </div>
                     <div id="history-content" class="collapsible-content" style="flex-grow: 1; display: flex; flex-direction: column;">
                         <div id="input-history" class="history-list"></div>
-                        <button id="clear-history">Limpar Rascunho</button>
+                        <button id="clear-history">Limpar</button>
                     </div>
                 </div>
             </div>
+
             <div class="mage-container">
                 <div id="mage-character" class="pixel-mage">
-                    <div class="hat-tip"></div><div class="hat-base"></div>
-                    <div class="head"><div class="eyes"><div class="eye left"></div><div class="eye right"></div></div><div class="beard"></div></div>
-                    <div class="body"><div class="arm left"></div><div class="arm right"></div><div class="feet"><div class="foot left"></div><div class="foot right"></div></div></div>
-                    <div class="staff"><div class="staff-head"><div class="gem"></div></div></div>
+                    <div class="hat-tip"></div>
+                    <div class="hat-base"></div>
+                    <div class="head">
+                        <div class="eyes">
+                            <div class="eye left"></div>
+                            <div class="eye right"></div>
+                        </div>
+                        <div class="beard"></div>
+                    </div>
+                    <div class="body">
+                        <div class="arm left"></div>
+                        <div class="arm right"></div>
+                        <div class="feet">
+                            <div class="foot left"></div>
+                            <div class="foot right"></div>
+                        </div>
+                    </div>
+                    <div class="staff">
+                        <div class="staff-head">
+                            <div class="gem"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="mage-effect">✨</div>
             </div>
@@ -102,35 +110,52 @@
 
         <main class="game-area">
             <div class="challenge-header">
-                <div class="challenge-instruction">Decifre a palavra seguindo as regras!</div>
+                <div class="challenge-instruction">
+                    Acerte a palavra proposta seguindo as regras mágicas.
+                </div>
                 <div class="hint-box">
                     <div id="hint-counter" class="hint-counter">Dica 1/5</div>
                     <div id="current-hint" class="hint-text fade-in">...</div>
                 </div>
             </div>
+            
             <div class="notepad-container" id="notepad">
-                <div class="notepad-header" onclick="toggleNotepad()">📝 Rascunho</div>
-                <div class="notepad-body"><textarea placeholder="Anote suas ideias..."></textarea></div>
+                <div class="notepad-header" onclick="toggleNotepad()">
+                    <span>📝 Rascunho <span class="tooltip-inline" title="Rascunho para ajudar vc a planejar a jogada. Clique para minimizar!">?</span></span>
+                </div>
+                <div class="notepad-body">
+                    <textarea placeholder="Anote suas ideias aqui..."></textarea>
+                </div>
             </div>
-            <div class="board-wrapper"><div id="word-grid" class="word-grid"></div></div>
+
+            <div class="board-wrapper">
+                <div id="word-grid" class="word-grid"></div>
+            </div>
+
             <div class="input-section">
                 <div class="input-controls">
                     <input type="text" id="char-input" maxlength="1" autofocus placeholder="?">
                     <button id="validate-btn">Validar</button>
                 </div>
+                
                 <div class="notification-area">
                     <div id="floating-msg" class="inline-message hidden"></div>
                     <div id="feedback-message" class="feedback"></div>
                     <div id="meaning-box" class="meaning-display hidden"></div>
                 </div>
             </div>
+
             <div id="alphabet-drawer" class="alphabet-wrapper">
-                <div class="alphabet-header">Mapa de Letras</div>
+                <div class="alphabet-header">
+                    <span>Mapa de Letras <span class="tooltip-inline" title="Mapa para ajudá-lo a identificar letras espelhadas. Clique para minimizar!">?</span></span>
+                </div>
                 <div id="mini-alphabet" class="alphabet-content"></div>
             </div>
         </main>
     </div>
+
     <audio id="success-sound" src="https://actions.google.com/sounds/v1/cartoon/clap_and_cheer_one_person.ogg"></audio>
-    <script type="module" src="script.js"></script>
+
+    <script src="script.js"></script>
 </body>
 </html>
