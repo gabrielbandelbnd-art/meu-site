@@ -15,17 +15,24 @@
     <div id="welcome-screen" class="welcome-container">
         <div class="modal-content">
             <h2 style="color: var(--accent); font-size: 2.5rem; margin-bottom: 20px;">Grimório de MagicLexis</h2>
-            <p style="font-size: 1.1rem; line-height: 1.6;">Você precisa acertar a palavra proposta pelo algoritmo, seguindo as regras do jogo, preste bem atenção nas dicas e boa sorte.</p>
+            <p style="font-size: 1.1rem; line-height: 1.6;">Você precisa acertar a palavra proposta pelo algoritmo, seguindo as regras do jogo.</p>
             
+            <div class="difficulty-box">
+                <label for="length-selector">Escolha o desafio:</label>
+                <select id="length-selector">
+                    <option value="any">🎲 Aleatório (Qualquer tamanho)</option>
+                    </select>
+            </div>
+
             <ul style="text-align: left; margin: 25px 0; color: var(--text-dim); font-size: 1rem; padding-left: 20px;">
                 <li style="margin-bottom: 10px;">Uma <strong>Vogal</strong> transforma a próxima letra na sua sucessora (A vira B).</li>
                 <li style="margin-bottom: 10px;">Uma <strong>Consoante</strong> pode espelhar a letra anterior.</li>
                 <li style="margin-bottom: 10px;">Letras repetidas (A...A) invertem o que está no meio.</li>
             </ul>
             <p class="highlight-text">
-                ⚠️ <strong>O Ciclo Infinito:</strong> O tamanho da palavra é oculto. Se você preencher tudo, o cursor volta ao início e substitui a primeira letra.
+                ⚠️ <strong>O Ciclo Infinito:</strong> Se preencher tudo, o cursor volta ao início.
             </p>
-            <button id="start-game-btn">Entendi, vamos conjurar!</button>
+            <button id="start-game-btn">ENTENDI, VAMOS CONJURAR!</button>
         </div>
     </div>
 
@@ -76,7 +83,6 @@
                 <div id="mage-character" class="pixel-mage">
                     <div class="hat-tip"></div>
                     <div class="hat-base"></div>
-                    
                     <div class="head">
                         <div class="eyes">
                             <div class="eye left"></div>
@@ -84,7 +90,6 @@
                         </div>
                         <div class="beard"></div>
                     </div>
-                    
                     <div class="body">
                         <div class="arm left"></div>
                         <div class="arm right"></div>
@@ -93,7 +98,6 @@
                             <div class="foot right"></div>
                         </div>
                     </div>
-
                     <div class="staff">
                         <div class="staff-head">
                             <div class="gem"></div>
@@ -102,14 +106,12 @@
                 </div>
                 <div class="mage-effect">✨</div>
             </div>
-
         </aside>
 
         <main class="game-area">
-            
             <div class="challenge-header">
                 <div class="challenge-instruction">
-                    Você precisa acertar a palavra proposta pelo algoritmo, seguindo as regras do jogo, preste bem atenção nas dicas e boa sorte.
+                    Acerte a palavra proposta seguindo as regras mágicas.
                 </div>
                 <div class="hint-box">
                     <div id="hint-counter" class="hint-counter">Dica 1/5</div>
@@ -149,7 +151,6 @@
                 </div>
                 <div id="mini-alphabet" class="alphabet-content"></div>
             </div>
-
         </main>
     </div>
 

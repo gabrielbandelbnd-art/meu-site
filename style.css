@@ -22,7 +22,7 @@ body {
     font-family: 'Segoe UI', Roboto, sans-serif;
     margin: 0;
     height: 100vh;
-    overflow: hidden; /* Importante para o app não rolar inteiro */
+    overflow: hidden;
     display: flex;
 }
 
@@ -32,7 +32,7 @@ body {
     background: #121212; z-index: 5000;
     display: flex; justify-content: center; align-items: center;
 }
-.app-container.hidden-app { display: none; } /* Esconde o jogo no início */
+.app-container.hidden-app { display: none; }
 
 .modal-content {
     background: #1e1e1e; padding: 40px; border-radius: 15px;
@@ -40,6 +40,24 @@ body {
     box-shadow: 0 0 50px rgba(187, 134, 252, 0.15);
     margin: 20px;
 }
+
+/* NOVO: Estilo do seletor de dificuldade */
+.difficulty-box {
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid #444;
+}
+.difficulty-box label {
+    display: block; margin-bottom: 8px; color: var(--accent); font-weight: bold;
+}
+#length-selector {
+    background: #000; color: #fff; border: 1px solid var(--accent);
+    padding: 10px; border-radius: 5px; font-size: 1rem; width: 100%;
+    cursor: pointer; outline: none;
+}
+
 .highlight-text {
     background: rgba(255, 183, 77, 0.1); border-left: 4px solid var(--warning);
     padding: 15px; text-align: left; font-size: 1rem; margin-top: 20px; border-radius: 4px;
@@ -47,7 +65,7 @@ body {
 #start-game-btn {
     background: var(--accent); color: #000; border: none; padding: 15px 40px;
     font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer;
-    margin-top: 30px; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;
+    margin-top: 20px; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;
 }
 #start-game-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--accent); }
 
@@ -55,12 +73,8 @@ body {
 .app-container { display: flex; width: 100%; height: 100%; position: relative; }
 
 /* Botões Mobile (Invisíveis no Desktop) */
-.mobile-menu-btn, .mobile-alphabet-btn {
-    display: none; /* Padrão desktop */
-}
-.mobile-overlay {
-    display: none;
-}
+.mobile-menu-btn, .mobile-alphabet-btn { display: none; }
+.mobile-overlay { display: none; }
 
 /* --- SIDEBAR --- */
 .sidebar {
@@ -73,12 +87,12 @@ body {
     transition: opacity 0.2s; opacity: 1; display: flex; flex-direction: column; height: 100%;
 }
 
-/* Estado Minimizado da Sidebar (Desktop) */
+/* Estado Minimizado da Sidebar */
 .sidebar.collapsed { width: 80px; padding: 20px 5px; }
 .sidebar.collapsed .sidebar-content { opacity: 0; pointer-events: none; position: absolute; }
 .sidebar.collapsed .mage-container { transform: scale(0.7); bottom: 10px; } 
 
-/* Botão Toggle da Sidebar (Desktop) */
+/* Botão Toggle da Sidebar */
 .sidebar-toggle {
     position: absolute; top: 50%; right: -15px; width: 30px; height: 30px;
     background: var(--accent); color: #000; border: none; border-radius: 50%;
@@ -113,7 +127,7 @@ body {
     border: 1px solid #333; font-size: 0.9rem;
 }
 
-/* BOTÃO LIMPAR HISTÓRICO */
+/* BOTÃO LIMPAR HISTÓRICO - ESTILO ORIGINAL */
 #clear-history {
     background: transparent;
     border: 1px solid var(--error);
@@ -143,67 +157,32 @@ body {
     image-rendering: pixelated; 
 }
 
-/* Chapéu */
-.hat-tip {
-    position: absolute; top: -35px; left: 35px; width: 0; height: 0;
-    border-left: 15px solid transparent; border-right: 15px solid transparent;
-    border-bottom: 40px solid var(--mage-blue); transform: rotate(-10deg); z-index: 10;
-}
-.hat-base {
-    position: absolute; top: 0; left: 10px; width: 80px; height: 15px;
-    background: var(--mage-dark-blue); border-radius: 4px; z-index: 9;
-}
-/* Cabeça */
-.head {
-    position: absolute; top: 10px; left: 25px; width: 50px; height: 45px;
-    background: var(--mage-skin); border-radius: 6px; z-index: 5;
-}
+/* Partes do Mago */
+.hat-tip { position: absolute; top: -35px; left: 35px; width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-bottom: 40px solid var(--mage-blue); transform: rotate(-10deg); z-index: 10; }
+.hat-base { position: absolute; top: 0; left: 10px; width: 80px; height: 15px; background: var(--mage-dark-blue); border-radius: 4px; z-index: 9; }
+.head { position: absolute; top: 10px; left: 25px; width: 50px; height: 45px; background: var(--mage-skin); border-radius: 6px; z-index: 5; }
 .eyes { display: flex; justify-content: space-around; padding: 12px 6px 0; }
 .eye { width: 6px; height: 6px; background: #000; animation: blink 4s infinite; }
-.beard {
-    position: absolute; bottom: -15px; left: 0; width: 100%; height: 35px;
-    background: var(--mage-beard); border-radius: 0 0 20px 20px;
-    clip-path: polygon(0 0, 100% 0, 50% 100%); z-index: 6;
-}
-/* Corpo */
-.body {
-    position: absolute; bottom: 0; left: 25px; width: 50px; height: 60px;
-    background: var(--mage-blue); border-radius: 8px 8px 0 0; z-index: 4;
-}
-.arm {
-    position: absolute; top: 15px; width: 15px; height: 35px;
-    background: var(--mage-dark-blue); border-radius: 4px; transition: 0.3s;
-}
+.beard { position: absolute; bottom: -15px; left: 0; width: 100%; height: 35px; background: var(--mage-beard); border-radius: 0 0 20px 20px; clip-path: polygon(0 0, 100% 0, 50% 100%); z-index: 6; }
+.body { position: absolute; bottom: 0; left: 25px; width: 50px; height: 60px; background: var(--mage-blue); border-radius: 8px 8px 0 0; z-index: 4; }
+.arm { position: absolute; top: 15px; width: 15px; height: 35px; background: var(--mage-dark-blue); border-radius: 4px; transition: 0.3s; }
 .arm.left { left: -10px; transform-origin: top right; }
 .arm.right { right: -10px; transform-origin: top left; }
 .feet { display: flex; justify-content: space-between; position: absolute; bottom: -5px; width: 100%; }
 .foot { width: 18px; height: 10px; background: #000; border-radius: 4px; }
-/* Cajado */
-.staff {
-    position: absolute; right: 0; bottom: 0; width: 6px; height: 110px;
-    background: #795548; z-index: 8; transform-origin: bottom center; transition: 0.3s;
-}
-.staff-head {
-    position: absolute; top: -10px; left: -7px; width: 20px; height: 20px;
-    background: #5d4037; border-radius: 50%;
-}
-.gem {
-    width: 14px; height: 14px; background: #00e5ff; border-radius: 50%;
-    margin: 3px; box-shadow: 0 0 8px #00e5ff; animation: pulseGem 2s infinite;
-}
+.staff { position: absolute; right: 0; bottom: 0; width: 6px; height: 110px; background: #795548; z-index: 8; transform-origin: bottom center; transition: 0.3s; }
+.staff-head { position: absolute; top: -10px; left: -7px; width: 20px; height: 20px; background: #5d4037; border-radius: 50%; }
+.gem { width: 14px; height: 14px; background: #00e5ff; border-radius: 50%; margin: 3px; box-shadow: 0 0 8px #00e5ff; animation: pulseGem 2s infinite; }
 
-/* Animações */
 @keyframes blink { 0%, 96%, 100% { height: 6px; } 98% { height: 2px; } }
 @keyframes pulseGem { 0%, 100% { opacity: 0.8; } 50% { opacity: 1; box-shadow: 0 0 15px #00e5ff; } }
 
 .pixel-mage.cast .arm.right { transform: rotate(-140deg); }
 .pixel-mage.cast .staff { transform: rotate(-15deg) translateY(-5px); }
 .pixel-mage.cast .gem { background: #fff; box-shadow: 0 0 20px #fff; }
-
 .pixel-mage.win { animation: jumpHappy 0.5s infinite alternate; }
 .pixel-mage.win .arm.left { transform: rotate(130deg); }
 .pixel-mage.win .arm.right { transform: rotate(-130deg); }
-
 .pixel-mage.sad .head { background: #cfd8dc; }
 .pixel-mage.sad .eye { background: var(--mage-blue); height: 2px; margin-top: 4px; }
 .pixel-mage.sad { animation: shakeSad 0.5s; }
@@ -211,17 +190,14 @@ body {
 @keyframes jumpHappy { 0% { transform: translateY(0); } 100% { transform: translateY(-15px); } }
 @keyframes shakeSad { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
-.mage-effect {
-    position: absolute; top: -40px; font-size: 3rem; opacity: 0; pointer-events: none;
-}
+.mage-effect { position: absolute; top: -40px; font-size: 3rem; opacity: 0; pointer-events: none; }
 .mage-effect.active { animation: spellEffect 1s forwards; }
 @keyframes spellEffect { 0% { opacity: 1; transform: translateY(20px) scale(0.5); } 100% { opacity: 0; transform: translateY(-60px) scale(1.5); } }
 
 /* --- GAME AREA --- */
 .game-area {
     flex: 1; display: flex; flex-direction: column; align-items: center;
-    padding: 20px 40px; height: 100vh; overflow-y: auto; /* Permite rolar se necessário */
-    position: relative;
+    padding: 20px 40px; height: 100vh; overflow-y: auto; position: relative;
 }
 .challenge-header { text-align: center; margin-bottom: 10px; width: 100%; max-width: 800px; flex-shrink: 0; }
 .challenge-instruction { color: var(--warning); font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; line-height: 1.3; }
@@ -251,8 +227,7 @@ body {
 
 /* TABULEIRO */
 .board-wrapper {
-    flex-grow: 1; display: flex; justify-content: center; align-items: center;
-    width: 100%;
+    flex-grow: 1; display: flex; justify-content: center; align-items: center; width: 100%;
 }
 .word-grid {
     display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
@@ -328,29 +303,25 @@ button#validate-btn:active { transform: scale(0.95); }
 @media (max-width: 768px) {
     /* Botão Menu Esquerdo */
     .mobile-menu-btn {
-        display: flex;
-        align-items: center; justify-content: center;
+        display: flex; align-items: center; justify-content: center;
         position: fixed; top: 15px; left: 15px;
         width: 45px; height: 45px;
-        background: var(--accent); color: #000;
-        border: none; border-radius: 8px;
+        background: var(--accent); color: #000; border: none; border-radius: 8px;
         font-size: 1.5rem; z-index: 6000;
         box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
 
     /* NOVO: Botão Menu Direito (Alfabeto) */
     .mobile-alphabet-btn {
-        display: flex;
-        align-items: center; justify-content: center;
-        position: fixed; top: 15px; right: 15px; /* Canto superior direito */
+        display: flex; align-items: center; justify-content: center;
+        position: fixed; top: 15px; right: 15px;
         width: 45px; height: 45px;
-        background: var(--accent); color: #000;
-        border: none; border-radius: 8px;
+        background: var(--accent); color: #000; border: none; border-radius: 8px;
         font-size: 0.9rem; font-weight: bold; z-index: 6000;
         box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
 
-    /* Menu Lateral Esquerdo */
+    /* Sidebar Esquerda */
     .sidebar {
         position: fixed; top: 0; left: -100%;
         width: 85%; height: 100vh;
@@ -359,10 +330,9 @@ button#validate-btn:active { transform: scale(0.95); }
         transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .sidebar.mobile-open { left: 0; }
-
     .sidebar-toggle { display: none; }
 
-    /* Overlay Escuro */
+    /* Overlay */
     .mobile-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0,0,0,0.7); z-index: 5000;
@@ -371,17 +341,12 @@ button#validate-btn:active { transform: scale(0.95); }
     }
     .mobile-overlay.active { display: block; opacity: 1; pointer-events: all; }
 
-    .game-area {
-        padding: 70px 15px 10px 15px;
-        width: 100%;
-    }
-
+    .game-area { padding: 70px 15px 10px 15px; width: 100%; }
     .challenge-instruction { font-size: 0.95rem; }
-    
     .letter-box { width: 45px; height: 60px; font-size: 1.8rem; border-width: 2px; }
     .word-grid { gap: 8px; }
 
-    /* NOVO: Configuração do Alfabeto como Menu Lateral Direito */
+    /* NOVO: Alfabeto como Menu Lateral Direito */
     .alphabet-wrapper {
         position: fixed; top: 0; right: -100%;
         width: 280px; height: 100vh;
@@ -390,8 +355,8 @@ button#validate-btn:active { transform: scale(0.95); }
         box-shadow: -5px 0 20px rgba(0,0,0,0.5);
         transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex; flex-direction: column;
-        border: none; margin: 0; border-radius: 0;
-        padding: 20px;
+        border: none; margin: 0; border-radius: 0; padding: 20px;
+        padding-top: 70px; /* Espaço para não ficar embaixo do botão X se tiver */
     }
     .alphabet-wrapper.mobile-open { right: 0; }
 

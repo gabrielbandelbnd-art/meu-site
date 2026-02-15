@@ -1,5 +1,6 @@
-/* --- DADOS (300 PALAVRAS) --- */
+/* --- DADOS (LOTE 1 - 120 PALAVRAS) --- */
 const allChallenges = [
+    // --- 3 LETRAS ---
     { word: "SOL", hints: ["Astro rei.", "Aquece o dia.", "Estrela.", "Luz natural.", "Calor."], meaning: "Estrela central do sistema solar." },
     { word: "LUA", hints: ["Satélite.", "Noite.", "Fases.", "Marés.", "Branca."], meaning: "Satélite natural da Terra." },
     { word: "MAR", hints: ["Oceano.", "Sal.", "Ondas.", "Azul.", "Praia."], meaning: "Grande massa de água salgada." },
@@ -10,47 +11,140 @@ const allChallenges = [
     { word: "RIO", hints: ["Água doce.", "Correnteza.", "Peixes.", "Fluxo.", "Leito."], meaning: "Curso de água natural." },
     { word: "VOZ", hints: ["Falar.", "Cantar.", "Garganta.", "Som humano.", "Grito."], meaning: "Som produzido pelas cordas vocais." },
     { word: "LUZ", hints: ["Claridade.", "Lâmpada.", "Velocidade.", "Sol.", "Dia."], meaning: "Radiação visível." },
-    { word: "GOL", hints: ["Futebol.", "Rede.", "Ponto.", "Chute.", "Trave."], meaning: "Ponto marcado no futebol." },
-    { word: "SAL", hints: ["Tempero.", "Branco.", "Mar.", "Cozinha.", "Salgado."], meaning: "Cloreto de sódio." },
-    { word: "MAE", hints: ["Genitora.", "Amor.", "Família.", "Origem.", "Cuidado."], meaning: "Mulher que gerou um filho." },
-    { word: "PAI", hints: ["Genitor.", "Família.", "Protetor.", "Origem.", "Masculino."], meaning: "Homem que gerou um filho." },
-    { word: "SIM", hints: ["Afirmação.", "Positivo.", "Concordo.", "Aceito.", "Oposto de não."], meaning: "Advérbio de afirmação." },
-    { word: "NAO", hints: ["Negação.", "Recusa.", "Nunca.", "Jamais.", "Oposto de sim."], meaning: "Advérbio de negação." },
-    { word: "FIM", hints: ["Término.", "Acabou.", "Final.", "Conclusão.", "Desfecho."], meaning: "Onde algo termina." },
-    { word: "LAR", hints: ["Casa.", "Família.", "Abrigo.", "Doce.", "Residência."], meaning: "Lugar onde se mora." },
-    { word: "PÅO", hints: ["Alimento.", "Trigo.", "Padaria.", "Café.", "Massa."], meaning: "Alimento feito de farinha." },
-    { word: "AVE", hints: ["Pássaro.", "Voo.", "Penas.", "Bico.", "Ninho."], meaning: "Animal com penas." },
-    { word: "DOR", hints: ["Sofrimento.", "Machucado.", "Sentimento ruim.", "Ai.", "Desconforto."], meaning: "Sensação desagradável." },
-    { word: "REI", hints: ["Monarca.", "Coroa.", "Trono.", "Reino.", "Governante."], meaning: "Chefe de um reino." },
-    { word: "LEI", hints: ["Regra.", "Direito.", "Ordem.", "Juiz.", "Justiça."], meaning: "Norma jurídica." },
-    { word: "BOI", hints: ["Animal.", "Fazenda.", "Chifre.", "Pasto.", "Gado."], meaning: "Mamífero bovino." },
-    { word: "MEL", hints: ["Doce.", "Abelha.", "Colmeia.", "Pegajoso.", "Dourado."], meaning: "Alimento produzido por abelhas." },
-    { word: "CEU", hints: ["Alto.", "Nuvens.", "Espaço.", "Azul.", "Paraíso."], meaning: "Espaço celeste." },
-    { word: "NOZ", hints: ["Fruto.", "Dura.", "Natal.", "Quebra.", "Seca."], meaning: "Fruto da nogueira." },
-    { word: "GIZ", hints: ["Lousa.", "Branco.", "Escrever.", "Pó.", "Escola."], meaning: "Material para escrever em quadros." },
-    { word: "GAS", hints: ["Combustível.", "Cozinha.", "Fogo.", "Ar.", "Vapor."], meaning: "Estado da matéria." },
-    { word: "OLA", hints: ["Saudação.", "Cumprimento.", "Oi.", "Chegada.", "Voz."], meaning: "Forma de cumprimento." },
-    { word: "CASA", hints: ["Moradia.", "Teto.", "Lar.", "Construção.", "Abrigo."], meaning: "Edifício para habitar." },
-    { word: "BOLA", hints: ["Esfera.", "Jogo.", "Redonda.", "Futebol.", "Brinquedo."], meaning: "Objeto esférico." },
+    { word: "SAL", hints: ["Tempero.", "Branco.", "Mar.", "Cozinha.", "Sódio."], meaning: "Substância usada para temperar." },
+    { word: "MAE", hints: ["Geradora.", "Amor.", "Família.", "Origem.", "Cuidado."], meaning: "Genitora." },
+    { word: "PAI", hints: ["Protetor.", "Família.", "Masculino.", "Origem.", "Herói."], meaning: "Genitor." },
+    { word: "GOL", hints: ["Futebol.", "Rede.", "Ponto.", "Chute.", "Torcida."], meaning: "Ponto no futebol." },
+    { word: "FIM", hints: ["Término.", "Acabou.", "Conclusão.", "Final.", "Desfecho."], meaning: "Onde algo termina." },
+
+    // --- 4 LETRAS ---
+    { word: "AMOR", hints: ["Coração.", "Afeto.", "Paixão.", "Sentimento.", "União."], meaning: "Forte afeição por outra pessoa." },
     { word: "VIDA", hints: ["Viver.", "Existência.", "Nascer.", "Biologia.", "Sopro."], meaning: "Estado de atividade funcional." },
-    { word: "AMOR", hints: ["Coração.", "Afeto.", "Paixão.", "Sentimento.", "União."], meaning: "Forte afeição." },
-    { word: "ANEL", hints: ["Dedo.", "Joia.", "Ouro.", "Círculo.", "Compromisso."], meaning: "Aro ornamental." },
+    { word: "GATO", hints: ["Felino.", "Miau.", "Bigode.", "Animal.", "Doméstico."], meaning: "Pequeno mamífero carnívoro." },
+    { word: "CASA", hints: ["Moradia.", "Teto.", "Lar.", "Construção.", "Abrigo."], meaning: "Edifício para habitar." },
+    { word: "BOLA", hints: ["Esfera.", "Jogo.", "Redonda.", "Futebol.", "Brinquedo."], meaning: "Objeto esférico usado em jogos." },
+    { word: "ANEL", hints: ["Dedo.", "Joia.", "Ouro.", "Círculo.", "Compromisso."], meaning: "Aro ornamental usado no dedo." },
     { word: "TREM", hints: ["Trilho.", "Vagão.", "Locomotiva.", "Viagem.", "Apito."], meaning: "Comboio ferroviário." },
     { word: "FLOR", hints: ["Jardim.", "Pétala.", "Cheiro.", "Planta.", "Primavera."], meaning: "Órgão reprodutor das plantas." },
     { word: "MESA", hints: ["Móvel.", "Jantar.", "Apoio.", "Quatro pernas.", "Madeira."], meaning: "Móvel com tampo plano." },
-    { word: "GATO", hints: ["Felino.", "Miau.", "Bigode.", "Animal.", "Doméstico."], meaning: "Pequeno mamífero carnívoro." },
-    { word: "DADO", hints: ["Sorte.", "Cubo.", "Números.", "Jogos.", "Lados."], meaning: "Cubo para jogos de azar." },
     { word: "FOGO", hints: ["Quente.", "Queima.", "Chama.", "Incêndio.", "Luz."], meaning: "Combustão visível." },
     { word: "AGUA", hints: ["Líquido.", "Beber.", "Vida.", "Rio.", "Chuva."], meaning: "Líquido essencial à vida." },
-    { word: "LAGO", hints: ["Água parada.", "Pato.", "Pesca.", "Natureza.", "Pequeno mar."], meaning: "Depressão com água." },
-    { word: "SEDE", hints: ["Beber.", "Seca.", "Garganta.", "Água.", "Desejo."], meaning: "Necessidade de beber." },
     { word: "MEDO", hints: ["Susto.", "Pavor.", "Escuro.", "Terror.", "Emoção."], meaning: "Sensação de perigo." },
     { word: "RISO", hints: ["Alegria.", "Boca.", "Piada.", "Engraçado.", "Som."], meaning: "Ato de rir." },
-    { word: "SONO", hints: ["Dormir.", "Cama.", "Noite.", "Cansaço.", "Sonhar."], meaning: "Estado de repouso." },
-    { word: "TODO", hints: ["Inteiro.", "Completo.", "Total.", "Tudo.", "Global."], meaning: "A totalidade." },
-    { word: "NADA", hints: ["Vazio.", "Zero.", "Oco.", "Inexistente.", "Nenhum."], meaning: "Coisa nenhuma." },
-    { word: "HOJE", hints: ["Agora.", "Dia atual.", "Presente.", "Data.", "Tempo."], meaning: "O dia em que estamos." }
-];
+    { word: "CAFE", hints: ["Bebida.", "Preto.", "Manhã.", "Acordar.", "Cafeína."], meaning: "Bebida estimulante." },
+    { word: "LIXO", hints: ["Descarte.", "Sujeira.", "Reciclar.", "Cesto.", "Resto."], meaning: "Resíduos descartados." },
+
+    // --- 5 LETRAS ---
+    { word: "LIVRO", hints: ["Leitura.", "Páginas.", "Biblioteca.", "História.", "Capa."], meaning: "Conjunto de folhas escritas." },
+    { word: "PORTA", hints: ["Entrada.", "Abrir.", "Madeira.", "Maçaneta.", "Saída."], meaning: "Abertura em parede para passagem." },
+    { word: "NAVIO", hints: ["Mar.", "Transporte.", "Barco grande.", "Oceano.", "Cruzeiro."], meaning: "Grande embarcação." },
+    { word: "PEIXE", hints: ["Água.", "Nadar.", "Escamas.", "Rio.", "Mar."], meaning: "Animal vertebrado aquático." },
+    { word: "CARTA", hints: ["Correio.", "Papel.", "Envelope.", "Escrever.", "Mensagem."], meaning: "Mensagem escrita enviada a alguém." },
+    { word: "PLUMA", hints: ["Leve.", "Pena.", "Ave.", "Macio.", "Travesseiro."], meaning: "Pena de ave." },
+    { word: "NOITE", hints: ["Escuro.", "Lua.", "Estrelas.", "Dormir.", "Fim do dia."], meaning: "Período sem luz solar." },
+    { word: "CHUVA", hints: ["Água.", "Nuvens.", "Molhado.", "Temporal.", "Gotas."], meaning: "Precipitação atmosférica." },
+    { word: "PRAIA", hints: ["Areia.", "Mar.", "Sol.", "Verão.", "Ondas."], meaning: "Borda de terra à beira-mar." },
+    { word: "SONHO", hints: ["Dormir.", "Imaginação.", "Desejo.", "Pesadelo.", "Noite."], meaning: "Imagens vistas enquanto se dorme." },
+    { word: "RISCO", hints: ["Perigo.", "Traço.", "Aventura.", "Medo.", "Rabisco."], meaning: "Possibilidade de perigo." },
+    { word: "MUNDO", hints: ["Terra.", "Globo.", "Planeta.", "Universo.", "Pessoas."], meaning: "O planeta Terra." },
+    { word: "TEMPO", hints: ["Relógio.", "Horas.", "Clima.", "Passado.", "Futuro."], meaning: "Duração dos fatos." },
+    { word: "IDEIA", hints: ["Pensamento.", "Mente.", "Criatividade.", "Luz.", "Plano."], meaning: "Representação mental." },
+    { word: "FESTA", hints: ["Comemoração.", "Bolo.", "Música.", "Amigos.", "Dança."], meaning: "Reunião para celebrar." },
+
+    // --- 6 LETRAS ---
+    { word: "ESCOLA", hints: ["Estudar.", "Alunos.", "Professor.", "Aulas.", "Saber."], meaning: "Estabelecimento de ensino." },
+    { word: "JARDIM", hints: ["Flores.", "Verde.", "Grama.", "Plantas.", "Natureza."], meaning: "Terreno cultivado com plantas." },
+    { word: "VIAGEM", hints: ["Turismo.", "Malas.", "Férias.", "Avião.", "Estrada."], meaning: "Ato de deslocar-se a outro lugar." },
+    { word: "MUSICA", hints: ["Som.", "Melodia.", "Ritmo.", "Instrumento.", "Canção."], meaning: "Arte de combinar sons." },
+    { word: "AMIGOS", hints: ["Parceria.", "Companhia.", "Lealdade.", "Festa.", "Grupo."], meaning: "Pessoas com quem se tem afeto." },
+    { word: "CIDADE", hints: ["Prédios.", "Ruas.", "Urbano.", "População.", "Prefeito."], meaning: "Aglomerado urbano." },
+    { word: "COMIDA", hints: ["Fome.", "Almoço.", "Jantar.", "Sabor.", "Nutrição."], meaning: "O que se come." },
+    { word: "BRASIL", hints: ["País.", "Verde e amarelo.", "Samba.", "Futebol.", "Sul-americano."], meaning: "Maior país da América do Sul." },
+    { word: "JOGADA", hints: ["Esporte.", "Movimento.", "Estratégia.", "Lance.", "Partida."], meaning: "Ato de jogar." },
+    { word: "QUARTO", hints: ["Dormir.", "Cama.", "Cômodo.", "Casa.", "Descanso."], meaning: "Aposento para dormir." },
+    { word: "ABRACO", hints: ["Carinho.", "Braços.", "Aperto.", "Afeto.", "Cumprimento."], meaning: "Enlaçamento com os braços." },
+    { word: "FUTURO", hints: ["Amanhã.", "Destino.", "Tempo.", "Vir a ser.", "Adiante."], meaning: "Tempo que há de vir." },
+    { word: "POESIA", hints: ["Rima.", "Versos.", "Arte.", "Escrita.", "Amor."], meaning: "Arte de compor versos." },
+    { word: "BOSQUE", hints: ["Árvores.", "Floresta.", "Natureza.", "Verde.", "Passeio."], meaning: "Pequena floresta." },
+    { word: "TROVAO", hints: ["Barulho.", "Tempestade.", "Raio.", "Céu.", "Estrondo."], meaning: "Ruído provocado pelo raio." },
+
+    // --- 7 LETRAS ---
+    { word: "GUITARRA", hints: ["Música.", "Cordas.", "Rock.", "Solo.", "Elétrica."], meaning: "Instrumento musical de cordas." },
+    { word: "VAMPIRO", hints: ["Sangue.", "Dentes.", "Noite.", "Morcego.", "Drácula."], meaning: "Criatura mitológica que bebe sangue." },
+    { word: "ESTRELA", hints: ["Céu.", "Brilho.", "Noite.", "Espaço.", "Pontas."], meaning: "Corpo celeste luminoso." },
+    { word: "FAMILIA", hints: ["Parentes.", "Casa.", "Sangue.", "União.", "Genealogia."], meaning: "Grupo de pessoas com laços sanguíneos." },
+    { word: "PERFUME", hints: ["Cheiro.", "Frasco.", "Aroma.", "Essência.", "Flor."], meaning: "Líquido aromático." },
+    { word: "FUTEBOL", hints: ["Esporte.", "Gol.", "Bola.", "Campo.", "Time."], meaning: "Esporte jogado com os pés." },
+    { word: "CORAGEM", hints: ["Bravura.", "Medo.", "Herói.", "Enfrentar.", "Valente."], meaning: "Moral forte perante o perigo." },
+    { word: "DESTINO", hints: ["Futuro.", "Sorte.", "Caminho.", "Fado.", "Final."], meaning: "O que está determinado a acontecer." },
+    { word: "OCEANOS", hints: ["Água.", "Azul.", "Terra.", "Mar.", "Profundo."], meaning: "Grandes massas de água salgada." },
+    { word: "FLORESTA", hints: ["Árvores.", "Selva.", "Verde.", "Animais.", "Mata."], meaning: "Grande extensão de árvores." },
+    { word: "ESPELHO", hints: ["Reflexo.", "Vidro.", "Imagem.", "Olhar.", "Vaidade."], meaning: "Superfície que reflete a imagem." },
+    { word: "RAPOSAS", hints: ["Animal.", "Esperta.", "Laranja.", "Cauda.", "Mato."], meaning: "Mamífero carnívoro." },
+    { word: "PLANETA", hints: ["Terra.", "Espaço.", "Orbita.", "Mundo.", "Sol."], meaning: "Corpo celeste que orbita uma estrela." },
+    { word: "ABELHAS", hints: ["Mel.", "Inseto.", "Colmeia.", "Ferrão.", "Rainha."], meaning: "Inseto produtor de mel." },
+    { word: "CORRIDA", hints: ["Velocidade.", "Esporte.", "Pressa.", "Pés.", "Chegada."], meaning: "Ato de correr." },
+
+    // --- 8 LETRAS ---
+    { word: "CACHORRO", hints: ["Latir.", "Animal.", "Amigo.", "Osso.", "Doméstico."], meaning: "Melhor amigo do homem." },
+    { word: "ELEFANTE", hints: ["Grande.", "Tromba.", "África.", "Pesado.", "Cinza."], meaning: "Maior animal terrestre." },
+    { word: "DINHEIRO", hints: ["Pagar.", "Moeda.", "Banco.", "Compra.", "Riqueza."], meaning: "Meio de troca de valores." },
+    { word: "PRESENTE", hints: ["Aniversário.", "Dar.", "Caixa.", "Agora.", "Natal."], meaning: "Objeto oferecido a alguém." },
+    { word: "HISTORIA", hints: ["Passado.", "Livro.", "Tempo.", "Fatos.", "Contar."], meaning: "Narrativa de eventos passados." },
+    { word: "NATUREZA", hints: ["Verde.", "Matas.", "Animais.", "Terra.", "Vida."], meaning: "Mundo físico e seus fenômenos." },
+    { word: "LIBERDADE", hints: ["Livre.", "Voo.", "Prisão (oposto).", "Direito.", "Escolha."], meaning: "Poder de agir segundo a própria vontade." },
+    { word: "TRABALHO", hints: ["Emprego.", "Salário.", "Ofício.", "Esforço.", "Profissão."], meaning: "Atividade produtiva." },
+    { word: "UNIVERSO", hints: ["Espaço.", "Tudo.", "Galáxias.", "Infinito.", "Estrelas."], meaning: "Conjunto de tudo o que existe." },
+    { word: "SAUDADES", hints: ["Falta.", "Lembrança.", "Distância.", "Sentimento.", "Nostalgia."], meaning: "Sentimento de falta de alguém." },
+
+    // --- 9 LETRAS ---
+    { word: "ESPERANCA", hints: ["Fé.", "Futuro.", "Acreditar.", "Verde.", "Sonho."], meaning: "Sentimento de quem vê como possível o que deseja." },
+    { word: "FELICIDADE", hints: ["Alegria.", "Sorriso.", "Bem-estar.", "Contente.", "Emoção."], meaning: "Estado de quem é feliz." },
+    { word: "BORBOLETA", hints: ["Inseto.", "Voar.", "Colorida.", "Casulo.", "Transformação."], meaning: "Inseto de asas coloridas." },
+    { word: "GEOGRAFIA", hints: ["Mapas.", "Terra.", "Países.", "Estudo.", "Relevo."], meaning: "Ciência que estuda a superfície terrestre." },
+    { word: "AVENTURA", hints: ["Risco.", "Viagem.", "Ação.", "Explorar.", "Adrenalina."], meaning: "Experiência arriscada ou emocionante." },
+    { word: "CHOCOLATE", hints: ["Doce.", "Cacau.", "Marrom.", "Páscoa.", "Comer."], meaning: "Alimento feito de cacau." },
+    { word: "PRINCESA", hints: ["Reino.", "Coroa.", "Conto de fadas.", "Castelo.", "Filha do rei."], meaning: "Filha de rei ou rainha." },
+    { word: "TECNOLOGIA", hints: ["Computador.", "Futuro.", "Inovação.", "Digital.", "Máquinas."], meaning: "Aplicação de conhecimento científico." },
+    { word: "LITERATURA", hints: ["Livros.", "Escrita.", "Autores.", "Poesia.", "Texto."], meaning: "Arte de escrever." },
+    { word: "PROFESSOR", hints: ["Ensino.", "Escola.", "Mestre.", "Aula.", "Aprender."], meaning: "Aquele que ensina." },
+
+    // --- 10 LETRAS ---
+    { word: "COMPUTADOR", hints: ["Máquina.", "Internet.", "Teclado.", "Tela.", "PC."], meaning: "Máquina eletrônica de processamento de dados." },
+    { word: "RINOCERONTE", hints: ["Animal.", "Chifre.", "Pesado.", "África.", "Forte."], meaning: "Grande mamífero com chifre no nariz." },
+    { word: "MATEMATICA", hints: ["Números.", "Contas.", "Soma.", "Escola.", "Lógica."], meaning: "Ciência dos números e formas." },
+    { word: "ANIVERSARIO", hints: ["Festa.", "Bolo.", "Idade.", "Parabéns.", "Data."], meaning: "Dia em que se completa anos." },
+    { word: "ASTRONAUTA", hints: ["Espaço.", "Lua.", "Foguete.", "Nasa.", "Capacete."], meaning: "Viajante espacial." },
+    { word: "BRINCADEIRA", hints: ["Diversão.", "Criança.", "Jogo.", "Rir.", "Passatempo."], meaning: "Ato de brincar." },
+    { word: "INTELIGENTE", hints: ["Esperto.", "Cérebro.", "Saber.", "Gênio.", "Raciocínio."], meaning: "Que tem inteligência." },
+    { word: "RESILIENCIA", hints: ["Força.", "Superar.", "Adaptar.", "Voltar.", "Persistir."], meaning: "Capacidade de se recuperar de dificuldades." },
+    { word: "SENTIMENTO", hints: ["Emoção.", "Coração.", "Amor.", "Ódio.", "Sentir."], meaning: "Ato ou efeito de sentir." },
+    { word: "CATASTROFE", hints: ["Desastre.", "Caos.", "Destruição.", "Ruim.", "Acidente."], meaning: "Grande desgraça ou infortúnio." },
+
+    // --- 11 a 13 LETRAS ---
+    { word: "CURIOSIDADE", hints: ["Saber.", "Pergunta.", "Descobrir.", "Interesse.", "Xereta."], meaning: "Vontade de ver ou aprender algo." },
+    { word: "ELETRICIDADE", hints: ["Luz.", "Choque.", "Tomada.", "Energia.", "Fios."], meaning: "Forma de energia." },
+    { word: "UNIVERSIDADE", hints: ["Faculdade.", "Estudo.", "Diploma.", "Campus.", "Superior."], meaning: "Instituição de ensino superior." },
+    { word: "COMUNICACAO", hints: ["Falar.", "Mensagem.", "Troca.", "Conversa.", "Mídia."], meaning: "Ato de transmitir informação." },
+    { word: "REFRIGERANTE", hints: ["Bebida.", "Gás.", "Doce.", "Gelado.", "Soda."], meaning: "Bebida não alcoólica gaseificada." },
+    { word: "SOLIDARIEDADE", hints: ["Ajuda.", "Apoio.", "Bondade.", "Próximo.", "União."], meaning: "Cooperação mútua entre pessoas." },
+    { word: "TRANSFORMACAO", hints: ["Mudança.", "Virar.", "Evolução.", "Metamorfose.", "Diferente."], meaning: "Ato de transformar." },
+    { word: "INDEPENDENCIA", hints: ["Livre.", "País.", "Autonomia.", "Sozinho.", "7 de setembro."], meaning: "Estado de quem não depende de outro." },
+    { word: "ARQUITETURA", hints: ["Prédios.", "Projeto.", "Desenho.", "Construção.", "Arte."], meaning: "Arte de projetar e edificar." },
+    { word: "CONHECIMENTO", hints: ["Saber.", "Estudo.", "Mente.", "Aprender.", "Sabedoria."], meaning: "Ato de conhecer ou saber." },
+
+    // --- 14 a 20 LETRAS (DIFÍCIL) ---
+    { word: "PARALELEPIPEDO", hints: ["Rua.", "Pedra.", "Calçada.", "Bloco.", "Geometria."], meaning: "Sólido geométrico ou pedra de calçamento." },
+    { word: "DESENVOLVIMENTO", hints: ["Crescer.", "Progresso.", "Avanço.", "Melhora.", "Evoluir."], meaning: "Ato de desenvolver-se." },
+    { word: "RESPONSABILIDADE", hints: ["Dever.", "Adulto.", "Cuidar.", "Culpa.", "Sério."], meaning: "Obrigação de responder pelas próprias ações." },
+    { word: "SUSTENTABILIDADE", hints: ["Natureza.", "Futuro.", "Reciclar.", "Verde.", "Planeta."], meaning: "Uso consciente dos recursos naturais." },
+    { word: "INCONSTITUCIONAL", hints: ["Lei.", "Proibido.", "Contra.", "Regra.", "Jurídico."], meaning: "Que é contra a constituição." },
+    { word: "OTORRINOLARINGOLOGISTA", hints: ["Médico.", "Garganta.", "Nariz.", "Ouvido.", "Nome comprido."], meaning: "Médico especialista em ouvido, nariz e garganta." },
+    { word: "INDEPENDENTEMENTE", hints: ["Sem depender.", "Apesar.", "Livre.", "Sozinho.", "Advérbio."], meaning: "De modo independente." },
+    { word: "REVOLUCIONARIO", hints: ["Mudança.", "Guerra.", "Novo.", "Líder.", "Transformar."], meaning: "Que causa revolução." },
+    { word: "EXTRAORDINARIO", hints: ["Incrível.", "Fora do comum.", "Especial.", "Raro.", "Ótimo."], meaning: "Que não é ordinário ou comum." },
+    { word: "INTERNACIONALIZACAO", hints: ["Mundo.", "Global.", "Países.", "Exterior.", "Expandir."], meaning: "Tornar algo internacional." }
+];;
 
 let usedIndices = [];
 
@@ -65,6 +159,7 @@ const successSound = document.getElementById('success-sound');
 const miniAlphabetContainer = document.getElementById('mini-alphabet');
 const hintText = document.getElementById('current-hint');
 const hintCounter = document.getElementById('hint-counter');
+const lengthSelector = document.getElementById('length-selector');
 
 let currentWord = [];
 let replaceIndex = 0;
@@ -79,24 +174,19 @@ const sidebar = document.getElementById('sidebar');
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
 const mobileOverlay = document.getElementById('mobile-overlay');
 
-// NOVO: Menu do Alfabeto
+// MENU DO ALFABETO
 const alphabetDrawer = document.getElementById('alphabet-drawer');
 const mobileAlphabetBtn = document.getElementById('mobile-alphabet-btn');
 
 function toggleMobileMenu() {
     sidebar.classList.toggle('mobile-open');
-    // Se abrir o menu esquerdo, fecha o direito se estiver aberto
-    alphabetDrawer.classList.remove('mobile-open');
-    
-    // Toggle overlay baseado se ALGUM menu está aberto
+    alphabetDrawer.classList.remove('mobile-open'); // Fecha o outro
     checkOverlay();
 }
 
 function toggleAlphabetMenu() {
     alphabetDrawer.classList.toggle('mobile-open');
-    // Se abrir o menu direito, fecha o esquerdo se estiver aberto
-    sidebar.classList.remove('mobile-open');
-    
+    sidebar.classList.remove('mobile-open'); // Fecha o outro
     checkOverlay();
 }
 
@@ -114,7 +204,6 @@ if(mobileAlphabetBtn) mobileAlphabetBtn.onclick = toggleAlphabetMenu;
 
 if(mobileOverlay) {
     mobileOverlay.onclick = () => {
-        // Fecha tudo ao clicar fora
         sidebar.classList.remove('mobile-open');
         alphabetDrawer.classList.remove('mobile-open');
         mobileOverlay.classList.remove('active');
@@ -126,16 +215,36 @@ function clearAllHighlights() {
     document.querySelectorAll('.rule-card').forEach(card => card.classList.remove('rule-active'));
 }
 
+/* NOVO: PREENCHE O SELETOR COM OPÇÕES DISPONÍVEIS */
+function populateLengthOptions() {
+    // Descobre quais tamanhos de palavra existem no banco de dados
+    const lengths = [...new Set(allChallenges.map(c => c.word.length))].sort((a,b) => a-b);
+    
+    lengths.forEach(len => {
+        const option = document.createElement('option');
+        option.value = len;
+        option.innerText = `${len} Letras`;
+        lengthSelector.appendChild(option);
+    });
+}
+
 function initChallenge() {
     clearAllHighlights();
     animateMage('reset');
     
+    // FILTRAGEM PELA ESCOLHA DO USUÁRIO
+    const selectedLen = lengthSelector.value;
+    let pool = allChallenges;
+    
+    if (selectedLen !== 'any') {
+        pool = allChallenges.filter(c => c.word.length === parseInt(selectedLen));
+    }
+
+    if (pool.length === 0) pool = allChallenges; // Fallback se der erro
+
     // Sorteio
-    if (usedIndices.length === allChallenges.length) usedIndices = [];
-    let randIdx;
-    do { randIdx = Math.floor(Math.random() * allChallenges.length); } while (usedIndices.includes(randIdx));
-    usedIndices.push(randIdx);
-    targetChallenge = allChallenges[randIdx];
+    const randIdx = Math.floor(Math.random() * pool.length);
+    targetChallenge = pool[randIdx];
     
     maxWordLength = targetChallenge.word.length;
     currentWord = [];
@@ -333,6 +442,10 @@ async function validate() {
             document.body.classList.remove('success-flash');
             initChallenge();
             feedback.innerText = "Novo desafio iniciado!";
+            
+            // --- LINHA NOVA PARA APAGAR A MENSAGEM DEPOIS DE 2 SEGUNDOS ---
+            setTimeout(() => { feedback.innerText = ""; }, 2000); 
+            
         }, 5000);
         return;
     }
@@ -510,8 +623,11 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.add('mobile-mode');
     }
     
+    // NOVO: Preenche as opções de dificuldade
+    populateLengthOptions();
+
     startMageIdle();
-    initChallenge();
+    // initChallenge é chamado apenas quando clica em START agora
 });
 
 // LÓGICA DO BOTÃO DE BOAS-VINDAS
@@ -521,5 +637,8 @@ document.getElementById('start-game-btn').onclick = () => {
     // Mostra o jogo
     document.getElementById('app-container').classList.remove('hidden-app');
     
+    // Inicia o jogo agora com a dificuldade selecionada
+    initChallenge();
+
     if (audioCtx.state === 'suspended') audioCtx.resume();
 };
