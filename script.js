@@ -642,3 +642,26 @@ document.getElementById('start-game-btn').onclick = () => {
 
     if (audioCtx.state === 'suspended') audioCtx.resume();
 };
+/* ================= HUB CONTROLE ================= */
+
+const hub = document.getElementById("main-hub");
+const hubPlay = document.getElementById("hub-play");
+const welcomeScreen = document.getElementById("welcome-screen");
+
+hubPlay.addEventListener("click", () => {
+    hub.style.display = "none";
+    welcomeScreen.style.display = "flex";
+});
+
+// Botões futuros
+document.getElementById("hub-profile").addEventListener("click", () => {
+    alert("Sistema de Perfil em construção 🔮");
+});
+
+document.getElementById("hub-tournaments").addEventListener("click", () => {
+    alert("Torneios em breve 🏆");
+});
+
+document.getElementById("hub-ranking").addEventListener("click", () => {
+    alert("Ranking global em breve 📊");
+});
