@@ -665,3 +665,39 @@ document.getElementById("hub-tournaments").addEventListener("click", () => {
 document.getElementById("hub-ranking").addEventListener("click", () => {
     alert("Ranking global em breve 📊");
 });
+/* --- LÓGICA DO SELETOR DE MODO DE JOGO --- */
+document.addEventListener("DOMContentLoaded", () => {
+    const modeSelector = document.getElementById('mode-selector');
+    const modeWarning = document.getElementById('mode-warning');
+
+    if (modeSelector) {
+        modeSelector.addEventListener('change', (e) => {
+            const selectedMode = e.target.value;
+
+            // Se o modo escolhido NÃO for 'solo'
+            if (selectedMode !== 'solo') {
+                // Toca som de erro (se o contexto de áudio estiver ativo)
+                if (typeof playSoundEffect === 'function') {
+                    playSoundEffect('error');
+                    // Tenta animar o mago para 'triste' se ele estiver visível
+                    if (typeof animateMage === 'function') animateMage('sad');
+                }
+
+                // Mostra a mensagem de aviso
+                modeWarning.style.display = 'block';
+                modeWarning.classList.add('popIn'); // Reusa sua animação de popIn
+
+                // Reseta o seletor para "Solo" automaticamente
+                e.target.value = 'solo';
+
+                // Esconde a mensagem após 3 segundos
+                setTimeout(() => {
+                    modeWarning.style.display = 'none';
+                }, 3000);
+            } else {
+                // Se selecionar Solo, garante que o aviso suma
+                modeWarning.style.display = 'none';
+            }
+        });
+    }
+});
