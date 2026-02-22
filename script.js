@@ -288,12 +288,22 @@ function stopHintCycle() { if (hintInterval) clearInterval(hintInterval); }
 const isVowel = (c) => 'AEIOUaeiou'.includes(c);
 
 const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
-alphabet.forEach(letter => {
+alphabet.forEach((letter, index) => {
     const div = document.createElement('div');
-    div.className = 'mini-char'; div.id = `mini-${letter}`; div.innerText = letter;
+    div.className = 'mini-char'; 
+    div.id = `mini-${letter}`; 
+    
+    // Descobre qual é a letra espelhada baseada na posição (A=0 vira Z=25)
+    const mirrored = alphabet[25 - index];
+    
+    // Insere a letra principal e a pequena
+    div.innerHTML = `
+        ${letter}
+        <span class="mirrored-letter">${mirrored}</span>
+    `;
+    
     miniAlphabetContainer.appendChild(div);
 });
-
 function updateMiniAlphabet() {
     document.querySelectorAll('.mini-char').forEach(el => el.classList.remove('active'));
     currentWord.forEach(char => {
