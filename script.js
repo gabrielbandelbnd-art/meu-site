@@ -360,6 +360,46 @@ function render(showTutorial = false) {
     updateMiniAlphabet();
 }
 
+// --- LÓGICA DO BOTÃO LIMPAR TABULEIRO --- //
+const clearBoardBtn = document.getElementById('clear-board-btn');
+let clearConfirmState = false;
+
+if (clearBoardBtn) {
+    clearBoardBtn.addEventListener('click', () => {
+        if (!clearConfirmState) {
+            // Primeiro clique - Pede confirmação
+            clearBoardBtn.innerText = "CERTEZA?";
+            clearBoardBtn.style.background = "var(--error)";
+            clearBoardBtn.style.color = "#fff";
+            clearConfirmState = true;
+
+            // Reseta o botão após 3 segundos se não clicar novamente
+            setTimeout(() => {
+                if (clearConfirmState) {
+                    resetClearButton();
+                }
+            }, 3000);
+        } else {
+            // Segundo clique - Limpa o tabuleiro
+            currentWord = [];
+            replaceIndex = 0;
+            charInput.placeholder = "?";
+            render();
+            resetClearButton();
+            if (typeof playSoundEffect === 'function') playSoundEffect('error'); // Som de apagar
+        }
+    });
+}
+
+function resetClearButton() {
+    if (clearBoardBtn) {
+        clearBoardBtn.innerText = "LIMPAR";
+        clearBoardBtn.style.background = "transparent";
+        clearBoardBtn.style.color = "var(--error)";
+        clearConfirmState = false;
+    }
+}
+
 function addChar(char) {
     if (!/^[a-zA-Z]$/.test(char)) return;
 
@@ -375,12 +415,18 @@ function addChar(char) {
     historyList.scrollTop = historyList.scrollHeight;
 
     if (currentWord.length >= maxWordLength) {
+        // --- NOVO: LIMPA O TABULEIRO QUANDO VOLTA PRO INÍCIO --- //
         playSoundEffect('overwrite');
-        currentWord.splice(replaceIndex, 1);
-        let insertionIndex = replaceIndex;
-        replaceIndex++;
-        if (replaceIndex >= maxWordLength) replaceIndex = 0;
-        processNewChar(char, insertionIndex);
+        
+        // Resetamos o array e o índice para começar uma palavra nova "limpa"
+        currentWord = [];
+        replaceIndex = 0;
+        
+        // Processa a letra que o usuário acabou de digitar na nova posição 0
+        processNewChar(char, 0);
+
+        showFloatingMessage("Ciclo Reiniciado! Tabuleiro limpo.", 2500);
+
     } else {
         playSoundEffect('type');
         processNewChar(char, currentWord.length);
