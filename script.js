@@ -246,6 +246,8 @@ const funnyPhrases = [
     "Eu sinto que você consegue melhor… bem melhor.",
     "Continua tentando. Uma hora a gente acerta… eu espero."
 ];
+// --- NOVA VARIÁVEL: SACOLA DE FRASES ---
+let unusedPhrases = [...funnyPhrases];
 
 /* --- MOBILE MENU LOGIC --- */
 const sidebar = document.getElementById('sidebar');
@@ -618,8 +620,14 @@ async function validate() {
             // ---- LÓGICA DA GALINHA REVISADA ----
             consecutiveErrors++;
             
-            // Escolhe uma frase aleatória
-            const randomPhrase = funnyPhrases[Math.floor(Math.random() * funnyPhrases.length)];
+            // Se a sacola esvaziar, enche ela de novo com as 70 frases!
+            if (unusedPhrases.length === 0) {
+                unusedPhrases = [...funnyPhrases];
+            }
+            
+            // Sorteia uma frase das que sobraram e tira ela da sacola (splice)
+            const randomPhraseIndex = Math.floor(Math.random() * unusedPhrases.length);
+            const randomPhrase = unusedPhrases.splice(randomPhraseIndex, 1)[0];
             
             // Exibe a mensagem original + a frase engraçada menorzinha embaixo
             feedback.innerHTML = `❌ Tente novamente<br><span style="font-size: 0.9rem; font-weight: normal; color: var(--text-dim);">${randomPhrase}</span>`; 
