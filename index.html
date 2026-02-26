@@ -143,11 +143,14 @@
                     Acerte a palavra proposta seguindo as regras mágicas.
                 </div>
                 <div class="hint-box">
-                    <div id="hint-counter" class="hint-counter">Dica 1/5</div>
+                    <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 5px;">
+                        <div id="hint-counter" class="hint-counter">Dica 1/5</div>
+                        <button id="skip-hint-btn" style="background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; text-transform: uppercase;">Pular Dica ▶</button>
+                    </div>
                     <div id="current-hint" class="hint-text fade-in">...</div>
                 </div>
             </div>
-            
+                
             <div class="notepad-container" id="notepad">
                 <div class="notepad-header" onclick="toggleNotepad()">
                     <span>📝 Rascunho <span class="tooltip-inline" title="Rascunho para ajudar vc a planejar a jogada. Clique para minimizar!">?</span></span>

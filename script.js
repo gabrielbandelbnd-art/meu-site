@@ -144,7 +144,7 @@ const allChallenges = [
     { word: "REVOLUCIONARIO", hints: ["Mudança.", "Guerra.", "Novo.", "Líder.", "Transformar."], meaning: "Que causa revolução." },
     { word: "EXTRAORDINARIO", hints: ["Incrível.", "Fora do comum.", "Especial.", "Raro.", "Ótimo."], meaning: "Que não é ordinário ou comum." },
     { word: "INTERNACIONALIZACAO", hints: ["Mundo.", "Global.", "Países.", "Exterior.", "Expandir."], meaning: "Tornar algo internacional." }
-];;
+];
 
 let usedIndices = [];
 
@@ -168,8 +168,11 @@ let targetChallenge = null;
 let hintIndex = 0;
 let hintInterval = null;
 let maxWordLength = 0;
-// --- VARIÁVEIS DA GALINHA E FRASES ---
+
+// --- VARIÁVEIS DA GALINHA E MENSAGENS ---
 let consecutiveErrors = 0;
+let chickenAlreadySummoned = false; // Trava para a galinha voar só 1 vez
+let feedbackTimeout = null; // Trava para a mensagem durar exatos 6 segundos
 
 const funnyPhrases = [
     "Que isso, cara? Tá tentando inventar uma palavra nova pro dicionário?",
@@ -326,9 +329,12 @@ function initChallenge() {
     replaceIndex = 0;
     
     hintIndex = 0;
+    consecutiveErrors = 0;
+    chickenAlreadySummoned = false; // "Recarrega" a galinha para o novo desafio
+    if (feedbackTimeout) clearTimeout(feedbackTimeout); // Limpa relógio antigo
+    
     updateHintDisplay();
     startHintCycle();
-    consecutiveErrors = 0;
     
     feedback.innerText = "";
     meaningBox.innerText = "";
@@ -359,6 +365,22 @@ function startHintCycle() {
     }, 5000);
 }
 
+// LÓGICA DO BOTÃO PULAR DICA
+const skipHintBtn = document.getElementById('skip-hint-btn');
+if (skipHintBtn) {
+    skipHintBtn.addEventListener('click', () => {
+        if (!targetChallenge) return;
+        // Avança o índice da dica manualmente
+        hintIndex++; 
+        if (hintIndex >= targetChallenge.hints.length) hintIndex = 0;
+        
+        updateHintDisplay();
+        
+        // Reinicia o timer para dar tempo de ler a nova dica antes de trocar sozinha
+        startHintCycle();
+    });
+}
+
 function stopHintCycle() { if (hintInterval) clearInterval(hintInterval); }
 
 const isVowel = (c) => 'AEIOUaeiou'.includes(c);
@@ -380,6 +402,7 @@ alphabet.forEach((letter, index) => {
     
     miniAlphabetContainer.appendChild(div);
 });
+
 function updateMiniAlphabet() {
     document.querySelectorAll('.mini-char').forEach(el => el.classList.remove('active'));
     currentWord.forEach(char => {
@@ -575,8 +598,8 @@ async function validate() {
             initChallenge();
             feedback.innerText = "Novo desafio iniciado!";
             
-            // --- LINHA NOVA PARA APAGAR A MENSAGEM DEPOIS DE 2 SEGUNDOS ---
-            setTimeout(() => { feedback.innerText = ""; }, 2000); 
+            if (feedbackTimeout) clearTimeout(feedbackTimeout);
+            feedbackTimeout = setTimeout(() => { feedback.innerText = ""; }, 2000); 
             
         }, 5000);
         return;
@@ -592,7 +615,7 @@ async function validate() {
             animateMage('reset');
             consecutiveErrors = 0; // Zera o contador se chutar uma palavra real
         } else {
-            // ---- COMEÇO DA LÓGICA DA GALINHA E FRASES ----
+            // ---- LÓGICA DA GALINHA REVISADA ----
             consecutiveErrors++;
             
             // Escolhe uma frase aleatória
@@ -601,13 +624,19 @@ async function validate() {
             // Exibe a mensagem original + a frase engraçada menorzinha embaixo
             feedback.innerHTML = `❌ Tente novamente<br><span style="font-size: 0.9rem; font-weight: normal; color: var(--text-dim);">${randomPhrase}</span>`; 
             feedback.style.color = "var(--error)";
-            document.body.classList.add('error-flash'); 
             
-            if (consecutiveErrors === 3) {
+            document.body.classList.add('error-flash'); 
+            setTimeout(() => document.body.classList.remove('error-flash'), 500); // Remove o piscar vermelho
+            
+            // Invoca a galinha apenas se for o 3º erro E se ela ainda não tiver aparecido neste desafio
+            if (consecutiveErrors >= 3 && chickenAlreadySummoned === false) {
+                chickenAlreadySummoned = true; // Marca que ela já apareceu neste desafio
+                
                 // Toca o SEU som de galinha local
                 const chickenAudio = new Audio('galinha.mp3');
-                chickenAudio.volume = 1.0; // Volume no máximo!
+                chickenAudio.volume = 1.0; 
                 chickenAudio.play().catch(e => console.log("Erro no áudio:", e));    
+                
                 const chickenEl = document.createElement('div');
                 chickenEl.innerText = '🐔'; // A galinha!
                 chickenEl.className = 'flying-chicken';
@@ -616,7 +645,6 @@ async function validate() {
                 // Remove a galinha do HTML depois de 3 segundos
                 setTimeout(() => chickenEl.remove(), 3000);
                 
-                consecutiveErrors = 0; // Zera para a galinha voltar se ele errar mais 3
             } else {
                 playSoundEffect('error');
                 animateMage('sad');
@@ -627,10 +655,15 @@ async function validate() {
         feedback.innerText = "Erro na API"; 
     }
 
-    setTimeout(() => { 
+    // --- CONTROLE DE TEMPO DAS FRASES (5 SEGUNDOS) ---
+    if (feedbackTimeout) clearTimeout(feedbackTimeout); // Cancela o timer anterior
+    
+    feedbackTimeout = setTimeout(() => { 
         document.body.classList.remove('success-flash', 'error-flash'); 
-        if(!feedback.innerText.includes("Novo")) feedback.innerText = ""; 
-    }, 2000);
+        if(!feedback.innerText.includes("Novo") && !feedback.innerText.includes("ACERTOU")) {
+            feedback.innerText = ""; 
+        }
+    }, 5000); // 5000 = 5 segundos
 }
 
 charInput.addEventListener('input', (e) => { 
