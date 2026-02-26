@@ -168,6 +168,81 @@ let targetChallenge = null;
 let hintIndex = 0;
 let hintInterval = null;
 let maxWordLength = 0;
+// --- VARIÁVEIS DA GALINHA E FRASES ---
+let consecutiveErrors = 0;
+
+const funnyPhrases = [
+    "Que isso, cara? Tá tentando inventar uma palavra nova pro dicionário?",
+    "Essa aí nem o Google teve coragem de reconhecer.",
+    "Tá difícil ou você tá de gracinha validando tudo errado?",
+    "Quer algo mais fácil? Vai jogar modo três letras, campeão.",
+    "Você digitou com o cotovelo agora, né?",
+    "Calma, respira… não é um teclado musical.",
+    "Essa palavra existe só na sua imaginação fértil.",
+    "Eu até tentei defender você, mas não deu.",
+    "Se errar mais uma, vou pedir reforço pro professor de português.",
+    "Tá treinando pra campeonato mundial de erro?",
+    "Essa passou longe… tipo, outro CEP.",
+    "Amigo… isso foi estratégia ou desespero?",
+    "Eu acredito em você… mas essa aí me quebrou.",
+    "Se criatividade valesse ponto, você tava ganhando.",
+    "Palavra inédita detectada. Quer patentear?",
+    "Você tá jogando ou testando minha paciência?",
+    "Errar é humano… mas você tá se dedicando demais.",
+    "Quase! Só errou todas as letras.",
+    "Vou fingir que não vi essa e te dar outra chance.",
+    "Tá me estressando… mas de um jeito carismático. Continua tentando",
+    "Você tá jogando ou digitando senha errada do WiFi?",
+    "Essa palavra foi criada agora, né? Registro em cartório já.",
+    "Calma, não precisa inventar idioma novo.",
+    "Eu pedi uma palavra, não um enigma.",
+    "Tá tentando me confundir ou se confundir?",
+    "Se errar desse jeito fosse esporte, você tava nas Olimpíadas.",
+    "Isso aí foi ousadia… mas não foi acerto.",
+    "Quase acertou! Só faltou acertar.",
+    "Você piscou e digitou?",
+    "Essa palavra mora em Nárnia.",
+    "Digitou com pressa ou com raiva?",
+    "Eu acredito no seu potencial… mas não nessa palavra.",
+    "Tá testando minha paciência nível hard?",
+    "Respira, jovem gafanhoto.",
+    "Essa foi tão errada que eu até ri.",
+    "Você desbloqueou o modo criativo sem querer.",
+    "Palavra alternativa detectada. Pena que não existe.",
+    "Tá querendo trollar o sistema?",
+    "Se fosse prova, eu chamava seus pais.",
+    "Essa aí passou voando… longe do certo.",
+    "Foi estratégia secreta ou só caos mesmo?",
+    "Você tá aquecendo os dedos antes de acertar, né?",
+    "Essa palavra tá pedindo socorro.",
+    "Eu não esperava isso… e olha que eu já vi muita coisa.",
+    "Tentativa válida… só não foi válida mesmo.",
+    "Você está oficialmente improvisando.",
+    "Calma, não é teste de criatividade.",
+    "Se insistir assim, eu começo a cobrar taxa de erro.",
+    "Palavra misteriosa… até demais.",
+    "Você tem talento… pra errar com confiança.",
+    "Isso foi ousado. Errado, mas ousado.",
+    "A intenção foi boa… eu acho.",
+    "Tá jogando no modo aleatório?",
+    "Essa palavra veio de qual dimensão?",
+    "Você tá tentando desbloquear um final secreto?",
+    "Se errar fosse XP, você já tava nível máximo.",
+    "Palavra quase invisível… porque não existe.",
+    "Eu vi o que você fez aí. Não recomendo.",
+    "Tá me desafiando ou se desafiando?",
+    "Essa foi criativa. Inútil… mas criativa.",
+    "Você digitou e pensou depois, né?",
+    "Quer um dicionário de presente?",
+    "Tá fazendo speedrun de erro?",
+    "Essa aí nem a professora corrigia.",
+    "Você consegue… só não assim.",
+    "Palavra inédita versão beta.",
+    "Foi tentativa ou experimento científico?",
+    "Tá achando que eu não sei ler?",
+    "Eu sinto que você consegue melhor… bem melhor.",
+    "Continua tentando. Uma hora a gente acerta… eu espero."
+];
 
 /* --- MOBILE MENU LOGIC --- */
 const sidebar = document.getElementById('sidebar');
@@ -253,6 +328,7 @@ function initChallenge() {
     hintIndex = 0;
     updateHintDisplay();
     startHintCycle();
+    consecutiveErrors = 0;
     
     feedback.innerText = "";
     meaningBox.innerText = "";
@@ -509,15 +585,47 @@ async function validate() {
     try {
         const res = await fetch(`https://api.dicionario-aberto.net/word/${word.toLowerCase()}`);
         const data = await res.json();
+        
         if (data.length > 0) {
-            feedback.innerText = "⚠️ Palavra existe, mas não é a do desafio."; feedback.style.color = "var(--warning)";
+            feedback.innerText = "⚠️ Palavra existe, mas não é a do desafio."; 
+            feedback.style.color = "var(--warning)";
             animateMage('reset');
+            consecutiveErrors = 0; // Zera o contador se chutar uma palavra real
         } else {
-            feedback.innerText = "❌ Tente novamente"; feedback.style.color = "var(--error)";
-            document.body.classList.add('error-flash'); playSoundEffect('error');
-            animateMage('sad');
+            // ---- COMEÇO DA LÓGICA DA GALINHA E FRASES ----
+            consecutiveErrors++;
+            
+            // Escolhe uma frase aleatória
+            const randomPhrase = funnyPhrases[Math.floor(Math.random() * funnyPhrases.length)];
+            
+            // Exibe a mensagem original + a frase engraçada menorzinha embaixo
+            feedback.innerHTML = `❌ Tente novamente<br><span style="font-size: 0.9rem; font-weight: normal; color: var(--text-dim);">${randomPhrase}</span>`; 
+            feedback.style.color = "var(--error)";
+            document.body.classList.add('error-flash'); 
+            
+            if (consecutiveErrors === 3) {
+                // Toca o SEU som de galinha local
+                const chickenAudio = new Audio('galinha.mp3');
+                chickenAudio.volume = 1.0; // Volume no máximo!
+                chickenAudio.play().catch(e => console.log("Erro no áudio:", e));    
+                const chickenEl = document.createElement('div');
+                chickenEl.innerText = '🐔'; // A galinha!
+                chickenEl.className = 'flying-chicken';
+                document.body.appendChild(chickenEl);
+                
+                // Remove a galinha do HTML depois de 3 segundos
+                setTimeout(() => chickenEl.remove(), 3000);
+                
+                consecutiveErrors = 0; // Zera para a galinha voltar se ele errar mais 3
+            } else {
+                playSoundEffect('error');
+                animateMage('sad');
+            }
+            // ---- FIM DA LÓGICA ----
         }
-    } catch { feedback.innerText = "Erro na API"; }
+    } catch { 
+        feedback.innerText = "Erro na API"; 
+    }
 
     setTimeout(() => { 
         document.body.classList.remove('success-flash', 'error-flash'); 

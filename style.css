@@ -482,3 +482,22 @@ button#validate-btn:active { transform: scale(0.95); }
     transform: scale(1.05);
     box-shadow: 0 0 20px var(--accent);
 }
+/* ================= EASTER EGG DA GALINHA ================= */
+.feedback { text-align: center; } /* Garante que a frase fique centralizada */
+
+.flying-chicken {
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8rem; /* Tamanho gigante */
+    z-index: 9999;
+    pointer-events: none; /* Para não atrapalhar o clique do jogador */
+    animation: chickenFly 3s ease-in-out forwards;
+}
+
+@keyframes chickenFly {
+    0% { bottom: -100px; transform: translateX(-50%) rotate(0deg); opacity: 1; }
+    50% { bottom: 50%; transform: translateX(-50%) rotate(20deg) scale(1.5); }
+    100% { bottom: 120%; transform: translateX(-50%) rotate(-20deg); opacity: 0; }
+}
