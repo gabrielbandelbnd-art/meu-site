@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
@@ -7,8 +7,31 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="auth-gate" class="auth-gate">
+        <div class="auth-gate-card">
+            <h2>Entrar no MagicLexis</h2>
+            <p>Faça login para continuar e liberar o Grimório Arcano.</p>
+
+            <div class="profile-auth-panel">
+                <button id="gate-google-btn" class="profile-btn auth-google">Google</button>
+                <button id="gate-apple-btn" class="profile-btn auth-apple">Apple</button>
+                <button id="gate-anon-btn" class="profile-btn auth-anon">Visitante</button>
+            </div>
+
+            <div class="profile-auth-email">
+                <input id="gate-email-input" type="email" placeholder="Email">
+                <input id="gate-password-input" type="password" placeholder="Senha">
+                <div class="profile-auth-email-actions">
+                    <button id="gate-login-email-btn" class="profile-btn">Entrar</button>
+                    <button id="gate-register-email-btn" class="profile-btn">Cadastrar</button>
+                </div>
+            </div>
+            <div id="gate-status" class="profile-status"></div>
+        </div>
+    </div>
+
     <!-- ================= HUB PRINCIPAL ================= -->
-<div id="main-hub" class="hub-container">
+<div id="main-hub" class="hub-container hidden-control">
     <div class="hub-content">
         <h1 class="hub-title">🧙 Grimório Arcano</h1>
         <p class="hub-sub">Bem-vindo ao MagicLexis</p>
@@ -20,6 +43,7 @@
             <button class="hub-btn" id="hub-ranking">📊 Ranking</button>
         </div>
     </div>
+    <button id="hub-logout-btn" class="hub-logout-btn hidden-control">Sair</button>
 </div>
 
 
@@ -67,6 +91,17 @@
 
     <div id="app-container" class="app-container hidden-app">
         <div id="mobile-overlay" class="mobile-overlay"></div>
+        <div id="user-menu" class="user-menu hidden-control">
+            <button id="user-menu-trigger" class="user-menu-trigger">
+                <img id="user-avatar-top" class="user-avatar-top" alt="Avatar">
+                <span id="user-name-top" class="user-name-top">Visitante</span>
+                <span class="user-menu-caret">▾</span>
+            </button>
+            <div id="user-menu-dropdown" class="user-menu-dropdown hidden-control">
+                <button id="user-open-profile">Configurações</button>
+                <button id="user-logout-top">Logout</button>
+            </div>
+        </div>
 
         <aside class="sidebar" id="sidebar">
             <button id="toggle-sidebar-btn" class="sidebar-toggle" title="Expandir/Recolher Menu">◀</button>
@@ -190,6 +225,51 @@
 
     <audio id="success-sound" src="https://actions.google.com/sounds/v1/cartoon/clap_and_cheer_one_person.ogg"></audio>
 
+    <div id="profile-modal" class="profile-modal hidden-control">
+        <div class="profile-card">
+            <button id="close-profile-modal" class="profile-close">✕</button>
+            <h3>Perfil de Jogador</h3>
+
+            <div class="profile-auth-panel">
+                <button id="login-google-btn" class="profile-btn auth-google">Google</button>
+                <button id="login-apple-btn" class="profile-btn auth-apple">Apple</button>
+                <button id="login-anon-btn" class="profile-btn auth-anon">Entrar como visitante</button>
+            </div>
+
+            <div class="profile-auth-email">
+                <input id="email-input" type="email" placeholder="Email">
+                <input id="password-input" type="password" placeholder="Senha">
+                <div class="profile-auth-email-actions">
+                    <button id="login-email-btn" class="profile-btn">Entrar</button>
+                    <button id="register-email-btn" class="profile-btn">Cadastrar</button>
+                </div>
+            </div>
+
+            <div class="profile-divider"></div>
+
+            <div class="profile-main">
+                <img id="profile-avatar" class="profile-avatar" alt="Avatar do usuário">
+                <input id="profile-name-input" type="text" maxlength="24" placeholder="Seu nome">
+                <input id="profile-photo-input" type="file" accept="image/*">
+                <button id="save-profile-btn" class="profile-btn">Salvar perfil</button>
+                <div id="profile-points" class="profile-points">Pontos: 0</div>
+                <div id="profile-status" class="profile-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ranking-modal" class="profile-modal hidden-control">
+        <div class="profile-card ranking-card">
+            <button id="close-ranking-modal" class="profile-close">✕</button>
+            <h3>Ranking Global (Top 50)</h3>
+            <div id="ranking-list" class="ranking-list"></div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

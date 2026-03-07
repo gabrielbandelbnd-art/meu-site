@@ -1,4 +1,4 @@
-﻿/* --- DADOS (LOTE 1 - 120 PALAVRAS) --- */
+/* --- DADOS (LOTE 1 - 120 PALAVRAS) --- */
 const allChallenges = [
     // --- 3 LETRAS ---
     { word: "SOL", hints: ["Astro rei.", "Aquece o dia.", "Estrela.", "Luz natural.", "Calor."], meaning: "Estrela central do sistema solar." },
@@ -589,6 +589,7 @@ async function validate() {
         meaningBox.innerText = targetChallenge.meaning;
         meaningBox.classList.remove('hidden');
         document.body.classList.add('success-flash');
+        handleCorrectAnswer();
         
         successSound.play(); playSoundEffect('victory'); triggerConfetti();
         animateMage('win');
@@ -849,6 +850,7 @@ document.getElementById('start-game-btn').onclick = () => {
     initChallenge();
 
     if (audioCtx.state === 'suspended') audioCtx.resume();
+    syncTopUserUi(activeUser, activeUserDoc);
 };
 /* ================= HUB CONTROLE ================= */
 
@@ -859,11 +861,12 @@ const welcomeScreen = document.getElementById("welcome-screen");
 hubPlay.addEventListener("click", () => {
     hub.style.display = "none";
     welcomeScreen.style.display = "flex";
+    syncTopUserUi(activeUser, activeUserDoc);
 });
 
 // Botões futuros
 document.getElementById("hub-profile").addEventListener("click", () => {
-    alert("Sistema de Perfil em construção 🔮");
+    openProfileModal();
 });
 
 document.getElementById("hub-tournaments").addEventListener("click", () => {
@@ -871,7 +874,7 @@ document.getElementById("hub-tournaments").addEventListener("click", () => {
 });
 
 document.getElementById("hub-ranking").addEventListener("click", () => {
-    alert("Ranking global em breve 📊");
+    openRankingModal();
 });
 /* --- LÓGICA DO SELETOR DE MODO DE JOGO --- */
 document.addEventListener("DOMContentLoaded", () => {
@@ -908,4 +911,400 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+});
+/* ================= FIREBASE AUTH / PERFIL / RANKING ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyC1QWteo4EFrWokdry-EVS38Dj7J1AhGjI",
+  authDomain: "magiclexis.firebaseapp.com",
+  projectId: "magiclexis",
+  storageBucket: "magiclexis.firebasestorage.app",
+  messagingSenderId: "1018035751895",
+  appId: "1:1018035751895:web:a6817a7bec70e7672e1992"
+};
+
+let auth = null;
+let db = null;
+let storage = null;
+let activeUser = null;
+let activeUserDoc = null;
+
+const DEFAULT_AVATAR = 'https://ui-avatars.com/api/?name=ML&background=1f1f1f&color=bb86fc&size=128';
+
+const profileModal = document.getElementById('profile-modal');
+const rankingModal = document.getElementById('ranking-modal');
+const profileStatus = document.getElementById('profile-status');
+const profileNameInput = document.getElementById('profile-name-input');
+const profilePhotoInput = document.getElementById('profile-photo-input');
+const profileAvatar = document.getElementById('profile-avatar');
+const profilePoints = document.getElementById('profile-points');
+const userMenu = document.getElementById('user-menu');
+const userMenuDropdown = document.getElementById('user-menu-dropdown');
+const userAvatarTop = document.getElementById('user-avatar-top');
+const userNameTop = document.getElementById('user-name-top');
+const hubLogoutBtn = document.getElementById('hub-logout-btn');
+const authGate = document.getElementById('auth-gate');
+const gateStatus = document.getElementById('gate-status');
+
+function setStatus(msg = '', isError = false) {
+    if (!profileStatus) return;
+    profileStatus.innerText = msg;
+    profileStatus.style.color = isError ? 'var(--error)' : 'var(--warning)';
+}
+
+function showControl(el, show) {
+    if (!el) return;
+    el.classList.toggle('hidden-control', !show);
+}
+
+function setGateStatus(msg = '', isError = false) {
+    if (!gateStatus) return;
+    gateStatus.innerText = msg;
+    gateStatus.style.color = isError ? 'var(--error)' : 'var(--warning)';
+}
+
+function showHubScreen(show) {
+    if (!hub) return;
+    if (show) {
+        hub.classList.remove('hidden-control');
+        hub.style.display = 'flex';
+    } else {
+        hub.classList.add('hidden-control');
+    }
+}
+
+function showAuthGate(show) {
+    showControl(authGate, show);
+}
+function getModeVisitor(user) {
+    return !!(user && user.isAnonymous);
+}
+
+async function ensureUserDoc(user) {
+    if (!db || !user || user.isAnonymous) return null;
+    const userRef = db.collection('users').doc(user.uid);
+    const snap = await userRef.get();
+
+    if (!snap.exists) {
+        const baseName = user.displayName || (user.email ? user.email.split('@')[0] : 'Jogador');
+        await userRef.set({
+            uid: user.uid,
+            name: baseName,
+            photo: user.photoURL || DEFAULT_AVATAR,
+            points: 0
+        });
+    }
+
+    const fresh = await userRef.get();
+    return fresh.data();
+}
+
+function syncTopUserUi(user, userDoc) {
+    const isLogged = !!user;
+    const isAnon = getModeVisitor(user);
+
+    const displayName = isLogged
+        ? (isAnon ? 'Visitante' : (userDoc?.name || user.displayName || user.email || 'Jogador'))
+        : 'Visitante';
+
+    const displayPhoto = isLogged
+        ? (userDoc?.photo || user.photoURL || DEFAULT_AVATAR)
+        : DEFAULT_AVATAR;
+
+    if (userNameTop) userNameTop.innerText = displayName;
+    if (userAvatarTop) userAvatarTop.src = displayPhoto;
+    if (profileAvatar) profileAvatar.src = displayPhoto;
+
+    const appVisible = !document.getElementById('app-container')?.classList.contains('hidden-app');
+    showControl(userMenu, isLogged && appVisible);
+
+    const hubVisible = !hub.classList.contains('hidden-control') && hub.style.display !== 'none';
+    showControl(hubLogoutBtn, isLogged && hubVisible);
+    if (profilePoints) {
+        const pts = isAnon ? 0 : (userDoc?.points || 0);
+        profilePoints.innerText = `Pontos: ${pts}`;
+    }
+}
+
+function openProfileModal() {
+    showControl(profileModal, true);
+    showControl(userMenuDropdown, false);
+
+    if (activeUser) {
+        const isAnon = activeUser.isAnonymous;
+        profileNameInput.value = isAnon
+            ? 'Visitante'
+            : (activeUserDoc?.name || activeUser.displayName || activeUser.email?.split('@')[0] || 'Jogador');
+        profileNameInput.disabled = isAnon;
+        profilePhotoInput.disabled = isAnon;
+        if (isAnon) {
+            setStatus('Conta visitante: faça login para salvar perfil e pontuação.');
+        } else {
+            setStatus('');
+        }
+    }
+}
+
+function closeProfileModal() {
+    showControl(profileModal, false);
+    setStatus('');
+}
+
+async function openRankingModal() {
+    showControl(rankingModal, true);
+    showControl(userMenuDropdown, false);
+    await loadRanking();
+}
+
+function closeRankingModal() {
+    showControl(rankingModal, false);
+}
+
+async function uploadProfilePhoto(file, uid) {
+    if (!storage || !file || !uid) return null;
+    const storageRef = storage.ref().child(`profile_photos/${uid}/${Date.now()}_${file.name}`);
+    await storageRef.put(file);
+    return await storageRef.getDownloadURL();
+}
+
+async function saveProfile() {
+    if (!activeUser || !db || activeUser.isAnonymous) {
+        setStatus('Visitante não salva perfil.', true);
+        return;
+    }
+
+    const newName = (profileNameInput.value || '').trim().slice(0, 24) || 'Jogador';
+    const file = profilePhotoInput.files?.[0] || null;
+
+    setStatus('Salvando perfil...');
+    try {
+        let photoURL = activeUserDoc?.photo || activeUser.photoURL || DEFAULT_AVATAR;
+        if (file) {
+            photoURL = await uploadProfilePhoto(file, activeUser.uid);
+        }
+
+        await activeUser.updateProfile({ displayName: newName, photoURL });
+        await db.collection('users').doc(activeUser.uid).set({
+            uid: activeUser.uid,
+            name: newName,
+            photo: photoURL,
+            points: activeUserDoc?.points || 0
+        }, { merge: true });
+
+        activeUserDoc = { ...(activeUserDoc || {}), name: newName, photo: photoURL };
+        syncTopUserUi(activeUser, activeUserDoc);
+        setStatus('Perfil salvo com sucesso.');
+    } catch (err) {
+        setStatus('Erro ao salvar perfil: ' + (err.message || err), true);
+    }
+}
+
+async function authWithGoogle() {
+    if (!auth) return;
+    try {
+        await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        setStatus('Login Google realizado.');
+        setGateStatus('Login Google realizado.');
+    } catch (err) {
+        setStatus('Falha no login Google: ' + (err.message || err), true);
+        setGateStatus('Falha no login Google: ' + (err.message || err), true);
+    }
+}
+
+async function authWithApple() {
+    if (!auth) return;
+    try {
+        const provider = new firebase.auth.OAuthProvider('apple.com');
+        provider.addScope('email');
+        provider.addScope('name');
+        await auth.signInWithPopup(provider);
+        setStatus('Login Apple realizado.');
+        setGateStatus('Login Apple realizado.');
+    } catch (err) {
+        setStatus('Falha no login Apple: ' + (err.message || err), true);
+        setGateStatus('Falha no login Apple: ' + (err.message || err), true);
+    }
+}
+
+async function authAnonymously() {
+    if (!auth) return;
+    try {
+        await auth.signInAnonymously();
+        setStatus('Entrou como visitante.');
+        setGateStatus('Entrou como visitante.');
+    } catch (err) {
+        setStatus('Erro no modo visitante: ' + (err.message || err), true);
+        setGateStatus('Erro no modo visitante: ' + (err.message || err), true);
+    }
+}
+
+async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordFieldId = 'password-input') {
+    if (!auth) return;
+    const email = (document.getElementById(emailFieldId)?.value || '').trim();
+    const password = document.getElementById(passwordFieldId)?.value || '';
+
+    if (!email || !password) {
+        setStatus('Informe email e senha.', true);
+        setGateStatus('Informe email e senha.', true);
+        return;
+    }
+
+    try {
+        if (isRegister) {
+            await auth.createUserWithEmailAndPassword(email, password);
+            setStatus('Conta criada com sucesso.');
+            setGateStatus('Conta criada com sucesso.');
+        } else {
+            await auth.signInWithEmailAndPassword(email, password);
+            setStatus('Login realizado.');
+            setGateStatus('Login realizado.');
+        }
+    } catch (err) {
+        setStatus('Erro no login/cadastro: ' + (err.message || err), true);
+        setGateStatus('Erro no login/cadastro: ' + (err.message || err), true);
+    }
+}
+
+async function logoutUser() {
+    if (!auth) return;
+    try {
+        await auth.signOut();
+        setStatus('Sessão encerrada.');
+        setGateStatus('Faça login para continuar.');
+    } catch (err) {
+        setStatus('Erro ao sair: ' + (err.message || err), true);
+        setGateStatus('Erro ao sair: ' + (err.message || err), true);
+    }
+}
+
+async function handleCorrectAnswer() {
+    if (!activeUser || !db || activeUser.isAnonymous) return;
+
+    try {
+        const ref = db.collection('users').doc(activeUser.uid);
+        await ref.set({
+            uid: activeUser.uid,
+            name: activeUserDoc?.name || activeUser.displayName || 'Jogador',
+            photo: activeUserDoc?.photo || activeUser.photoURL || DEFAULT_AVATAR,
+            points: firebase.firestore.FieldValue.increment(1)
+        }, { merge: true });
+
+        const fresh = await ref.get();
+        activeUserDoc = fresh.data();
+        if (profilePoints) profilePoints.innerText = `Pontos: ${activeUserDoc.points || 0}`;
+    } catch (err) {
+        console.log('Erro ao somar pontos:', err);
+    }
+}
+
+async function loadRanking() {
+    const rankingList = document.getElementById('ranking-list');
+    if (!rankingList) return;
+
+    if (!db) {
+        rankingList.innerHTML = '<div class="ranking-item">Firebase indisponível.</div>';
+        return;
+    }
+
+    rankingList.innerHTML = '<div class="ranking-item">Carregando ranking...</div>';
+
+    try {
+        const snap = await db.collection('users').orderBy('points', 'desc').limit(50).get();
+
+        if (snap.empty) {
+            rankingList.innerHTML = '<div class="ranking-item">Sem dados no ranking ainda.</div>';
+            return;
+        }
+
+        rankingList.innerHTML = '';
+        snap.docs.forEach((doc, idx) => {
+            const u = doc.data();
+            const item = document.createElement('div');
+            item.className = 'ranking-item';
+            item.innerHTML = `
+                <strong>#${idx + 1}</strong>
+                <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+                    <img class="ranking-avatar" src="${u.photo || DEFAULT_AVATAR}" alt="avatar">
+                    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${u.name || 'Jogador'}</span>
+                </div>
+                <strong>${u.points || 0}</strong>
+            `;
+            rankingList.appendChild(item);
+        });
+    } catch (err) {
+        rankingList.innerHTML = `<div class="ranking-item">Erro ao carregar ranking: ${err.message || err}</div>`;
+    }
+}
+
+function bindAuthUiEvents() {
+    document.getElementById('close-profile-modal')?.addEventListener('click', closeProfileModal);
+    document.getElementById('close-ranking-modal')?.addEventListener('click', closeRankingModal);
+    document.getElementById('save-profile-btn')?.addEventListener('click', saveProfile);
+
+    document.getElementById('login-google-btn')?.addEventListener('click', authWithGoogle);
+    document.getElementById('login-apple-btn')?.addEventListener('click', authWithApple);
+    document.getElementById('login-anon-btn')?.addEventListener('click', authAnonymously);
+    document.getElementById('login-email-btn')?.addEventListener('click', () => authWithEmail(false));
+    document.getElementById('register-email-btn')?.addEventListener('click', () => authWithEmail(true));
+
+    document.getElementById('gate-google-btn')?.addEventListener('click', authWithGoogle);
+    document.getElementById('gate-apple-btn')?.addEventListener('click', authWithApple);
+    document.getElementById('gate-anon-btn')?.addEventListener('click', authAnonymously);
+    document.getElementById('gate-login-email-btn')?.addEventListener('click', () => authWithEmail(false, 'gate-email-input', 'gate-password-input'));
+    document.getElementById('gate-register-email-btn')?.addEventListener('click', () => authWithEmail(true, 'gate-email-input', 'gate-password-input'));
+
+    document.getElementById('hub-logout-btn')?.addEventListener('click', logoutUser);
+    document.getElementById('user-logout-top')?.addEventListener('click', logoutUser);
+    document.getElementById('user-open-profile')?.addEventListener('click', openProfileModal);
+
+    document.getElementById('user-menu-trigger')?.addEventListener('click', () => {
+        showControl(userMenuDropdown, userMenuDropdown.classList.contains('hidden-control'));
+    });
+
+    window.addEventListener('click', (e) => {
+        if (!userMenu?.contains(e.target)) showControl(userMenuDropdown, false);
+        if (e.target === profileModal) closeProfileModal();
+        if (e.target === rankingModal) closeRankingModal();
+    });
+}
+
+function initFirebase() {
+    if (!window.firebase) return;
+
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+
+    auth = firebase.auth();
+    db = firebase.firestore();
+    storage = firebase.storage();
+
+    auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+            activeUser = null;
+            activeUserDoc = null;
+            showAuthGate(true);
+            showHubScreen(false);
+            welcomeScreen.style.display = 'none';
+            document.getElementById('app-container')?.classList.add('hidden-app');
+            syncTopUserUi(null, null);
+            return;
+        }
+
+        activeUser = user;
+        activeUserDoc = await ensureUserDoc(user);
+
+        showAuthGate(false);
+        const appHidden = document.getElementById('app-container')?.classList.contains('hidden-app');
+        const welcomeHidden = welcomeScreen.style.display === 'none';
+        if (appHidden && welcomeHidden) {
+            showHubScreen(true);
+        }
+
+        syncTopUserUi(user, activeUserDoc);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    bindAuthUiEvents();
+    initFirebase();
 });
