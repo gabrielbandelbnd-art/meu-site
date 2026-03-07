@@ -1143,7 +1143,6 @@ async function authWithGoogle() {
         setGateStatus('Falha no login Google: ' + (err.message || err), true);
     }
 }
-
 async function authWithApple() {
     if (!auth) {
         setGateStatus('Firebase Auth não inicializado. Recarregue a página.', true);
@@ -1157,10 +1156,17 @@ async function authWithApple() {
         setStatus('Login Apple realizado.');
         setGateStatus('Login Apple realizado.');
     } catch (err) {
+        const code = err?.code || '';
+        if (code === 'auth/operation-not-allowed') {
+            setStatus('Login Apple indisponível neste projeto no momento. Use Google, Email/Senha ou Visitante.');
+            setGateStatus('Login Apple indisponível neste projeto no momento. Use Google, Email/Senha ou Visitante.');
+            return;
+        }
         setStatus('Falha no login Apple: ' + (err.message || err), true);
         setGateStatus('Falha no login Apple: ' + (err.message || err), true);
     }
 }
+
 
 async function authAnonymously() {
     if (!auth) {
