@@ -700,8 +700,11 @@ if(toggleBtn) {
 }
 
 
+const isMobileViewport = () => window.matchMedia('(max-width: 800px)').matches;
+
 document.body.onclick = (e) => { 
     if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (isMobileViewport()) return; // Evita abrir teclado a cada toque fora do input no celular
     // Ajuste para não roubar foco se clicar no sidebar mobile
     if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.classList.contains('letter-box') && !sidebar.contains(e.target) && !alphabetDrawer.contains(e.target)) {
         charInput.focus(); 
