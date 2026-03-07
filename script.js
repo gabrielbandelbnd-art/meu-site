@@ -935,8 +935,11 @@ const rankingModal = document.getElementById('ranking-modal');
 const profileStatus = document.getElementById('profile-status');
 const profileNameInput = document.getElementById('profile-name-input');
 const profilePhotoInput = document.getElementById('profile-photo-input');
+const profilePhotoBtn = document.getElementById('profile-photo-btn');
+const profileNameTitle = document.getElementById('profile-name-title');
 const profileAvatar = document.getElementById('profile-avatar');
 const profilePoints = document.getElementById('profile-points');
+const profileRank = document.getElementById('profile-rank');
 const userMenu = document.getElementById('user-menu');
 const userMenuDropdown = document.getElementById('user-menu-dropdown');
 const userAvatarTop = document.getElementById('user-avatar-top');
@@ -1127,7 +1130,10 @@ async function saveProfile() {
 }
 
 async function authWithGoogle() {
-    if (!auth) return;
+    if (!auth) {
+        setGateStatus('Firebase Auth não inicializado. Recarregue a página.', true);
+        return;
+    }
     try {
         await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
         setStatus('Login Google realizado.');
@@ -1139,7 +1145,10 @@ async function authWithGoogle() {
 }
 
 async function authWithApple() {
-    if (!auth) return;
+    if (!auth) {
+        setGateStatus('Firebase Auth não inicializado. Recarregue a página.', true);
+        return;
+    }
     try {
         const provider = new firebase.auth.OAuthProvider('apple.com');
         provider.addScope('email');
@@ -1154,7 +1163,10 @@ async function authWithApple() {
 }
 
 async function authAnonymously() {
-    if (!auth) return;
+    if (!auth) {
+        setGateStatus('Firebase Auth não inicializado. Recarregue a página.', true);
+        return;
+    }
     try {
         await auth.signInAnonymously();
         setStatus('Entrou como visitante.');
@@ -1166,7 +1178,10 @@ async function authAnonymously() {
 }
 
 async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordFieldId = 'password-input') {
-    if (!auth) return;
+    if (!auth) {
+        setGateStatus('Firebase Auth não inicializado. Recarregue a página.', true);
+        return;
+    }
     const email = (document.getElementById(emailFieldId)?.value || '').trim();
     const password = document.getElementById(passwordFieldId)?.value || '';
 
@@ -1292,7 +1307,10 @@ function bindAuthUiEvents() {
 }
 
 function initFirebase() {
-    if (!window.firebase) return;
+    if (!window.firebase) {
+        setGateStatus('Firebase não carregou. Verifique internet/CDN e recarregue (Ctrl+F5).', true);
+        return;
+    }
 
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
