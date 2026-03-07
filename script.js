@@ -1291,14 +1291,17 @@ function initFirebase() {
         }
 
         activeUser = user;
-        activeUserDoc = await ensureUserDoc(user);
+        try {
+            activeUserDoc = await ensureUserDoc(user);
+        } catch (e) {
+            activeUserDoc = null;
+            console.log('Falha ao carregar doc do usuário:', e);
+        }
 
         showAuthGate(false);
-        const appHidden = document.getElementById('app-container')?.classList.contains('hidden-app');
-        const welcomeHidden = welcomeScreen.style.display === 'none';
-        if (appHidden && welcomeHidden) {
-            showHubScreen(true);
-        }
+        showHubScreen(true);
+        welcomeScreen.style.display = 'none';
+        document.getElementById('app-container')?.classList.add('hidden-app');
 
         syncTopUserUi(user, activeUserDoc);
     });

@@ -9,23 +9,28 @@
 <body>
     <div id="auth-gate" class="auth-gate">
         <div class="auth-gate-card">
-            <h2>Entrar no MagicLexis</h2>
-            <p>Faça login para continuar e liberar o Grimório Arcano.</p>
+            <div class="auth-brand">MAGICLEXIS</div>
+            <h2>Entre no Grimório Arcano</h2>
+            <p>Faça login para salvar seu progresso, acumular pontos e subir no ranking.</p>
 
-            <div class="profile-auth-panel">
-                <button id="gate-google-btn" class="profile-btn auth-google">Google</button>
-                <button id="gate-apple-btn" class="profile-btn auth-apple">Apple</button>
-                <button id="gate-anon-btn" class="profile-btn auth-anon">Visitante</button>
-            </div>
-
-            <div class="profile-auth-email">
-                <input id="gate-email-input" type="email" placeholder="Email">
+            <div class="auth-gate-inputs">
+                <input id="gate-email-input" type="email" placeholder="E-mail">
                 <input id="gate-password-input" type="password" placeholder="Senha">
-                <div class="profile-auth-email-actions">
-                    <button id="gate-login-email-btn" class="profile-btn">Entrar</button>
-                    <button id="gate-register-email-btn" class="profile-btn">Cadastrar</button>
-                </div>
             </div>
+
+            <div class="auth-gate-main-actions">
+                <button id="gate-login-email-btn" class="profile-btn auth-main-btn">Entrar</button>
+                <button id="gate-register-email-btn" class="profile-btn auth-secondary-btn">Cadastrar</button>
+            </div>
+
+            <div class="auth-divider-line"><span>ou entre com</span></div>
+
+            <div class="auth-gate-social-row">
+                <button id="gate-apple-btn" class="profile-btn auth-apple icon-btn"><span></span> Apple</button>
+                <button id="gate-google-btn" class="profile-btn auth-google icon-btn"><span>G</span> Google</button>
+                <button id="gate-anon-btn" class="profile-btn auth-anon icon-btn"><span>👤</span> Visitante</button>
+            </div>
+
             <div id="gate-status" class="profile-status"></div>
         </div>
     </div>
