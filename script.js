@@ -1013,6 +1013,7 @@ function syncTopUserUi(user, userDoc) {
     if (userNameTop) userNameTop.innerText = displayName;
     if (userAvatarTop) userAvatarTop.src = displayPhoto;
     if (profileAvatar) profileAvatar.src = displayPhoto;
+    if (profileNameTitle) profileNameTitle.innerText = displayName;
 
     const appVisible = !document.getElementById('app-container')?.classList.contains('hidden-app');
     showControl(userMenu, isLogged && appVisible);
@@ -1025,23 +1026,50 @@ function syncTopUserUi(user, userDoc) {
     }
 }
 
+
+async function refreshProfileRank() {
+    if (!profileRank) return;
+
+    if (!activeUser || activeUser.isAnonymous || !db) {
+        profileRank.innerText = 'Ranking global: visitante';
+        return;
+    }
+
+    try {
+        const points = activeUserDoc?.points || 0;
+        const higher = await db.collection('users').where('points', '>', points).get();
+        const rank = higher.size + 1;
+        profileRank.innerText = `Ranking global: #${rank}`;
+    } catch (err) {
+        profileRank.innerText = 'Ranking global: --';
+    }
+}
 function openProfileModal() {
     showControl(profileModal, true);
     showControl(userMenuDropdown, false);
 
-    if (activeUser) {
-        const isAnon = activeUser.isAnonymous;
-        profileNameInput.value = isAnon
-            ? 'Visitante'
-            : (activeUserDoc?.name || activeUser.displayName || activeUser.email?.split('@')[0] || 'Jogador');
-        profileNameInput.disabled = isAnon;
-        profilePhotoInput.disabled = isAnon;
-        if (isAnon) {
-            setStatus('Conta visitante: faça login para salvar perfil e pontuação.');
-        } else {
-            setStatus('');
-        }
+    if (!activeUser) {
+        setStatus('Faça login para acessar o perfil.', true);
+        return;
     }
+
+    const isAnon = activeUser.isAnonymous;
+    const displayName = isAnon
+        ? 'Visitante'
+        : (activeUserDoc?.name || activeUser.displayName || activeUser.email?.split('@')[0] || 'Jogador');
+
+    profileNameInput.value = displayName;
+    profileNameInput.disabled = isAnon;
+    profilePhotoInput.disabled = isAnon;
+    if (profilePhotoBtn) profilePhotoBtn.disabled = isAnon;
+
+    if (isAnon) {
+        setStatus('Conta visitante: joga normal, mas não salva pontos nem ranking.');
+    } else {
+        setStatus('');
+    }
+
+    refreshProfileRank();
 }
 
 function closeProfileModal() {
@@ -1239,12 +1267,8 @@ function bindAuthUiEvents() {
     document.getElementById('close-profile-modal')?.addEventListener('click', closeProfileModal);
     document.getElementById('close-ranking-modal')?.addEventListener('click', closeRankingModal);
     document.getElementById('save-profile-btn')?.addEventListener('click', saveProfile);
-
-    document.getElementById('login-google-btn')?.addEventListener('click', authWithGoogle);
-    document.getElementById('login-apple-btn')?.addEventListener('click', authWithApple);
-    document.getElementById('login-anon-btn')?.addEventListener('click', authAnonymously);
-    document.getElementById('login-email-btn')?.addEventListener('click', () => authWithEmail(false));
-    document.getElementById('register-email-btn')?.addEventListener('click', () => authWithEmail(true));
+    document.getElementById('profile-logout-btn')?.addEventListener('click', logoutUser);
+    profilePhotoBtn?.addEventListener('click', () => profilePhotoInput?.click());
 
     document.getElementById('gate-google-btn')?.addEventListener('click', authWithGoogle);
     document.getElementById('gate-apple-btn')?.addEventListener('click', authWithApple);
