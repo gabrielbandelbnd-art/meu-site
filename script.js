@@ -1,4 +1,4 @@
-/* --- DADOS (LOTE 1 - 120 PALAVRAS) --- */
+﻿/* --- DADOS (LOTE 1 - 120 PALAVRAS) --- */
 const allChallenges = [
     // --- 3 LETRAS ---
     { word: "SOL", hints: ["Astro rei.", "Aquece o dia.", "Estrela.", "Luz natural.", "Calor."], meaning: "Estrela central do sistema solar." },
