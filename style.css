@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --bg-dark: #121212;
     --sidebar-bg: #1e1e1e;
     --card-bg: #2d2d2d;
@@ -72,7 +72,7 @@ body {
 /* --- ESTRUTURA DO JOGO --- */
 .app-container { display: flex; width: 100%; height: 100%; position: relative; }
 
-/* Botões Mobile (Invisíveis no Desktop) */
+/* BotÃµes Mobile (InvisÃ­veis no Desktop) */
 .mobile-menu-btn, .mobile-alphabet-btn { display: none; }
 .mobile-overlay { display: none; }
 
@@ -92,7 +92,7 @@ body {
 .sidebar.collapsed .sidebar-content { opacity: 0; pointer-events: none; position: absolute; }
 .sidebar.collapsed .mage-container { transform: scale(0.7); bottom: 10px; } 
 
-/* Botão Toggle da Sidebar */
+/* BotÃ£o Toggle da Sidebar */
 .sidebar-toggle {
     position: absolute; top: 50%; right: -15px; width: 30px; height: 30px;
     background: var(--accent); color: #000; border: none; border-radius: 50%;
@@ -127,7 +127,7 @@ body {
     border: 1px solid #333; font-size: 0.9rem;
 }
 
-/* BOTÃO LIMPAR HISTÓRICO - ESTILO ORIGINAL */
+/* BOTÃƒO LIMPAR HISTÃ“RICO - ESTILO ORIGINAL */
 #clear-history {
     background: transparent;
     border: 1px solid var(--error);
@@ -259,7 +259,7 @@ button#validate-btn {
 }
 button#validate-btn:active { transform: scale(0.95); }
 
-/* NOTIFICAÇÕES */
+/* NOTIFICAÃ‡Ã•ES */
 .notification-area { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 40px; }
 .inline-message {
     background: var(--warning); color: #000; padding: 8px 20px; border-radius: 20px;
@@ -294,17 +294,39 @@ button#validate-btn:active { transform: scale(0.95); }
     font-weight: bold; 
     border-radius: 4px; 
     background: #222; 
+    transition: transform 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+    transform-origin: center;
 }
 .mini-char.active { color: #000; background-color: var(--accent); }
+.mini-char:hover {
+    transform: scale(1.12);
+    color: #f0f0f0;
+    box-shadow: 0 0 10px rgba(187, 134, 252, 0.45);
+    z-index: 2;
+}
+.mini-char.active:hover {
+    color: #000;
+    box-shadow: 0 0 12px rgba(187, 134, 252, 0.65);
+}
 
 /* --- NOVA CLASSE PARA A LETRA PEQUENA --- */
 .mirrored-letter {
     position: absolute;
     bottom: 2px;
     right: 4px;
-    font-size: 0.5rem; /* Fica bem pequenininha */
-    opacity: 0.6; /* Levemente transparente para não brigar com a letra principal */
-    font-weight: normal;
+    font-size: 0.62rem; /* Mais visível sem competir com a letra principal */
+    opacity: 0.95;
+    font-weight: 700;
+    color: #d8d8d8;
+    text-shadow: 0 0 2px rgba(255, 255, 255, 0.25);
+}
+.mini-char.active .mirrored-letter {
+    color: #1a1a1a;
+    opacity: 0.9;
+}
+.mini-char:hover .mirrored-letter {
+    color: #ffffff;
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.45);
 }
 /* TOOLTIP & EXTRAS */
 .tooltip, .tooltip-inline {
@@ -317,12 +339,80 @@ button#validate-btn:active { transform: scale(0.95); }
 .success-flash { box-shadow: inset 0 0 60px rgba(3, 218, 198, 0.3); }
 .error-flash { box-shadow: inset 0 0 60px rgba(207, 102, 121, 0.3); }
 
+/* ================= MODAL DE REGRAS (CLIQUE) ================= */
+.rules-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(3px);
+}
+.rules-modal-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
 
-/* ==========================================================================
-   BOLHA DE PROTEÇÃO MOBILE
+.rules-modal-box {
+    background: var(--sidebar-bg);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 30px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.9);
+    color: #fff;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    transform: scale(0.8);
+    transition: transform 0.3s;
+}
+.rules-modal-overlay.active .rules-modal-box {
+    transform: scale(1);
+}
+
+.close-rules-btn {
+    position: absolute;
+    top: 15px; right: 20px;
+    background: transparent;
+    color: var(--error);
+    border: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: bold;
+}
+.close-rules-btn:hover {
+    transform: scale(1.2);
+}
+
+.rules-modal-box h4 { margin: 15px 0 5px 0; font-size: 1.05rem; }
+.rules-modal-box p { margin: 5px 0; }
+.rules-modal-box code { background: #000; padding: 2px 6px; border-radius: 4px; color: var(--accent); font-weight: bold; font-size: 1rem; }/* ==========================================================================
+   BOLHA DE PROTEÃ‡ÃƒO MOBILE
    ========================================================================== */
 @media (max-width: 800px) {
-    /* 1. Destrava a rolagem da página inteira */
+    /* AdaptaÃ§Ã£o do Popup de Regras para Mobile */
+    .rules-detail-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        width: 90%;
+        margin-left: 0;
+    }
+    .rules-hover-trigger:hover .rules-detail-popup {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    /* 1. Destrava a rolagem da pÃ¡gina inteira */
     html, body {
         height: auto !important;
         min-height: 100vh;
@@ -340,11 +430,11 @@ button#validate-btn:active { transform: scale(0.95); }
     .game-area {
         height: auto !important;
         min-height: 100vh;
-        padding: 80px 15px 40px 15px; /* Espaço para o botão de menu no topo não cobrir o jogo */
+        padding: 80px 15px 40px 15px; /* EspaÃ§o para o botÃ£o de menu no topo nÃ£o cobrir o jogo */
         overflow-y: visible !important;
     }
 
-    /* 2. Ajuste do Tabuleiro para caber bem na tela em pé */
+    /* 2. Ajuste do Tabuleiro para caber bem na tela em pÃ© */
     .board-wrapper {
         flex-grow: 0;
         margin: 20px 0;
@@ -352,7 +442,7 @@ button#validate-btn:active { transform: scale(0.95); }
     .letter-box { width: 45px; height: 60px; font-size: 1.8rem; border-width: 2px; }
     .word-grid { gap: 8px; }
 
-    /* 3. Botão do Menu Esquerdo (Regras) */
+    /* 3. BotÃ£o do Menu Esquerdo (Regras) */
     .mobile-menu-btn {
         display: flex; align-items: center; justify-content: center;
         position: fixed; top: 15px; left: 15px;
@@ -376,7 +466,7 @@ button#validate-btn:active { transform: scale(0.95); }
     .sidebar-toggle { display: none; }
 
     /* 5. Alfabeto livre no final da tela (Basta rolar para baixo) */
-    .mobile-alphabet-btn { display: none !important; } /* Esconde aquele botão extra */
+    .mobile-alphabet-btn { display: none !important; } /* Esconde aquele botÃ£o extra */
     
     .alphabet-wrapper {
         position: relative !important; 
@@ -419,7 +509,7 @@ button#validate-btn:active { transform: scale(0.95); }
         transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex; flex-direction: column;
         border: none; margin: 0; border-radius: 0; padding: 20px;
-        padding-top: 70px; /* Espaço para não ficar embaixo do botão X se tiver */
+        padding-top: 70px; /* EspaÃ§o para nÃ£o ficar embaixo do botÃ£o X se tiver */
     }
     .alphabet-wrapper.mobile-open { right: 0; }
 
@@ -492,7 +582,7 @@ button#validate-btn:active { transform: scale(0.95); }
     transform: translateX(-50%);
     font-size: 8rem; /* Tamanho gigante */
     z-index: 9999;
-    pointer-events: none; /* Para não atrapalhar o clique do jogador */
+    pointer-events: none; /* Para nÃ£o atrapalhar o clique do jogador */
     animation: chickenFly 3s ease-in-out forwards;
 }
 
@@ -501,3 +591,4 @@ button#validate-btn:active { transform: scale(0.95); }
     50% { bottom: 50%; transform: translateX(-50%) rotate(20deg) scale(1.5); }
     100% { bottom: 120%; transform: translateX(-50%) rotate(-20deg); opacity: 0; }
 }
+
