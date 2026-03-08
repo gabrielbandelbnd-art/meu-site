@@ -947,6 +947,12 @@ const userNameTop = document.getElementById('user-name-top');
 const hubLogoutBtn = document.getElementById('hub-logout-btn');
 const authGate = document.getElementById('auth-gate');
 const gateStatus = document.getElementById('gate-status');
+const gateEmailInput = document.getElementById('gate-email-input');
+const gatePasswordInput = document.getElementById('gate-password-input');
+const gateConfirmPasswordInput = document.getElementById('gate-confirm-password-input');
+const gateLoginBtn = document.getElementById('gate-login-email-btn');
+const gateRegisterBtn = document.getElementById('gate-register-email-btn');
+let gateAuthMode = 'login';
 
 function setStatus(msg = '', isError = false) {
     if (!profileStatus) return;
@@ -989,6 +995,28 @@ function observeLanguageChanges() {
     observer.observe(root, { attributes: true, attributeFilter: ['lang'] });
 }
 
+function setGateAuthMode(mode = 'login') {
+    gateAuthMode = mode === 'register' ? 'register' : 'login';
+    const isRegister = gateAuthMode === 'register';
+
+    showControl(gateConfirmPasswordInput, isRegister);
+    if (gateConfirmPasswordInput) {
+        gateConfirmPasswordInput.value = '';
+        gateConfirmPasswordInput.disabled = !isRegister;
+    }
+
+    if (gatePasswordInput) {
+        gatePasswordInput.placeholder = isRegister ? 'Senha (min. 6)' : 'Senha';
+    }
+
+    if (gateLoginBtn && gateRegisterBtn) {
+        gateLoginBtn.className = isRegister ? 'profile-btn auth-secondary-btn' : 'profile-btn auth-main-btn';
+        gateRegisterBtn.className = isRegister ? 'profile-btn auth-main-btn' : 'profile-btn auth-secondary-btn';
+    }
+
+    setGateStatus(isRegister ? 'Confirme a senha para criar a conta.' : '');
+}
+
 function showHubScreen(show) {
     if (!hub) return;
     if (show) {
@@ -1001,6 +1029,7 @@ function showHubScreen(show) {
 
 function showAuthGate(show) {
     showControl(authGate, show);
+    if (show) setGateAuthMode('login');
 }
 function getModeVisitor(user) {
     return !!(user && user.isAnonymous);
@@ -1191,6 +1220,7 @@ async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordF
     }
     const email = (document.getElementById(emailFieldId)?.value || '').trim();
     const password = document.getElementById(passwordFieldId)?.value || '';
+    const confirmPassword = document.getElementById('gate-confirm-password-input')?.value || '';
 
     if (!email || !password) {
         setStatus('Informe email e senha.', true);
@@ -1198,11 +1228,25 @@ async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordF
         return;
     }
 
+    if (isRegister) {
+        if (!confirmPassword) {
+            setStatus('Confirme a senha para criar a conta.', true);
+            setGateStatus('Confirme a senha para criar a conta.', true);
+            return;
+        }
+        if (password !== confirmPassword) {
+            setStatus('As senhas não coincidem.', true);
+            setGateStatus('As senhas não coincidem.', true);
+            return;
+        }
+    }
+
     try {
         if (isRegister) {
             await auth.createUserWithEmailAndPassword(email, password);
             setStatus('Conta criada com sucesso.');
             setGateStatus('Conta criada com sucesso.');
+            setGateAuthMode('login');
         } else {
             await auth.signInWithEmailAndPassword(email, password);
             setStatus('Login realizado.');
@@ -1294,8 +1338,26 @@ function bindAuthUiEvents() {
 
     document.getElementById('gate-google-btn')?.addEventListener('click', authWithGoogle);
     document.getElementById('gate-anon-btn')?.addEventListener('click', authAnonymously);
-    document.getElementById('gate-login-email-btn')?.addEventListener('click', () => authWithEmail(false, 'gate-email-input', 'gate-password-input'));
-    document.getElementById('gate-register-email-btn')?.addEventListener('click', () => authWithEmail(true, 'gate-email-input', 'gate-password-input'));
+    document.getElementById('gate-login-email-btn')?.addEventListener('click', () => {
+        if (gateAuthMode === 'register') {
+            setGateAuthMode('login');
+            return;
+        }
+        authWithEmail(false, 'gate-email-input', 'gate-password-input');
+    });
+    document.getElementById('gate-register-email-btn')?.addEventListener('click', () => {
+        if (gateAuthMode !== 'register') {
+            setGateAuthMode('register');
+            return;
+        }
+        authWithEmail(true, 'gate-email-input', 'gate-password-input');
+    });
+
+    gateConfirmPasswordInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && gateAuthMode === 'register') {
+            authWithEmail(true, 'gate-email-input', 'gate-password-input');
+        }
+    });
 
     document.getElementById('hub-logout-btn')?.addEventListener('click', logoutUser);
     document.getElementById('user-logout-top')?.addEventListener('click', logoutUser);
@@ -1357,6 +1419,7 @@ function initFirebase() {
 
 document.addEventListener('DOMContentLoaded', () => {
     bindAuthUiEvents();
+    setGateAuthMode('login');
     initFirebase();
     updateAuthProviderLabels();
     observeLanguageChanges();
