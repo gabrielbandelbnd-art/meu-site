@@ -1217,3 +1217,261 @@ button#validate-btn:active { transform: scale(0.95); }
         transform: scale(1.08);
     }
 }
+
+/* ================= MOBILE RE-TUNE (NO DESKTOP CHANGE) ================= */
+@media (max-width: 800px) {
+    html, body, .app-container {
+        height: 100dvh !important;
+        overflow: hidden !important;
+    }
+
+    .game-area {
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+        overflow: hidden !important;
+        display: grid;
+        grid-template-rows: auto auto minmax(76px, 1fr) auto auto;
+        gap: 8px;
+        padding: calc(env(safe-area-inset-top, 0px) + 62px) 10px calc(env(safe-area-inset-bottom, 0px) + 6px) 10px !important;
+    }
+
+    .challenge-header {
+        margin-bottom: 0;
+    }
+
+    .challenge-instruction {
+        font-size: 0.82rem;
+        margin-bottom: 6px;
+        line-height: 1.2;
+    }
+
+    .hint-box {
+        padding: 8px 10px;
+    }
+
+    .hint-text {
+        font-size: 0.92rem;
+    }
+
+    #mobile-rules-slot {
+        display: block !important;
+        margin-bottom: 0;
+    }
+
+    .mobile-slot .mobile-panel {
+        border-radius: 10px;
+    }
+
+    .mobile-slot .mobile-panel-title {
+        font-size: 0.74rem;
+        padding: 7px 10px;
+    }
+
+    .mobile-slot .mobile-panel-body {
+        padding: 7px;
+        gap: 6px;
+    }
+
+    #mobile-rules-slot .collapsible-header {
+        font-size: 0.7rem;
+        padding-bottom: 4px;
+    }
+
+    #mobile-rules-slot .rule-card {
+        padding: 6px 8px;
+        margin-bottom: 5px;
+        font-size: 0.72rem;
+        line-height: 1.25;
+    }
+
+    #mobile-rules-slot em {
+        font-size: 0.68rem;
+    }
+
+    #mobile-tools-slot,
+    #notepad {
+        display: none !important;
+    }
+
+    .sidebar.mobile-open {
+        left: 0 !important;
+        width: min(88vw, 350px);
+    }
+
+    .sidebar.mobile-open .brand-container,
+    .sidebar.mobile-open .mage-container {
+        display: none;
+    }
+
+    .sidebar.mobile-open .collapsible-section:first-of-type {
+        display: none !important;
+    }
+
+    .sidebar.mobile-open .collapsible-section {
+        margin-top: 0 !important;
+    }
+
+    .sidebar.mobile-open .collapsible-header {
+        font-size: 0.78rem;
+    }
+
+    .sidebar.mobile-open .history-list {
+        min-height: 120px;
+        max-height: 180px;
+    }
+
+    .sidebar.mobile-open #clear-history {
+        min-height: 42px;
+    }
+
+    .board-wrapper {
+        margin: 0;
+        align-items: center;
+        min-height: 76px;
+    }
+
+    .tutorial-message {
+        font-size: 0.9rem;
+        padding: 10px 8px;
+        border-radius: 10px;
+        line-height: 1.2;
+    }
+
+    .word-grid {
+        gap: 6px;
+    }
+
+    .letter-box {
+        width: 36px;
+        height: 46px;
+        font-size: 1.45rem;
+        border-width: 2px;
+    }
+
+    .input-section {
+        margin-bottom: 0;
+    }
+
+    .notification-area {
+        min-height: 26px;
+    }
+
+    .feedback {
+        font-size: 0.88rem;
+        margin-bottom: 0;
+        line-height: 1.15;
+    }
+
+    .input-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 6px;
+    }
+
+    .input-controls #char-input {
+        display: none !important;
+    }
+
+    .input-controls #clear-board-btn,
+    .input-controls #validate-btn {
+        width: 100%;
+        min-height: 42px;
+        font-size: 0.95rem !important;
+        padding: 0 10px !important;
+    }
+
+    #alphabet-drawer {
+        margin-top: 2px !important;
+        padding: 8px !important;
+    }
+
+    #alphabet-drawer .alphabet-header {
+        font-size: 0.72rem;
+        padding: 4px;
+    }
+
+    #mini-alphabet.alphabet-content {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 6px;
+        padding: 8px 4px;
+    }
+
+    #mini-alphabet .mini-char {
+        min-height: 42px;
+        font-size: 0.95rem;
+        gap: 4px;
+        padding: 4px 2px;
+        border-radius: 7px;
+    }
+
+    #mini-alphabet .mirrored-letter {
+        position: static;
+        font-size: 0.62rem;
+        opacity: 0.84;
+        line-height: 1;
+    }
+
+    .mobile-victory-modal,
+    .mobile-error-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 9100;
+        background: rgba(0, 0, 0, 0.72);
+        backdrop-filter: blur(3px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .mobile-victory-card,
+    .mobile-error-card {
+        width: min(90vw, 300px);
+        border: 1px solid #b88bff;
+        border-radius: 14px;
+        background: radial-gradient(circle at 50% 10%, rgba(139, 83, 245, 0.34), rgba(28, 19, 44, 0.96));
+        box-shadow: 0 0 30px rgba(187, 134, 252, 0.35);
+        text-align: center;
+        padding: 12px 10px 14px;
+    }
+
+    .mobile-victory-title,
+    .mobile-error-title {
+        color: #f2deff;
+        font-size: 1.05rem;
+        font-weight: 900;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
+
+    .mobile-victory-mage,
+    .mobile-error-mage {
+        margin: 0 auto;
+        transform: scale(0.95);
+    }
+}
+
+@media (max-width: 800px) {
+    .mobile-menu-btn {
+        display: flex !important;
+    }
+    .mobile-alphabet-btn {
+        display: none !important;
+    }
+}
+
+@media (max-width: 800px) {
+    .input-controls {
+        grid-template-columns: 1fr 66px 1fr !important;
+    }
+
+    .input-controls #char-input {
+        display: block !important;
+        width: 66px !important;
+        min-height: 42px;
+        font-size: 1.45rem;
+        text-align: center;
+        pointer-events: none;
+    }
+}

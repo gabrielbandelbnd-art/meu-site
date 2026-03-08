@@ -260,6 +260,7 @@ const mobileAlphabetBtn = document.getElementById('mobile-alphabet-btn');
 const mobileRulesSlot = document.getElementById('mobile-rules-slot');
 const mobileToolsSlot = document.getElementById('mobile-tools-slot');
 const mobileVictoryModal = document.getElementById('mobile-victory-modal');
+const mobileErrorModal = document.getElementById('mobile-error-modal');
 let mobileLayoutPrepared = false;
 
 function toggleMobileMenu() {
@@ -629,10 +630,12 @@ async function validate() {
             feedback.innerText = "⚠️ Palavra existe, mas não é a do desafio."; 
             feedback.style.color = "var(--warning)";
             animateMage('reset');
+            showMobileErrorMagePopup();
             consecutiveErrors = 0; // Zera o contador se chutar uma palavra real
         } else {
             // ---- LÓGICA DA GALINHA REVISADA ----
             consecutiveErrors++;
+            showMobileErrorMagePopup();
             
             // Se a sacola esvaziar, enche ela de novo com as 70 frases!
             if (unusedPhrases.length === 0) {
@@ -854,14 +857,16 @@ function setupMobileLayout() {
     if (!isMobileViewport() || mobileLayoutPrepared) return;
     mobileLayoutPrepared = true;
 
+    const sidebarContent = sidebar ? sidebar.querySelector('.sidebar-content') : null;
     const collapsibleSections = sidebar ? sidebar.querySelectorAll('.collapsible-section') : [];
     const rulesSection = collapsibleSections[0] || null;
     const historySection = collapsibleSections[1] || null;
+    const notepadEl = document.getElementById('notepad');
     const rulesContentEl = document.getElementById('rules-content');
     const historyContentEl = document.getElementById('history-content');
+
     if (rulesContentEl) rulesContentEl.classList.remove('hidden');
     if (historyContentEl) historyContentEl.classList.remove('hidden');
-
 
     if (mobileRulesSlot) {
         mobileRulesSlot.classList.remove('hidden-control');
@@ -871,17 +876,20 @@ function setupMobileLayout() {
     }
 
     if (mobileToolsSlot) {
-        mobileToolsSlot.classList.remove('hidden-control');
-        const toolsPanel = buildMobilePanel('Rascunho e Hist�rico');
-        if (document.getElementById('notepad')) toolsPanel.body.appendChild(document.getElementById('notepad'));
-        if (historySection) toolsPanel.body.appendChild(historySection);
-        mobileToolsSlot.appendChild(toolsPanel.panel);
+        mobileToolsSlot.classList.add('hidden-control');
     }
 
-    if (sidebar) sidebar.classList.add('mobile-sidebar-hidden');
-    if (mobileMenuBtn) mobileMenuBtn.classList.add('hidden-control');
+    if (sidebarContent && notepadEl) {
+        sidebarContent.appendChild(notepadEl);
+        notepadEl.classList.add('mobile-notepad-in-sidebar');
+    }
+
+    if (sidebarContent && historySection) {
+        sidebarContent.appendChild(historySection);
+    }
+
+    if (mobileMenuBtn) mobileMenuBtn.classList.remove('hidden-control');
     if (mobileAlphabetBtn) mobileAlphabetBtn.classList.add('hidden-control');
-    if (mobileOverlay) mobileOverlay.classList.remove('active');
 
     if (charInput) {
         charInput.setAttribute('readonly', 'readonly');
@@ -897,6 +905,14 @@ function showMobileVictoryPopup() {
     setTimeout(() => {
         mobileVictoryModal.classList.add('hidden-control');
     }, 2300);
+}
+
+function showMobileErrorMagePopup() {
+    if (!isMobileViewport() || !mobileErrorModal) return;
+    mobileErrorModal.classList.remove('hidden-control');
+    setTimeout(() => {
+        mobileErrorModal.classList.add('hidden-control');
+    }, 1000);
 }
 
 /* --- INICIALIZAÇÃO --- */
