@@ -870,7 +870,7 @@ function setupMobileLayout() {
 
     if (mobileRulesSlot) {
         mobileRulesSlot.classList.remove('hidden-control');
-        const rulesPanel = buildMobilePanel('Regras \u00E1gicas');
+        const rulesPanel = buildMobilePanel('Regras M\u00E1gicas');
         if (rulesSection) rulesPanel.body.appendChild(rulesSection);
         mobileRulesSlot.appendChild(rulesPanel.panel);
     }

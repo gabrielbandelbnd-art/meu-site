@@ -1620,3 +1620,118 @@ button#validate-btn:active { transform: scale(0.95); }
         display: block !important;
     }
 }
+
+/* ================= MOBILE POLISH FINAL ================= */
+@media (max-width: 800px) {
+    .sidebar.mobile-open {
+        padding-top: calc(env(safe-area-inset-top, 0px) + 78px) !important;
+    }
+
+    .sidebar.mobile-open .sidebar-content {
+        padding-top: 10px !important;
+    }
+
+    .sidebar.mobile-open .collapsible-section:first-of-type {
+        display: none !important;
+    }
+
+    .sidebar.mobile-open #notepad,
+    .sidebar.mobile-open #notepad.mobile-notepad-in-sidebar {
+        display: block !important;
+        width: 100% !important;
+        margin: 0 0 12px 0 !important;
+    }
+
+    .sidebar.mobile-open #notepad .notepad-body {
+        height: 120px !important;
+    }
+
+    #mobile-rules-slot .mobile-panel-title {
+        padding: 5px 8px !important;
+        font-size: 0.68rem !important;
+    }
+
+    #mobile-rules-slot .mobile-panel-body {
+        padding: 5px !important;
+        gap: 3px !important;
+    }
+
+    #mobile-rules-slot .rule-card {
+        padding: 4px 6px !important;
+        margin-bottom: 3px !important;
+        font-size: 0.66rem !important;
+        line-height: 1.15 !important;
+    }
+
+    #mobile-rules-slot .collapsible-header {
+        font-size: 0.66rem !important;
+        padding-bottom: 3px !important;
+    }
+
+    #mobile-rules-slot em {
+        font-size: 0.62rem !important;
+    }
+
+    .input-controls {
+        grid-template-columns: 1fr 58px 1fr !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        transform: translateY(-8px) !important;
+        margin-bottom: 0 !important;
+    }
+
+    .input-controls #clear-board-btn,
+    .input-controls #validate-btn,
+    .input-controls #char-input {
+        min-height: 44px !important;
+        height: 44px !important;
+        border-radius: 10px !important;
+    }
+
+    .input-controls #char-input {
+        display: block !important;
+        width: 58px !important;
+        font-size: 1.28rem !important;
+        border: 1px solid #5e4b84 !important;
+        color: #c8a0ff !important;
+        background: #0f0f14 !important;
+    }
+
+    .input-controls #clear-board-btn {
+        font-size: 0.92rem !important;
+    }
+
+    .input-controls #validate-btn {
+        font-size: 0.98rem !important;
+        box-shadow: 0 0 0 1px rgba(187,134,252,0.25) inset;
+    }
+
+    #alphabet-drawer {
+        margin-top: -2px !important;
+        padding: 5px !important;
+    }
+
+    #alphabet-drawer .alphabet-header {
+        font-size: 0.66rem !important;
+        padding: 2px !important;
+    }
+
+    #mini-alphabet.alphabet-content {
+        grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+        gap: 3px !important;
+        padding: 4px 2px !important;
+    }
+
+    #mini-alphabet .mini-char {
+        min-height: 28px !important;
+        height: 28px !important;
+        font-size: 0.76rem !important;
+        gap: 1px !important;
+        padding: 2px 1px !important;
+    }
+
+    #mini-alphabet .mirrored-letter {
+        font-size: 0.45rem !important;
+        opacity: 0.95 !important;
+    }
+}
