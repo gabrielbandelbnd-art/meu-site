@@ -1475,3 +1475,148 @@ button#validate-btn:active { transform: scale(0.95); }
         pointer-events: none;
     }
 }
+
+/* ================= MOBILE FINAL FINE TUNE ================= */
+@media (max-width: 800px) {
+    .game-area {
+        grid-template-rows: auto auto minmax(48px, 1fr) auto auto !important;
+        gap: 6px !important;
+        padding: calc(env(safe-area-inset-top, 0px) + 60px) 10px calc(env(safe-area-inset-bottom, 0px) + 6px) 10px !important;
+    }
+
+    .challenge-instruction {
+        font-size: 0.8rem !important;
+        margin-bottom: 4px !important;
+    }
+
+    .hint-box {
+        padding: 7px 9px !important;
+    }
+
+    .hint-text {
+        font-size: 0.88rem !important;
+    }
+
+    #mobile-rules-slot .mobile-panel-title {
+        font-size: 0.7rem !important;
+        padding: 6px 9px !important;
+    }
+
+    #mobile-rules-slot .mobile-panel-body {
+        padding: 6px !important;
+        gap: 4px !important;
+    }
+
+    #mobile-rules-slot .rule-card {
+        padding: 5px 7px !important;
+        margin-bottom: 4px !important;
+        font-size: 0.68rem !important;
+        line-height: 1.2 !important;
+    }
+
+    #mobile-rules-slot .collapsible-header {
+        font-size: 0.68rem !important;
+    }
+
+    #mobile-rules-slot em {
+        font-size: 0.64rem !important;
+    }
+
+    .game-area > #notepad {
+        display: none !important;
+    }
+
+    .sidebar.mobile-open {
+        left: 0 !important;
+        width: min(88vw, 350px);
+        padding-top: calc(env(safe-area-inset-top, 0px) + 72px) !important;
+    }
+
+    .sidebar.mobile-open .sidebar-content {
+        padding-top: 4px;
+    }
+
+    .sidebar.mobile-open #notepad,
+    .sidebar.mobile-open #notepad.mobile-notepad-in-sidebar {
+        display: block !important;
+        margin: 0 0 10px 0 !important;
+        width: 100% !important;
+    }
+
+    .sidebar.mobile-open #notepad .notepad-body {
+        height: 110px !important;
+    }
+
+    .sidebar.mobile-open .collapsible-section:first-of-type {
+        display: none !important;
+    }
+
+    .board-wrapper {
+        min-height: 64px !important;
+    }
+
+    .tutorial-message {
+        font-size: 0.84rem !important;
+        padding: 8px 7px !important;
+    }
+
+    .letter-box {
+        width: 34px !important;
+        height: 42px !important;
+        font-size: 1.28rem !important;
+    }
+
+    .input-section {
+        margin-bottom: 2px !important;
+    }
+
+    .input-controls {
+        margin-bottom: 2px !important;
+        transform: translateY(-4px);
+        position: relative;
+        z-index: 2;
+    }
+
+    #alphabet-drawer {
+        margin-top: 0 !important;
+        padding: 6px !important;
+        position: relative;
+        z-index: 1;
+        flex-shrink: 0;
+    }
+
+    #alphabet-drawer .alphabet-header {
+        font-size: 0.68rem !important;
+        padding: 3px !important;
+    }
+
+    #mini-alphabet.alphabet-content {
+        grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+        gap: 4px !important;
+        padding: 6px 2px !important;
+    }
+
+    #mini-alphabet .mini-char {
+        min-height: 31px !important;
+        font-size: 0.82rem !important;
+        gap: 2px !important;
+        padding: 3px 1px !important;
+        border-radius: 6px !important;
+    }
+
+    #mini-alphabet .mirrored-letter {
+        font-size: 0.5rem !important;
+        opacity: 0.9 !important;
+    }
+
+    .input-controls #char-input {
+        width: 60px !important;
+        min-height: 40px !important;
+        font-size: 1.35rem !important;
+    }
+}
+@media (max-width: 800px) {
+    .sidebar.mobile-open .collapsible-section:first-of-type {
+        display: block !important;
+    }
+}

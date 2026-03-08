@@ -870,7 +870,7 @@ function setupMobileLayout() {
 
     if (mobileRulesSlot) {
         mobileRulesSlot.classList.remove('hidden-control');
-        const rulesPanel = buildMobilePanel('Regras Mágicas');
+        const rulesPanel = buildMobilePanel('Regras \u00E1gicas');
         if (rulesSection) rulesPanel.body.appendChild(rulesSection);
         mobileRulesSlot.appendChild(rulesPanel.panel);
     }
@@ -1516,3 +1516,4 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
+
