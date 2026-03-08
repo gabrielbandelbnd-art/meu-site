@@ -784,7 +784,6 @@ button#validate-btn:active { transform: scale(0.95); }
     cursor: pointer;
 }
 .auth-google { background: #7baaf7; }
-.auth-apple { background: #ddd; }
 .auth-anon { background: #ffd54f; }
 .profile-divider {
     height: 1px;
