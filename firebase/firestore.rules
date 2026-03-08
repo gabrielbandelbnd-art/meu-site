@@ -1,0 +1,68 @@
+﻿rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isServer() {
+      // Custom claim opcional para painéis/admin scripts.
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    // Perfil base do usuário.
+    match /users/{uid} {
+      allow read: if true;
+      allow create: if isOwner(uid);
+      allow update: if isOwner(uid)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(['name', 'photo', 'updatedAt']);
+      allow delete: if false;
+
+      // Status diário por usuário (bloqueio do dia, progresso, etc.).
+      match /daily_status/{dateKey} {
+        allow read, create, update: if isOwner(uid);
+        allow delete: if false;
+      }
+    }
+
+    // Pool com 365 palavras (conteúdo pode ser público para auditoria, opcional).
+    match /daily_word_pool/{wordId} {
+      allow read: if true;
+      allow write: if isServer();
+    }
+
+    // Documento público do dia (NÃO guardar a resposta aqui).
+    match /daily_words/{dateKey} {
+      allow read: if true;
+      allow write: if isServer();
+
+      // Runs por usuário no dia.
+      match /runs/{uid} {
+        allow read: if isOwner(uid) || isServer();
+        allow write: if isServer(); // somente Functions escrevem tentativa/tempo
+      }
+    }
+
+    // Documento privado do dia (resposta/significado/hints extras).
+    match /daily_words_private/{dateKey} {
+      allow read, write: if isServer();
+    }
+
+    // Ranking diário agregado (somente leitura pública).
+    match /daily_leaderboard/{dateKey} {
+      allow read: if true;
+      allow write: if isServer();
+    }
+
+    // Fallback: negar tudo não mapeado.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
