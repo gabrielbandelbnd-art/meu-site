@@ -257,6 +257,10 @@ const mobileOverlay = document.getElementById('mobile-overlay');
 // MENU DO ALFABETO
 const alphabetDrawer = document.getElementById('alphabet-drawer');
 const mobileAlphabetBtn = document.getElementById('mobile-alphabet-btn');
+const mobileRulesSlot = document.getElementById('mobile-rules-slot');
+const mobileToolsSlot = document.getElementById('mobile-tools-slot');
+const mobileVictoryModal = document.getElementById('mobile-victory-modal');
+let mobileLayoutPrepared = false;
 
 function toggleMobileMenu() {
     sidebar.classList.toggle('mobile-open');
@@ -402,6 +406,14 @@ alphabet.forEach((letter, index) => {
         <span class="mirrored-letter">${mirrored}</span>
     `;
     
+    div.setAttribute('data-letter', letter);
+    div.setAttribute('role', 'button');
+    div.addEventListener('click', () => {
+        if (!isMobileViewport()) return;
+        addChar(letter);
+        if (charInput) charInput.blur();
+    });
+
     miniAlphabetContainer.appendChild(div);
 });
 
@@ -593,6 +605,7 @@ async function validate() {
         
         successSound.play(); playSoundEffect('victory'); triggerConfetti();
         animateMage('win');
+        showMobileVictoryPopup();
         
         stopHintCycle(); clearAllHighlights();
         
@@ -824,6 +837,68 @@ function showFloatingMessage(text, duration = 2000) {
     setTimeout(() => { msg.classList.add('hidden'); }, duration);
 }
 
+function buildMobilePanel(titleText) {
+    const panel = document.createElement('div');
+    panel.className = 'mobile-panel';
+    const header = document.createElement('div');
+    header.className = 'mobile-panel-title';
+    header.innerText = titleText;
+    const body = document.createElement('div');
+    body.className = 'mobile-panel-body';
+    panel.appendChild(header);
+    panel.appendChild(body);
+    return { panel, body };
+}
+
+function setupMobileLayout() {
+    if (!isMobileViewport() || mobileLayoutPrepared) return;
+    mobileLayoutPrepared = true;
+
+    const collapsibleSections = sidebar ? sidebar.querySelectorAll('.collapsible-section') : [];
+    const rulesSection = collapsibleSections[0] || null;
+    const historySection = collapsibleSections[1] || null;
+    const rulesContentEl = document.getElementById('rules-content');
+    const historyContentEl = document.getElementById('history-content');
+    if (rulesContentEl) rulesContentEl.classList.remove('hidden');
+    if (historyContentEl) historyContentEl.classList.remove('hidden');
+
+
+    if (mobileRulesSlot) {
+        mobileRulesSlot.classList.remove('hidden-control');
+        const rulesPanel = buildMobilePanel('Regras M�gicas');
+        if (rulesSection) rulesPanel.body.appendChild(rulesSection);
+        mobileRulesSlot.appendChild(rulesPanel.panel);
+    }
+
+    if (mobileToolsSlot) {
+        mobileToolsSlot.classList.remove('hidden-control');
+        const toolsPanel = buildMobilePanel('Rascunho e Hist�rico');
+        if (document.getElementById('notepad')) toolsPanel.body.appendChild(document.getElementById('notepad'));
+        if (historySection) toolsPanel.body.appendChild(historySection);
+        mobileToolsSlot.appendChild(toolsPanel.panel);
+    }
+
+    if (sidebar) sidebar.classList.add('mobile-sidebar-hidden');
+    if (mobileMenuBtn) mobileMenuBtn.classList.add('hidden-control');
+    if (mobileAlphabetBtn) mobileAlphabetBtn.classList.add('hidden-control');
+    if (mobileOverlay) mobileOverlay.classList.remove('active');
+
+    if (charInput) {
+        charInput.setAttribute('readonly', 'readonly');
+        charInput.setAttribute('inputmode', 'none');
+        charInput.setAttribute('tabindex', '-1');
+        charInput.blur();
+    }
+}
+
+function showMobileVictoryPopup() {
+    if (!isMobileViewport() || !mobileVictoryModal) return;
+    mobileVictoryModal.classList.remove('hidden-control');
+    setTimeout(() => {
+        mobileVictoryModal.classList.add('hidden-control');
+    }, 2300);
+}
+
 /* --- INICIALIZAÇÃO --- */
 document.addEventListener("DOMContentLoaded", () => {
     // Detecta mobile (apenas para logs ou classes extras se precisar)
@@ -834,6 +909,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // NOVO: Preenche as opções de dificuldade
     populateLengthOptions();
+    setupMobileLayout();
 
     startMageIdle();
     // initChallenge é chamado apenas quando clica em START agora

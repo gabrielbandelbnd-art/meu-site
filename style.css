@@ -1069,3 +1069,151 @@ button#validate-btn:active { transform: scale(0.95); }
 .profile-ghost-btn:hover {
     background: rgba(187, 134, 252, 0.16);
 }
+/* ================= MOBILE UX REWORK (ONLY MOBILE) ================= */
+@media (max-width: 800px) {
+    .sidebar.mobile-sidebar-hidden {
+        display: none !important;
+    }
+
+    .mobile-menu-btn,
+    .mobile-alphabet-btn {
+        display: none !important;
+    }
+
+    .mobile-slot {
+        display: block;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    .mobile-panel {
+        border: 1px solid #6d54a1;
+        border-radius: 12px;
+        background: rgba(26, 22, 36, 0.9);
+        overflow: hidden;
+    }
+
+    .mobile-panel-title {
+        background: linear-gradient(90deg, rgba(141, 91, 247, 0.95), rgba(196, 63, 216, 0.95));
+        color: #100818;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        font-size: 0.82rem;
+        padding: 9px 12px;
+    }
+
+    .mobile-panel-body {
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .mobile-panel-body .collapsible-section {
+        margin-top: 0 !important;
+        display: block !important;
+        flex-grow: 0 !important;
+    }
+
+    .mobile-panel-body .collapsible-header {
+        font-size: 0.78rem;
+        letter-spacing: 1px;
+    }
+
+    .mobile-panel-body .history-list {
+        min-height: 110px;
+        max-height: 170px;
+    }
+
+    #mobile-tools-slot #notepad {
+        margin-bottom: 0;
+        max-width: 100%;
+    }
+
+    #mobile-tools-slot #notepad .notepad-body {
+        height: 90px;
+    }
+
+    #alphabet-drawer {
+        margin-top: 30px !important;
+        padding: 14px !important;
+    }
+
+    #mini-alphabet.alphabet-content {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 10px;
+        padding: 12px 8px;
+    }
+
+    #mini-alphabet .mini-char {
+        min-height: 56px;
+        font-size: 1.05rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        border-radius: 8px;
+        padding: 6px 4px;
+    }
+
+    #mini-alphabet .mirrored-letter {
+        position: static;
+        font-size: 0.7rem;
+        opacity: 0.85;
+        line-height: 1;
+        font-weight: 600;
+    }
+
+    .input-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .input-controls #char-input {
+        display: none !important;
+    }
+
+    .input-controls #clear-board-btn,
+    .input-controls #validate-btn {
+        width: 100%;
+        min-height: 50px;
+    }
+
+    .mobile-victory-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 9100;
+        background: rgba(0, 0, 0, 0.72);
+        backdrop-filter: blur(3px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .mobile-victory-card {
+        width: min(92vw, 340px);
+        border: 1px solid #b88bff;
+        border-radius: 16px;
+        background: radial-gradient(circle at 50% 10%, rgba(139, 83, 245, 0.34), rgba(28, 19, 44, 0.96));
+        box-shadow: 0 0 30px rgba(187, 134, 252, 0.35);
+        text-align: center;
+        padding: 16px 14px 18px;
+    }
+
+    .mobile-victory-title {
+        color: #f2deff;
+        font-size: 1.3rem;
+        font-weight: 900;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+    }
+
+    .mobile-victory-mage {
+        margin: 0 auto;
+        transform: scale(1.08);
+    }
+}
