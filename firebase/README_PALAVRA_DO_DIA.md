@@ -1,93 +1,72 @@
 ﻿# Palavra do Dia - Setup Firebase (MagicLexis)
 
-## 1) Ativar plano Blaze
-1. Abra o [Firebase Console](https://console.firebase.google.com/).
-2. Selecione o projeto `magiclexis`.
-3. Clique em **Upgrade** e mude para **Blaze (pay-as-you-go)**.
-4. Cadastre um cartao valido (necessario para Cloud Functions agendadas).
+## Estrutura usada neste projeto
+- Functions codebase: `magiclexis/`
+- Regras Firestore: `firebase/firestore.rules`
+- Indexes Firestore: `firebase/firestore.indexes.json`
+- Seed: `firebase/seed/`
 
-## 2) Habilitar APIs (se solicitado)
-No primeiro deploy, o CLI pode pedir para ativar:
-- Cloud Build API
-- Cloud Functions API
-- Cloud Scheduler API
-- Artifact Registry API
+## 1) Confirmar plano Blaze
+1. Abra o Firebase Console e selecione `magiclexis`.
+2. Verifique se o projeto está em **Blaze**.
 
-Aceite todas.
-
-## 3) Instalar Firebase CLI e autenticar
+## 2) Login e seleção de projeto
 ```bash
-npm i -g firebase-tools
 firebase login
 firebase use magiclexis
 ```
 
-## 4) Publicar regras e indices do Firestore
-Na raiz do projeto (`C:\Users\gabri\OneDrive\Documentos\meu site`):
+## 3) Publicar regras e índices
 ```bash
 firebase deploy --only firestore:rules
 firebase deploy --only firestore:indexes
 ```
 
-## 5) Instalar dependencias das Functions
+## 4) Instalar dependências das Functions
 ```bash
-cd firebase/functions
+cd magiclexis
 npm install
-cd ../..
+cd ..
 ```
 
-## 6) Deploy das Cloud Functions
+## 5) Deploy das Functions
 ```bash
 firebase deploy --only functions
 ```
 
-Functions criadas:
-- `rotateDailyWord` (cron 00:00 America/Sao_Paulo)
+Functions publicadas:
+- `rotateDailyWord` (00:00 America/Sao_Paulo)
 - `startDailyRun`
 - `unlockDailyHint`
 - `submitDailyGuess`
 
-## 7) Criar credencial de servico para o seed
-1. Firebase Console -> Project Settings -> Service Accounts.
-2. Clique em **Generate new private key**.
-3. Salve o JSON localmente (nao commitar no git).
+## 6) Rodar seed das 365 palavras
+### 6.1 Gerar chave de serviço
+- Firebase Console -> Project settings -> Service accounts -> Generate new private key.
 
-No terminal (PowerShell):
+### 6.2 Exportar credencial no terminal (PowerShell)
 ```powershell
 $env:GOOGLE_APPLICATION_CREDENTIALS='C:\caminho\serviceAccount.json'
 ```
 
-## 8) Rodar seed das 365 palavras
-Instale `firebase-admin` na raiz (se nao tiver):
-```bash
-npm i firebase-admin
-```
-
-Rode:
+### 6.3 Rodar seed
+Na raiz do projeto:
 ```bash
 node firebase/seed/seed-daily-pool.js
 ```
 
-Isso popula `daily_word_pool` com 365 entradas.
-
-## 9) Teste rapido
-1. Chame `startDailyRun` no app.
-2. Confira se retorna 3 dicas e `wordLength`.
-3. Tente `unlockDailyHint` com `adProof` fake no ambiente de teste.
-4. Tente `submitDailyGuess` com palavra errada e correta.
-5. Verifique no Firestore:
-   - `daily_words/{dateKey}` (publico)
-   - `daily_words_private/{dateKey}` (segredo)
+## 7) Teste rápido
+1. Chame `startDailyRun` autenticado.
+2. Chame `submitDailyGuess` com tentativa errada.
+3. Chame com tentativa correta e valide `meaning` + `isRecord`.
+4. Confirme no Firestore:
+   - `daily_words/{dateKey}` (sem resposta)
+   - `daily_words_private/{dateKey}` (com resposta)
    - `daily_words/{dateKey}/runs/{uid}`
    - `users/{uid}/daily_status/{dateKey}`
 
-## 10) Seguranca da resposta (anti-leak)
-- **Nunca** guardar palavra/resposta em `daily_words` publico.
-- Palavra e significado ficam apenas em `daily_words_private`.
-- Cliente so recebe significado apos `submitDailyGuess` com sucesso.
-- Se quiser endurecer mais, substitua `word` por hash + validacao derivada no servidor.
-
-## 11) Producao (recomendado)
-- Configurar App Check no front.
-- Validar `adProof` real (SSV do AdMob) em `unlockDailyHint`.
-- Aplicar monitoramento de erro em Functions.
+## Segurança (resposta não exposta)
+- A palavra correta NÃO fica em coleção pública.
+- Cliente só lê `daily_words/{dateKey}` com metadados e 3 dicas.
+- Palavra e significado ficam em `daily_words_private/{dateKey}`.
+- `meaning` só retorna após acerto em `submitDailyGuess`.
