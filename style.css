@@ -939,13 +939,14 @@ button#validate-btn:active { transform: scale(0.95); }
 .auth-divider-line::before { left: 0; }
 .auth-divider-line::after { right: 0; }
 .auth-gate-social-row {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 12px;
-    align-items: stretch;
+    flex-wrap: wrap;
 }
 .auth-gate-social-row .profile-btn {
-    width: 100%;
+    width: min(240px, calc(50% - 6px));
     min-height: 52px;
 }
 .icon-btn {
@@ -990,9 +991,15 @@ button#validate-btn:active { transform: scale(0.95); }
 }
 
 @media (max-width: 800px) {
-    .auth-gate-main-actions,
-    .auth-gate-social-row {
+    .auth-gate-main-actions {
         grid-template-columns: 1fr;
+    }
+    .auth-gate-social-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .auth-gate-social-row .profile-btn {
+        width: 100%;
     }
 }
 
