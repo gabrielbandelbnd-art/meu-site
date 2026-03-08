@@ -965,6 +965,30 @@ function setGateStatus(msg = '', isError = false) {
     gateStatus.style.color = isError ? 'var(--error)' : 'var(--warning)';
 }
 
+function updateAuthProviderLabels() {
+    const lang = (document.documentElement.lang || 'pt').toLowerCase();
+    const locale = lang.startsWith('en') ? 'en' : (lang.startsWith('es') ? 'es' : 'pt');
+
+    const textMap = {
+        pt: { google: 'Entrar com Google', guest: 'Visitante' },
+        en: { google: 'Sign in with Google', guest: 'Guest' },
+        es: { google: 'Iniciar con Google', guest: 'Invitado' }
+    };
+
+    const labels = textMap[locale] || textMap.pt;
+    const googleLabel = document.getElementById('gate-google-btn-label');
+    const anonLabel = document.getElementById('gate-anon-btn-label');
+    if (googleLabel) googleLabel.innerText = labels.google;
+    if (anonLabel) anonLabel.innerText = labels.guest;
+}
+
+function observeLanguageChanges() {
+    const root = document.documentElement;
+    if (!root || typeof MutationObserver === 'undefined') return;
+    const observer = new MutationObserver(() => updateAuthProviderLabels());
+    observer.observe(root, { attributes: true, attributeFilter: ['lang'] });
+}
+
 function showHubScreen(show) {
     if (!hub) return;
     if (show) {
@@ -1334,4 +1358,6 @@ function initFirebase() {
 document.addEventListener('DOMContentLoaded', () => {
     bindAuthUiEvents();
     initFirebase();
+    updateAuthProviderLabels();
+    observeLanguageChanges();
 });

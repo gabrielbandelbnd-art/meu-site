@@ -783,8 +783,8 @@ button#validate-btn:active { transform: scale(0.95); }
     padding: 10px;
     cursor: pointer;
 }
-.auth-google { background: #7baaf7; }
-.auth-anon { background: #ffd54f; }
+
+
 .profile-divider {
     height: 1px;
     background: #444;
@@ -940,32 +940,62 @@ button#validate-btn:active { transform: scale(0.95); }
 .auth-divider-line::after { right: 0; }
 .auth-gate-social-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    align-items: stretch;
+}
+.auth-gate-social-row .profile-btn {
+    width: 100%;
+    min-height: 52px;
 }
 .icon-btn {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     font-weight: 700;
 }
-.icon-btn span {
+.icon-btn .icon-mark {
     display: inline-flex;
     width: 20px;
     height: 20px;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background: rgba(0,0,0,0.2);
-    font-size: 0.95rem;
+    background: rgba(0,0,0,0.25);
+    font-size: 14px;
 }
+.auth-google {
+    background: #ffffff;
+    color: #1f1f1f;
+    border: 1px solid #dadce0;
+}
+.auth-google:hover {
+    filter: brightness(0.98);
+}
+.auth-google .google-mark {
+    background: transparent;
+    color: transparent;
+    border-radius: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    background-image: conic-gradient(from 220deg, #4285F4 0deg 90deg, #34A853 90deg 180deg, #FBBC05 180deg 270deg, #EA4335 270deg 360deg);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+.auth-anon {
+    background: #ffd54f;
+    color: #1f1f1f;
+    border: 1px solid #e0b832;
+}
+
 @media (max-width: 800px) {
     .auth-gate-main-actions,
     .auth-gate-social-row {
         grid-template-columns: 1fr;
     }
 }
+
 .arcane-profile-card {
     width: min(92vw, 520px);
     background: radial-gradient(circle at 40% 15%, rgba(137, 65, 176, 0.22) 0%, rgba(30, 20, 46, 0.92) 55%, rgba(20, 14, 31, 0.96) 100%);
