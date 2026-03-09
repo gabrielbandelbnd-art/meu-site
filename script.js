@@ -1316,8 +1316,8 @@ async function refreshDailyHubState() {
     } catch (err) {
         dailyHubPreviewRun = null;
         const info = normalizeCallableError(err);
-        console.error('Erro refreshDailyHubState', info);
-        setDailyHubStatus(`Erro (${info.code}): ${info.message}`, true);
+        console.error('Erro refreshDailyHubState', info, err);
+        setDailyHubStatus(`Erro (${info.code}): ${info.message}`, false);
     }
 }
 function applyDailyRunData(data) {
@@ -1424,7 +1424,7 @@ async function startDailyModeFromHub() {
     } catch (err) {
         const info = normalizeCallableError(err);
         console.error('startDailyRun erro', info);
-        setDailyHubStatus(`Erro (${info.code}): ${info.message}`, true);
+        setDailyHubStatus(`Erro (${info.code}): ${info.message}`, false);
         showFloatingMessage('Erro ao iniciar Palavra do Dia.', 2500);
     }
 }
