@@ -1,4 +1,4 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+﻿import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import {
     getAuth,
     onAuthStateChanged,
@@ -1152,6 +1152,7 @@ const NORMAL_MODE = 'normal';
 let currentGameMode = NORMAL_MODE;
 let dailySession = null;
 let dailyTimerInterval = null;
+let dailyHubCountdownInterval = null;
 let dailyShareText = '';
 let dailyHubPreviewRun = null;
 const DAILY_SHARE_LINK = 'https://magiclexis.vercel.app';
@@ -2025,6 +2026,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
+
 
 
 
