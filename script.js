@@ -319,7 +319,7 @@ function initChallenge() {
     clearAllHighlights();
     animateMage('reset');
     
-    // FILTRAGEM PELA ESCOLHA DO USUÁRIO
+    // FILTRAGEM PELA ESCOLHA DO USUARIO
     const selectedLen = lengthSelector.value;
     let pool = allChallenges;
     
@@ -332,27 +332,35 @@ function initChallenge() {
     // Sorteio
     const randIdx = Math.floor(Math.random() * pool.length);
     targetChallenge = pool[randIdx];
-    
-    maxWordLength = targetChallenge.word.length;
+
+    startChallengeEngine(targetChallenge, {
+        wordLength: targetChallenge.word.length,
+        resetHistory: false
+    });
+}
+
+function startChallengeEngine(challengeData, options = {}) {
+    targetChallenge = challengeData;
+    maxWordLength = options.wordLength || challengeData?.word?.length || 3;
     currentWord = [];
     replaceIndex = 0;
-    
     hintIndex = 0;
     consecutiveErrors = 0;
-    chickenAlreadySummoned = false; // "Recarrega" a galinha para o novo desafio
-    if (feedbackTimeout) clearTimeout(feedbackTimeout); // Limpa relógio antigo
-    
-    updateHintDisplay();
-    startHintCycle();
-    
+    chickenAlreadySummoned = false;
+    if (feedbackTimeout) clearTimeout(feedbackTimeout);
+
     feedback.innerText = "";
     meaningBox.innerText = "";
     meaningBox.classList.add('hidden');
-    
-    // Reseta placeholder
     charInput.placeholder = "?";
-    
-    render(true); 
+
+    if (options.resetHistory && historyList) {
+        historyList.innerHTML = '';
+    }
+
+    updateHintDisplay();
+    startHintCycle();
+    render(true);
 }
 
 function updateHintDisplay() {
@@ -1106,6 +1114,7 @@ let auth = null;
 let db = null;
 let storage = null;
 let functionsApi = null;
+const FUNCTIONS_REGION = 'southamerica-east1';
 
 const DAILY_MODE = 'daily';
 const NORMAL_MODE = 'normal';
@@ -1176,40 +1185,27 @@ function normalizeCallableError(err) {
 
 async function callDailyFunction(name, payload = {}) {
     if (!activeUser) {
-        throw new Error('Usuário não autenticado para chamada diária.');
+        const err = new Error('Usuario nao autenticado para chamada diaria.');
+        err.code = 'unauthenticated';
+        throw err;
     }
 
-    await activeUser.getIdToken(true);
-
-    try {
-        const call = functionsApi?.httpsCallable?.(name);
-        if (!call) throw new Error('Firebase Functions SDK não disponível.');
-        const { data } = await call(payload);
-        return data;
-    } catch (sdkErr) {
-        console.error(`[Daily][SDK] ${name} falhou`, normalizeCallableError(sdkErr));
-
-        const token = await activeUser.getIdToken();
-        const url = `https://southamerica-east1-${firebaseConfig.projectId}.cloudfunctions.net/${name}`;
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ data: payload })
-        });
-
-        const body = await res.json().catch(() => ({}));
-        if (!res.ok || body?.error) {
-            const err = new Error(body?.error?.message || `HTTP ${res.status}`);
-            err.code = body?.error?.status || `http-${res.status}`;
-            err.details = body?.error?.details || null;
-            throw err;
-        }
-
-        return body?.result;
+    if (!functionsApi || typeof functionsApi.httpsCallable !== 'function') {
+        const err = new Error('Firebase Functions SDK nao disponivel.');
+        err.code = 'functions/not-initialized';
+        throw err;
     }
+
+    const token = await activeUser.getIdToken();
+    if (!token) {
+        const err = new Error('Token de autenticacao indisponivel.');
+        err.code = 'auth/missing-token';
+        throw err;
+    }
+
+    const call = functionsApi.httpsCallable(name);
+    const { data } = await call(payload);
+    return data;
 }
 function setDailyHubStatus(message, blocked = false) {
     if (dailyHubStatusDesktop) dailyHubStatusDesktop.innerText = message;
@@ -1311,30 +1307,21 @@ function applyDailyRunData(data) {
         timezone: data.timezone || 'America/Sao_Paulo'
     };
 
-    targetChallenge = {
+    const dailyChallenge = {
         word: '',
         hints: data.hints || [],
         meaning: ''
     };
 
-    maxWordLength = data.wordLength || 3;
-    currentWord = [];
-    replaceIndex = 0;
     isFirstRound = true;
-    hintIndex = 0;
-    charInput.placeholder = '?';
-    feedback.innerText = '';
-    meaningBox.innerText = '';
-    meaningBox.classList.add('hidden');
-
-    if (historyList) historyList.innerHTML = '';
+    startChallengeEngine(dailyChallenge, {
+        wordLength: data.wordLength || 3,
+        resetHistory: true
+    });
 
     showDailyStatusBar(true);
     setDailyAttempts(0);
-    updateHintDisplay();
-    startHintCycle();
     startDailyTimer();
-    render(true);
 }
 
 function openDailyResultModal(payload) {
@@ -1853,7 +1840,7 @@ function initFirebase() {
     auth = firebase.auth();
     db = firebase.firestore();
     storage = firebase.storage();
-    functionsApi = firebase.app().functions("southamerica-east1");
+    functionsApi = firebase.app().functions(FUNCTIONS_REGION);
 
     auth.onAuthStateChanged(async (user) => {
         if (!user) {
