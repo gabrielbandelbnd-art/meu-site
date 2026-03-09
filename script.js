@@ -644,10 +644,9 @@ async function validate() {
 
     feedback.innerText = "Verificando...";
 
-    if (currentGameMode === DAILY_MODE && dailySession && functionsApi) {
+    if (currentGameMode === DAILY_MODE && dailySession) {
         try {
-            const call = functionsApi.httpsCallable('submitDailyGuess');
-            const { data } = await call({ guess: word });
+            const data = await callDailyFunction('submitDailyGuess', { guess: word });
 
             if (data?.alreadyCompleted) {
                 feedback.innerText = 'Palavra do Dia já concluída hoje.';
@@ -689,7 +688,9 @@ async function validate() {
         } catch (err) {
             feedback.innerText = 'Erro ao validar Palavra do Dia.';
             feedback.style.color = 'var(--error)';
-            console.log('submitDailyGuess erro', err);
+            const info = normalizeCallableError(err);
+            console.error('submitDailyGuess erro', info);
+            feedback.innerText = `Erro Palavra do Dia (${info.code}).`; 
             return;
         }
     }
@@ -1165,6 +1166,51 @@ function formatDailyElapsed(ms = 0) {
     return `${min}:${sec}`;
 }
 
+function normalizeCallableError(err) {
+    return {
+        code: err?.code || err?.error?.status || 'unknown',
+        message: err?.message || err?.error?.message || 'Erro desconhecido',
+        details: err?.details || err?.error?.details || null
+    };
+}
+
+async function callDailyFunction(name, payload = {}) {
+    if (!activeUser) {
+        throw new Error('Usuário não autenticado para chamada diária.');
+    }
+
+    await activeUser.getIdToken(true);
+
+    try {
+        const call = functionsApi?.httpsCallable?.(name);
+        if (!call) throw new Error('Firebase Functions SDK não disponível.');
+        const { data } = await call(payload);
+        return data;
+    } catch (sdkErr) {
+        console.error(`[Daily][SDK] ${name} falhou`, normalizeCallableError(sdkErr));
+
+        const token = await activeUser.getIdToken();
+        const url = `https://southamerica-east1-${firebaseConfig.projectId}.cloudfunctions.net/${name}`;
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ data: payload })
+        });
+
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok || body?.error) {
+            const err = new Error(body?.error?.message || `HTTP ${res.status}`);
+            err.code = body?.error?.status || `http-${res.status}`;
+            err.details = body?.error?.details || null;
+            throw err;
+        }
+
+        return body?.result;
+    }
+}
 function setDailyHubStatus(message, blocked = false) {
     if (dailyHubStatusDesktop) dailyHubStatusDesktop.innerText = message;
     if (dailyHubStatusMobile) dailyHubStatusMobile.innerText = message;
@@ -1315,13 +1361,12 @@ async function shareDailyResult() {
 }
 
 async function unlockNextDailyHint() {
-    if (!dailySession || !functionsApi) return;
+    if (!dailySession) return;
     if ((dailySession.unlockedHints || 3) >= 5) return;
 
     pauseDailyTimer();
     try {
-        const call = functionsApi.httpsCallable('unlockDailyHint');
-        const { data } = await call({ adProof: 'mock_rewarded_ad' });
+        const data = await callDailyFunction('unlockDailyHint', { adProof: 'mock_rewarded_ad' });
 
         if (!targetChallenge) targetChallenge = { hints: [] };
         targetChallenge.hints = data?.hints || targetChallenge.hints;
@@ -1333,21 +1378,21 @@ async function unlockNextDailyHint() {
         showFloatingMessage('Dica extra desbloqueada! 🔓');
     } catch (err) {
         showFloatingMessage('Não foi possível desbloquear a dica agora.', 2500);
-        console.log('unlockDailyHint erro', err);
+        const info = normalizeCallableError(err);
+        console.error('unlockDailyHint erro', info);
     } finally {
         resumeDailyTimer();
     }
 }
 
 async function startDailyModeFromHub() {
-    if (!activeUser || !functionsApi) {
+    if (!activeUser) {
         setDailyHubStatus('Faça login para jogar.', true);
         return;
     }
 
     try {
-        const call = functionsApi.httpsCallable('startDailyRun');
-        const { data } = await call({});
+        const data = await callDailyFunction('startDailyRun', {});
 
         if (data?.blocked) {
             setDailyHubStatus('Concluída hoje. Liberada após 00:00 (São Paulo).', true);
@@ -1363,9 +1408,10 @@ async function startDailyModeFromHub() {
         applyDailyRunData(data);
         syncTopUserUi(activeUser, activeUserDoc);
     } catch (err) {
-        setDailyHubStatus('Erro ao iniciar Palavra do Dia.', true);
+        const info = normalizeCallableError(err);
+        console.error('startDailyRun erro', info);
+        setDailyHubStatus(`Erro (${info.code}): ${info.message}`, true);
         showFloatingMessage('Erro ao iniciar Palavra do Dia.', 2500);
-        console.log('startDailyRun erro', err);
     }
 }
 
