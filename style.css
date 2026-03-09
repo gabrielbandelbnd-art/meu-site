@@ -72,7 +72,7 @@ body {
 /* --- ESTRUTURA DO JOGO --- */
 .app-container { display: flex; width: 100%; height: 100%; position: relative; }
 
-/* BotÃµes Mobile (InvisÃ­veis no Desktop) */
+/* Botões Mobile (Invisíveis no Desktop) */
 .mobile-menu-btn, .mobile-alphabet-btn { display: none; }
 .mobile-overlay { display: none; }
 
@@ -92,7 +92,7 @@ body {
 .sidebar.collapsed .sidebar-content { opacity: 0; pointer-events: none; position: absolute; }
 .sidebar.collapsed .mage-container { transform: scale(0.7); bottom: 10px; } 
 
-/* BotÃ£o Toggle da Sidebar */
+/* Botão Toggle da Sidebar */
 .sidebar-toggle {
     position: absolute; top: 50%; right: -15px; width: 30px; height: 30px;
     background: var(--accent); color: #000; border: none; border-radius: 50%;
@@ -127,7 +127,7 @@ body {
     border: 1px solid #333; font-size: 0.9rem;
 }
 
-/* BOTÃƒO LIMPAR HISTÃ“RICO - ESTILO ORIGINAL */
+/* BOTAO LIMPAR HISTORICO - ESTILO ORIGINAL */
 #clear-history {
     background: transparent;
     border: 1px solid var(--error);
@@ -259,7 +259,7 @@ button#validate-btn {
 }
 button#validate-btn:active { transform: scale(0.95); }
 
-/* NOTIFICAÃ‡Ã•ES */
+/* NOTIFICAÇÕES */
 .notification-area { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 40px; }
 .inline-message {
     background: var(--warning); color: #000; padding: 8px 20px; border-radius: 20px;
@@ -397,7 +397,7 @@ button#validate-btn:active { transform: scale(0.95); }
 .rules-modal-box h4 { margin: 15px 0 5px 0; font-size: 1.05rem; }
 .rules-modal-box p { margin: 5px 0; }
 .rules-modal-box code { background: #000; padding: 2px 6px; border-radius: 4px; color: var(--accent); font-weight: bold; font-size: 1rem; }/* ==========================================================================
-   BOLHA DE PROTEÃ‡ÃƒO MOBILE
+   BOLHA DE PROTECAO MOBILE
    ========================================================================== */
 @media (max-width: 800px) {
     /* Adaptação do Popup de Regras para Mobile */
@@ -630,7 +630,7 @@ button#validate-btn:active { transform: scale(0.95); }
     transform: translateX(-50%);
     font-size: 8rem; /* Tamanho gigante */
     z-index: 9999;
-    pointer-events: none; /* Para nÃ£o atrapalhar o clique do jogador */
+    pointer-events: none; /* Para não atrapalhar o clique do jogador */
     animation: chickenFly 3s ease-in-out forwards;
 }
 
@@ -1835,3 +1835,5 @@ button#validate-btn:active { transform: scale(0.95); }
         display: block;
     }
 }
+
+

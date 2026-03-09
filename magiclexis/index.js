@@ -198,7 +198,7 @@ exports.rotateDailyWord = onSchedule(
 
 exports.startDailyRun = onCall({region: "southamerica-east1"}, async (req) => {
   if (!req.auth) {
-    throw new HttpsError("unauthenticated", "FaÃ§a login para iniciar.");
+    throw new HttpsError("unauthenticated", "Faça login para iniciar.");
   }
 
   const uid = req.auth.uid;
@@ -230,7 +230,7 @@ exports.startDailyRun = onCall({region: "southamerica-east1"}, async (req) => {
       return {
         blocked: true,
         dateKey,
-        message: "Palavra do Dia jÃ¡ concluÃ­da hoje. Volte apÃ³s meia-noite de SÃ£o Paulo.",
+        message: "Palavra do Dia já concluída hoje. Volte após meia-noite de São Paulo.",
       };
     }
 
@@ -285,16 +285,16 @@ exports.startDailyRun = onCall({region: "southamerica-east1"}, async (req) => {
 
 exports.unlockDailyHint = onCall({region: "southamerica-east1"}, async (req) => {
   if (!req.auth) {
-    throw new HttpsError("unauthenticated", "FaÃ§a login para desbloquear dica.");
+    throw new HttpsError("unauthenticated", "Faça login para desbloquear dica.");
   }
 
   const uid = req.auth.uid;
   const dateKey = dateKeySaoPaulo(new Date());
 
-  // TODO: validar prova real de anÃºncio (AdMob Rewarded SSV ou provedor equivalente).
+  // TODO: validar prova real de anúncio (AdMob Rewarded SSV ou provedor equivalente).
   const adProof = req.data?.adProof;
   if (!adProof) {
-    throw new HttpsError("failed-precondition", "adProof obrigatÃ³rio.");
+    throw new HttpsError("failed-precondition", "adProof obrigatório.");
   }
 
   const runRef = db.doc(`daily_words/${dateKey}/runs/${uid}`);
@@ -305,7 +305,7 @@ exports.unlockDailyHint = onCall({region: "southamerica-east1"}, async (req) => 
 
   const run = runSnap.data();
   if (run.completedAt) {
-    throw new HttpsError("failed-precondition", "Partida jÃ¡ concluÃ­da.");
+    throw new HttpsError("failed-precondition", "Partida já concluída.");
   }
 
   const next = Math.min((run.unlockedHints || 3) + 1, 5);
@@ -328,13 +328,13 @@ exports.unlockDailyHint = onCall({region: "southamerica-east1"}, async (req) => 
 
 exports.submitDailyGuess = onCall({region: "southamerica-east1"}, async (req) => {
   if (!req.auth) {
-    throw new HttpsError("unauthenticated", "FaÃ§a login para validar tentativa.");
+    throw new HttpsError("unauthenticated", "Faça login para validar tentativa.");
   }
 
   const uid = req.auth.uid;
   const rawGuess = req.data?.guess;
   if (!rawGuess) {
-    throw new HttpsError("invalid-argument", "guess obrigatÃ³rio.");
+    throw new HttpsError("invalid-argument", "guess obrigatório.");
   }
 
   const dateKey = dateKeySaoPaulo(new Date());
@@ -358,7 +358,7 @@ exports.submitDailyGuess = onCall({region: "southamerica-east1"}, async (req) =>
       throw new HttpsError("failed-precondition", "Inicie a Palavra do Dia antes.");
     }
     if (!priSnap.exists) {
-      throw new HttpsError("not-found", "Resposta diÃ¡ria indisponÃ­vel.");
+      throw new HttpsError("not-found", "Resposta diária indisponível.");
     }
 
     const run = runSnap.data() || {};
@@ -369,7 +369,7 @@ exports.submitDailyGuess = onCall({region: "southamerica-east1"}, async (req) =>
     const privateData = priSnap.data() || {};
     const target = normalizeWord(privateData.word || "");
     if (!target) {
-      throw new HttpsError("failed-precondition", "Palavra diÃ¡ria invÃ¡lida no documento privado.");
+      throw new HttpsError("failed-precondition", "Palavra diária inválida no documento privado.");
     }
 
     const now = Date.now();
