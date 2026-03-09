@@ -47,7 +47,18 @@
             <button class="hub-btn" id="hub-tournaments">🏆 Torneios</button>
             <button class="hub-btn" id="hub-ranking">📊 Ranking</button>
         </div>
+
+        <div id="daily-hub-mobile" class="daily-hub-mobile">
+            <div class="daily-hub-title">Palavra do Dia</div>
+            <div id="daily-hub-status-mobile" class="daily-hub-status">Carregando status...</div>
+            <button id="hub-daily-btn-mobile" class="hub-btn daily-hub-play-btn">▶ Jogar Palavra do Dia</button>
+        </div>
     </div>
+    <aside id="daily-hub-card" class="daily-hub-card">
+        <h3>Palavra do Dia</h3>
+        <p id="daily-hub-status-desktop" class="daily-hub-status">Carregando status...</p>
+        <button id="hub-daily-btn-desktop" class="daily-hub-play-btn">▶ Jogar Palavra do Dia</button>
+    </aside>
     <button id="hub-logout-btn" class="hub-logout-btn hidden-control">Sair</button>
 </div>
 
@@ -189,6 +200,11 @@
                     </div>
                     <div id="current-hint" class="hint-text fade-in">...</div>
                 </div>
+                <div id="daily-status-bar" class="daily-status-bar hidden-control">
+                    <span class="daily-status-mode">Palavra do Dia</span>
+                    <span id="daily-timer">00:00</span>
+                    <span id="daily-attempts">Tentativas: 0</span>
+                </div>
             </div>
                 
             <div id="mobile-rules-slot" class="mobile-slot hidden-control"></div>
@@ -263,7 +279,7 @@
 
     <div id="mobile-victory-modal" class="mobile-victory-modal hidden-control">
         <div class="mobile-victory-card">
-            <div class="mobile-victory-title">VIT�RIA!</div>
+            <div class="mobile-victory-title">VITÓRIA!</div>
             <div class="pixel-mage win mobile-victory-mage">
                 <div class="hat-tip"></div>
                 <div class="hat-base"></div>
@@ -291,6 +307,17 @@
         </div>
     </div>
 
+    <div id="daily-result-modal" class="profile-modal hidden-control">
+        <div class="profile-card daily-result-card">
+            <button id="close-daily-result-modal" class="profile-close">✕</button>
+            <h3>Palavra do Dia Concluída</h3>
+            <div id="daily-result-time" class="daily-result-line">Tempo: --</div>
+            <div id="daily-result-attempts" class="daily-result-line">Tentativas: --</div>
+            <div id="daily-result-meaning" class="daily-result-meaning">Significado: --</div>
+            <div id="daily-result-record" class="daily-result-record hidden-control">🏆 Esse é um tempo recorde dessa palavra.</div>
+            <button id="daily-share-btn" class="profile-btn auth-main-btn">Compartilhar resultado</button>
+        </div>
+    </div>
     <audio id="success-sound" src="https://actions.google.com/sounds/v1/cartoon/clap_and_cheer_one_person.ogg"></audio>
 
     <div id="profile-modal" class="profile-modal hidden-control">
@@ -332,6 +359,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-functions-compat.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

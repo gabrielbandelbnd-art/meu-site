@@ -1735,3 +1735,103 @@ button#validate-btn:active { transform: scale(0.95); }
         opacity: 0.95 !important;
     }
 }
+
+/* ================= PALAVRA DO DIA (HUB + RESULTADO) ================= */
+.daily-hub-card {
+    width: 320px;
+    margin-left: 36px;
+    padding: 24px 20px;
+    border: 2px solid var(--accent);
+    border-radius: 18px;
+    background: rgba(20, 20, 25, 0.92);
+    box-shadow: 0 0 35px rgba(187, 134, 252, 0.25);
+}
+.daily-hub-card h3 {
+    margin: 0 0 10px;
+    color: var(--accent);
+    font-size: 1.45rem;
+}
+.daily-hub-status {
+    margin: 0 0 14px;
+    color: var(--text-dim);
+    line-height: 1.4;
+    min-height: 40px;
+}
+.daily-hub-play-btn {
+    width: 100%;
+    border: 1px solid var(--accent);
+    background: linear-gradient(90deg, rgba(122, 75, 205, 0.95), rgba(187, 134, 252, 0.95));
+    color: #111;
+    border-radius: 10px;
+    padding: 13px 14px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.daily-hub-play-btn[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+.daily-hub-mobile {
+    display: none;
+    margin-top: 16px;
+    border: 1px solid #4f3c78;
+    border-radius: 12px;
+    padding: 12px;
+    text-align: left;
+    background: rgba(12, 12, 17, 0.85);
+}
+.daily-hub-title {
+    color: var(--accent);
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.daily-status-bar {
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 12px;
+    border: 1px solid #5e4c82;
+    border-radius: 8px;
+    background: rgba(24, 21, 35, 0.85);
+    color: #efe8ff;
+    font-size: 0.95rem;
+}
+.daily-status-mode { color: var(--accent); font-weight: 700; }
+
+.daily-result-card {
+    width: min(92vw, 460px);
+}
+.daily-result-line {
+    margin: 8px 0;
+    color: #f4f0ff;
+    font-size: 1.05rem;
+}
+.daily-result-meaning {
+    margin: 12px 0;
+    color: var(--text-dim);
+    font-style: italic;
+}
+.daily-result-record {
+    margin: 10px 0;
+    color: var(--success);
+    font-weight: 700;
+}
+
+@media (max-width: 800px) {
+    .hub-container {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 12px;
+    }
+    .daily-hub-card {
+        display: none;
+    }
+    .daily-hub-mobile {
+        display: block;
+    }
+}

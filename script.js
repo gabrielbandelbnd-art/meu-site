@@ -314,6 +314,8 @@ function populateLengthOptions() {
 }
 
 function initChallenge() {
+    currentGameMode = NORMAL_MODE;
+    resetDailySession();
     clearAllHighlights();
     animateMage('reset');
     
@@ -355,39 +357,84 @@ function initChallenge() {
 
 function updateHintDisplay() {
     if (!targetChallenge) return;
-    hintText.classList.remove('fade-in'); hintText.classList.add('fade-out');
+    const hints = targetChallenge.hints || [];
+    const totalHints = currentGameMode === DAILY_MODE ? 5 : (hints.length || 5);
+
+    if (currentGameMode === DAILY_MODE && dailySession) {
+        const unlocked = dailySession.unlockedHints || 3;
+        const maxIndex = Math.max(0, unlocked - 1);
+        if (hintIndex > maxIndex) hintIndex = maxIndex;
+        if (skipHintBtn) {
+            skipHintBtn.innerText = unlocked < 5 && hintIndex >= maxIndex
+                ? 'Desbloquear Dica ▶'
+                : 'Pular Dica ▶';
+        }
+        hintCounter.innerText = `Dica ${Math.min(hintIndex + 1, unlocked)}/${totalHints}`;
+    } else {
+        if (skipHintBtn) skipHintBtn.innerText = 'Pular Dica ▶';
+        hintCounter.innerText = `Dica ${hintIndex + 1}/${totalHints}`;
+    }
+
+    hintText.classList.remove('fade-in');
+    hintText.classList.add('fade-out');
     setTimeout(() => {
-        hintText.innerText = targetChallenge.hints[hintIndex];
-        hintCounter.innerText = `Dica ${hintIndex + 1}/${targetChallenge.hints.length}`;
-        hintText.classList.remove('fade-out'); hintText.classList.add('fade-in');
+        hintText.innerText = hints[hintIndex] || '...';
+        hintText.classList.remove('fade-out');
+        hintText.classList.add('fade-in');
     }, 200);
 }
-
 function startHintCycle() {
     if (hintInterval) clearInterval(hintInterval);
     hintInterval = setInterval(() => {
         if (!targetChallenge) return;
-        hintIndex++; if (hintIndex >= targetChallenge.hints.length) hintIndex = 0;
+
+        if (currentGameMode === DAILY_MODE && dailySession) {
+            const unlocked = dailySession.unlockedHints || 3;
+            hintIndex++;
+            if (hintIndex >= unlocked) hintIndex = 0;
+            updateHintDisplay();
+            return;
+        }
+
+        hintIndex++;
+        if (hintIndex >= targetChallenge.hints.length) hintIndex = 0;
         updateHintDisplay();
     }, 5000);
 }
-
 // LÓGICA DO BOTÃO PULAR DICA
 const skipHintBtn = document.getElementById('skip-hint-btn');
 if (skipHintBtn) {
-    skipHintBtn.addEventListener('click', () => {
+    skipHintBtn.addEventListener('click', async () => {
         if (!targetChallenge) return;
-        // Avança o índice da dica manualmente
-        hintIndex++; 
+
+        if (currentGameMode === DAILY_MODE && dailySession) {
+            const unlocked = dailySession.unlockedHints || 3;
+            const maxIdx = Math.max(0, unlocked - 1);
+
+            if (hintIndex < maxIdx) {
+                hintIndex++;
+                updateHintDisplay();
+                startHintCycle();
+                return;
+            }
+
+            if (unlocked < 5) {
+                await unlockNextDailyHint();
+                return;
+            }
+
+            hintIndex = 0;
+            updateHintDisplay();
+            startHintCycle();
+            return;
+        }
+
+        hintIndex++;
         if (hintIndex >= targetChallenge.hints.length) hintIndex = 0;
-        
         updateHintDisplay();
-        
-        // Reinicia o timer para dar tempo de ler a nova dica antes de trocar sozinha
         startHintCycle();
     });
 }
-
 function stopHintCycle() { if (hintInterval) clearInterval(hintInterval); }
 
 const isVowel = (c) => 'AEIOUaeiou'.includes(c);
@@ -594,30 +641,80 @@ function processNewChar(char, indexToInsert) {
 async function validate() {
     const word = currentWord.join('').toUpperCase();
     if (word.length < 2) return;
-    
+
     feedback.innerText = "Verificando...";
-    
+
+    if (currentGameMode === DAILY_MODE && dailySession && functionsApi) {
+        try {
+            const call = functionsApi.httpsCallable('submitDailyGuess');
+            const { data } = await call({ guess: word });
+
+            if (data?.alreadyCompleted) {
+                feedback.innerText = 'Palavra do Dia já concluída hoje.';
+                feedback.style.color = 'var(--warning)';
+                setDailyHubStatus('Concluída hoje. Liberada após 00:00 (São Paulo).', true);
+                return;
+            }
+
+            if (!data?.success) {
+                dailySession.attempts = data?.attempts || ((dailySession.attempts || 0) + 1);
+                setDailyAttempts(dailySession.attempts);
+                feedback.innerText = '⚠️ Ainda não é a Palavra do Dia.';
+                feedback.style.color = 'var(--warning)';
+                animateMage('sad');
+                showMobileErrorMagePopup();
+                return;
+            }
+
+            dailySession.attempts = data.attempts || dailySession.attempts;
+            setDailyAttempts(dailySession.attempts);
+            stopDailyTimer();
+            if (typeof data.elapsedMs === 'number') {
+                dailySession.baseElapsedMs = data.elapsedMs;
+                updateDailyTimerUi();
+            }
+
+            feedback.innerText = '🏆 ACERTOU A PALAVRA DO DIA!';
+            feedback.style.color = 'var(--success)';
+            meaningBox.innerText = data.meaning || '';
+            meaningBox.classList.remove('hidden');
+            animateMage('win');
+            triggerConfetti();
+            showMobileVictoryPopup();
+
+            dailyShareText = data?.share?.text || '';
+            openDailyResultModal(data);
+            setDailyHubStatus('Concluída hoje. Liberada após 00:00 (São Paulo).', true);
+            return;
+        } catch (err) {
+            feedback.innerText = 'Erro ao validar Palavra do Dia.';
+            feedback.style.color = 'var(--error)';
+            console.log('submitDailyGuess erro', err);
+            return;
+        }
+    }
+
     if (targetChallenge && word === targetChallenge.word) {
         feedback.innerText = "🏆 ACERTOU!"; feedback.style.color = "var(--success)";
         meaningBox.innerText = targetChallenge.meaning;
         meaningBox.classList.remove('hidden');
         document.body.classList.add('success-flash');
         handleCorrectAnswer();
-        
+
         successSound.play(); playSoundEffect('victory'); triggerConfetti();
         animateMage('win');
         showMobileVictoryPopup();
-        
+
         stopHintCycle(); clearAllHighlights();
-        
+
         setTimeout(() => {
             document.body.classList.remove('success-flash');
             initChallenge();
             feedback.innerText = "Novo desafio iniciado!";
-            
+
             if (feedbackTimeout) clearTimeout(feedbackTimeout);
-            feedbackTimeout = setTimeout(() => { feedback.innerText = ""; }, 2000); 
-            
+            feedbackTimeout = setTimeout(() => { feedback.innerText = ""; }, 2000);
+
         }, 5000);
         return;
     }
@@ -625,72 +722,62 @@ async function validate() {
     try {
         const res = await fetch(`https://api.dicionario-aberto.net/word/${word.toLowerCase()}`);
         const data = await res.json();
-        
+
         if (data.length > 0) {
-            feedback.innerText = "⚠️ Palavra existe, mas não é a do desafio."; 
+            feedback.innerText = "⚠️ Palavra existe, mas não é a do desafio.";
             feedback.style.color = "var(--warning)";
             animateMage('reset');
             showMobileErrorMagePopup();
-            consecutiveErrors = 0; // Zera o contador se chutar uma palavra real
+            consecutiveErrors = 0;
         } else {
-            // ---- LÓGICA DA GALINHA REVISADA ----
             consecutiveErrors++;
             showMobileErrorMagePopup();
-            
-            // Se a sacola esvaziar, enche ela de novo com as 70 frases!
+
             if (unusedPhrases.length === 0) {
                 unusedPhrases = [...funnyPhrases];
             }
-            
-            // Sorteia uma frase das que sobraram e tira ela da sacola (splice)
+
             const randomPhraseIndex = Math.floor(Math.random() * unusedPhrases.length);
             const randomPhrase = unusedPhrases.splice(randomPhraseIndex, 1)[0];
-            
-            // Exibe a mensagem original + a frase engraçada menorzinha embaixo
-            feedback.innerHTML = `❌ Tente novamente<br><span style="font-size: 0.9rem; font-weight: normal; color: var(--text-dim);">${randomPhrase}</span>`; 
+
+            feedback.innerHTML = `❌ Tente novamente<br><span style="font-size: 0.9rem; font-weight: normal; color: var(--text-dim);">${randomPhrase}</span>`;
             feedback.style.color = "var(--error)";
-            
-            document.body.classList.add('error-flash'); 
-            setTimeout(() => document.body.classList.remove('error-flash'), 500); // Remove o piscar vermelho
-            
-            // Invoca a galinha apenas se for o 3º erro E se ela ainda não tiver aparecido neste desafio
+
+            document.body.classList.add('error-flash');
+            setTimeout(() => document.body.classList.remove('error-flash'), 500);
+
             if (consecutiveErrors >= 3 && chickenAlreadySummoned === false) {
-                chickenAlreadySummoned = true; // Marca que ela já apareceu neste desafio
-                
-                // Toca o SEU som de galinha local
+                chickenAlreadySummoned = true;
+
                 const chickenAudio = new Audio('galinha.mp3');
-                chickenAudio.volume = 1.0; 
-                chickenAudio.play().catch(e => console.log("Erro no áudio:", e));    
-                
+                chickenAudio.volume = 1.0;
+                chickenAudio.play().catch(e => console.log("Erro no áudio:", e));
+
                 const chickenEl = document.createElement('div');
-                chickenEl.innerText = '🐔'; // A galinha!
+                chickenEl.innerText = '🐔';
                 chickenEl.className = 'flying-chicken';
                 document.body.appendChild(chickenEl);
-                
-                // Remove a galinha do HTML depois de 3 segundos
+
                 setTimeout(() => chickenEl.remove(), 3000);
-                
+
             } else {
                 playSoundEffect('error');
                 animateMage('sad');
             }
-            // ---- FIM DA LÓGICA ----
         }
-    } catch { 
-        feedback.innerText = "Erro na API"; 
+    } catch {
+        feedback.innerText = "Erro na API";
     }
 
-    // --- CONTROLE DE TEMPO DAS FRASES (5 SEGUNDOS) ---
-    if (feedbackTimeout) clearTimeout(feedbackTimeout); // Cancela o timer anterior
-    
-    feedbackTimeout = setTimeout(() => { 
-        document.body.classList.remove('success-flash', 'error-flash'); 
-        if(!feedback.innerText.includes("Novo") && !feedback.innerText.includes("ACERTOU")) {
-            feedback.innerText = ""; 
-        }
-    }, 5000); // 5000 = 5 segundos
-}
+    if (feedbackTimeout) clearTimeout(feedbackTimeout);
 
+    feedbackTimeout = setTimeout(() => {
+        document.body.classList.remove('success-flash', 'error-flash');
+        if(!feedback.innerText.includes("Novo") && !feedback.innerText.includes("ACERTOU")) {
+            feedback.innerText = "";
+        }
+    }, 5000);
+}
 charInput.addEventListener('input', (e) => { 
     if(e.target.value) { addChar(e.target.value); e.target.value = ''; }
 });
@@ -1017,6 +1104,14 @@ const firebaseConfig = {
 let auth = null;
 let db = null;
 let storage = null;
+let functionsApi = null;
+
+const DAILY_MODE = 'daily';
+const NORMAL_MODE = 'normal';
+let currentGameMode = NORMAL_MODE;
+let dailySession = null;
+let dailyTimerInterval = null;
+let dailyShareText = '';
 let activeUser = null;
 let activeUserDoc = null;
 
@@ -1044,7 +1139,235 @@ const gatePasswordInput = document.getElementById('gate-password-input');
 const gateConfirmPasswordInput = document.getElementById('gate-confirm-password-input');
 const gateLoginBtn = document.getElementById('gate-login-email-btn');
 const gateRegisterBtn = document.getElementById('gate-register-email-btn');
+const dailyHubCard = document.getElementById('daily-hub-card');
+const dailyHubMobile = document.getElementById('daily-hub-mobile');
+const dailyHubStatusDesktop = document.getElementById('daily-hub-status-desktop');
+const dailyHubStatusMobile = document.getElementById('daily-hub-status-mobile');
+const hubDailyBtnDesktop = document.getElementById('hub-daily-btn-desktop');
+const hubDailyBtnMobile = document.getElementById('hub-daily-btn-mobile');
+const dailyStatusBar = document.getElementById('daily-status-bar');
+const dailyTimerEl = document.getElementById('daily-timer');
+const dailyAttemptsEl = document.getElementById('daily-attempts');
+const dailyResultModal = document.getElementById('daily-result-modal');
+const closeDailyResultModalBtn = document.getElementById('close-daily-result-modal');
+const dailyResultTimeEl = document.getElementById('daily-result-time');
+const dailyResultAttemptsEl = document.getElementById('daily-result-attempts');
+const dailyResultMeaningEl = document.getElementById('daily-result-meaning');
+const dailyResultRecordEl = document.getElementById('daily-result-record');
+const dailyShareBtn = document.getElementById('daily-share-btn');
+
 let gateAuthMode = 'login';
+
+function formatDailyElapsed(ms = 0) {
+    const total = Math.max(0, Math.floor(ms / 1000));
+    const min = Math.floor(total / 60).toString().padStart(2, '0');
+    const sec = (total % 60).toString().padStart(2, '0');
+    return `${min}:${sec}`;
+}
+
+function setDailyHubStatus(message, blocked = false) {
+    if (dailyHubStatusDesktop) dailyHubStatusDesktop.innerText = message;
+    if (dailyHubStatusMobile) dailyHubStatusMobile.innerText = message;
+    if (hubDailyBtnDesktop) hubDailyBtnDesktop.disabled = blocked;
+    if (hubDailyBtnMobile) hubDailyBtnMobile.disabled = blocked;
+}
+
+function showDailyStatusBar(show) {
+    if (!dailyStatusBar) return;
+    dailyStatusBar.classList.toggle('hidden-control', !show);
+}
+
+function stopDailyTimer() {
+    if (dailyTimerInterval) {
+        clearInterval(dailyTimerInterval);
+        dailyTimerInterval = null;
+    }
+}
+
+function getDailyElapsedMs() {
+    if (!dailySession) return 0;
+    const now = Date.now();
+    const running = dailySession.pausedAt ? dailySession.pausedAt : now;
+    return Math.max(0, running - dailySession.startedAt + (dailySession.baseElapsedMs || 0));
+}
+
+function updateDailyTimerUi() {
+    if (!dailyTimerEl) return;
+    dailyTimerEl.innerText = formatDailyElapsed(getDailyElapsedMs());
+}
+
+function startDailyTimer() {
+    stopDailyTimer();
+    updateDailyTimerUi();
+    dailyTimerInterval = setInterval(updateDailyTimerUi, 250);
+}
+
+function pauseDailyTimer() {
+    if (!dailySession || dailySession.pausedAt) return;
+    dailySession.pausedAt = Date.now();
+}
+
+function resumeDailyTimer() {
+    if (!dailySession || !dailySession.pausedAt) return;
+    const pausedDuration = Date.now() - dailySession.pausedAt;
+    dailySession.startedAt += pausedDuration;
+    dailySession.pausedAt = null;
+}
+
+function setDailyAttempts(attempts = 0) {
+    if (dailyAttemptsEl) dailyAttemptsEl.innerText = `Tentativas: ${attempts}`;
+}
+
+function resetDailySession() {
+    dailySession = null;
+    dailyShareText = '';
+    stopDailyTimer();
+    showDailyStatusBar(false);
+}
+
+async function refreshDailyHubState() {
+    if (!activeUser || !db) {
+        setDailyHubStatus('Faça login para jogar.', true);
+        return;
+    }
+
+    try {
+        const dateKey = new Intl.DateTimeFormat('en-CA', {
+            timeZone: 'America/Sao_Paulo',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).format(new Date());
+
+        const statusSnap = await db.doc(`users/${activeUser.uid}/daily_status/${dateKey}`).get();
+        const done = statusSnap.exists && !!(statusSnap.data()?.done || statusSnap.data()?.completedAt);
+
+        if (done) {
+            setDailyHubStatus('Concluída hoje. Liberada após 00:00 (São Paulo).', true);
+            return;
+        }
+
+        setDailyHubStatus('Disponível agora. Palavra exclusiva de hoje.', false);
+    } catch (err) {
+        setDailyHubStatus('Clique para jogar a Palavra do Dia.', false);
+        console.log('Erro refreshDailyHubState', err);
+    }
+}
+function applyDailyRunData(data) {
+    currentGameMode = DAILY_MODE;
+    dailySession = {
+        dateKey: data.dateKey,
+        unlockedHints: data.unlockedHints || 3,
+        attempts: 0,
+        startedAt: Date.now(),
+        pausedAt: null,
+        baseElapsedMs: 0,
+        timezone: data.timezone || 'America/Sao_Paulo'
+    };
+
+    targetChallenge = {
+        word: '',
+        hints: data.hints || [],
+        meaning: ''
+    };
+
+    maxWordLength = data.wordLength || 3;
+    currentWord = [];
+    replaceIndex = 0;
+    isFirstRound = true;
+    hintIndex = 0;
+    charInput.placeholder = '?';
+    feedback.innerText = '';
+    meaningBox.innerText = '';
+    meaningBox.classList.add('hidden');
+
+    if (historyList) historyList.innerHTML = '';
+
+    showDailyStatusBar(true);
+    setDailyAttempts(0);
+    updateHintDisplay();
+    startHintCycle();
+    startDailyTimer();
+    render(true);
+}
+
+function openDailyResultModal(payload) {
+    if (!dailyResultModal) return;
+    if (dailyResultTimeEl) dailyResultTimeEl.innerText = `Tempo: ${formatDailyElapsed(payload.elapsedMs || 0)}`;
+    if (dailyResultAttemptsEl) dailyResultAttemptsEl.innerText = `Tentativas: ${payload.attempts || 0}`;
+    if (dailyResultMeaningEl) dailyResultMeaningEl.innerText = `Significado: ${payload.meaning || '--'}`;
+    if (dailyResultRecordEl) dailyResultRecordEl.classList.toggle('hidden-control', !payload.isRecord);
+    showControl(dailyResultModal, true);
+}
+
+async function shareDailyResult() {
+    if (!dailyShareText) return;
+    try {
+        if (navigator.share) {
+            await navigator.share({ text: dailyShareText });
+        } else if (navigator.clipboard) {
+            await navigator.clipboard.writeText(dailyShareText);
+            showFloatingMessage('Resultado copiado para área de transferência.', 2200);
+        }
+    } catch (err) {
+        console.log('Falha ao compartilhar resultado diário', err);
+    }
+}
+
+async function unlockNextDailyHint() {
+    if (!dailySession || !functionsApi) return;
+    if ((dailySession.unlockedHints || 3) >= 5) return;
+
+    pauseDailyTimer();
+    try {
+        const call = functionsApi.httpsCallable('unlockDailyHint');
+        const { data } = await call({ adProof: 'mock_rewarded_ad' });
+
+        if (!targetChallenge) targetChallenge = { hints: [] };
+        targetChallenge.hints = data?.hints || targetChallenge.hints;
+        dailySession.unlockedHints = data?.unlockedHints || dailySession.unlockedHints;
+
+        hintIndex = Math.min(hintIndex + 1, (dailySession.unlockedHints || 3) - 1);
+        updateHintDisplay();
+        startHintCycle();
+        showFloatingMessage('Dica extra desbloqueada! 🔓');
+    } catch (err) {
+        showFloatingMessage('Não foi possível desbloquear a dica agora.', 2500);
+        console.log('unlockDailyHint erro', err);
+    } finally {
+        resumeDailyTimer();
+    }
+}
+
+async function startDailyModeFromHub() {
+    if (!activeUser || !functionsApi) {
+        setDailyHubStatus('Faça login para jogar.', true);
+        return;
+    }
+
+    try {
+        const call = functionsApi.httpsCallable('startDailyRun');
+        const { data } = await call({});
+
+        if (data?.blocked) {
+            setDailyHubStatus('Concluída hoje. Liberada após 00:00 (São Paulo).', true);
+            showFloatingMessage('Palavra do Dia já concluída hoje.', 2500);
+            return;
+        }
+
+        setDailyHubStatus('Partida diária em andamento.', false);
+        hub.style.display = 'none';
+        welcomeScreen.style.display = 'none';
+        document.getElementById('app-container')?.classList.remove('hidden-app');
+
+        applyDailyRunData(data);
+        syncTopUserUi(activeUser, activeUserDoc);
+    } catch (err) {
+        setDailyHubStatus('Erro ao iniciar Palavra do Dia.', true);
+        showFloatingMessage('Erro ao iniciar Palavra do Dia.', 2500);
+        console.log('startDailyRun erro', err);
+    }
+}
 
 function setStatus(msg = '', isError = false) {
     if (!profileStatus) return;
@@ -1276,7 +1599,7 @@ async function saveProfile() {
 
 async function authWithGoogle() {
     if (!auth) {
-        setGateStatus('Firebase Auth n�o inicializado. Recarregue a p�gina.', true);
+        setGateStatus('Firebase Auth não inicializado. Recarregue a página.', true);
         return;
     }
     try {
@@ -1292,7 +1615,7 @@ async function authWithGoogle() {
 
 async function authAnonymously() {
     if (!auth) {
-        setGateStatus('Firebase Auth n�o inicializado. Recarregue a p�gina.', true);
+        setGateStatus('Firebase Auth não inicializado. Recarregue a página.', true);
         return;
     }
     try {
@@ -1307,7 +1630,7 @@ async function authAnonymously() {
 
 async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordFieldId = 'password-input') {
     if (!auth) {
-        setGateStatus('Firebase Auth n�o inicializado. Recarregue a p�gina.', true);
+        setGateStatus('Firebase Auth não inicializado. Recarregue a página.', true);
         return;
     }
     const email = (document.getElementById(emailFieldId)?.value || '').trim();
@@ -1327,8 +1650,8 @@ async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordF
             return;
         }
         if (password !== confirmPassword) {
-            setStatus('As senhas n�o coincidem.', true);
-            setGateStatus('As senhas n�o coincidem.', true);
+            setStatus('As senhas não coincidem.', true);
+            setGateStatus('As senhas não coincidem.', true);
             return;
         }
     }
@@ -1437,6 +1760,10 @@ function bindAuthUiEvents() {
         }
         authWithEmail(false, 'gate-email-input', 'gate-password-input');
     });
+    hubDailyBtnDesktop?.addEventListener('click', startDailyModeFromHub);
+    hubDailyBtnMobile?.addEventListener('click', startDailyModeFromHub);
+    closeDailyResultModalBtn?.addEventListener('click', () => showControl(dailyResultModal, false));
+    dailyShareBtn?.addEventListener('click', shareDailyResult);
     document.getElementById('gate-register-email-btn')?.addEventListener('click', () => {
         if (gateAuthMode !== 'register') {
             setGateAuthMode('register');
@@ -1463,12 +1790,13 @@ function bindAuthUiEvents() {
         if (!userMenu?.contains(e.target)) showControl(userMenuDropdown, false);
         if (e.target === profileModal) closeProfileModal();
         if (e.target === rankingModal) closeRankingModal();
+        if (e.target === dailyResultModal) showControl(dailyResultModal, false);
     });
 }
 
 function initFirebase() {
     if (!window.firebase) {
-        setGateStatus('Firebase n�o carregou. Verifique internet/CDN e recarregue (Ctrl+F5).', true);
+        setGateStatus('Firebase não carregou. Verifique internet/CDN e recarregue (Ctrl+F5).', true);
         return;
     }
 
@@ -1479,6 +1807,7 @@ function initFirebase() {
     auth = firebase.auth();
     db = firebase.firestore();
     storage = firebase.storage();
+    functionsApi = firebase.app().functions("southamerica-east1");
 
     auth.onAuthStateChanged(async (user) => {
         if (!user) {
@@ -1489,6 +1818,8 @@ function initFirebase() {
             welcomeScreen.style.display = 'none';
             document.getElementById('app-container')?.classList.add('hidden-app');
             syncTopUserUi(null, null);
+            resetDailySession();
+            setDailyHubStatus("Faça login para jogar.", true);
             return;
         }
 
@@ -1506,6 +1837,7 @@ function initFirebase() {
         document.getElementById('app-container')?.classList.add('hidden-app');
 
         syncTopUserUi(user, activeUserDoc);
+        refreshDailyHubState();
     });
 }
 
@@ -1516,4 +1848,3 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
-
