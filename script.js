@@ -1,149 +1,149 @@
-﻿/* --- DADOS (LOTE 1 - 120 PALAVRAS) --- */
+/* --- DADOS (LOTE 1 - 120 PALAVRAS) --- */
 const allChallenges = [
     // --- 3 LETRAS ---
     { word: "SOL", hints: ["Astro rei.", "Aquece o dia.", "Estrela.", "Luz natural.", "Calor."], meaning: "Estrela central do sistema solar." },
-    { word: "LUA", hints: ["SatÃƒÂ©lite.", "Noite.", "Fases.", "MarÃƒÂ©s.", "Branca."], meaning: "SatÃƒÂ©lite natural da Terra." },
-    { word: "MAR", hints: ["Oceano.", "Sal.", "Ondas.", "Azul.", "Praia."], meaning: "Grande massa de ÃƒÂ¡gua salgada." },
-    { word: "CEU", hints: ["Azul.", "Nuvens.", "Alto.", "Infinito.", "ParaÃƒÂ­so."], meaning: "EspaÃƒÂ§o acima da Terra." },
-    { word: "PAZ", hints: ["Calma.", "Branco.", "TrÃƒÂ©gua.", "Sossego.", "Harmonia."], meaning: "Estado de tranquilidade." },
-    { word: "SOM", hints: ["Ouvir.", "MÃƒÂºsica.", "RuÃƒÂ­do.", "VibraÃƒÂ§ÃƒÂ£o.", "Volume."], meaning: "SensaÃƒÂ§ÃƒÂ£o auditiva." },
-    { word: "COR", hints: ["Tinta.", "Arco-ÃƒÂ­ris.", "Visual.", "Pintura.", "Luz."], meaning: "ImpressÃƒÂ£o visual da luz." },
-    { word: "RIO", hints: ["ÃƒÂgua doce.", "Correnteza.", "Peixes.", "Fluxo.", "Leito."], meaning: "Curso de ÃƒÂ¡gua natural." },
+    { word: "LUA", hints: ["Satélite.", "Noite.", "Fases.", "Marés.", "Branca."], meaning: "Satélite natural da Terra." },
+    { word: "MAR", hints: ["Oceano.", "Sal.", "Ondas.", "Azul.", "Praia."], meaning: "Grande massa de água salgada." },
+    { word: "CEU", hints: ["Azul.", "Nuvens.", "Alto.", "Infinito.", "Paraíso."], meaning: "Espaço acima da Terra." },
+    { word: "PAZ", hints: ["Calma.", "Branco.", "Trégua.", "Sossego.", "Harmonia."], meaning: "Estado de tranquilidade." },
+    { word: "SOM", hints: ["Ouvir.", "Música.", "Ruído.", "Vibração.", "Volume."], meaning: "Sensação auditiva." },
+    { word: "COR", hints: ["Tinta.", "Arco-íris.", "Visual.", "Pintura.", "Luz."], meaning: "Impressão visual da luz." },
+    { word: "RIO", hints: ["Água doce.", "Correnteza.", "Peixes.", "Fluxo.", "Leito."], meaning: "Curso de água natural." },
     { word: "VOZ", hints: ["Falar.", "Cantar.", "Garganta.", "Som humano.", "Grito."], meaning: "Som produzido pelas cordas vocais." },
-    { word: "LUZ", hints: ["Claridade.", "LÃƒÂ¢mpada.", "Velocidade.", "Sol.", "Dia."], meaning: "RadiaÃƒÂ§ÃƒÂ£o visÃƒÂ­vel." },
-    { word: "SAL", hints: ["Tempero.", "Branco.", "Mar.", "Cozinha.", "SÃƒÂ³dio."], meaning: "SubstÃƒÂ¢ncia usada para temperar." },
-    { word: "MAE", hints: ["Geradora.", "Amor.", "FamÃƒÂ­lia.", "Origem.", "Cuidado."], meaning: "Genitora." },
-    { word: "PAI", hints: ["Protetor.", "FamÃƒÂ­lia.", "Masculino.", "Origem.", "HerÃƒÂ³i."], meaning: "Genitor." },
+    { word: "LUZ", hints: ["Claridade.", "Lâmpada.", "Velocidade.", "Sol.", "Dia."], meaning: "Radiação visível." },
+    { word: "SAL", hints: ["Tempero.", "Branco.", "Mar.", "Cozinha.", "Sódio."], meaning: "Substância usada para temperar." },
+    { word: "MAE", hints: ["Geradora.", "Amor.", "Família.", "Origem.", "Cuidado."], meaning: "Genitora." },
+    { word: "PAI", hints: ["Protetor.", "Família.", "Masculino.", "Origem.", "Herói."], meaning: "Genitor." },
     { word: "GOL", hints: ["Futebol.", "Rede.", "Ponto.", "Chute.", "Torcida."], meaning: "Ponto no futebol." },
-    { word: "FIM", hints: ["TÃƒÂ©rmino.", "Acabou.", "ConclusÃƒÂ£o.", "Final.", "Desfecho."], meaning: "Onde algo termina." },
+    { word: "FIM", hints: ["Término.", "Acabou.", "Conclusão.", "Final.", "Desfecho."], meaning: "Onde algo termina." },
 
     // --- 4 LETRAS ---
-    { word: "AMOR", hints: ["CoraÃƒÂ§ÃƒÂ£o.", "Afeto.", "PaixÃƒÂ£o.", "Sentimento.", "UniÃƒÂ£o."], meaning: "Forte afeiÃƒÂ§ÃƒÂ£o por outra pessoa." },
-    { word: "VIDA", hints: ["Viver.", "ExistÃƒÂªncia.", "Nascer.", "Biologia.", "Sopro."], meaning: "Estado de atividade funcional." },
-    { word: "GATO", hints: ["Felino.", "Miau.", "Bigode.", "Animal.", "DomÃƒÂ©stico."], meaning: "Pequeno mamÃƒÂ­fero carnÃƒÂ­voro." },
-    { word: "CASA", hints: ["Moradia.", "Teto.", "Lar.", "ConstruÃƒÂ§ÃƒÂ£o.", "Abrigo."], meaning: "EdifÃƒÂ­cio para habitar." },
-    { word: "BOLA", hints: ["Esfera.", "Jogo.", "Redonda.", "Futebol.", "Brinquedo."], meaning: "Objeto esfÃƒÂ©rico usado em jogos." },
-    { word: "ANEL", hints: ["Dedo.", "Joia.", "Ouro.", "CÃƒÂ­rculo.", "Compromisso."], meaning: "Aro ornamental usado no dedo." },
-    { word: "TREM", hints: ["Trilho.", "VagÃƒÂ£o.", "Locomotiva.", "Viagem.", "Apito."], meaning: "Comboio ferroviÃƒÂ¡rio." },
-    { word: "FLOR", hints: ["Jardim.", "PÃƒÂ©tala.", "Cheiro.", "Planta.", "Primavera."], meaning: "Ãƒâ€œrgÃƒÂ£o reprodutor das plantas." },
-    { word: "MESA", hints: ["MÃƒÂ³vel.", "Jantar.", "Apoio.", "Quatro pernas.", "Madeira."], meaning: "MÃƒÂ³vel com tampo plano." },
-    { word: "FOGO", hints: ["Quente.", "Queima.", "Chama.", "IncÃƒÂªndio.", "Luz."], meaning: "CombustÃƒÂ£o visÃƒÂ­vel." },
-    { word: "AGUA", hints: ["LÃƒÂ­quido.", "Beber.", "Vida.", "Rio.", "Chuva."], meaning: "LÃƒÂ­quido essencial ÃƒÂ  vida." },
-    { word: "MEDO", hints: ["Susto.", "Pavor.", "Escuro.", "Terror.", "EmoÃƒÂ§ÃƒÂ£o."], meaning: "SensaÃƒÂ§ÃƒÂ£o de perigo." },
-    { word: "RISO", hints: ["Alegria.", "Boca.", "Piada.", "EngraÃƒÂ§ado.", "Som."], meaning: "Ato de rir." },
-    { word: "CAFE", hints: ["Bebida.", "Preto.", "ManhÃƒÂ£.", "Acordar.", "CafeÃƒÂ­na."], meaning: "Bebida estimulante." },
-    { word: "LIXO", hints: ["Descarte.", "Sujeira.", "Reciclar.", "Cesto.", "Resto."], meaning: "ResÃƒÂ­duos descartados." },
+    { word: "AMOR", hints: ["Coração.", "Afeto.", "Paixão.", "Sentimento.", "União."], meaning: "Forte afeição por outra pessoa." },
+    { word: "VIDA", hints: ["Viver.", "Existência.", "Nascer.", "Biologia.", "Sopro."], meaning: "Estado de atividade funcional." },
+    { word: "GATO", hints: ["Felino.", "Miau.", "Bigode.", "Animal.", "Doméstico."], meaning: "Pequeno mamífero carnívoro." },
+    { word: "CASA", hints: ["Moradia.", "Teto.", "Lar.", "Construção.", "Abrigo."], meaning: "Edifício para habitar." },
+    { word: "BOLA", hints: ["Esfera.", "Jogo.", "Redonda.", "Futebol.", "Brinquedo."], meaning: "Objeto esférico usado em jogos." },
+    { word: "ANEL", hints: ["Dedo.", "Joia.", "Ouro.", "Círculo.", "Compromisso."], meaning: "Aro ornamental usado no dedo." },
+    { word: "TREM", hints: ["Trilho.", "Vagão.", "Locomotiva.", "Viagem.", "Apito."], meaning: "Comboio ferroviário." },
+    { word: "FLOR", hints: ["Jardim.", "Pétala.", "Cheiro.", "Planta.", "Primavera."], meaning: "Órgão reprodutor das plantas." },
+    { word: "MESA", hints: ["Móvel.", "Jantar.", "Apoio.", "Quatro pernas.", "Madeira."], meaning: "Móvel com tampo plano." },
+    { word: "FOGO", hints: ["Quente.", "Queima.", "Chama.", "Incêndio.", "Luz."], meaning: "Combustão visível." },
+    { word: "AGUA", hints: ["Líquido.", "Beber.", "Vida.", "Rio.", "Chuva."], meaning: "Líquido essencial à vida." },
+    { word: "MEDO", hints: ["Susto.", "Pavor.", "Escuro.", "Terror.", "Emoção."], meaning: "Sensação de perigo." },
+    { word: "RISO", hints: ["Alegria.", "Boca.", "Piada.", "Engraçado.", "Som."], meaning: "Ato de rir." },
+    { word: "CAFE", hints: ["Bebida.", "Preto.", "Manhã.", "Acordar.", "Cafeína."], meaning: "Bebida estimulante." },
+    { word: "LIXO", hints: ["Descarte.", "Sujeira.", "Reciclar.", "Cesto.", "Resto."], meaning: "Resíduos descartados." },
 
     // --- 5 LETRAS ---
-    { word: "LIVRO", hints: ["Leitura.", "PÃƒÂ¡ginas.", "Biblioteca.", "HistÃƒÂ³ria.", "Capa."], meaning: "Conjunto de folhas escritas." },
-    { word: "PORTA", hints: ["Entrada.", "Abrir.", "Madeira.", "MaÃƒÂ§aneta.", "SaÃƒÂ­da."], meaning: "Abertura em parede para passagem." },
-    { word: "NAVIO", hints: ["Mar.", "Transporte.", "Barco grande.", "Oceano.", "Cruzeiro."], meaning: "Grande embarcaÃƒÂ§ÃƒÂ£o." },
-    { word: "PEIXE", hints: ["ÃƒÂgua.", "Nadar.", "Escamas.", "Rio.", "Mar."], meaning: "Animal vertebrado aquÃƒÂ¡tico." },
-    { word: "CARTA", hints: ["Correio.", "Papel.", "Envelope.", "Escrever.", "Mensagem."], meaning: "Mensagem escrita enviada a alguÃƒÂ©m." },
+    { word: "LIVRO", hints: ["Leitura.", "Páginas.", "Biblioteca.", "História.", "Capa."], meaning: "Conjunto de folhas escritas." },
+    { word: "PORTA", hints: ["Entrada.", "Abrir.", "Madeira.", "Maçaneta.", "Saída."], meaning: "Abertura em parede para passagem." },
+    { word: "NAVIO", hints: ["Mar.", "Transporte.", "Barco grande.", "Oceano.", "Cruzeiro."], meaning: "Grande embarcação." },
+    { word: "PEIXE", hints: ["Água.", "Nadar.", "Escamas.", "Rio.", "Mar."], meaning: "Animal vertebrado aquático." },
+    { word: "CARTA", hints: ["Correio.", "Papel.", "Envelope.", "Escrever.", "Mensagem."], meaning: "Mensagem escrita enviada a alguém." },
     { word: "PLUMA", hints: ["Leve.", "Pena.", "Ave.", "Macio.", "Travesseiro."], meaning: "Pena de ave." },
-    { word: "NOITE", hints: ["Escuro.", "Lua.", "Estrelas.", "Dormir.", "Fim do dia."], meaning: "PerÃƒÂ­odo sem luz solar." },
-    { word: "CHUVA", hints: ["ÃƒÂgua.", "Nuvens.", "Molhado.", "Temporal.", "Gotas."], meaning: "PrecipitaÃƒÂ§ÃƒÂ£o atmosfÃƒÂ©rica." },
-    { word: "PRAIA", hints: ["Areia.", "Mar.", "Sol.", "VerÃƒÂ£o.", "Ondas."], meaning: "Borda de terra ÃƒÂ  beira-mar." },
-    { word: "SONHO", hints: ["Dormir.", "ImaginaÃƒÂ§ÃƒÂ£o.", "Desejo.", "Pesadelo.", "Noite."], meaning: "Imagens vistas enquanto se dorme." },
-    { word: "RISCO", hints: ["Perigo.", "TraÃƒÂ§o.", "Aventura.", "Medo.", "Rabisco."], meaning: "Possibilidade de perigo." },
+    { word: "NOITE", hints: ["Escuro.", "Lua.", "Estrelas.", "Dormir.", "Fim do dia."], meaning: "Período sem luz solar." },
+    { word: "CHUVA", hints: ["Água.", "Nuvens.", "Molhado.", "Temporal.", "Gotas."], meaning: "Precipitação atmosférica." },
+    { word: "PRAIA", hints: ["Areia.", "Mar.", "Sol.", "Verão.", "Ondas."], meaning: "Borda de terra à beira-mar." },
+    { word: "SONHO", hints: ["Dormir.", "Imaginação.", "Desejo.", "Pesadelo.", "Noite."], meaning: "Imagens vistas enquanto se dorme." },
+    { word: "RISCO", hints: ["Perigo.", "Traço.", "Aventura.", "Medo.", "Rabisco."], meaning: "Possibilidade de perigo." },
     { word: "MUNDO", hints: ["Terra.", "Globo.", "Planeta.", "Universo.", "Pessoas."], meaning: "O planeta Terra." },
-    { word: "TEMPO", hints: ["RelÃƒÂ³gio.", "Horas.", "Clima.", "Passado.", "Futuro."], meaning: "DuraÃƒÂ§ÃƒÂ£o dos fatos." },
-    { word: "IDEIA", hints: ["Pensamento.", "Mente.", "Criatividade.", "Luz.", "Plano."], meaning: "RepresentaÃƒÂ§ÃƒÂ£o mental." },
-    { word: "FESTA", hints: ["ComemoraÃƒÂ§ÃƒÂ£o.", "Bolo.", "MÃƒÂºsica.", "Amigos.", "DanÃƒÂ§a."], meaning: "ReuniÃƒÂ£o para celebrar." },
+    { word: "TEMPO", hints: ["Relógio.", "Horas.", "Clima.", "Passado.", "Futuro."], meaning: "Duração dos fatos." },
+    { word: "IDEIA", hints: ["Pensamento.", "Mente.", "Criatividade.", "Luz.", "Plano."], meaning: "Representação mental." },
+    { word: "FESTA", hints: ["Comemoração.", "Bolo.", "Música.", "Amigos.", "Dança."], meaning: "Reunião para celebrar." },
 
     // --- 6 LETRAS ---
     { word: "ESCOLA", hints: ["Estudar.", "Alunos.", "Professor.", "Aulas.", "Saber."], meaning: "Estabelecimento de ensino." },
     { word: "JARDIM", hints: ["Flores.", "Verde.", "Grama.", "Plantas.", "Natureza."], meaning: "Terreno cultivado com plantas." },
-    { word: "VIAGEM", hints: ["Turismo.", "Malas.", "FÃƒÂ©rias.", "AviÃƒÂ£o.", "Estrada."], meaning: "Ato de deslocar-se a outro lugar." },
-    { word: "MUSICA", hints: ["Som.", "Melodia.", "Ritmo.", "Instrumento.", "CanÃƒÂ§ÃƒÂ£o."], meaning: "Arte de combinar sons." },
+    { word: "VIAGEM", hints: ["Turismo.", "Malas.", "Férias.", "Avião.", "Estrada."], meaning: "Ato de deslocar-se a outro lugar." },
+    { word: "MUSICA", hints: ["Som.", "Melodia.", "Ritmo.", "Instrumento.", "Canção."], meaning: "Arte de combinar sons." },
     { word: "AMIGOS", hints: ["Parceria.", "Companhia.", "Lealdade.", "Festa.", "Grupo."], meaning: "Pessoas com quem se tem afeto." },
-    { word: "CIDADE", hints: ["PrÃƒÂ©dios.", "Ruas.", "Urbano.", "PopulaÃƒÂ§ÃƒÂ£o.", "Prefeito."], meaning: "Aglomerado urbano." },
-    { word: "COMIDA", hints: ["Fome.", "AlmoÃƒÂ§o.", "Jantar.", "Sabor.", "NutriÃƒÂ§ÃƒÂ£o."], meaning: "O que se come." },
-    { word: "BRASIL", hints: ["PaÃƒÂ­s.", "Verde e amarelo.", "Samba.", "Futebol.", "Sul-americano."], meaning: "Maior paÃƒÂ­s da AmÃƒÂ©rica do Sul." },
-    { word: "JOGADA", hints: ["Esporte.", "Movimento.", "EstratÃƒÂ©gia.", "Lance.", "Partida."], meaning: "Ato de jogar." },
-    { word: "QUARTO", hints: ["Dormir.", "Cama.", "CÃƒÂ´modo.", "Casa.", "Descanso."], meaning: "Aposento para dormir." },
-    { word: "ABRACO", hints: ["Carinho.", "BraÃƒÂ§os.", "Aperto.", "Afeto.", "Cumprimento."], meaning: "EnlaÃƒÂ§amento com os braÃƒÂ§os." },
-    { word: "FUTURO", hints: ["AmanhÃƒÂ£.", "Destino.", "Tempo.", "Vir a ser.", "Adiante."], meaning: "Tempo que hÃƒÂ¡ de vir." },
+    { word: "CIDADE", hints: ["Prédios.", "Ruas.", "Urbano.", "População.", "Prefeito."], meaning: "Aglomerado urbano." },
+    { word: "COMIDA", hints: ["Fome.", "Almoço.", "Jantar.", "Sabor.", "Nutrição."], meaning: "O que se come." },
+    { word: "BRASIL", hints: ["País.", "Verde e amarelo.", "Samba.", "Futebol.", "Sul-americano."], meaning: "Maior país da América do Sul." },
+    { word: "JOGADA", hints: ["Esporte.", "Movimento.", "Estratégia.", "Lance.", "Partida."], meaning: "Ato de jogar." },
+    { word: "QUARTO", hints: ["Dormir.", "Cama.", "Cômodo.", "Casa.", "Descanso."], meaning: "Aposento para dormir." },
+    { word: "ABRACO", hints: ["Carinho.", "Braços.", "Aperto.", "Afeto.", "Cumprimento."], meaning: "Enlaçamento com os braços." },
+    { word: "FUTURO", hints: ["Amanhã.", "Destino.", "Tempo.", "Vir a ser.", "Adiante."], meaning: "Tempo que há de vir." },
     { word: "POESIA", hints: ["Rima.", "Versos.", "Arte.", "Escrita.", "Amor."], meaning: "Arte de compor versos." },
-    { word: "BOSQUE", hints: ["ÃƒÂrvores.", "Floresta.", "Natureza.", "Verde.", "Passeio."], meaning: "Pequena floresta." },
-    { word: "TROVAO", hints: ["Barulho.", "Tempestade.", "Raio.", "CÃƒÂ©u.", "Estrondo."], meaning: "RuÃƒÂ­do provocado pelo raio." },
+    { word: "BOSQUE", hints: ["Árvores.", "Floresta.", "Natureza.", "Verde.", "Passeio."], meaning: "Pequena floresta." },
+    { word: "TROVAO", hints: ["Barulho.", "Tempestade.", "Raio.", "Céu.", "Estrondo."], meaning: "Ruído provocado pelo raio." },
 
     // --- 7 LETRAS ---
-    { word: "GUITARRA", hints: ["MÃƒÂºsica.", "Cordas.", "Rock.", "Solo.", "ElÃƒÂ©trica."], meaning: "Instrumento musical de cordas." },
-    { word: "VAMPIRO", hints: ["Sangue.", "Dentes.", "Noite.", "Morcego.", "DrÃƒÂ¡cula."], meaning: "Criatura mitolÃƒÂ³gica que bebe sangue." },
-    { word: "ESTRELA", hints: ["CÃƒÂ©u.", "Brilho.", "Noite.", "EspaÃƒÂ§o.", "Pontas."], meaning: "Corpo celeste luminoso." },
-    { word: "FAMILIA", hints: ["Parentes.", "Casa.", "Sangue.", "UniÃƒÂ£o.", "Genealogia."], meaning: "Grupo de pessoas com laÃƒÂ§os sanguÃƒÂ­neos." },
-    { word: "PERFUME", hints: ["Cheiro.", "Frasco.", "Aroma.", "EssÃƒÂªncia.", "Flor."], meaning: "LÃƒÂ­quido aromÃƒÂ¡tico." },
-    { word: "FUTEBOL", hints: ["Esporte.", "Gol.", "Bola.", "Campo.", "Time."], meaning: "Esporte jogado com os pÃƒÂ©s." },
-    { word: "CORAGEM", hints: ["Bravura.", "Medo.", "HerÃƒÂ³i.", "Enfrentar.", "Valente."], meaning: "Moral forte perante o perigo." },
-    { word: "DESTINO", hints: ["Futuro.", "Sorte.", "Caminho.", "Fado.", "Final."], meaning: "O que estÃƒÂ¡ determinado a acontecer." },
-    { word: "OCEANOS", hints: ["ÃƒÂgua.", "Azul.", "Terra.", "Mar.", "Profundo."], meaning: "Grandes massas de ÃƒÂ¡gua salgada." },
-    { word: "FLORESTA", hints: ["ÃƒÂrvores.", "Selva.", "Verde.", "Animais.", "Mata."], meaning: "Grande extensÃƒÂ£o de ÃƒÂ¡rvores." },
-    { word: "ESPELHO", hints: ["Reflexo.", "Vidro.", "Imagem.", "Olhar.", "Vaidade."], meaning: "SuperfÃƒÂ­cie que reflete a imagem." },
-    { word: "RAPOSAS", hints: ["Animal.", "Esperta.", "Laranja.", "Cauda.", "Mato."], meaning: "MamÃƒÂ­fero carnÃƒÂ­voro." },
-    { word: "PLANETA", hints: ["Terra.", "EspaÃƒÂ§o.", "Orbita.", "Mundo.", "Sol."], meaning: "Corpo celeste que orbita uma estrela." },
-    { word: "ABELHAS", hints: ["Mel.", "Inseto.", "Colmeia.", "FerrÃƒÂ£o.", "Rainha."], meaning: "Inseto produtor de mel." },
-    { word: "CORRIDA", hints: ["Velocidade.", "Esporte.", "Pressa.", "PÃƒÂ©s.", "Chegada."], meaning: "Ato de correr." },
+    { word: "GUITARRA", hints: ["Música.", "Cordas.", "Rock.", "Solo.", "Elétrica."], meaning: "Instrumento musical de cordas." },
+    { word: "VAMPIRO", hints: ["Sangue.", "Dentes.", "Noite.", "Morcego.", "Drácula."], meaning: "Criatura mitológica que bebe sangue." },
+    { word: "ESTRELA", hints: ["Céu.", "Brilho.", "Noite.", "Espaço.", "Pontas."], meaning: "Corpo celeste luminoso." },
+    { word: "FAMILIA", hints: ["Parentes.", "Casa.", "Sangue.", "União.", "Genealogia."], meaning: "Grupo de pessoas com laços sanguíneos." },
+    { word: "PERFUME", hints: ["Cheiro.", "Frasco.", "Aroma.", "Essência.", "Flor."], meaning: "Líquido aromático." },
+    { word: "FUTEBOL", hints: ["Esporte.", "Gol.", "Bola.", "Campo.", "Time."], meaning: "Esporte jogado com os pés." },
+    { word: "CORAGEM", hints: ["Bravura.", "Medo.", "Herói.", "Enfrentar.", "Valente."], meaning: "Moral forte perante o perigo." },
+    { word: "DESTINO", hints: ["Futuro.", "Sorte.", "Caminho.", "Fado.", "Final."], meaning: "O que está determinado a acontecer." },
+    { word: "OCEANOS", hints: ["Água.", "Azul.", "Terra.", "Mar.", "Profundo."], meaning: "Grandes massas de água salgada." },
+    { word: "FLORESTA", hints: ["Árvores.", "Selva.", "Verde.", "Animais.", "Mata."], meaning: "Grande extensão de árvores." },
+    { word: "ESPELHO", hints: ["Reflexo.", "Vidro.", "Imagem.", "Olhar.", "Vaidade."], meaning: "Superfície que reflete a imagem." },
+    { word: "RAPOSAS", hints: ["Animal.", "Esperta.", "Laranja.", "Cauda.", "Mato."], meaning: "Mamífero carnívoro." },
+    { word: "PLANETA", hints: ["Terra.", "Espaço.", "Orbita.", "Mundo.", "Sol."], meaning: "Corpo celeste que orbita uma estrela." },
+    { word: "ABELHAS", hints: ["Mel.", "Inseto.", "Colmeia.", "Ferrão.", "Rainha."], meaning: "Inseto produtor de mel." },
+    { word: "CORRIDA", hints: ["Velocidade.", "Esporte.", "Pressa.", "Pés.", "Chegada."], meaning: "Ato de correr." },
 
     // --- 8 LETRAS ---
-    { word: "CACHORRO", hints: ["Latir.", "Animal.", "Amigo.", "Osso.", "DomÃƒÂ©stico."], meaning: "Melhor amigo do homem." },
-    { word: "ELEFANTE", hints: ["Grande.", "Tromba.", "ÃƒÂfrica.", "Pesado.", "Cinza."], meaning: "Maior animal terrestre." },
+    { word: "CACHORRO", hints: ["Latir.", "Animal.", "Amigo.", "Osso.", "Doméstico."], meaning: "Melhor amigo do homem." },
+    { word: "ELEFANTE", hints: ["Grande.", "Tromba.", "África.", "Pesado.", "Cinza."], meaning: "Maior animal terrestre." },
     { word: "DINHEIRO", hints: ["Pagar.", "Moeda.", "Banco.", "Compra.", "Riqueza."], meaning: "Meio de troca de valores." },
-    { word: "PRESENTE", hints: ["AniversÃƒÂ¡rio.", "Dar.", "Caixa.", "Agora.", "Natal."], meaning: "Objeto oferecido a alguÃƒÂ©m." },
+    { word: "PRESENTE", hints: ["Aniversário.", "Dar.", "Caixa.", "Agora.", "Natal."], meaning: "Objeto oferecido a alguém." },
     { word: "HISTORIA", hints: ["Passado.", "Livro.", "Tempo.", "Fatos.", "Contar."], meaning: "Narrativa de eventos passados." },
-    { word: "NATUREZA", hints: ["Verde.", "Matas.", "Animais.", "Terra.", "Vida."], meaning: "Mundo fÃƒÂ­sico e seus fenÃƒÂ´menos." },
-    { word: "LIBERDADE", hints: ["Livre.", "Voo.", "PrisÃƒÂ£o (oposto).", "Direito.", "Escolha."], meaning: "Poder de agir segundo a prÃƒÂ³pria vontade." },
-    { word: "TRABALHO", hints: ["Emprego.", "SalÃƒÂ¡rio.", "OfÃƒÂ­cio.", "EsforÃƒÂ§o.", "ProfissÃƒÂ£o."], meaning: "Atividade produtiva." },
-    { word: "UNIVERSO", hints: ["EspaÃƒÂ§o.", "Tudo.", "GalÃƒÂ¡xias.", "Infinito.", "Estrelas."], meaning: "Conjunto de tudo o que existe." },
-    { word: "SAUDADES", hints: ["Falta.", "LembranÃƒÂ§a.", "DistÃƒÂ¢ncia.", "Sentimento.", "Nostalgia."], meaning: "Sentimento de falta de alguÃƒÂ©m." },
+    { word: "NATUREZA", hints: ["Verde.", "Matas.", "Animais.", "Terra.", "Vida."], meaning: "Mundo físico e seus fenômenos." },
+    { word: "LIBERDADE", hints: ["Livre.", "Voo.", "Prisão (oposto).", "Direito.", "Escolha."], meaning: "Poder de agir segundo a própria vontade." },
+    { word: "TRABALHO", hints: ["Emprego.", "Salário.", "Ofício.", "Esforço.", "Profissão."], meaning: "Atividade produtiva." },
+    { word: "UNIVERSO", hints: ["Espaço.", "Tudo.", "Galáxias.", "Infinito.", "Estrelas."], meaning: "Conjunto de tudo o que existe." },
+    { word: "SAUDADES", hints: ["Falta.", "Lembrança.", "Distância.", "Sentimento.", "Nostalgia."], meaning: "Sentimento de falta de alguém." },
 
     // --- 9 LETRAS ---
-    { word: "ESPERANCA", hints: ["FÃƒÂ©.", "Futuro.", "Acreditar.", "Verde.", "Sonho."], meaning: "Sentimento de quem vÃƒÂª como possÃƒÂ­vel o que deseja." },
-    { word: "FELICIDADE", hints: ["Alegria.", "Sorriso.", "Bem-estar.", "Contente.", "EmoÃƒÂ§ÃƒÂ£o."], meaning: "Estado de quem ÃƒÂ© feliz." },
-    { word: "BORBOLETA", hints: ["Inseto.", "Voar.", "Colorida.", "Casulo.", "TransformaÃƒÂ§ÃƒÂ£o."], meaning: "Inseto de asas coloridas." },
-    { word: "GEOGRAFIA", hints: ["Mapas.", "Terra.", "PaÃƒÂ­ses.", "Estudo.", "Relevo."], meaning: "CiÃƒÂªncia que estuda a superfÃƒÂ­cie terrestre." },
-    { word: "AVENTURA", hints: ["Risco.", "Viagem.", "AÃƒÂ§ÃƒÂ£o.", "Explorar.", "Adrenalina."], meaning: "ExperiÃƒÂªncia arriscada ou emocionante." },
-    { word: "CHOCOLATE", hints: ["Doce.", "Cacau.", "Marrom.", "PÃƒÂ¡scoa.", "Comer."], meaning: "Alimento feito de cacau." },
+    { word: "ESPERANCA", hints: ["Fé.", "Futuro.", "Acreditar.", "Verde.", "Sonho."], meaning: "Sentimento de quem vê como possível o que deseja." },
+    { word: "FELICIDADE", hints: ["Alegria.", "Sorriso.", "Bem-estar.", "Contente.", "Emoção."], meaning: "Estado de quem é feliz." },
+    { word: "BORBOLETA", hints: ["Inseto.", "Voar.", "Colorida.", "Casulo.", "Transformação."], meaning: "Inseto de asas coloridas." },
+    { word: "GEOGRAFIA", hints: ["Mapas.", "Terra.", "Países.", "Estudo.", "Relevo."], meaning: "Ciência que estuda a superfície terrestre." },
+    { word: "AVENTURA", hints: ["Risco.", "Viagem.", "Ação.", "Explorar.", "Adrenalina."], meaning: "Experiência arriscada ou emocionante." },
+    { word: "CHOCOLATE", hints: ["Doce.", "Cacau.", "Marrom.", "Páscoa.", "Comer."], meaning: "Alimento feito de cacau." },
     { word: "PRINCESA", hints: ["Reino.", "Coroa.", "Conto de fadas.", "Castelo.", "Filha do rei."], meaning: "Filha de rei ou rainha." },
-    { word: "TECNOLOGIA", hints: ["Computador.", "Futuro.", "InovaÃƒÂ§ÃƒÂ£o.", "Digital.", "MÃƒÂ¡quinas."], meaning: "AplicaÃƒÂ§ÃƒÂ£o de conhecimento cientÃƒÂ­fico." },
+    { word: "TECNOLOGIA", hints: ["Computador.", "Futuro.", "Inovação.", "Digital.", "Máquinas."], meaning: "Aplicação de conhecimento científico." },
     { word: "LITERATURA", hints: ["Livros.", "Escrita.", "Autores.", "Poesia.", "Texto."], meaning: "Arte de escrever." },
     { word: "PROFESSOR", hints: ["Ensino.", "Escola.", "Mestre.", "Aula.", "Aprender."], meaning: "Aquele que ensina." },
 
     // --- 10 LETRAS ---
-    { word: "COMPUTADOR", hints: ["MÃƒÂ¡quina.", "Internet.", "Teclado.", "Tela.", "PC."], meaning: "MÃƒÂ¡quina eletrÃƒÂ´nica de processamento de dados." },
-    { word: "RINOCERONTE", hints: ["Animal.", "Chifre.", "Pesado.", "ÃƒÂfrica.", "Forte."], meaning: "Grande mamÃƒÂ­fero com chifre no nariz." },
-    { word: "MATEMATICA", hints: ["NÃƒÂºmeros.", "Contas.", "Soma.", "Escola.", "LÃƒÂ³gica."], meaning: "CiÃƒÂªncia dos nÃƒÂºmeros e formas." },
-    { word: "ANIVERSARIO", hints: ["Festa.", "Bolo.", "Idade.", "ParabÃƒÂ©ns.", "Data."], meaning: "Dia em que se completa anos." },
-    { word: "ASTRONAUTA", hints: ["EspaÃƒÂ§o.", "Lua.", "Foguete.", "Nasa.", "Capacete."], meaning: "Viajante espacial." },
-    { word: "BRINCADEIRA", hints: ["DiversÃƒÂ£o.", "CrianÃƒÂ§a.", "Jogo.", "Rir.", "Passatempo."], meaning: "Ato de brincar." },
-    { word: "INTELIGENTE", hints: ["Esperto.", "CÃƒÂ©rebro.", "Saber.", "GÃƒÂªnio.", "RaciocÃƒÂ­nio."], meaning: "Que tem inteligÃƒÂªncia." },
-    { word: "RESILIENCIA", hints: ["ForÃƒÂ§a.", "Superar.", "Adaptar.", "Voltar.", "Persistir."], meaning: "Capacidade de se recuperar de dificuldades." },
-    { word: "SENTIMENTO", hints: ["EmoÃƒÂ§ÃƒÂ£o.", "CoraÃƒÂ§ÃƒÂ£o.", "Amor.", "Ãƒâ€œdio.", "Sentir."], meaning: "Ato ou efeito de sentir." },
-    { word: "CATASTROFE", hints: ["Desastre.", "Caos.", "DestruiÃƒÂ§ÃƒÂ£o.", "Ruim.", "Acidente."], meaning: "Grande desgraÃƒÂ§a ou infortÃƒÂºnio." },
+    { word: "COMPUTADOR", hints: ["Máquina.", "Internet.", "Teclado.", "Tela.", "PC."], meaning: "Máquina eletrônica de processamento de dados." },
+    { word: "RINOCERONTE", hints: ["Animal.", "Chifre.", "Pesado.", "África.", "Forte."], meaning: "Grande mamífero com chifre no nariz." },
+    { word: "MATEMATICA", hints: ["Números.", "Contas.", "Soma.", "Escola.", "Lógica."], meaning: "Ciência dos números e formas." },
+    { word: "ANIVERSARIO", hints: ["Festa.", "Bolo.", "Idade.", "Parabéns.", "Data."], meaning: "Dia em que se completa anos." },
+    { word: "ASTRONAUTA", hints: ["Espaço.", "Lua.", "Foguete.", "Nasa.", "Capacete."], meaning: "Viajante espacial." },
+    { word: "BRINCADEIRA", hints: ["Diversão.", "Criança.", "Jogo.", "Rir.", "Passatempo."], meaning: "Ato de brincar." },
+    { word: "INTELIGENTE", hints: ["Esperto.", "Cérebro.", "Saber.", "Gênio.", "Raciocínio."], meaning: "Que tem inteligência." },
+    { word: "RESILIENCIA", hints: ["Força.", "Superar.", "Adaptar.", "Voltar.", "Persistir."], meaning: "Capacidade de se recuperar de dificuldades." },
+    { word: "SENTIMENTO", hints: ["Emoção.", "Coração.", "Amor.", "Ódio.", "Sentir."], meaning: "Ato ou efeito de sentir." },
+    { word: "CATASTROFE", hints: ["Desastre.", "Caos.", "Destruição.", "Ruim.", "Acidente."], meaning: "Grande desgraça ou infortúnio." },
 
     // --- 11 a 13 LETRAS ---
     { word: "CURIOSIDADE", hints: ["Saber.", "Pergunta.", "Descobrir.", "Interesse.", "Xereta."], meaning: "Vontade de ver ou aprender algo." },
     { word: "ELETRICIDADE", hints: ["Luz.", "Choque.", "Tomada.", "Energia.", "Fios."], meaning: "Forma de energia." },
-    { word: "UNIVERSIDADE", hints: ["Faculdade.", "Estudo.", "Diploma.", "Campus.", "Superior."], meaning: "InstituiÃƒÂ§ÃƒÂ£o de ensino superior." },
-    { word: "COMUNICACAO", hints: ["Falar.", "Mensagem.", "Troca.", "Conversa.", "MÃƒÂ­dia."], meaning: "Ato de transmitir informaÃƒÂ§ÃƒÂ£o." },
-    { word: "REFRIGERANTE", hints: ["Bebida.", "GÃƒÂ¡s.", "Doce.", "Gelado.", "Soda."], meaning: "Bebida nÃƒÂ£o alcoÃƒÂ³lica gaseificada." },
-    { word: "SOLIDARIEDADE", hints: ["Ajuda.", "Apoio.", "Bondade.", "PrÃƒÂ³ximo.", "UniÃƒÂ£o."], meaning: "CooperaÃƒÂ§ÃƒÂ£o mÃƒÂºtua entre pessoas." },
-    { word: "TRANSFORMACAO", hints: ["MudanÃƒÂ§a.", "Virar.", "EvoluÃƒÂ§ÃƒÂ£o.", "Metamorfose.", "Diferente."], meaning: "Ato de transformar." },
-    { word: "INDEPENDENCIA", hints: ["Livre.", "PaÃƒÂ­s.", "Autonomia.", "Sozinho.", "7 de setembro."], meaning: "Estado de quem nÃƒÂ£o depende de outro." },
-    { word: "ARQUITETURA", hints: ["PrÃƒÂ©dios.", "Projeto.", "Desenho.", "ConstruÃƒÂ§ÃƒÂ£o.", "Arte."], meaning: "Arte de projetar e edificar." },
+    { word: "UNIVERSIDADE", hints: ["Faculdade.", "Estudo.", "Diploma.", "Campus.", "Superior."], meaning: "Instituição de ensino superior." },
+    { word: "COMUNICACAO", hints: ["Falar.", "Mensagem.", "Troca.", "Conversa.", "Mídia."], meaning: "Ato de transmitir informação." },
+    { word: "REFRIGERANTE", hints: ["Bebida.", "Gás.", "Doce.", "Gelado.", "Soda."], meaning: "Bebida não alcoólica gaseificada." },
+    { word: "SOLIDARIEDADE", hints: ["Ajuda.", "Apoio.", "Bondade.", "Próximo.", "União."], meaning: "Cooperação mútua entre pessoas." },
+    { word: "TRANSFORMACAO", hints: ["Mudança.", "Virar.", "Evolução.", "Metamorfose.", "Diferente."], meaning: "Ato de transformar." },
+    { word: "INDEPENDENCIA", hints: ["Livre.", "País.", "Autonomia.", "Sozinho.", "7 de setembro."], meaning: "Estado de quem não depende de outro." },
+    { word: "ARQUITETURA", hints: ["Prédios.", "Projeto.", "Desenho.", "Construção.", "Arte."], meaning: "Arte de projetar e edificar." },
     { word: "CONHECIMENTO", hints: ["Saber.", "Estudo.", "Mente.", "Aprender.", "Sabedoria."], meaning: "Ato de conhecer ou saber." },
 
-    // --- 14 a 20 LETRAS (DIFÃƒÂCIL) ---
-    { word: "PARALELEPIPEDO", hints: ["Rua.", "Pedra.", "CalÃƒÂ§ada.", "Bloco.", "Geometria."], meaning: "SÃƒÂ³lido geomÃƒÂ©trico ou pedra de calÃƒÂ§amento." },
-    { word: "DESENVOLVIMENTO", hints: ["Crescer.", "Progresso.", "AvanÃƒÂ§o.", "Melhora.", "Evoluir."], meaning: "Ato de desenvolver-se." },
-    { word: "RESPONSABILIDADE", hints: ["Dever.", "Adulto.", "Cuidar.", "Culpa.", "SÃƒÂ©rio."], meaning: "ObrigaÃƒÂ§ÃƒÂ£o de responder pelas prÃƒÂ³prias aÃƒÂ§ÃƒÂµes." },
+    // --- 14 a 20 LETRAS (DIFÍCIL) ---
+    { word: "PARALELEPIPEDO", hints: ["Rua.", "Pedra.", "Calçada.", "Bloco.", "Geometria."], meaning: "Sólido geométrico ou pedra de calçamento." },
+    { word: "DESENVOLVIMENTO", hints: ["Crescer.", "Progresso.", "Avanço.", "Melhora.", "Evoluir."], meaning: "Ato de desenvolver-se." },
+    { word: "RESPONSABILIDADE", hints: ["Dever.", "Adulto.", "Cuidar.", "Culpa.", "Sério."], meaning: "Obrigação de responder pelas próprias ações." },
     { word: "SUSTENTABILIDADE", hints: ["Natureza.", "Futuro.", "Reciclar.", "Verde.", "Planeta."], meaning: "Uso consciente dos recursos naturais." },
-    { word: "INCONSTITUCIONAL", hints: ["Lei.", "Proibido.", "Contra.", "Regra.", "JurÃƒÂ­dico."], meaning: "Que ÃƒÂ© contra a constituiÃƒÂ§ÃƒÂ£o." },
-    { word: "OTORRINOLARINGOLOGISTA", hints: ["MÃƒÂ©dico.", "Garganta.", "Nariz.", "Ouvido.", "Nome comprido."], meaning: "MÃƒÂ©dico especialista em ouvido, nariz e garganta." },
-    { word: "INDEPENDENTEMENTE", hints: ["Sem depender.", "Apesar.", "Livre.", "Sozinho.", "AdvÃƒÂ©rbio."], meaning: "De modo independente." },
-    { word: "REVOLUCIONARIO", hints: ["MudanÃƒÂ§a.", "Guerra.", "Novo.", "LÃƒÂ­der.", "Transformar."], meaning: "Que causa revoluÃƒÂ§ÃƒÂ£o." },
-    { word: "EXTRAORDINARIO", hints: ["IncrÃƒÂ­vel.", "Fora do comum.", "Especial.", "Raro.", "Ãƒâ€œtimo."], meaning: "Que nÃƒÂ£o ÃƒÂ© ordinÃƒÂ¡rio ou comum." },
-    { word: "INTERNACIONALIZACAO", hints: ["Mundo.", "Global.", "PaÃƒÂ­ses.", "Exterior.", "Expandir."], meaning: "Tornar algo internacional." }
+    { word: "INCONSTITUCIONAL", hints: ["Lei.", "Proibido.", "Contra.", "Regra.", "Jurídico."], meaning: "Que é contra a constituição." },
+    { word: "OTORRINOLARINGOLOGISTA", hints: ["Médico.", "Garganta.", "Nariz.", "Ouvido.", "Nome comprido."], meaning: "Médico especialista em ouvido, nariz e garganta." },
+    { word: "INDEPENDENTEMENTE", hints: ["Sem depender.", "Apesar.", "Livre.", "Sozinho.", "Advérbio."], meaning: "De modo independente." },
+    { word: "REVOLUCIONARIO", hints: ["Mudança.", "Guerra.", "Novo.", "Líder.", "Transformar."], meaning: "Que causa revolução." },
+    { word: "EXTRAORDINARIO", hints: ["Incrível.", "Fora do comum.", "Especial.", "Raro.", "Ótimo."], meaning: "Que não é ordinário ou comum." },
+    { word: "INTERNACIONALIZACAO", hints: ["Mundo.", "Global.", "Países.", "Exterior.", "Expandir."], meaning: "Tornar algo internacional." }
 ];
 
 let usedIndices = [];
@@ -160,15 +160,6 @@ const miniAlphabetContainer = document.getElementById('mini-alphabet');
 const hintText = document.getElementById('current-hint');
 const hintCounter = document.getElementById('hint-counter');
 const lengthSelector = document.getElementById('length-selector');
-const dailyStatusBar = document.getElementById('daily-status-bar');
-const dailyModeLabel = document.getElementById('daily-mode-label');
-const dailyTimerEl = document.getElementById('daily-timer');
-const dailyAttemptsEl = document.getElementById('daily-attempts');
-const dailyResultModal = document.getElementById('daily-result-modal');
-const dailyResultTime = document.getElementById('daily-result-time');
-const dailyResultAttempts = document.getElementById('daily-result-attempts');
-const dailyResultRecord = document.getElementById('daily-result-record');
-const dailyResultMeaning = document.getElementById('daily-result-meaning');
 
 let currentWord = [];
 let replaceIndex = 0;
@@ -177,90 +168,85 @@ let targetChallenge = null;
 let hintIndex = 0;
 let hintInterval = null;
 let maxWordLength = 0;
-let currentGameMode = 'normal';
-let dailySession = null;
-let dailyTimerInterval = null;
-let functionsApi = null;
-let lastDailyShareText = '';
 
-// --- VARIÃƒÂVEIS DA GALINHA E MENSAGENS ---
+// --- VARIÁVEIS DA GALINHA E MENSAGENS ---
 let consecutiveErrors = 0;
-let chickenAlreadySummoned = false; // Trava para a galinha voar sÃƒÂ³ 1 vez
+let chickenAlreadySummoned = false; // Trava para a galinha voar só 1 vez
 let feedbackTimeout = null; // Trava para a mensagem durar exatos 6 segundos
 
 const funnyPhrases = [
-    "Que isso, cara? TÃƒÂ¡ tentando inventar uma palavra nova pro dicionÃƒÂ¡rio?",
-    "Essa aÃƒÂ­ nem o Google teve coragem de reconhecer.",
-    "TÃƒÂ¡ difÃƒÂ­cil ou vocÃƒÂª tÃƒÂ¡ de gracinha validando tudo errado?",
-    "Quer algo mais fÃƒÂ¡cil? Vai jogar modo trÃƒÂªs letras, campeÃƒÂ£o.",
-    "VocÃƒÂª digitou com o cotovelo agora, nÃƒÂ©?",
-    "Calma, respiraÃ¢â‚¬Â¦ nÃƒÂ£o ÃƒÂ© um teclado musical.",
-    "Essa palavra existe sÃƒÂ³ na sua imaginaÃƒÂ§ÃƒÂ£o fÃƒÂ©rtil.",
-    "Eu atÃƒÂ© tentei defender vocÃƒÂª, mas nÃƒÂ£o deu.",
-    "Se errar mais uma, vou pedir reforÃƒÂ§o pro professor de portuguÃƒÂªs.",
-    "TÃƒÂ¡ treinando pra campeonato mundial de erro?",
-    "Essa passou longeÃ¢â‚¬Â¦ tipo, outro CEP.",
-    "AmigoÃ¢â‚¬Â¦ isso foi estratÃƒÂ©gia ou desespero?",
-    "Eu acredito em vocÃƒÂªÃ¢â‚¬Â¦ mas essa aÃƒÂ­ me quebrou.",
-    "Se criatividade valesse ponto, vocÃƒÂª tava ganhando.",
-    "Palavra inÃƒÂ©dita detectada. Quer patentear?",
-    "VocÃƒÂª tÃƒÂ¡ jogando ou testando minha paciÃƒÂªncia?",
-    "Errar ÃƒÂ© humanoÃ¢â‚¬Â¦ mas vocÃƒÂª tÃƒÂ¡ se dedicando demais.",
-    "Quase! SÃƒÂ³ errou todas as letras.",
-    "Vou fingir que nÃƒÂ£o vi essa e te dar outra chance.",
-    "TÃƒÂ¡ me estressandoÃ¢â‚¬Â¦ mas de um jeito carismÃƒÂ¡tico. Continua tentando",
-    "VocÃƒÂª tÃƒÂ¡ jogando ou digitando senha errada do WiFi?",
-    "Essa palavra foi criada agora, nÃƒÂ©? Registro em cartÃƒÂ³rio jÃƒÂ¡.",
-    "Calma, nÃƒÂ£o precisa inventar idioma novo.",
-    "Eu pedi uma palavra, nÃƒÂ£o um enigma.",
-    "TÃƒÂ¡ tentando me confundir ou se confundir?",
-    "Se errar desse jeito fosse esporte, vocÃƒÂª tava nas OlimpÃƒÂ­adas.",
-    "Isso aÃƒÂ­ foi ousadiaÃ¢â‚¬Â¦ mas nÃƒÂ£o foi acerto.",
-    "Quase acertou! SÃƒÂ³ faltou acertar.",
-    "VocÃƒÂª piscou e digitou?",
-    "Essa palavra mora em NÃƒÂ¡rnia.",
+    "Que isso, cara? Tá tentando inventar uma palavra nova pro dicionário?",
+    "Essa aí nem o Google teve coragem de reconhecer.",
+    "Tá difícil ou você tá de gracinha validando tudo errado?",
+    "Quer algo mais fácil? Vai jogar modo três letras, campeão.",
+    "Você digitou com o cotovelo agora, né?",
+    "Calma, respira… não é um teclado musical.",
+    "Essa palavra existe só na sua imaginação fértil.",
+    "Eu até tentei defender você, mas não deu.",
+    "Se errar mais uma, vou pedir reforço pro professor de português.",
+    "Tá treinando pra campeonato mundial de erro?",
+    "Essa passou longe… tipo, outro CEP.",
+    "Amigo… isso foi estratégia ou desespero?",
+    "Eu acredito em você… mas essa aí me quebrou.",
+    "Se criatividade valesse ponto, você tava ganhando.",
+    "Palavra inédita detectada. Quer patentear?",
+    "Você tá jogando ou testando minha paciência?",
+    "Errar é humano… mas você tá se dedicando demais.",
+    "Quase! Só errou todas as letras.",
+    "Vou fingir que não vi essa e te dar outra chance.",
+    "Tá me estressando… mas de um jeito carismático. Continua tentando",
+    "Você tá jogando ou digitando senha errada do WiFi?",
+    "Essa palavra foi criada agora, né? Registro em cartório já.",
+    "Calma, não precisa inventar idioma novo.",
+    "Eu pedi uma palavra, não um enigma.",
+    "Tá tentando me confundir ou se confundir?",
+    "Se errar desse jeito fosse esporte, você tava nas Olimpíadas.",
+    "Isso aí foi ousadia… mas não foi acerto.",
+    "Quase acertou! Só faltou acertar.",
+    "Você piscou e digitou?",
+    "Essa palavra mora em Nárnia.",
     "Digitou com pressa ou com raiva?",
-    "Eu acredito no seu potencialÃ¢â‚¬Â¦ mas nÃƒÂ£o nessa palavra.",
-    "TÃƒÂ¡ testando minha paciÃƒÂªncia nÃƒÂ­vel hard?",
+    "Eu acredito no seu potencial… mas não nessa palavra.",
+    "Tá testando minha paciência nível hard?",
     "Respira, jovem gafanhoto.",
-    "Essa foi tÃƒÂ£o errada que eu atÃƒÂ© ri.",
-    "VocÃƒÂª desbloqueou o modo criativo sem querer.",
-    "Palavra alternativa detectada. Pena que nÃƒÂ£o existe.",
-    "TÃƒÂ¡ querendo trollar o sistema?",
+    "Essa foi tão errada que eu até ri.",
+    "Você desbloqueou o modo criativo sem querer.",
+    "Palavra alternativa detectada. Pena que não existe.",
+    "Tá querendo trollar o sistema?",
     "Se fosse prova, eu chamava seus pais.",
-    "Essa aÃƒÂ­ passou voandoÃ¢â‚¬Â¦ longe do certo.",
-    "Foi estratÃƒÂ©gia secreta ou sÃƒÂ³ caos mesmo?",
-    "VocÃƒÂª tÃƒÂ¡ aquecendo os dedos antes de acertar, nÃƒÂ©?",
-    "Essa palavra tÃƒÂ¡ pedindo socorro.",
-    "Eu nÃƒÂ£o esperava issoÃ¢â‚¬Â¦ e olha que eu jÃƒÂ¡ vi muita coisa.",
-    "Tentativa vÃƒÂ¡lidaÃ¢â‚¬Â¦ sÃƒÂ³ nÃƒÂ£o foi vÃƒÂ¡lida mesmo.",
-    "VocÃƒÂª estÃƒÂ¡ oficialmente improvisando.",
-    "Calma, nÃƒÂ£o ÃƒÂ© teste de criatividade.",
-    "Se insistir assim, eu comeÃƒÂ§o a cobrar taxa de erro.",
-    "Palavra misteriosaÃ¢â‚¬Â¦ atÃƒÂ© demais.",
-    "VocÃƒÂª tem talentoÃ¢â‚¬Â¦ pra errar com confianÃƒÂ§a.",
+    "Essa aí passou voando… longe do certo.",
+    "Foi estratégia secreta ou só caos mesmo?",
+    "Você tá aquecendo os dedos antes de acertar, né?",
+    "Essa palavra tá pedindo socorro.",
+    "Eu não esperava isso… e olha que eu já vi muita coisa.",
+    "Tentativa válida… só não foi válida mesmo.",
+    "Você está oficialmente improvisando.",
+    "Calma, não é teste de criatividade.",
+    "Se insistir assim, eu começo a cobrar taxa de erro.",
+    "Palavra misteriosa… até demais.",
+    "Você tem talento… pra errar com confiança.",
     "Isso foi ousado. Errado, mas ousado.",
-    "A intenÃƒÂ§ÃƒÂ£o foi boaÃ¢â‚¬Â¦ eu acho.",
-    "TÃƒÂ¡ jogando no modo aleatÃƒÂ³rio?",
-    "Essa palavra veio de qual dimensÃƒÂ£o?",
-    "VocÃƒÂª tÃƒÂ¡ tentando desbloquear um final secreto?",
-    "Se errar fosse XP, vocÃƒÂª jÃƒÂ¡ tava nÃƒÂ­vel mÃƒÂ¡ximo.",
-    "Palavra quase invisÃƒÂ­velÃ¢â‚¬Â¦ porque nÃƒÂ£o existe.",
-    "Eu vi o que vocÃƒÂª fez aÃƒÂ­. NÃƒÂ£o recomendo.",
-    "TÃƒÂ¡ me desafiando ou se desafiando?",
-    "Essa foi criativa. InÃƒÂºtilÃ¢â‚¬Â¦ mas criativa.",
-    "VocÃƒÂª digitou e pensou depois, nÃƒÂ©?",
-    "Quer um dicionÃƒÂ¡rio de presente?",
-    "TÃƒÂ¡ fazendo speedrun de erro?",
-    "Essa aÃƒÂ­ nem a professora corrigia.",
-    "VocÃƒÂª consegueÃ¢â‚¬Â¦ sÃƒÂ³ nÃƒÂ£o assim.",
-    "Palavra inÃƒÂ©dita versÃƒÂ£o beta.",
-    "Foi tentativa ou experimento cientÃƒÂ­fico?",
-    "TÃƒÂ¡ achando que eu nÃƒÂ£o sei ler?",
-    "Eu sinto que vocÃƒÂª consegue melhorÃ¢â‚¬Â¦ bem melhor.",
-    "Continua tentando. Uma hora a gente acertaÃ¢â‚¬Â¦ eu espero."
+    "A intenção foi boa… eu acho.",
+    "Tá jogando no modo aleatório?",
+    "Essa palavra veio de qual dimensão?",
+    "Você tá tentando desbloquear um final secreto?",
+    "Se errar fosse XP, você já tava nível máximo.",
+    "Palavra quase invisível… porque não existe.",
+    "Eu vi o que você fez aí. Não recomendo.",
+    "Tá me desafiando ou se desafiando?",
+    "Essa foi criativa. Inútil… mas criativa.",
+    "Você digitou e pensou depois, né?",
+    "Quer um dicionário de presente?",
+    "Tá fazendo speedrun de erro?",
+    "Essa aí nem a professora corrigia.",
+    "Você consegue… só não assim.",
+    "Palavra inédita versão beta.",
+    "Foi tentativa ou experimento científico?",
+    "Tá achando que eu não sei ler?",
+    "Eu sinto que você consegue melhor… bem melhor.",
+    "Continua tentando. Uma hora a gente acerta… eu espero."
 ];
-// --- NOVA VARIÃƒÂVEL: SACOLA DE FRASES ---
+// --- NOVA VARIÁVEL: SACOLA DE FRASES ---
 let unusedPhrases = [...funnyPhrases];
 
 /* --- MOBILE MENU LOGIC --- */
@@ -314,7 +300,7 @@ function clearAllHighlights() {
     document.querySelectorAll('.rule-card').forEach(card => card.classList.remove('rule-active'));
 }
 
-/* NOVO: PREENCHE O SELETOR COM OPÃƒâ€¡Ãƒâ€¢ES DISPONÃƒÂVEIS */
+/* NOVO: PREENCHE O SELETOR COM OPÇÕES DISPONÍVEIS */
 function populateLengthOptions() {
     // Descobre quais tamanhos de palavra existem no banco de dados
     const lengths = [...new Set(allChallenges.map(c => c.word.length))].sort((a,b) => a-b);
@@ -328,12 +314,10 @@ function populateLengthOptions() {
 }
 
 function initChallenge() {
-    currentGameMode = 'normal';
-    resetDailySessionUi();
     clearAllHighlights();
     animateMage('reset');
     
-    // FILTRAGEM PELA ESCOLHA DO USUÃƒÂRIO
+    // FILTRAGEM PELA ESCOLHA DO USUÁRIO
     const selectedLen = lengthSelector.value;
     let pool = allChallenges;
     
@@ -354,7 +338,7 @@ function initChallenge() {
     hintIndex = 0;
     consecutiveErrors = 0;
     chickenAlreadySummoned = false; // "Recarrega" a galinha para o novo desafio
-    if (feedbackTimeout) clearTimeout(feedbackTimeout); // Limpa relÃƒÂ³gio antigo
+    if (feedbackTimeout) clearTimeout(feedbackTimeout); // Limpa relógio antigo
     
     updateHintDisplay();
     startHintCycle();
@@ -388,12 +372,12 @@ function startHintCycle() {
     }, 5000);
 }
 
-// LÃƒâ€œGICA DO BOTÃƒÆ’O PULAR DICA
+// LÓGICA DO BOTÃO PULAR DICA
 const skipHintBtn = document.getElementById('skip-hint-btn');
 if (skipHintBtn) {
     skipHintBtn.addEventListener('click', () => {
         if (!targetChallenge) return;
-        // AvanÃƒÂ§a o ÃƒÂ­ndice da dica manualmente
+        // Avança o índice da dica manualmente
         hintIndex++; 
         if (hintIndex >= targetChallenge.hints.length) hintIndex = 0;
         
@@ -414,7 +398,7 @@ alphabet.forEach((letter, index) => {
     div.className = 'mini-char'; 
     div.id = `mini-${letter}`; 
     
-    // Descobre qual ÃƒÂ© a letra espelhada baseada na posiÃƒÂ§ÃƒÂ£o (A=0 vira Z=25)
+    // Descobre qual é a letra espelhada baseada na posição (A=0 vira Z=25)
     const mirrored = alphabet[25 - index];
     
     // Insere a letra principal e a pequena
@@ -473,7 +457,7 @@ function render(showTutorial = false) {
     if (isFirstRound && currentWord.length === 0 && showTutorial) {
         const msgDiv = document.createElement('div');
         msgDiv.className = 'tutorial-message';
-        msgDiv.innerHTML = 'Digite uma letra no campo abaixo onde tem uma interrogaÃƒÂ§ÃƒÂ£o para comeÃƒÂ§ar';
+        msgDiv.innerHTML = 'Digite uma letra no campo abaixo onde tem uma interrogação para começar';
         wordGrid.appendChild(msgDiv);
         return;
     }
@@ -490,20 +474,20 @@ function render(showTutorial = false) {
     updateMiniAlphabet();
 }
 
-// --- LÃƒâ€œGICA DO BOTÃƒÆ’O LIMPAR TABULEIRO --- //
+// --- LÓGICA DO BOTÃO LIMPAR TABULEIRO --- //
 const clearBoardBtn = document.getElementById('clear-board-btn');
 let clearConfirmState = false;
 
 if (clearBoardBtn) {
     clearBoardBtn.addEventListener('click', () => {
         if (!clearConfirmState) {
-            // Primeiro clique - Pede confirmaÃƒÂ§ÃƒÂ£o
+            // Primeiro clique - Pede confirmação
             clearBoardBtn.innerText = "CERTEZA?";
             clearBoardBtn.style.background = "var(--error)";
             clearBoardBtn.style.color = "#fff";
             clearConfirmState = true;
 
-            // Reseta o botÃƒÂ£o apÃƒÂ³s 3 segundos se nÃƒÂ£o clicar novamente
+            // Reseta o botão após 3 segundos se não clicar novamente
             setTimeout(() => {
                 if (clearConfirmState) {
                     resetClearButton();
@@ -545,14 +529,14 @@ function addChar(char) {
     historyList.scrollTop = historyList.scrollHeight;
 
     if (currentWord.length >= maxWordLength) {
-        // --- NOVO: LIMPA O TABULEIRO QUANDO VOLTA PRO INÃƒÂCIO --- //
+        // --- NOVO: LIMPA O TABULEIRO QUANDO VOLTA PRO INÍCIO --- //
         playSoundEffect('overwrite');
         
-        // Resetamos o array e o ÃƒÂ­ndice para comeÃƒÂ§ar uma palavra nova "limpa"
+        // Resetamos o array e o índice para começar uma palavra nova "limpa"
         currentWord = [];
         replaceIndex = 0;
         
-        // Processa a letra que o usuÃƒÂ¡rio acabou de digitar na nova posiÃƒÂ§ÃƒÂ£o 0
+        // Processa a letra que o usuário acabou de digitar na nova posição 0
         processNewChar(char, 0);
 
         showFloatingMessage("Ciclo Reiniciado! Tabuleiro limpo.", 2500);
@@ -561,9 +545,9 @@ function addChar(char) {
         playSoundEffect('type');
         processNewChar(char, currentWord.length);
         
-        // AVISO NA PENÃƒÅ¡LTIMA LETRA (N-1)
+        // AVISO NA PENÚLTIMA LETRA (N-1)
         if (currentWord.length === maxWordLength - 1) {
-            showFloatingMessage("PrÃƒÂ³xima letra ÃƒÂ© a ÃƒÂºltima! O ciclo vai reiniciar.", 2500);
+            showFloatingMessage("Próxima letra é a última! O ciclo vai reiniciar.", 2500);
             playSoundEffect('alert');
         }
         
@@ -590,7 +574,7 @@ function processNewChar(char, indexToInsert) {
 
     currentWord.splice(indexToInsert, 0, charToAdd);
 
-    // REGRA 3: SanduÃƒÂ­che
+    // REGRA 3: Sanduíche
     const firstIdx = currentWord.indexOf(charToAdd);
     const lastIdxFound = currentWord.lastIndexOf(charToAdd);
     
@@ -607,194 +591,14 @@ function processNewChar(char, indexToInsert) {
     render();
 }
 
-function formatElapsed(ms = 0) {
-    const totalSec = Math.max(0, Math.floor(ms / 1000));
-    const min = Math.floor(totalSec / 60).toString().padStart(2, '0');
-    const sec = (totalSec % 60).toString().padStart(2, '0');
-    return `${min}:${sec}`;
-}
-
-function stopDailyTimer() {
-    if (dailyTimerInterval) {
-        clearInterval(dailyTimerInterval);
-        dailyTimerInterval = null;
-    }
-}
-
-function resetDailySessionUi() {
-    stopDailyTimer();
-    dailySession = null;
-    if (dailyStatusBar) dailyStatusBar.classList.add('hidden-control');
-    if (dailyTimerEl) dailyTimerEl.innerText = 'Tempo: 00:00';
-    if (dailyAttemptsEl) dailyAttemptsEl.innerText = 'Tentativas: 0';
-}
-
-function startDailyTimer(startMs = Date.now()) {
-    stopDailyTimer();
-    const tick = () => {
-        if (!dailyTimerEl) return;
-        const elapsed = Date.now() - startMs;
-        dailyTimerEl.innerText = `Tempo: ${formatElapsed(elapsed)}`;
-    };
-    tick();
-    dailyTimerInterval = setInterval(tick, 1000);
-}
-
-function showDailyResult(data) {
-    if (dailyResultTime) dailyResultTime.innerText = `Tempo: ${formatElapsed(data.elapsedMs || 0)}`;
-    if (dailyResultAttempts) dailyResultAttempts.innerText = `Tentativas: ${data.attempts || 0}`;
-    if (dailyResultMeaning) dailyResultMeaning.innerText = `Significado: ${data.meaning || '--'}`;
-    if (dailyResultRecord) dailyResultRecord.classList.toggle('hidden-control', !data.isRecord);
-    if (dailyResultModal) dailyResultModal.classList.remove('hidden-control');
-    lastDailyShareText = data?.share?.text || '';
-}
-
-async function shareDailyResult() {
-    if (!lastDailyShareText) return;
-    try {
-        if (navigator.share) {
-            await navigator.share({ text: lastDailyShareText });
-            return;
-        }
-        if (navigator.clipboard) {
-            await navigator.clipboard.writeText(lastDailyShareText);
-            feedback.innerText = 'Resultado copiado para compartilhar!';
-            feedback.style.color = 'var(--success)';
-        }
-    } catch (err) {
-        console.log('Falha ao compartilhar resultado diário:', err);
-    }
-}
-
-async function startDailyWordMode() {
-    if (!functionsApi) {
-        feedback.innerText = 'Functions indisponivel. Recarregue a pagina.';
-        feedback.style.color = 'var(--error)';
-        return;
-    }
-
-    try {
-        const callStart = functionsApi.httpsCallable('startDailyRun');
-        const result = await callStart({});
-        const data = result?.data || {};
-
-        if (data.blocked) {
-            feedback.innerText = data.message || 'Palavra do Dia ja concluida hoje.';
-            feedback.style.color = 'var(--warning)';
-            return;
-        }
-
-        currentGameMode = 'daily';
-        clearAllHighlights();
-        animateMage('reset');
-        stopHintCycle();
-
-        hub.classList.add('hidden-control');
-        welcomeScreen.style.display = 'none';
-        document.getElementById('app-container')?.classList.remove('hidden-app');
-
-        targetChallenge = {
-            word: '',
-            hints: Array.isArray(data.hints) ? data.hints : ['Sem dica disponivel.'],
-            meaning: ''
-        };
-
-        maxWordLength = data.wordLength || 3;
-        currentWord = [];
-        replaceIndex = 0;
-        isFirstRound = true;
-        hintIndex = 0;
-        consecutiveErrors = 0;
-        chickenAlreadySummoned = false;
-
-        if (dailyStatusBar) dailyStatusBar.classList.remove('hidden-control');
-        if (dailyModeLabel) dailyModeLabel.innerText = `Palavra do Dia (${data.dateKey || ''})`;
-
-        const startMs = Date.now();
-        dailySession = {
-            dateKey: data.dateKey,
-            startedAtMs: startMs,
-            attempts: 0
-        };
-
-        if (dailyAttemptsEl) dailyAttemptsEl.innerText = 'Tentativas: 0';
-        startDailyTimer(startMs);
-
-        updateHintDisplay();
-        feedback.innerText = 'Modo Palavra do Dia iniciado!';
-        feedback.style.color = 'var(--accent)';
-        meaningBox.classList.add('hidden');
-        meaningBox.innerText = '';
-        charInput.placeholder = '?';
-        render(true);
-
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        syncTopUserUi(activeUser, activeUserDoc);
-    } catch (err) {
-        feedback.innerText = `Erro ao iniciar Palavra do Dia: ${err.message || err}`;
-        feedback.style.color = 'var(--error)';
-    }
-}
-
-async function validateDailyAttempt(word) {
-    if (!functionsApi || !dailySession) return;
-
-    try {
-        const callSubmit = functionsApi.httpsCallable('submitDailyGuess');
-        const result = await callSubmit({ guess: word });
-        const data = result?.data || {};
-
-        if (data.alreadyCompleted) {
-            feedback.innerText = 'Voce ja concluiu a Palavra do Dia de hoje.';
-            feedback.style.color = 'var(--warning)';
-            return;
-        }
-
-        if (!data.success) {
-            dailySession.attempts = data.attempts || (dailySession.attempts + 1);
-            if (dailyAttemptsEl) dailyAttemptsEl.innerText = `Tentativas: ${dailySession.attempts}`;
-            feedback.innerText = 'Ainda nao foi dessa vez. Continue tentando!';
-            feedback.style.color = 'var(--error)';
-            animateMage('sad');
-            showMobileErrorMagePopup();
-            return;
-        }
-
-        dailySession.attempts = data.attempts || dailySession.attempts;
-        if (dailyAttemptsEl) dailyAttemptsEl.innerText = `Tentativas: ${dailySession.attempts}`;
-        stopDailyTimer();
-
-        feedback.innerText = 'Palavra do Dia concluida!';
-        feedback.style.color = 'var(--success)';
-        meaningBox.innerText = data.meaning || '';
-        meaningBox.classList.remove('hidden');
-
-        successSound.play();
-        playSoundEffect('victory');
-        triggerConfetti();
-        animateMage('win');
-        showMobileVictoryPopup();
-
-        showDailyResult(data);
-    } catch (err) {
-        feedback.innerText = `Erro ao validar Palavra do Dia: ${err.message || err}`;
-        feedback.style.color = 'var(--error)';
-    }
-}
-
 async function validate() {
     const word = currentWord.join('').toUpperCase();
     if (word.length < 2) return;
     
     feedback.innerText = "Verificando...";
-
-    if (currentGameMode === 'daily') {
-        await validateDailyAttempt(word);
-        return;
-    }
-
+    
     if (targetChallenge && word === targetChallenge.word) {
-        feedback.innerText = "Ã°Å¸Ââ€  ACERTOU!"; feedback.style.color = "var(--success)";
+        feedback.innerText = "🏆 ACERTOU!"; feedback.style.color = "var(--success)";
         meaningBox.innerText = targetChallenge.meaning;
         meaningBox.classList.remove('hidden');
         document.body.classList.add('success-flash');
@@ -823,13 +627,13 @@ async function validate() {
         const data = await res.json();
         
         if (data.length > 0) {
-            feedback.innerText = "Ã¢Å¡Â Ã¯Â¸Â Palavra existe, mas nÃƒÂ£o ÃƒÂ© a do desafio."; 
+            feedback.innerText = "⚠️ Palavra existe, mas não é a do desafio."; 
             feedback.style.color = "var(--warning)";
             animateMage('reset');
             showMobileErrorMagePopup();
             consecutiveErrors = 0; // Zera o contador se chutar uma palavra real
         } else {
-            // ---- LÃƒâ€œGICA DA GALINHA REVISADA ----
+            // ---- LÓGICA DA GALINHA REVISADA ----
             consecutiveErrors++;
             showMobileErrorMagePopup();
             
@@ -842,24 +646,24 @@ async function validate() {
             const randomPhraseIndex = Math.floor(Math.random() * unusedPhrases.length);
             const randomPhrase = unusedPhrases.splice(randomPhraseIndex, 1)[0];
             
-            // Exibe a mensagem original + a frase engraÃƒÂ§ada menorzinha embaixo
-            feedback.innerHTML = `Ã¢ÂÅ’ Tente novamente<br><span style="font-size: 0.9rem; font-weight: normal; color: var(--text-dim);">${randomPhrase}</span>`; 
+            // Exibe a mensagem original + a frase engraçada menorzinha embaixo
+            feedback.innerHTML = `❌ Tente novamente<br><span style="font-size: 0.9rem; font-weight: normal; color: var(--text-dim);">${randomPhrase}</span>`; 
             feedback.style.color = "var(--error)";
             
             document.body.classList.add('error-flash'); 
             setTimeout(() => document.body.classList.remove('error-flash'), 500); // Remove o piscar vermelho
             
-            // Invoca a galinha apenas se for o 3Ã‚Âº erro E se ela ainda nÃƒÂ£o tiver aparecido neste desafio
+            // Invoca a galinha apenas se for o 3º erro E se ela ainda não tiver aparecido neste desafio
             if (consecutiveErrors >= 3 && chickenAlreadySummoned === false) {
-                chickenAlreadySummoned = true; // Marca que ela jÃƒÂ¡ apareceu neste desafio
+                chickenAlreadySummoned = true; // Marca que ela já apareceu neste desafio
                 
                 // Toca o SEU som de galinha local
                 const chickenAudio = new Audio('galinha.mp3');
                 chickenAudio.volume = 1.0; 
-                chickenAudio.play().catch(e => console.log("Erro no ÃƒÂ¡udio:", e));    
+                chickenAudio.play().catch(e => console.log("Erro no áudio:", e));    
                 
                 const chickenEl = document.createElement('div');
-                chickenEl.innerText = 'Ã°Å¸Ââ€'; // A galinha!
+                chickenEl.innerText = '🐔'; // A galinha!
                 chickenEl.className = 'flying-chicken';
                 document.body.appendChild(chickenEl);
                 
@@ -870,7 +674,7 @@ async function validate() {
                 playSoundEffect('error');
                 animateMage('sad');
             }
-            // ---- FIM DA LÃƒâ€œGICA ----
+            // ---- FIM DA LÓGICA ----
         }
     } catch { 
         feedback.innerText = "Erro na API"; 
@@ -892,7 +696,7 @@ charInput.addEventListener('input', (e) => {
 });
 validateBtn.addEventListener('click', validate);
 
-// BOTÃƒÆ’O LIMPAR HISTÃƒâ€œRICO - RESTAURADO A LÃƒâ€œGICA ORIGINAL
+// BOTÃO LIMPAR HISTÓRICO - RESTAURADO A LÓGICA ORIGINAL
 document.getElementById('clear-history').onclick = () => { 
     historyList.innerHTML = ''; 
     clearAllHighlights(); 
@@ -905,9 +709,9 @@ if(toggleBtn) {
         sidebar.classList.toggle('collapsed');
         // Alterna seta
         if (sidebar.classList.contains('collapsed')) {
-            toggleBtn.innerText = "Ã¢â€“Â¶";
+            toggleBtn.innerText = "▶";
         } else {
-            toggleBtn.innerText = "Ã¢â€”â‚¬";
+            toggleBtn.innerText = "◀";
         }
     };
 }
@@ -918,7 +722,7 @@ const isMobileViewport = () => window.matchMedia('(max-width: 800px)').matches;
 document.body.onclick = (e) => { 
     if (audioCtx.state === 'suspended') audioCtx.resume();
     if (isMobileViewport()) return; // Evita abrir teclado a cada toque fora do input no celular
-    // Ajuste para nÃƒÂ£o roubar foco se clicar no sidebar mobile
+    // Ajuste para não roubar foco se clicar no sidebar mobile
     if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.classList.contains('letter-box') && !sidebar.contains(e.target) && !alphabetDrawer.contains(e.target)) {
         charInput.focus(); 
     }
@@ -949,7 +753,7 @@ function animateMage(action) {
     }
 }
 
-/* --- ÃƒÂUDIO --- */
+/* --- ÁUDIO --- */
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioCtx = new AudioContext();
 
@@ -1016,7 +820,7 @@ function triggerConfetti() {
     }
 }
 
-/* --- UTILITÃƒÂRIOS --- */
+/* --- UTILITÁRIOS --- */
 function toggleSection(contentId, headerEl) {
     const content = document.getElementById(contentId);
     content.classList.toggle('hidden');
@@ -1111,7 +915,7 @@ function showMobileErrorMagePopup() {
     }, 1000);
 }
 
-/* --- INICIALIZAÃƒâ€¡ÃƒÆ’O --- */
+/* --- INICIALIZAÇÃO --- */
 document.addEventListener("DOMContentLoaded", () => {
     // Detecta mobile (apenas para logs ou classes extras se precisar)
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 800;
@@ -1119,15 +923,15 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.add('mobile-mode');
     }
     
-    // NOVO: Preenche as opÃƒÂ§ÃƒÂµes de dificuldade
+    // NOVO: Preenche as opções de dificuldade
     populateLengthOptions();
     setupMobileLayout();
 
     startMageIdle();
-    // initChallenge ÃƒÂ© chamado apenas quando clica em START agora
+    // initChallenge é chamado apenas quando clica em START agora
 });
 
-// LÃƒâ€œGICA DO BOTÃƒÆ’O DE BOAS-VINDAS
+// LÓGICA DO BOTÃO DE BOAS-VINDAS
 document.getElementById('start-game-btn').onclick = () => {
     // Some com o modal
     document.getElementById('welcome-screen').style.display = 'none';
@@ -1144,32 +948,27 @@ document.getElementById('start-game-btn').onclick = () => {
 
 const hub = document.getElementById("main-hub");
 const hubPlay = document.getElementById("hub-play");
-const hubDailyWordBtn = document.getElementById("hub-daily-word");
 const welcomeScreen = document.getElementById("welcome-screen");
 
 hubPlay.addEventListener("click", () => {
-    currentGameMode = "normal";
-    resetDailySessionUi();
     hub.style.display = "none";
     welcomeScreen.style.display = "flex";
     syncTopUserUi(activeUser, activeUserDoc);
 });
 
-hubDailyWordBtn?.addEventListener("click", startDailyWordMode);
-
-// BotÃƒÂµes futuros
+// Botões futuros
 document.getElementById("hub-profile").addEventListener("click", () => {
     openProfileModal();
 });
 
 document.getElementById("hub-tournaments").addEventListener("click", () => {
-    alert("Torneios em breve Ã°Å¸Ââ€ ");
+    alert("Torneios em breve 🏆");
 });
 
 document.getElementById("hub-ranking").addEventListener("click", () => {
     openRankingModal();
 });
-/* --- LÃƒâ€œGICA DO SELETOR DE MODO DE JOGO --- */
+/* --- LÓGICA DO SELETOR DE MODO DE JOGO --- */
 document.addEventListener("DOMContentLoaded", () => {
     const modeSelector = document.getElementById('mode-selector');
     const modeWarning = document.getElementById('mode-warning');
@@ -1178,23 +977,23 @@ document.addEventListener("DOMContentLoaded", () => {
         modeSelector.addEventListener('change', (e) => {
             const selectedMode = e.target.value;
 
-            // Se o modo escolhido NÃƒÆ’O for 'solo'
+            // Se o modo escolhido NÃO for 'solo'
             if (selectedMode !== 'solo') {
-                // Toca som de erro (se o contexto de ÃƒÂ¡udio estiver ativo)
+                // Toca som de erro (se o contexto de áudio estiver ativo)
                 if (typeof playSoundEffect === 'function') {
                     playSoundEffect('error');
-                    // Tenta animar o mago para 'triste' se ele estiver visÃƒÂ­vel
+                    // Tenta animar o mago para 'triste' se ele estiver visível
                     if (typeof animateMage === 'function') animateMage('sad');
                 }
 
                 // Mostra a mensagem de aviso
                 modeWarning.style.display = 'block';
-                modeWarning.classList.add('popIn'); // Reusa sua animaÃƒÂ§ÃƒÂ£o de popIn
+                modeWarning.classList.add('popIn'); // Reusa sua animação de popIn
 
                 // Reseta o seletor para "Solo" automaticamente
                 e.target.value = 'solo';
 
-                // Esconde a mensagem apÃƒÂ³s 3 segundos
+                // Esconde a mensagem após 3 segundos
                 setTimeout(() => {
                     modeWarning.style.display = 'none';
                 }, 3000);
@@ -1398,7 +1197,7 @@ function openProfileModal() {
     showControl(userMenuDropdown, false);
 
     if (!activeUser) {
-        setStatus('FaÃƒÂ§a login para acessar o perfil.', true);
+        setStatus('Faça login para acessar o perfil.', true);
         return;
     }
 
@@ -1413,7 +1212,7 @@ function openProfileModal() {
     if (profilePhotoBtn) profilePhotoBtn.disabled = isAnon;
 
     if (isAnon) {
-        setStatus('Conta visitante: joga normal, mas nÃƒÂ£o salva pontos nem ranking.');
+        setStatus('Conta visitante: joga normal, mas não salva pontos nem ranking.');
     } else {
         setStatus('');
     }
@@ -1445,7 +1244,7 @@ async function uploadProfilePhoto(file, uid) {
 
 async function saveProfile() {
     if (!activeUser || !db || activeUser.isAnonymous) {
-        setStatus('Visitante nÃƒÂ£o salva perfil.', true);
+        setStatus('Visitante não salva perfil.', true);
         return;
     }
 
@@ -1477,7 +1276,7 @@ async function saveProfile() {
 
 async function authWithGoogle() {
     if (!auth) {
-        setGateStatus('Firebase Auth nÃ£o inicializado. Recarregue a pÃ¡gina.', true);
+        setGateStatus('Firebase Auth n�o inicializado. Recarregue a p�gina.', true);
         return;
     }
     try {
@@ -1493,7 +1292,7 @@ async function authWithGoogle() {
 
 async function authAnonymously() {
     if (!auth) {
-        setGateStatus('Firebase Auth nÃ£o inicializado. Recarregue a pÃ¡gina.', true);
+        setGateStatus('Firebase Auth n�o inicializado. Recarregue a p�gina.', true);
         return;
     }
     try {
@@ -1508,7 +1307,7 @@ async function authAnonymously() {
 
 async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordFieldId = 'password-input') {
     if (!auth) {
-        setGateStatus('Firebase Auth nÃ£o inicializado. Recarregue a pÃ¡gina.', true);
+        setGateStatus('Firebase Auth n�o inicializado. Recarregue a p�gina.', true);
         return;
     }
     const email = (document.getElementById(emailFieldId)?.value || '').trim();
@@ -1528,8 +1327,8 @@ async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordF
             return;
         }
         if (password !== confirmPassword) {
-            setStatus('As senhas nÃ£o coincidem.', true);
-            setGateStatus('As senhas nÃ£o coincidem.', true);
+            setStatus('As senhas n�o coincidem.', true);
+            setGateStatus('As senhas n�o coincidem.', true);
             return;
         }
     }
@@ -1555,8 +1354,8 @@ async function logoutUser() {
     if (!auth) return;
     try {
         await auth.signOut();
-        setStatus('SessÃƒÂ£o encerrada.');
-        setGateStatus('FaÃƒÂ§a login para continuar.');
+        setStatus('Sessão encerrada.');
+        setGateStatus('Faça login para continuar.');
     } catch (err) {
         setStatus('Erro ao sair: ' + (err.message || err), true);
         setGateStatus('Erro ao sair: ' + (err.message || err), true);
@@ -1588,7 +1387,7 @@ async function loadRanking() {
     if (!rankingList) return;
 
     if (!db) {
-        rankingList.innerHTML = '<div class="ranking-item">Firebase indisponÃƒÂ­vel.</div>';
+        rankingList.innerHTML = '<div class="ranking-item">Firebase indisponível.</div>';
         return;
     }
 
@@ -1655,14 +1454,6 @@ function bindAuthUiEvents() {
     document.getElementById('hub-logout-btn')?.addEventListener('click', logoutUser);
     document.getElementById('user-logout-top')?.addEventListener('click', logoutUser);
     document.getElementById('user-open-profile')?.addEventListener('click', openProfileModal);
-    document.getElementById('close-daily-result')?.addEventListener('click', () => showControl(dailyResultModal, false));
-    document.getElementById('daily-share-btn')?.addEventListener('click', shareDailyResult);
-    document.getElementById('daily-back-hub-btn')?.addEventListener('click', () => {
-        showControl(dailyResultModal, false);
-        document.getElementById('app-container')?.classList.add('hidden-app');
-        showHubScreen(true);
-        resetDailySessionUi();
-    });
 
     document.getElementById('user-menu-trigger')?.addEventListener('click', () => {
         showControl(userMenuDropdown, userMenuDropdown.classList.contains('hidden-control'));
@@ -1677,7 +1468,7 @@ function bindAuthUiEvents() {
 
 function initFirebase() {
     if (!window.firebase) {
-        setGateStatus('Firebase nÃ£o carregou. Verifique internet/CDN e recarregue (Ctrl+F5).', true);
+        setGateStatus('Firebase n�o carregou. Verifique internet/CDN e recarregue (Ctrl+F5).', true);
         return;
     }
 
@@ -1688,7 +1479,6 @@ function initFirebase() {
     auth = firebase.auth();
     db = firebase.firestore();
     storage = firebase.storage();
-    functionsApi = firebase.app().functions("southamerica-east1");
 
     auth.onAuthStateChanged(async (user) => {
         if (!user) {
@@ -1707,7 +1497,7 @@ function initFirebase() {
             activeUserDoc = await ensureUserDoc(user);
         } catch (e) {
             activeUserDoc = null;
-            console.log('Falha ao carregar doc do usuÃƒÂ¡rio:', e);
+            console.log('Falha ao carregar doc do usuário:', e);
         }
 
         showAuthGate(false);
@@ -1726,12 +1516,4 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
-
-
-
-
-
-
-
-
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
@@ -10,8 +10,8 @@
     <div id="auth-gate" class="auth-gate">
         <div class="auth-gate-card">
             <div class="auth-brand">MagicLexis</div>
-            <h2>Entre no GrimÃƒÂ³rio Arcano</h2>
-            <p>FaÃƒÂ§a login para salvar seu progresso, acumular pontos e subir no ranking.</p>
+            <h2>Entre no Grimório Arcano</h2>
+            <p>Faça login para salvar seu progresso, acumular pontos e subir no ranking.</p>
 
             <div class="auth-gate-inputs">
                 <input id="gate-email-input" type="email" placeholder="E-mail">
@@ -38,34 +38,33 @@
     <!-- ================= HUB PRINCIPAL ================= -->
 <div id="main-hub" class="hub-container hidden-control">
     <div class="hub-content">
-        <h1 class="hub-title">Ã°Å¸Â§â„¢ GrimÃƒÂ³rio Arcano</h1>
+        <h1 class="hub-title">🧙 Grimório Arcano</h1>
         <p class="hub-sub">Bem-vindo ao MagicLexis</p>
 
         <div class="hub-buttons">
-            <button class="hub-btn" id="hub-play">Ã¢Å¡â€Ã¯Â¸Â Jogar</button>
-            <button class="hub-btn" id="hub-daily-word">Palavra do Dia</button>
-            <button class="hub-btn" id="hub-profile">Ã°Å¸â€˜Â¤ Perfil</button>
-            <button class="hub-btn" id="hub-tournaments">Ã°Å¸Ââ€  Torneios</button>
-            <button class="hub-btn" id="hub-ranking">Ã°Å¸â€œÅ  Ranking</button>
+            <button class="hub-btn" id="hub-play">⚔️ Jogar</button>
+            <button class="hub-btn" id="hub-profile">👤 Perfil</button>
+            <button class="hub-btn" id="hub-tournaments">🏆 Torneios</button>
+            <button class="hub-btn" id="hub-ranking">📊 Ranking</button>
         </div>
     </div>
     <button id="hub-logout-btn" class="hub-logout-btn hidden-control">Sair</button>
 </div>
 
 
-    <button id="mobile-menu-btn" class="mobile-menu-btn">Ã¢ËœÂ°</button>
+    <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
 
     <button id="mobile-alphabet-btn" class="mobile-alphabet-btn">A-Z</button>
 
     <div id="welcome-screen" class="welcome-container">
         <div class="modal-content">
-            <h2 style="color: var(--accent); font-size: 2.5rem; margin-bottom: 20px;">GrimÃƒÂ³rio de MagicLexis</h2>
-            <p style="font-size: 1.1rem; line-height: 1.6;">VocÃƒÂª precisa acertar a palavra proposta pelo algoritmo, seguindo as regras do jogo.</p>
+            <h2 style="color: var(--accent); font-size: 2.5rem; margin-bottom: 20px;">Grimório de MagicLexis</h2>
+            <p style="font-size: 1.1rem; line-height: 1.6;">Você precisa acertar a palavra proposta pelo algoritmo, seguindo as regras do jogo.</p>
             
             <div class="difficulty-box">
                 <label for="length-selector">Escolha o desafio:</label>
                 <select id="length-selector">
-                    <option value="any">Ã°Å¸Å½Â² AleatÃƒÂ³rio (Qualquer tamanho)</option>
+                    <option value="any">🎲 Aleatório (Qualquer tamanho)</option>
                     </select>
             </div>
            
@@ -73,23 +72,23 @@
             <div class="difficulty-box" style="margin-top: 10px;">
                 <label for="mode-selector">Modo de Jogo:</label>
                 <select id="mode-selector">
-                    <option value="solo">Ã°Å¸â€˜Â¤ Solo (Aventura)</option>
-                    <option value="1v1">Ã¢Å¡â€Ã¯Â¸Â 1 vs 1</option>
-                    <option value="2v2">Ã°Å¸â€ºÂ¡Ã¯Â¸Â 2 vs 2</option>
-                    <option value="4v4">Ã°Å¸ÂÂ° 4 vs 4</option>
+                    <option value="solo">👤 Solo (Aventura)</option>
+                    <option value="1v1">⚔️ 1 vs 1</option>
+                    <option value="2v2">🛡️ 2 vs 2</option>
+                    <option value="4v4">🏰 4 vs 4</option>
                 </select>
                 <p id="mode-warning" style="color: var(--warning); font-size: 0.9rem; margin-top: 5px; display: none;">
-                    Ã¢Å¡Â Ã¯Â¸Â As arenas de batalha estarÃƒÂ£o disponÃƒÂ­veis em breve!
+                    ⚠️ As arenas de batalha estarão disponíveis em breve!
                 </p>
             </div>
 
             <ul style="text-align: left; margin: 25px 0; color: var(--text-dim); font-size: 1rem; padding-left: 20px;">
-                <li style="margin-bottom: 10px;">Uma <strong>Vogal</strong> transforma a prÃƒÂ³xima letra na sua sucessora (A vira B).</li>
+                <li style="margin-bottom: 10px;">Uma <strong>Vogal</strong> transforma a próxima letra na sua sucessora (A vira B).</li>
                 <li style="margin-bottom: 10px;">Uma <strong>Consoante</strong> pode espelhar a letra anterior.</li>
-                <li style="margin-bottom: 10px;">Letras repetidas (A...A) invertem o que estÃƒÂ¡ no meio.</li>
+                <li style="margin-bottom: 10px;">Letras repetidas (A...A) invertem o que está no meio.</li>
             </ul>
             <p class="highlight-text">
-                Ã¢Å¡Â Ã¯Â¸Â <strong>O Ciclo Infinito:</strong> Se preencher tudo, o cursor volta ao inÃƒÂ­cio.
+                ⚠️ <strong>O Ciclo Infinito:</strong> Se preencher tudo, o cursor volta ao início.
             </p>
             <button id="start-game-btn">ENTENDI, VAMOS CONJURAR!</button>
         </div>
@@ -101,16 +100,16 @@
             <button id="user-menu-trigger" class="user-menu-trigger">
                 <img id="user-avatar-top" class="user-avatar-top" alt="Avatar">
                 <span id="user-name-top" class="user-name-top">Visitante</span>
-                <span class="user-menu-caret">Ã¢â€“Â¾</span>
+                <span class="user-menu-caret">▾</span>
             </button>
             <div id="user-menu-dropdown" class="user-menu-dropdown hidden-control">
-                <button id="user-open-profile">ConfiguraÃƒÂ§ÃƒÂµes</button>
+                <button id="user-open-profile">Configurações</button>
                 <button id="user-logout-top">Logout</button>
             </div>
         </div>
 
         <aside class="sidebar" id="sidebar">
-            <button id="toggle-sidebar-btn" class="sidebar-toggle" title="Expandir/Recolher Menu">Ã¢â€”â‚¬</button>
+            <button id="toggle-sidebar-btn" class="sidebar-toggle" title="Expandir/Recolher Menu">◀</button>
 
             <div class="sidebar-content">
                 <div class="brand-container">
@@ -120,18 +119,18 @@
                 <div class="collapsible-section">
                     <div class="collapsible-header" onclick="toggleSection('rules-content', this)">
                         Regras (Hard)
-                        <span class="tooltip" title="Leis mÃƒÂ¡gicas que alteram o que vocÃƒÂª digita. Clique para minimizar!">?</span>
+                        <span class="tooltip" title="Leis mágicas que alteram o que você digita. Clique para minimizar!">?</span>
                     </div>
                     <div id="rules-content" class="collapsible-content">
                         <div style="padding-top: 10px;">
                             <div id="rule-vowel" class="rule-card">
-                                <strong>Vogal (+1):</strong><br>Se anterior ÃƒÂ© vogal, a nova letra avanÃƒÂ§a 1 no alfabeto (Ex: A vira B).
+                                <strong>Vogal (+1):</strong><br>Se anterior é vogal, a nova letra avança 1 no alfabeto (Ex: A vira B).
                             </div>
                             <div id="rule-consonant" class="rule-card">
-                                <strong>Consoante (Espelho):</strong><br>Consoante faz a anterior virar oposto.<br><em>Ex: AÃ¢â€ â€Z, BÃ¢â€ â€Y, CÃ¢â€ â€X</em>
+                                <strong>Consoante (Espelho):</strong><br>Consoante faz a anterior virar oposto.<br><em>Ex: A↔Z, B↔Y, C↔X</em>
                             </div>
                             <div id="rule-repeat" class="rule-card">
-                                <strong>SanduÃƒÂ­che:</strong><br>Repetidas invertem o meio.<br><em>Ex: MARATONA vira MARANOTA</em>
+                                <strong>Sanduíche:</strong><br>Repetidas invertem o meio.<br><em>Ex: MARATONA vira MARANOTA</em>
                             </div>
                         </div>
                     </div>
@@ -139,7 +138,7 @@
 
                 <div class="collapsible-section" style="margin-top: 10px; flex-grow: 1; display: flex; flex-direction: column;">
                     <div class="collapsible-header" onclick="toggleSection('history-content', this)">
-                        HistÃƒÂ³rico
+                        Histórico
                         <span class="tooltip" title="Registro das teclas apertadas. Clique para minimizar!">?</span>
                     </div>
                     <div id="history-content" class="collapsible-content" style="flex-grow: 1; display: flex; flex-direction: column;">
@@ -174,24 +173,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="mage-effect">Ã¢Å“Â¨</div>
+                <div class="mage-effect">✨</div>
             </div>
         </aside>
 
         <main class="game-area">
-                        <div class="challenge-header">
+            <div class="challenge-header">
                 <div class="challenge-instruction">
-                    Acerte a palavra proposta seguindo as regras magicas.
-                </div>
-                <div id="daily-status-bar" class="daily-status-bar hidden-control">
-                    <span id="daily-mode-label">Palavra do Dia</span>
-                    <span id="daily-timer">Tempo: 00:00</span>
-                    <span id="daily-attempts">Tentativas: 0</span>
+                    Acerte a palavra proposta seguindo as regras mágicas.
                 </div>
                 <div class="hint-box">
                     <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 5px;">
                         <div id="hint-counter" class="hint-counter">Dica 1/5</div>
-                        <button id="skip-hint-btn" style="background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; text-transform: uppercase;">Pular Dica Ã¢â€“Â¶</button>
+                        <button id="skip-hint-btn" style="background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; text-transform: uppercase;">Pular Dica ▶</button>
                     </div>
                     <div id="current-hint" class="hint-text fade-in">...</div>
                 </div>
@@ -202,7 +196,7 @@
 
             <div class="notepad-container" id="notepad">
                 <div class="notepad-header" onclick="toggleNotepad()">
-                    <span>Ã°Å¸â€œÂ Rascunho <span class="tooltip-inline" title="Rascunho para ajudar vc a planejar a jogada. Clique para minimizar!">?</span></span>
+                    <span>📝 Rascunho <span class="tooltip-inline" title="Rascunho para ajudar vc a planejar a jogada. Clique para minimizar!">?</span></span>
                 </div>
                 <div class="notepad-body">
                     <textarea placeholder="Anote suas ideias aqui..."></textarea>
@@ -230,7 +224,7 @@
 
             <div id="alphabet-drawer" class="alphabet-wrapper">
                 <div class="alphabet-header">
-                    <span>Mapa de Letras <span class="tooltip-inline" title="Mapa para ajudÃƒÂ¡-lo a identificar letras espelhadas. Clique para minimizar!">?</span></span>
+                    <span>Mapa de Letras <span class="tooltip-inline" title="Mapa para ajudá-lo a identificar letras espelhadas. Clique para minimizar!">?</span></span>
                 </div>
                 <div id="mini-alphabet" class="alphabet-content"></div>
             </div>
@@ -269,7 +263,7 @@
 
     <div id="mobile-victory-modal" class="mobile-victory-modal hidden-control">
         <div class="mobile-victory-card">
-            <div class="mobile-victory-title">VITÃ“RIA!</div>
+            <div class="mobile-victory-title">VIT�RIA!</div>
             <div class="pixel-mage win mobile-victory-mage">
                 <div class="hat-tip"></div>
                 <div class="hat-base"></div>
@@ -301,12 +295,12 @@
 
     <div id="profile-modal" class="profile-modal hidden-control">
         <div class="profile-card arcane-profile-card">
-            <button id="close-profile-modal" class="profile-close">Ã¢Å“â€¢</button>
+            <button id="close-profile-modal" class="profile-close">✕</button>
             <h3>Perfil do Jogador</h3>
 
             <div class="profile-main">
                 <div class="profile-avatar-wrap">
-                    <img id="profile-avatar" class="profile-avatar" alt="Avatar do usuÃƒÂ¡rio">
+                    <img id="profile-avatar" class="profile-avatar" alt="Avatar do usuário">
                 </div>
 
                 <div id="profile-name-title" class="profile-name-title">Jogador</div>
@@ -326,26 +320,11 @@
     </div>
 
 
-        <div id="ranking-modal" class="profile-modal hidden-control">
+    <div id="ranking-modal" class="profile-modal hidden-control">
         <div class="profile-card ranking-card">
-            <button id="close-ranking-modal" class="profile-close">X</button>
+            <button id="close-ranking-modal" class="profile-close">✕</button>
             <h3>Ranking Global (Top 50)</h3>
             <div id="ranking-list" class="ranking-list"></div>
-        </div>
-    </div>
-
-    <div id="daily-result-modal" class="profile-modal hidden-control">
-        <div class="profile-card daily-result-card">
-            <button id="close-daily-result" class="profile-close">X</button>
-            <h3>Palavra do Dia Concluida</h3>
-            <p id="daily-result-time">Tempo: --</p>
-            <p id="daily-result-attempts">Tentativas: --</p>
-            <p id="daily-result-record" class="highlight-text hidden-control">Esse e um tempo recorde dessa palavra.</p>
-            <p id="daily-result-meaning" class="meaning-display">Significado: --</p>
-            <div class="daily-result-actions">
-                <button id="daily-share-btn" class="profile-btn auth-main-btn">Compartilhar resultado</button>
-                <button id="daily-back-hub-btn" class="profile-btn auth-secondary-btn">Voltar ao Hub</button>
-            </div>
         </div>
     </div>
 
@@ -353,9 +332,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-storage-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-functions-compat.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
-
-
