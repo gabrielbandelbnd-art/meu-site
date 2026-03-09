@@ -1,4 +1,4 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+﻿import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import {
     getAuth,
     onAuthStateChanged,
@@ -539,7 +539,7 @@ function render(showTutorial = false) {
     if (isFirstRound && currentWord.length === 0 && showTutorial) {
         const msgDiv = document.createElement('div');
         msgDiv.className = 'tutorial-message';
-        msgDiv.innerHTML = 'Digite uma letra no campo abaixo onde tem uma interrogaÃ§Ã£o para comeÃ§ar';
+        msgDiv.innerHTML = 'Digite uma letra no campo abaixo onde tem uma interrogação para começar';
         wordGrid.appendChild(msgDiv);
         return;
     }
