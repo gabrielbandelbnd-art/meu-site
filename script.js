@@ -1,3 +1,30 @@
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import {
+    getAuth,
+    onAuthStateChanged,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signInAnonymously,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signOut,
+    updateProfile
+} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+import {
+    getFirestore,
+    doc,
+    getDoc,
+    setDoc,
+    collection,
+    query,
+    where,
+    getDocs,
+    orderBy,
+    limit,
+    increment
+} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js';
+import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js';
 /* --- DADOS (LOTE 1 - 120 PALAVRAS) --- */
 const allChallenges = [
     // --- 3 LETRAS ---
@@ -928,6 +955,8 @@ function toggleNotepad() {
 function toggleAlphabet() {
     document.getElementById('mini-alphabet').classList.toggle('hidden');
 }
+window.toggleSection = toggleSection;
+window.toggleNotepad = toggleNotepad;
 
 function showFloatingMessage(text, duration = 2000) {
     const msg = document.getElementById('floating-msg');
@@ -1110,10 +1139,12 @@ const firebaseConfig = {
   appId: "1:1018035751895:web:a6817a7bec70e7672e1992"
 };
 
+let app = null;
 let auth = null;
 let db = null;
 let storage = null;
 let functionsApi = null;
+let dailyCallables = {};
 const FUNCTIONS_REGION = 'southamerica-east1';
 
 const DAILY_MODE = 'daily';
@@ -1191,20 +1222,16 @@ async function callDailyFunction(name, payload = {}) {
         throw err;
     }
 
-    if (!functionsApi || typeof functionsApi.httpsCallable !== 'function') {
-        const err = new Error('Firebase Functions SDK nao disponivel.');
+    if (!functionsApi) {
+        const err = new Error('Firebase Functions nao inicializado.');
         err.code = 'functions/not-initialized';
         throw err;
     }
 
-    const token = await activeUser.getIdToken();
-    if (!token) {
-        const err = new Error('Token de autenticacao indisponivel.');
-        err.code = 'auth/missing-token';
-        throw err;
-    }
+    const call = dailyCallables[name] || httpsCallable(functionsApi, name);
+    dailyCallables[name] = call;
 
-    const call = functionsApi.httpsCallable(name);
+    await activeUser.getIdToken(true);
     const { data } = await call(payload);
     return data;
 }
@@ -1485,23 +1512,22 @@ function getModeVisitor(user) {
 
 async function ensureUserDoc(user) {
     if (!db || !user || user.isAnonymous) return null;
-    const userRef = db.collection('users').doc(user.uid);
-    const snap = await userRef.get();
+    const userRef = doc(db, 'users', user.uid);
+    const snap = await getDoc(userRef);
 
-    if (!snap.exists) {
+    if (!snap.exists()) {
         const baseName = user.displayName || (user.email ? user.email.split('@')[0] : 'Jogador');
-        await userRef.set({
+        await setDoc(userRef, {
             uid: user.uid,
             name: baseName,
             photo: user.photoURL || DEFAULT_AVATAR,
             points: 0
-        });
+        }, { merge: true });
     }
 
-    const fresh = await userRef.get();
-    return fresh.data();
+    const fresh = await getDoc(userRef);
+    return fresh.exists() ? fresh.data() : null;
 }
-
 function syncTopUserUi(user, userDoc) {
     const isLogged = !!user;
     const isAnon = getModeVisitor(user);
@@ -1541,7 +1567,8 @@ async function refreshProfileRank() {
 
     try {
         const points = activeUserDoc?.points || 0;
-        const higher = await db.collection('users').where('points', '>', points).get();
+        const higherQuery = query(collection(db, 'users'), where('points', '>', points));
+        const higher = await getDocs(higherQuery);
         const rank = higher.size + 1;
         profileRank.innerText = `Ranking global: #${rank}`;
     } catch (err) {
@@ -1593,11 +1620,11 @@ function closeRankingModal() {
 
 async function uploadProfilePhoto(file, uid) {
     if (!storage || !file || !uid) return null;
-    const storageRef = storage.ref().child(`profile_photos/${uid}/${Date.now()}_${file.name}`);
-    await storageRef.put(file);
-    return await storageRef.getDownloadURL();
+    const path = `profile_photos/${uid}/${Date.now()}_${file.name}`;
+    const storageRef = ref(storage, path);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef);
 }
-
 async function saveProfile() {
     if (!activeUser || !db || activeUser.isAnonymous) {
         setStatus('Visitante não salva perfil.', true);
@@ -1614,8 +1641,8 @@ async function saveProfile() {
             photoURL = await uploadProfilePhoto(file, activeUser.uid);
         }
 
-        await activeUser.updateProfile({ displayName: newName, photoURL });
-        await db.collection('users').doc(activeUser.uid).set({
+        await updateProfile(activeUser, { displayName: newName, photoURL });
+        await setDoc(doc(db, 'users', activeUser.uid),{
             uid: activeUser.uid,
             name: newName,
             photo: photoURL,
@@ -1636,7 +1663,7 @@ async function authWithGoogle() {
         return;
     }
     try {
-        await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        await signInWithPopup(auth, new GoogleAuthProvider());
         setStatus('Login Google realizado.');
         setGateStatus('Login Google realizado.');
     } catch (err) {
@@ -1652,7 +1679,7 @@ async function authAnonymously() {
         return;
     }
     try {
-        await auth.signInAnonymously();
+        await signInAnonymously(auth);
         setStatus('Entrou como visitante.');
         setGateStatus('Entrou como visitante.');
     } catch (err) {
@@ -1691,12 +1718,12 @@ async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordF
 
     try {
         if (isRegister) {
-            await auth.createUserWithEmailAndPassword(email, password);
+            await createUserWithEmailAndPassword(auth, email, password);
             setStatus('Conta criada com sucesso.');
             setGateStatus('Conta criada com sucesso.');
             setGateAuthMode('login');
         } else {
-            await auth.signInWithEmailAndPassword(email, password);
+            await signInWithEmailAndPassword(auth, email, password);
             setStatus('Login realizado.');
             setGateStatus('Login realizado.');
         }
@@ -1709,7 +1736,7 @@ async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordF
 async function logoutUser() {
     if (!auth) return;
     try {
-        await auth.signOut();
+        await signOut(auth);
         setStatus('Sessão encerrada.');
         setGateStatus('Faça login para continuar.');
     } catch (err) {
@@ -1722,22 +1749,21 @@ async function handleCorrectAnswer() {
     if (!activeUser || !db || activeUser.isAnonymous) return;
 
     try {
-        const ref = db.collection('users').doc(activeUser.uid);
-        await ref.set({
+        const userRef = doc(db, 'users', activeUser.uid);
+        await setDoc(userRef, {
             uid: activeUser.uid,
             name: activeUserDoc?.name || activeUser.displayName || 'Jogador',
             photo: activeUserDoc?.photo || activeUser.photoURL || DEFAULT_AVATAR,
-            points: firebase.firestore.FieldValue.increment(1)
+            points: increment(1)
         }, { merge: true });
 
-        const fresh = await ref.get();
-        activeUserDoc = fresh.data();
-        if (profilePoints) profilePoints.innerText = `Pontos: ${activeUserDoc.points || 0}`;
+        const fresh = await getDoc(userRef);
+        activeUserDoc = fresh.exists() ? fresh.data() : activeUserDoc;
+        if (profilePoints) profilePoints.innerText = `Pontos: ${activeUserDoc?.points || 0}`;
     } catch (err) {
         console.log('Erro ao somar pontos:', err);
     }
 }
-
 async function loadRanking() {
     const rankingList = document.getElementById('ranking-list');
     if (!rankingList) return;
@@ -1750,7 +1776,8 @@ async function loadRanking() {
     rankingList.innerHTML = '<div class="ranking-item">Carregando ranking...</div>';
 
     try {
-        const snap = await db.collection('users').orderBy('points', 'desc').limit(50).get();
+        const rankingQuery = query(collection(db, 'users'), orderBy('points', 'desc'), limit(50));
+        const snap = await getDocs(rankingQuery);
 
         if (snap.empty) {
             rankingList.innerHTML = '<div class="ranking-item">Sem dados no ranking ainda.</div>';
@@ -1828,21 +1855,20 @@ function bindAuthUiEvents() {
 }
 
 function initFirebase() {
-    if (!window.firebase) {
-        setGateStatus('Firebase não carregou. Verifique internet/CDN e recarregue (Ctrl+F5).', true);
-        return;
-    }
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    storage = getStorage(app);
+    const functions = getFunctions(app, FUNCTIONS_REGION);
+    functionsApi = functions;
 
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
+    dailyCallables = {
+        startDailyRun: httpsCallable(functions, 'startDailyRun'),
+        unlockDailyHint: httpsCallable(functions, 'unlockDailyHint'),
+        submitDailyGuess: httpsCallable(functions, 'submitDailyGuess')
+    };
 
-    auth = firebase.auth();
-    db = firebase.firestore();
-    storage = firebase.storage();
-    functionsApi = firebase.app().functions(FUNCTIONS_REGION);
-
-    auth.onAuthStateChanged(async (user) => {
+    onAuthStateChanged(auth, async (user) => {
         if (!user) {
             activeUser = null;
             activeUserDoc = null;
@@ -1870,10 +1896,9 @@ function initFirebase() {
         document.getElementById('app-container')?.classList.add('hidden-app');
 
         syncTopUserUi(user, activeUserDoc);
-        refreshDailyHubState();
+        await refreshDailyHubState();
     });
 }
-
 document.addEventListener('DOMContentLoaded', () => {
     bindAuthUiEvents();
     setGateAuthMode('login');
