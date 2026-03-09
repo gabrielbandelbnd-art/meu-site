@@ -1,4 +1,4 @@
-﻿const {onCall, HttpsError} = require("firebase-functions/v2/https");
+const {onCall, HttpsError} = require("firebase-functions/v2/https");
 const {onSchedule} = require("firebase-functions/v2/scheduler");
 const logger = require("firebase-functions/logger");
 const admin = require("firebase-admin");
@@ -198,7 +198,7 @@ exports.rotateDailyWord = onSchedule(
 
 exports.startDailyRun = onCall({region: "southamerica-east1"}, async (req) => {
   if (!req.auth) {
-    throw new HttpsError("unauthenticated", "Faça login para iniciar.");
+    throw new HttpsError("unauthenticated", "FaÃ§a login para iniciar.");
   }
 
   const uid = req.auth.uid;
@@ -230,7 +230,7 @@ exports.startDailyRun = onCall({region: "southamerica-east1"}, async (req) => {
       return {
         blocked: true,
         dateKey,
-        message: "Palavra do Dia já concluída hoje. Volte após meia-noite de São Paulo.",
+        message: "Palavra do Dia jÃ¡ concluÃ­da hoje. Volte apÃ³s meia-noite de SÃ£o Paulo.",
       };
     }
 
@@ -285,16 +285,16 @@ exports.startDailyRun = onCall({region: "southamerica-east1"}, async (req) => {
 
 exports.unlockDailyHint = onCall({region: "southamerica-east1"}, async (req) => {
   if (!req.auth) {
-    throw new HttpsError("unauthenticated", "Faça login para desbloquear dica.");
+    throw new HttpsError("unauthenticated", "FaÃ§a login para desbloquear dica.");
   }
 
   const uid = req.auth.uid;
   const dateKey = dateKeySaoPaulo(new Date());
 
-  // TODO: validar prova real de anúncio (AdMob Rewarded SSV ou provedor equivalente).
+  // TODO: validar prova real de anÃºncio (AdMob Rewarded SSV ou provedor equivalente).
   const adProof = req.data?.adProof;
   if (!adProof) {
-    throw new HttpsError("failed-precondition", "adProof obrigatório.");
+    throw new HttpsError("failed-precondition", "adProof obrigatÃ³rio.");
   }
 
   const runRef = db.doc(`daily_words/${dateKey}/runs/${uid}`);
@@ -305,7 +305,7 @@ exports.unlockDailyHint = onCall({region: "southamerica-east1"}, async (req) => 
 
   const run = runSnap.data();
   if (run.completedAt) {
-    throw new HttpsError("failed-precondition", "Partida já concluída.");
+    throw new HttpsError("failed-precondition", "Partida jÃ¡ concluÃ­da.");
   }
 
   const next = Math.min((run.unlockedHints || 3) + 1, 5);
@@ -328,95 +328,143 @@ exports.unlockDailyHint = onCall({region: "southamerica-east1"}, async (req) => 
 
 exports.submitDailyGuess = onCall({region: "southamerica-east1"}, async (req) => {
   if (!req.auth) {
-    throw new HttpsError("unauthenticated", "Faça login para validar tentativa.");
+    throw new HttpsError("unauthenticated", "FaÃ§a login para validar tentativa.");
   }
 
   const uid = req.auth.uid;
   const rawGuess = req.data?.guess;
   if (!rawGuess) {
-    throw new HttpsError("invalid-argument", "guess obrigatório.");
+    throw new HttpsError("invalid-argument", "guess obrigatÃ³rio.");
   }
 
   const dateKey = dateKeySaoPaulo(new Date());
   const guess = normalizeWord(rawGuess);
 
-  const runRef = db.doc(`daily_words/${dateKey}/runs/${uid}`);
-  const statusRef = db.doc(`users/${uid}/daily_status/${dateKey}`);
-  const boardRef = db.doc(`daily_leaderboard/${dateKey}`);
-  const priRef = db.doc(`daily_words_private/${dateKey}`);
-
-  const [runSnap, priSnap] = await Promise.all([runRef.get(), priRef.get()]);
-  if (!runSnap.exists) {
-    throw new HttpsError("failed-precondition", "Inicie a Palavra do Dia antes.");
-  }
-  if (!priSnap.exists) {
-    throw new HttpsError("not-found", "Resposta diária indisponível.");
-  }
-
-  const run = runSnap.data();
-  if (run.completedAt) {
-    return {alreadyCompleted: true};
-  }
-
-  const target = priSnap.data().word;
-  const now = Date.now();
-  const startedAtMs = run.startedAt?.toMillis?.() || now;
-  const attempts = (run.attempts || 0) + 1;
-  const elapsedMs = Math.max(0, now - startedAtMs);
-  const success = guess === target;
-
-  let isRecord = false;
-
-  await db.runTransaction(async (tx) => {
-    tx.update(runRef, {
-      attempts,
-      elapsedMs,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      ...(success ? {completedAt: admin.firestore.FieldValue.serverTimestamp()} : {}),
-    });
-
-    if (!success) return;
-
-    const boardSnap = await tx.get(boardRef);
-    const bestMs = boardSnap.exists ? boardSnap.data().bestElapsedMs : null;
-    isRecord = bestMs == null || elapsedMs < bestMs;
-
-    if (isRecord) {
-      tx.set(boardRef, {
-        dateKey,
-        bestElapsedMs: elapsedMs,
-        bestUid: uid,
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-      }, {merge: true});
-    }
-
-    tx.set(statusRef, {
-      dateKey,
-      done: true,
-      attempts,
-      elapsedMs,
-      completedAt: admin.firestore.FieldValue.serverTimestamp(),
-      isRecord,
-    }, {merge: true});
+  logger.info("submitDailyGuess:input", {
+    uid,
+    dateKey,
+    rawGuessLen: String(rawGuess || "").length,
+    guessLen: guess.length,
   });
 
-  if (!success) {
-    return {success: false, attempts, elapsedMs};
-  }
+  try {
+    const runRef = db.doc(`daily_words/${dateKey}/runs/${uid}`);
+    const statusRef = db.doc(`users/${uid}/daily_status/${dateKey}`);
+    const boardRef = db.doc(`daily_leaderboard/${dateKey}`);
+    const priRef = db.doc(`daily_words_private/${dateKey}`);
 
-  const meaning = priSnap.data().meaning || "";
-  return {
-    success: true,
-    attempts,
-    elapsedMs,
-    meaning,
-    isRecord,
-    share: {
+    const [runSnap, priSnap] = await Promise.all([runRef.get(), priRef.get()]);
+    if (!runSnap.exists) {
+      throw new HttpsError("failed-precondition", "Inicie a Palavra do Dia antes.");
+    }
+    if (!priSnap.exists) {
+      throw new HttpsError("not-found", "Resposta diÃ¡ria indisponÃ­vel.");
+    }
+
+    const run = runSnap.data() || {};
+    if (run.completedAt) {
+      return {alreadyCompleted: true};
+    }
+
+    const privateData = priSnap.data() || {};
+    const target = normalizeWord(privateData.word || "");
+    if (!target) {
+      throw new HttpsError("failed-precondition", "Palavra diÃ¡ria invÃ¡lida no documento privado.");
+    }
+
+    const now = Date.now();
+    const startedAtMs = run.startedAt?.toMillis?.() || now;
+    const attempts = (run.attempts || 0) + 1;
+    const elapsedMs = Math.max(0, now - startedAtMs);
+    const success = guess === target;
+
+    logger.info("submitDailyGuess:before_tx", {
+      uid,
+      dateKey,
       attempts,
       elapsedMs,
+      success,
+      hasStartedAt: !!run.startedAt,
+      targetLen: target.length,
+    });
+
+    let isRecord = false;
+
+    await db.runTransaction(async (tx) => {
+      if (success) {
+        const boardSnap = await tx.get(boardRef);
+        const bestMs = boardSnap.exists ? boardSnap.data().bestElapsedMs : null;
+        isRecord = bestMs == null || elapsedMs < bestMs;
+      }
+
+      tx.update(runRef, {
+        attempts,
+        elapsedMs,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        ...(success ? {completedAt: admin.firestore.FieldValue.serverTimestamp()} : {}),
+      });
+
+      if (!success) return;
+
+      if (isRecord) {
+        tx.set(boardRef, {
+          dateKey,
+          bestElapsedMs: elapsedMs,
+          bestUid: uid,
+          updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        }, {merge: true});
+      }
+
+      tx.set(statusRef, {
+        dateKey,
+        done: true,
+        attempts,
+        elapsedMs,
+        completedAt: admin.firestore.FieldValue.serverTimestamp(),
+        isRecord,
+      }, {merge: true});
+    });
+
+    if (!success) {
+      return {success: false, attempts, elapsedMs};
+    }
+
+    const meaning = privateData.meaning || "";
+    return {
+      success: true,
+      attempts,
+      elapsedMs,
+      meaning,
       isRecord,
+      share: {
+        attempts,
+        elapsedMs,
+        isRecord,
+        dateKey,
+        text: `MagicLexis Palavra do Dia ${dateKey} | Tentativas: ${attempts} | Tempo: ${Math.round(elapsedMs / 1000)}s${isRecord ? " | Recorde!" : ""}`,
+      },
+    };
+  } catch (err) {
+    if (err instanceof HttpsError) {
+      logger.error("submitDailyGuess:https_error", {
+        uid,
+        dateKey,
+        code: err.code,
+        message: err.message,
+      });
+      throw err;
+    }
+
+    logger.error("submitDailyGuess:unexpected_error", {
+      uid,
       dateKey,
-      text: `MagicLexis Palavra do Dia ${dateKey} | Tentativas: ${attempts} | Tempo: ${Math.round(elapsedMs / 1000)}s${isRecord ? " | Recorde!" : ""}`,
-    },
-  };
+      message: err?.message || String(err),
+      stack: err?.stack || null,
+    });
+
+    throw new HttpsError(
+        "internal",
+        `submitDailyGuess falhou: ${err?.message || "erro desconhecido"}`
+    );
+  }
 });
