@@ -1122,6 +1122,7 @@ let currentGameMode = NORMAL_MODE;
 let dailySession = null;
 let dailyTimerInterval = null;
 let dailyShareText = '';
+let dailyHubPreviewRun = null;
 let activeUser = null;
 let activeUserDoc = null;
 
@@ -1268,31 +1269,28 @@ function resetDailySession() {
 }
 
 async function refreshDailyHubState() {
-    if (!activeUser || !db) {
-        setDailyHubStatus('Faça login para jogar.', true);
+    if (!activeUser) {
+        setDailyHubStatus('Faca login para jogar.', true);
+        dailyHubPreviewRun = null;
         return;
     }
 
     try {
-        const dateKey = new Intl.DateTimeFormat('en-CA', {
-            timeZone: 'America/Sao_Paulo',
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit'
-        }).format(new Date());
+        const data = await callDailyFunction('startDailyRun', {});
 
-        const statusSnap = await db.doc(`users/${activeUser.uid}/daily_status/${dateKey}`).get();
-        const done = statusSnap.exists && !!(statusSnap.data()?.done || statusSnap.data()?.completedAt);
-
-        if (done) {
-            setDailyHubStatus('Concluída hoje. Liberada após 00:00 (São Paulo).', true);
+        if (data?.blocked) {
+            setDailyHubStatus('Concluida hoje. Liberada apos 00:00 (Sao Paulo).', true);
+            dailyHubPreviewRun = null;
             return;
         }
 
-        setDailyHubStatus('Disponível agora. Palavra exclusiva de hoje.', false);
+        dailyHubPreviewRun = data;
+        setDailyHubStatus('Disponivel agora. Palavra exclusiva de hoje.', false);
     } catch (err) {
-        setDailyHubStatus('Clique para jogar a Palavra do Dia.', false);
-        console.log('Erro refreshDailyHubState', err);
+        dailyHubPreviewRun = null;
+        const info = normalizeCallableError(err);
+        console.error('Erro refreshDailyHubState', info);
+        setDailyHubStatus(`Erro (${info.code}): ${info.message}`, true);
     }
 }
 function applyDailyRunData(data) {
@@ -1374,20 +1372,22 @@ async function unlockNextDailyHint() {
 
 async function startDailyModeFromHub() {
     if (!activeUser) {
-        setDailyHubStatus('Faça login para jogar.', true);
+        setDailyHubStatus('Faca login para jogar.', true);
         return;
     }
 
     try {
-        const data = await callDailyFunction('startDailyRun', {});
+        const data = dailyHubPreviewRun || await callDailyFunction('startDailyRun', {});
 
         if (data?.blocked) {
-            setDailyHubStatus('Concluída hoje. Liberada após 00:00 (São Paulo).', true);
-            showFloatingMessage('Palavra do Dia já concluída hoje.', 2500);
+            setDailyHubStatus('Concluida hoje. Liberada apos 00:00 (Sao Paulo).', true);
+            showFloatingMessage('Palavra do Dia ja concluida hoje.', 2500);
+            dailyHubPreviewRun = null;
             return;
         }
 
-        setDailyHubStatus('Partida diária em andamento.', false);
+        setDailyHubStatus('Partida diaria em andamento.', false);
+        dailyHubPreviewRun = null;
         hub.style.display = 'none';
         welcomeScreen.style.display = 'none';
         document.getElementById('app-container')?.classList.remove('hidden-app');

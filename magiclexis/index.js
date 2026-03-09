@@ -32,36 +32,104 @@ function sha256(text) {
   return crypto.createHash("sha256").update(text).digest("hex");
 }
 
+function isBadWordDoc(doc) {
+  if (!doc || typeof doc !== "object") return "documento invalido";
+  if (!doc.word || typeof doc.word !== "string") return "campo word ausente/invalido";
+  if (!Array.isArray(doc.hints)) return "campo hints ausente/invalido";
+  if (typeof doc.active !== "boolean") return "campo active ausente/invalido";
+  if (typeof doc.meaning !== "string") return "campo meaning ausente/invalido";
+  return null;
+}
+
 async function getOrCreateDailyDocs(dateKey) {
+  logger.info("getOrCreateDailyDocs:start", {dateKey});
+
   const publicRef = db.collection("daily_words").doc(dateKey);
   const privateRef = db.collection("daily_words_private").doc(dateKey);
 
   const [pubSnap, priSnap] = await Promise.all([publicRef.get(), privateRef.get()]);
   if (pubSnap.exists && priSnap.exists) {
+    const publicData = pubSnap.data() || {};
+    const privateData = priSnap.data() || {};
+    logger.info("getOrCreateDailyDocs:cache_hit", {
+      dateKey,
+      wordLength: publicData.wordLength || null,
+      hintsPublicCount: Array.isArray(publicData.hintsPublic) ? publicData.hintsPublic.length : null,
+      hasPrivateWord: !!privateData.word,
+      privateHintsCount: Array.isArray(privateData.hints) ? privateData.hints.length : null,
+    });
+
     return {
       publicRef,
       privateRef,
-      publicData: pubSnap.data(),
-      privateData: priSnap.data(),
+      publicData,
+      privateData,
     };
   }
 
-  const poolSnap = await db.collection("daily_word_pool")
-      .where("active", "==", true)
-      .get();
+  logger.info("getOrCreateDailyDocs:cache_miss", {dateKey});
+
+  const poolQuery = db.collection("daily_word_pool").where("active", "==", true);
+  const poolSnap = await poolQuery.get();
+
+  logger.info("getOrCreateDailyDocs:pool_scan", {
+    dateKey,
+    poolExists: !poolSnap.empty,
+    activeCount: poolSnap.size,
+  });
+
   if (poolSnap.empty) {
-    throw new Error("Pool diária vazia. Rode o seed primeiro.");
+    throw new HttpsError(
+        "failed-precondition",
+        "Colecao daily_word_pool sem documentos active=true. Execute/reexecute o seed."
+    );
   }
 
-  const sorted = poolSnap.docs
-      .map((d) => ({id: d.id, ...d.data()}))
-      .sort((a, b) => a.word.localeCompare(b.word));
+  const mapped = poolSnap.docs.map((d) => ({id: d.id, ...d.data()}));
+  const invalid = mapped.find((d) => isBadWordDoc(d));
+  if (invalid) {
+    const reason = isBadWordDoc(invalid);
+    logger.error("getOrCreateDailyDocs:invalid_pool_doc", {
+      id: invalid.id,
+      reason,
+      keys: Object.keys(invalid || {}),
+    });
+    throw new HttpsError(
+        "failed-precondition",
+        `Documento invalido em daily_word_pool (${invalid.id}): ${reason}`
+    );
+  }
+
+  const sorted = mapped.sort((a, b) => String(a.word).localeCompare(String(b.word)));
 
   const hashNum = parseInt(sha256(dateKey).slice(0, 8), 16);
   const chosen = sorted[hashNum % sorted.length];
 
+  logger.info("getOrCreateDailyDocs:chosen", {
+    dateKey,
+    chosenId: chosen.id,
+    chosenWord: chosen.word,
+    chosenMeaningLen: (chosen.meaning || "").length,
+    chosenHintsCount: Array.isArray(chosen.hints) ? chosen.hints.length : null,
+    chosenActive: chosen.active,
+  });
+
   const normalized = normalizeWord(chosen.word);
   const hints = Array.isArray(chosen.hints) ? chosen.hints.slice(0, 5) : [];
+
+  if (!normalized || normalized.length < 2) {
+    throw new HttpsError(
+        "failed-precondition",
+        `Palavra escolhida invalida para o dia (${chosen.id}).`
+    );
+  }
+
+  if (hints.length < 3) {
+    throw new HttpsError(
+        "failed-precondition",
+        `Documento ${chosen.id} precisa ter ao menos 3 dicas.`
+    );
+  }
 
   const startsAt = admin.firestore.Timestamp.fromDate(new Date(`${dateKey}T00:00:00-03:00`));
   const endsAt = admin.firestore.Timestamp.fromMillis(startsAt.toMillis() + DAY_MS);
@@ -93,11 +161,22 @@ async function getOrCreateDailyDocs(dateKey) {
   });
 
   const [newPub, newPri] = await Promise.all([publicRef.get(), privateRef.get()]);
+  const publicData = newPub.data() || {};
+  const privateData = newPri.data() || {};
+
+  logger.info("getOrCreateDailyDocs:created", {
+    dateKey,
+    wordLength: publicData.wordLength || null,
+    hintsPublicCount: Array.isArray(publicData.hintsPublic) ? publicData.hintsPublic.length : null,
+    hasPrivateWord: !!privateData.word,
+    privateHintsCount: Array.isArray(privateData.hints) ? privateData.hints.length : null,
+  });
+
   return {
     publicRef,
     privateRef,
-    publicData: newPub.data(),
-    privateData: newPri.data(),
+    publicData,
+    privateData,
   };
 }
 
@@ -124,42 +203,84 @@ exports.startDailyRun = onCall({region: "southamerica-east1"}, async (req) => {
 
   const uid = req.auth.uid;
   const dateKey = dateKeySaoPaulo(new Date());
-  const {publicRef, publicData} = await getOrCreateDailyDocs(dateKey);
 
-  const statusRef = db.doc(`users/${uid}/daily_status/${dateKey}`);
-  const runRef = publicRef.collection("runs").doc(uid);
+  logger.info("startDailyRun:input", {
+    uid,
+    dateKey,
+    hasAuth: !!req.auth,
+  });
 
-  const [statusSnap, runSnap] = await Promise.all([statusRef.get(), runRef.get()]);
+  try {
+    const {publicRef, publicData} = await getOrCreateDailyDocs(dateKey);
 
-  if (statusSnap.exists && statusSnap.data().completedAt) {
-    return {
-      blocked: true,
-      dateKey,
-      message: "Palavra do Dia já concluída hoje. Volte após meia-noite de São Paulo.",
-    };
-  }
-
-  if (!runSnap.exists) {
-    await runRef.set({
+    logger.info("startDailyRun:daily_docs_ready", {
       uid,
       dateKey,
-      attempts: 0,
-      unlockedHints: 3,
-      startedAt: admin.firestore.FieldValue.serverTimestamp(),
-      completedAt: null,
-      elapsedMs: 0,
-      isRecord: false,
+      wordLength: publicData?.wordLength || null,
+      hintsPublicCount: Array.isArray(publicData?.hintsPublic) ? publicData.hintsPublic.length : null,
     });
-  }
 
-  return {
-    blocked: false,
-    dateKey,
-    wordLength: publicData.wordLength,
-    hints: publicData.hintsPublic,
-    unlockedHints: 3,
-    timezone: TZ,
-  };
+    const statusRef = db.doc(`users/${uid}/daily_status/${dateKey}`);
+    const runRef = publicRef.collection("runs").doc(uid);
+
+    const [statusSnap, runSnap] = await Promise.all([statusRef.get(), runRef.get()]);
+
+    if (statusSnap.exists && statusSnap.data().completedAt) {
+      logger.info("startDailyRun:blocked_completed", {uid, dateKey});
+      return {
+        blocked: true,
+        dateKey,
+        message: "Palavra do Dia já concluída hoje. Volte após meia-noite de São Paulo.",
+      };
+    }
+
+    if (!runSnap.exists) {
+      await runRef.set({
+        uid,
+        dateKey,
+        attempts: 0,
+        unlockedHints: 3,
+        startedAt: admin.firestore.FieldValue.serverTimestamp(),
+        completedAt: null,
+        elapsedMs: 0,
+        isRecord: false,
+      });
+      logger.info("startDailyRun:run_created", {uid, dateKey});
+    } else {
+      logger.info("startDailyRun:run_exists", {uid, dateKey});
+    }
+
+    return {
+      blocked: false,
+      dateKey,
+      wordLength: publicData.wordLength,
+      hints: publicData.hintsPublic,
+      unlockedHints: 3,
+      timezone: TZ,
+    };
+  } catch (err) {
+    if (err instanceof HttpsError) {
+      logger.error("startDailyRun:https_error", {
+        uid,
+        dateKey,
+        code: err.code,
+        message: err.message,
+      });
+      throw err;
+    }
+
+    logger.error("startDailyRun:unexpected_error", {
+      uid,
+      dateKey,
+      message: err?.message || String(err),
+      stack: err?.stack || null,
+    });
+
+    throw new HttpsError(
+        "internal",
+        `startDailyRun falhou: ${err?.message || "erro desconhecido"}`
+    );
+  }
 });
 
 exports.unlockDailyHint = onCall({region: "southamerica-east1"}, async (req) => {
