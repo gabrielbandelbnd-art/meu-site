@@ -66,45 +66,86 @@
     <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
 
     <button id="mobile-alphabet-btn" class="mobile-alphabet-btn">A-Z</button>
-
     <div id="welcome-screen" class="welcome-container">
-        <div class="modal-content">
-            <h2 style="color: var(--accent); font-size: 2.5rem; margin-bottom: 20px;">Grimório de MagicLexis</h2>
-            <p style="font-size: 1.1rem; line-height: 1.6;">Você precisa acertar a palavra proposta pelo algoritmo, seguindo as regras do jogo.</p>
-            
-            <div class="difficulty-box">
-                <label for="length-selector">Escolha o desafio:</label>
-                <select id="length-selector">
-                    <option value="any">🎲 Aleatório (Qualquer tamanho)</option>
-                    </select>
-            </div>
-           
-
-            <div class="difficulty-box" style="margin-top: 10px;">
-                <label for="mode-selector">Modo de Jogo:</label>
-                <select id="mode-selector">
-                    <option value="solo">👤 Solo (Aventura)</option>
-                    <option value="1v1">⚔️ 1 vs 1</option>
-                    <option value="2v2">🛡️ 2 vs 2</option>
-                    <option value="4v4">🏰 4 vs 4</option>
-                </select>
-                <p id="mode-warning" style="color: var(--warning); font-size: 0.9rem; margin-top: 5px; display: none;">
-                    ⚠️ As arenas de batalha estarão disponíveis em breve!
-                </p>
+        <div class="modal-content book-tutorial" aria-label="Tutorial do Grimório Arcano">
+            <div class="book-tutorial-header">
+                <h2>Grimório de MagicLexis</h2>
+                <p>Folheie as páginas para aprender as leis arcanas antes da partida.</p>
             </div>
 
-            <ul style="text-align: left; margin: 25px 0; color: var(--text-dim); font-size: 1rem; padding-left: 20px;">
-                <li style="margin-bottom: 10px;">Uma <strong>Vogal</strong> transforma a próxima letra na sua sucessora (A vira B).</li>
-                <li style="margin-bottom: 10px;">Uma <strong>Consoante</strong> pode espelhar a letra anterior.</li>
-                <li style="margin-bottom: 10px;">Letras repetidas (A...A) invertem o que está no meio.</li>
-            </ul>
-            <p class="highlight-text">
-                ⚠️ <strong>O Ciclo Infinito:</strong> Se preencher tudo, o cursor volta ao início.
-            </p>
-            <button id="start-game-btn">ENTENDI, VAMOS CONJURAR!</button>
+            <div class="book-shell">
+                <button class="book-arrow book-arrow-left" id="book-arrow-left" aria-label="Página anterior">‹</button>
+                <div class="book-pages-window" id="book-pages-window">
+                    <div class="book-pages-track" id="book-pages-track">
+                        <section class="book-page">
+                            <h3>Página 1 • Introdução</h3>
+                            <p>MagicLexis é um desafio de lógica verbal. Você precisa montar a palavra correta no tabuleiro usando as regras mágicas.</p>
+                        </section>
+
+                        <section class="book-page">
+                            <h3>Página 2 • Regra da Vogal (+1)</h3>
+                            <p>Quando a letra anterior for vogal, a nova letra avança uma casa no alfabeto.</p>
+                            <p class="book-example">Exemplo: A vira B.</p>
+                        </section>
+
+                        <section class="book-page">
+                            <h3>Página 3 • Regra da Consoante (Espelho)</h3>
+                            <p>Se a nova letra for consoante, a letra anterior pode ser espelhada no alfabeto.</p>
+                            <p class="book-example">Exemplo: A ↔ Z, B ↔ Y, C ↔ X.</p>
+                        </section>
+
+                        <section class="book-page">
+                            <h3>Página 4 • Regra do Sanduíche</h3>
+                            <p>Quando uma letra se repete em posições diferentes, o conteúdo entre elas é invertido.</p>
+                            <p class="book-example">Exemplo: MARATONA vira MARANOTA.</p>
+                        </section>
+
+                        <section class="book-page">
+                            <h3>Página 5 • Ciclo Infinito</h3>
+                            <p>Ao preencher todas as posições, o ciclo recomeça do início. Planeje cada jogada para não perder progresso.</p>
+                        </section>
+
+                        <section class="book-page">
+                            <h3>Página 6 • Como Validar</h3>
+                            <p>Monte a palavra no tabuleiro e use o botão <strong>Validar</strong>. Se estiver correta, você vence e recebe o significado.</p>
+                        </section>
+
+                        <section class="book-page book-page-config">
+                            <h3>Página 7 • Dicas Finais</h3>
+                            <p>Escolha o desafio e o modo. Depois, comece sua conjuração.</p>
+
+                            <div class="difficulty-box">
+                                <label for="length-selector">Escolha o desafio:</label>
+                                <select id="length-selector">
+                                    <option value="any">🎲 Aleatório (Qualquer tamanho)</option>
+                                </select>
+                            </div>
+
+                            <div class="difficulty-box">
+                                <label for="mode-selector">Modo de Jogo:</label>
+                                <select id="mode-selector">
+                                    <option value="solo">👤 Solo (Aventura)</option>
+                                    <option value="1v1">⚔️ 1 vs 1</option>
+                                    <option value="2v2">🛡️ 2 vs 2</option>
+                                    <option value="4v4">🏰 4 vs 4</option>
+                                </select>
+                                <p id="mode-warning" style="color: var(--warning); font-size: 0.9rem; margin-top: 5px; display: none;">
+                                    ⚠️ As arenas de batalha estarão disponíveis em breve!
+                                </p>
+                            </div>
+
+                            <button id="start-game-btn">ENTENDI, VAMOS CONJURAR!</button>
+                        </section>
+                    </div>
+                </div>
+                <button class="book-arrow book-arrow-right" id="book-arrow-right" aria-label="Próxima página">›</button>
+            </div>
+
+            <div class="book-nav">
+                <span class="tutorial-page-indicator" id="tutorial-page-indicator">Página 1 de 7</span>
+            </div>
         </div>
     </div>
-
     <div id="app-container" class="app-container hidden-app">
         <div id="mobile-overlay" class="mobile-overlay"></div>
         <div id="user-menu" class="user-menu hidden-control">

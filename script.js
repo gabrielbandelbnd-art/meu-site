@@ -1,4 +1,4 @@
-﻿import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import {
     getAuth,
     onAuthStateChanged,
@@ -1040,6 +1040,83 @@ function showMobileErrorMagePopup() {
     }, 1000);
 }
 
+let tutorialPageIndex = 0;
+let tutorialPageCount = 0;
+
+function initBookTutorial() {
+    const welcome = document.getElementById('welcome-screen');
+    const track = document.getElementById('book-pages-track');
+    const leftArrow = document.getElementById('book-arrow-left');
+    const rightArrow = document.getElementById('book-arrow-right');
+    const indicator = document.getElementById('tutorial-page-indicator');
+
+    if (!welcome || !track || !leftArrow || !rightArrow || !indicator) return;
+
+    const pages = Array.from(track.querySelectorAll('.book-page'));
+    tutorialPageCount = pages.length;
+    tutorialPageIndex = 0;
+
+    const updatePage = () => {
+        const safeIndex = Math.max(0, Math.min(tutorialPageIndex, tutorialPageCount - 1));
+        tutorialPageIndex = safeIndex;
+        track.style.transform = `translateX(-${safeIndex * 100}%)`;
+        indicator.textContent = `Página ${safeIndex + 1} de ${tutorialPageCount}`;
+        leftArrow.disabled = safeIndex === 0;
+        rightArrow.disabled = safeIndex === tutorialPageCount - 1;
+    };
+
+    const nextPage = () => {
+        if (tutorialPageIndex < tutorialPageCount - 1) {
+            tutorialPageIndex += 1;
+            updatePage();
+        }
+    };
+
+    const previousPage = () => {
+        if (tutorialPageIndex > 0) {
+            tutorialPageIndex -= 1;
+            updatePage();
+        }
+    };
+
+    leftArrow.addEventListener('click', previousPage);
+    rightArrow.addEventListener('click', nextPage);
+
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    track.addEventListener('touchstart', (event) => {
+        touchStartX = event.changedTouches[0].clientX;
+    }, { passive: true });
+
+    track.addEventListener('touchend', (event) => {
+        touchEndX = event.changedTouches[0].clientX;
+        const delta = touchStartX - touchEndX;
+        if (Math.abs(delta) < 40) return;
+        if (delta > 0) nextPage();
+        else previousPage();
+    }, { passive: true });
+
+    document.addEventListener('keydown', (event) => {
+        const welcomeVisible = window.getComputedStyle(welcome).display !== 'none';
+        if (!welcomeVisible) return;
+
+        const focusedTag = document.activeElement ? document.activeElement.tagName : '';
+        if (focusedTag === 'INPUT' || focusedTag === 'SELECT' || focusedTag === 'TEXTAREA') return;
+
+        if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            nextPage();
+        }
+
+        if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            previousPage();
+        }
+    });
+
+    updatePage();
+}
 /* --- INICIALIZACAO --- */
 document.addEventListener("DOMContentLoaded", () => {
     // Detecta mobile (apenas para logs ou classes extras se precisar)
@@ -1051,6 +1128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // NOVO: Preenche as opções de dificuldade
     populateLengthOptions();
     setupMobileLayout();
+    initBookTutorial();
 
     startMageIdle();
     // initChallenge é chamado apenas quando clica em START agora
