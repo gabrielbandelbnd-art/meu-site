@@ -10,8 +10,8 @@
     <div id="auth-gate" class="auth-gate">
         <div class="auth-gate-card">
             <div class="auth-brand">MagicLexis</div>
-            <h2>Entre no GrimÃ³rio Arcano</h2>
-            <p>FaÃ§a login para salvar seu progresso, acumular pontos e subir no ranking.</p>
+            <h2>Entre no Grimório Arcano</h2>
+            <p>Faça login para salvar seu progresso, acumular pontos e subir no ranking.</p>
 
             <div class="auth-gate-inputs">
                 <input id="gate-email-input" type="email" placeholder="E-mail">
@@ -48,23 +48,9 @@
             <button class="hub-btn" id="hub-ranking">📊 Ranking</button>
         </div>
 
-        <div class="hub-difficulty-box">
-            <label for="hub-normal-difficulty">Dificuldade (Jogo Normal)</label>
-            <select id="hub-normal-difficulty">
-                <option value="easy">Fácil</option>
-                <option value="hard" selected>Difícil</option>
-            </select>
-        </div>
 
         <div id="daily-hub-mobile" class="daily-hub-mobile">
             <div class="daily-hub-title">Palavra do Dia</div>
-            <div class="daily-hub-difficulty">
-                <label for="daily-difficulty-mobile">Dificuldade</label>
-                <select id="daily-difficulty-mobile">
-                    <option value="easy">Fácil</option>
-                    <option value="hard" selected>Difícil</option>
-                </select>
-            </div>
             <div id="daily-hub-status-mobile" class="daily-hub-status">Carregando status...</div>
             <button id="hub-daily-btn-mobile" class="hub-btn daily-hub-play-btn">▶ Jogar Palavra do Dia</button>
         </div>
@@ -72,8 +58,8 @@
     <aside id="daily-hub-card" class="daily-hub-card">
         <h3>Palavra do Dia</h3>
         <div class="daily-hub-difficulty">
-            <label for="daily-difficulty-desktop">Dificuldade</label>
-            <select id="daily-difficulty-desktop">
+            <label for="global-difficulty-selector">Dificuldade</label>
+            <select id="global-difficulty-selector">
                 <option value="easy">Fácil</option>
                 <option value="hard" selected>Difícil</option>
             </select>
@@ -88,57 +74,57 @@
 
     <button id="mobile-alphabet-btn" class="mobile-alphabet-btn">A-Z</button>
     <div id="welcome-screen" class="welcome-container">
-        <div class="modal-content book-tutorial" aria-label="Tutorial do GrimÃ³rio Arcano">
+        <div class="modal-content book-tutorial" aria-label="Tutorial do Grimório Arcano">
             <div class="book-tutorial-header">
-                <h2>GrimÃ³rio de MagicLexis</h2>
-                <p>Folheie as pÃ¡ginas para aprender as leis arcanas antes da partida.</p>
+                <h2>Grimório de MagicLexis</h2>
+                <p>Folheie as páginas para aprender as leis arcanas antes da partida.</p>
             </div>
 
             <div class="book-shell">
-                <button class="book-arrow book-arrow-left" id="book-arrow-left" aria-label="PÃ¡gina anterior">â€¹</button>
+                <button class="book-arrow book-arrow-left" id="book-arrow-left" aria-label="Página anterior">&lt;</button>
                 <div class="book-pages-window" id="book-pages-window">
                     <div class="book-pages-track" id="book-pages-track">
                         <section class="book-page">
-                            <h3>PÃ¡gina 1 â€¢ IntroduÃ§Ã£o</h3>
-                            <p>MagicLexis Ã© um desafio de lÃ³gica verbal. VocÃª precisa montar a palavra correta no tabuleiro usando as regras mÃ¡gicas.</p>
+                            <h3>Página 1 - Introdução</h3>
+                            <p>MagicLexis é um desafio de lógica verbal. Você precisa montar a palavra correta no tabuleiro usando as regras mágicas.</p>
                         </section>
 
                         <section class="book-page">
-                            <h3>PÃ¡gina 2 â€¢ Regra da Vogal (+1)</h3>
-                            <p>Quando a letra anterior for vogal, a nova letra avanÃ§a uma casa no alfabeto.</p>
+                            <h3>Página 2 - Regra da Vogal (+1)</h3>
+                            <p>Quando a letra anterior for vogal, a nova letra avança uma casa no alfabeto.</p>
                             <p class="book-example">Exemplo: A vira B.</p>
                         </section>
 
                         <section class="book-page">
-                            <h3>PÃ¡gina 3 â€¢ Regra da Consoante (Espelho)</h3>
+                            <h3>Página 3 - Regra da Consoante (Espelho)</h3>
                             <p>Se a nova letra for consoante, a letra anterior pode ser espelhada no alfabeto.</p>
-                            <p class="book-example">Exemplo: A â†” Z, B â†” Y, C â†” X.</p>
+                            <p class="book-example">Exemplo: A &lt;-&gt; Z, B &lt;-&gt; Y, C &lt;-&gt; X.</p>
                         </section>
 
                         <section class="book-page">
-                            <h3>PÃ¡gina 4 â€¢ Regra do SanduÃ­che</h3>
-                            <p>Quando uma letra se repete em posiÃ§Ãµes diferentes, o conteÃºdo entre elas Ã© invertido.</p>
+                            <h3>Página 4 - Regra do Sanduíche</h3>
+                            <p>Quando uma letra se repete em posições diferentes, o conteúdo entre elas é invertido.</p>
                             <p class="book-example">Exemplo: MARATONA vira MARANOTA.</p>
                         </section>
 
                         <section class="book-page">
-                            <h3>PÃ¡gina 5 â€¢ Ciclo Infinito</h3>
-                            <p>Ao preencher todas as posiÃ§Ãµes, o ciclo recomeÃ§a do inÃ­cio. Planeje cada jogada para nÃ£o perder progresso.</p>
+                            <h3>Página 5 - Ciclo Infinito</h3>
+                            <p>Ao preencher todas as posições, o ciclo recomeça do início. Planeje cada jogada para não perder progresso.</p>
                         </section>
 
                         <section class="book-page">
-                            <h3>PÃ¡gina 6 â€¢ Como Validar</h3>
-                            <p>Monte a palavra no tabuleiro e use o botÃ£o <strong>Validar</strong>. Se estiver correta, vocÃª vence e recebe o significado.</p>
+                            <h3>Página 6 - Como Validar</h3>
+                            <p>Monte a palavra no tabuleiro e use o botão <strong>Validar</strong>. Se estiver correta, você vence e recebe o significado.</p>
                         </section>
 
                         <section class="book-page book-page-config">
-                            <h3>PÃ¡gina 7 â€¢ Dicas Finais</h3>
-                            <p>Escolha o desafio e o modo. Depois, comece sua conjuraÃ§Ã£o.</p>
+                            <h3>Página 7 - Dicas Finais</h3>
+                            <p>Escolha o desafio e o modo. Depois, comece sua conjuração.</p>
 
                             <div class="difficulty-box">
                                 <label for="length-selector">Escolha o desafio:</label>
                                 <select id="length-selector">
-                                    <option value="any">ðŸŽ² AleatÃ³rio (Qualquer tamanho)</option>
+                                    <option value="any">Aleatório (Qualquer tamanho)</option>
                                 </select>
                             </div>
 
@@ -155,23 +141,15 @@
                                 </p>
                             </div>
 
-                            <div class="difficulty-box">
-                                <label for="difficulty-selector">Dificuldade:</label>
-                                <select id="difficulty-selector">
-                                    <option value="easy">Fácil</option>
-                                    <option value="hard" selected>Difícil</option>
-                                </select>
-                            </div>
-
                             <button id="start-game-btn">ENTENDI, VAMOS CONJURAR!</button>
                         </section>
                     </div>
                 </div>
-                <button class="book-arrow book-arrow-right" id="book-arrow-right" aria-label="PrÃ³xima pÃ¡gina">â€º</button>
+                <button class="book-arrow book-arrow-right" id="book-arrow-right" aria-label="Próxima página">&gt;</button>
             </div>
 
             <div class="book-nav">
-                <span class="tutorial-page-indicator" id="tutorial-page-indicator">PÃ¡gina 1 de 7</span>
+                <span class="tutorial-page-indicator" id="tutorial-page-indicator">Página 1 de 7</span>
             </div>
         </div>
     </div>
@@ -181,16 +159,16 @@
             <button id="user-menu-trigger" class="user-menu-trigger">
                 <img id="user-avatar-top" class="user-avatar-top" alt="Avatar">
                 <span id="user-name-top" class="user-name-top">Visitante</span>
-                <span class="user-menu-caret">â–¾</span>
+                <span class="user-menu-caret"></span>
             </button>
             <div id="user-menu-dropdown" class="user-menu-dropdown hidden-control">
-                <button id="user-open-profile">ConfiguraÃ§Ãµes</button>
+                <button id="user-open-profile">Configurações</button>
                 <button id="user-logout-top">Logout</button>
             </div>
         </div>
 
         <aside class="sidebar" id="sidebar">
-            <button id="toggle-sidebar-btn" class="sidebar-toggle" title="Expandir/Recolher Menu">â—€</button>
+            <button id="toggle-sidebar-btn" class="sidebar-toggle" title="Expandir/Recolher Menu"><</button>
 
             <div class="sidebar-content">
                 <div class="brand-container">
@@ -200,18 +178,18 @@
                 <div class="collapsible-section">
                     <div class="collapsible-header" onclick="toggleSection('rules-content', this)">
                         Regras (Hard)
-                        <span class="tooltip" title="Leis mÃ¡gicas que alteram o que vocÃª digita. Clique para minimizar!">?</span>
+                        <span class="tooltip" title="Leis mágicas que alteram o que você digita. Clique para minimizar!">?</span>
                     </div>
                     <div id="rules-content" class="collapsible-content">
                         <div style="padding-top: 10px;">
                             <div id="rule-vowel" class="rule-card">
-                                <strong>Vogal (+1):</strong><br>Se anterior Ã© vogal, a nova letra avanÃ§a 1 no alfabeto (Ex: A vira B).
+                                <strong>Vogal (+1):</strong><br>Se anterior é vogal, a nova letra avança 1 no alfabeto (Ex: A vira B).
                             </div>
                             <div id="rule-consonant" class="rule-card">
-                                <strong>Consoante (Espelho):</strong><br>Consoante faz a anterior virar oposto.<br><em>Ex: Aâ†”Z, Bâ†”Y, Câ†”X</em>
+                                <strong>Consoante (Espelho):</strong><br>Consoante faz a anterior virar oposto.<br><em>Ex: A&lt;-&gt;Z, B&lt;-&gt;Y, C&lt;-&gt;X</em>
                             </div>
                             <div id="rule-repeat" class="rule-card">
-                                <strong>SanduÃ­che:</strong><br>Repetidas invertem o meio.<br><em>Ex: MARATONA vira MARANOTA</em>
+                                <strong>Sanduíche:</strong><br>Repetidas invertem o meio.<br><em>Ex: MARATONA vira MARANOTA</em>
                             </div>
                         </div>
                     </div>
@@ -219,7 +197,7 @@
 
                 <div class="collapsible-section" style="margin-top: 10px; flex-grow: 1; display: flex; flex-direction: column;">
                     <div class="collapsible-header" onclick="toggleSection('history-content', this)">
-                        HistÃ³rico
+                        Histórico
                         <span class="tooltip" title="Registro das teclas apertadas. Clique para minimizar!">?</span>
                     </div>
                     <div id="history-content" class="collapsible-content" style="flex-grow: 1; display: flex; flex-direction: column;">
@@ -254,19 +232,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="mage-effect">âœ¨</div>
+                <div class="mage-effect">*</div>
             </div>
         </aside>
 
         <main class="game-area">
             <div class="challenge-header">
                 <div class="challenge-instruction">
-                    Acerte a palavra proposta seguindo as regras mÃ¡gicas.
+                    Acerte a palavra proposta seguindo as regras mágicas.
                 </div>
                 <div class="hint-box">
                     <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; margin-bottom: 5px;">
                         <div id="hint-counter" class="hint-counter">Dica 1/5</div>
-                        <button id="skip-hint-btn" style="background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; text-transform: uppercase;">Pular Dica â–¶</button>
+                        <button id="skip-hint-btn" style="background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 4px; padding: 2px 8px; font-size: 0.7rem; cursor: pointer; text-transform: uppercase;">Pular Dica &gt;</button>
                     </div>
                     <div id="current-hint" class="hint-text fade-in">...</div>
                 </div>
@@ -282,7 +260,7 @@
 
             <div class="notepad-container" id="notepad">
                 <div class="notepad-header" onclick="toggleNotepad()">
-                    <span>ðŸ“ Rascunho <span class="tooltip-inline" title="Rascunho para ajudar vc a planejar a jogada. Clique para minimizar!">?</span></span>
+                    <span>📝 Rascunho <span class="tooltip-inline" title="Rascunho para ajudar vc a planejar a jogada. Clique para minimizar!">?</span></span>
                 </div>
                 <div class="notepad-body">
                     <textarea placeholder="Anote suas ideias aqui..."></textarea>
@@ -310,7 +288,7 @@
 
             <div id="alphabet-drawer" class="alphabet-wrapper">
                 <div class="alphabet-header">
-                    <span>Mapa de Letras <span class="tooltip-inline" title="Mapa para ajudÃ¡-lo a identificar letras espelhadas. Clique para minimizar!">?</span></span>
+                    <span>Mapa de Letras <span class="tooltip-inline" title="Mapa para ajudá-lo a identificar letras espelhadas. Clique para minimizar!">?</span></span>
                 </div>
                 <div id="mini-alphabet" class="alphabet-content"></div>
             </div>
@@ -349,7 +327,7 @@
 
     <div id="mobile-victory-modal" class="mobile-victory-modal hidden-control">
         <div class="mobile-victory-card">
-            <div class="mobile-victory-title">VITÃ“RIA!</div>
+            <div class="mobile-victory-title">VITORIA!</div>
             <div class="pixel-mage win mobile-victory-mage">
                 <div class="hat-tip"></div>
                 <div class="hat-base"></div>
@@ -379,12 +357,12 @@
 
     <div id="daily-result-modal" class="profile-modal hidden-control">
         <div class="profile-card daily-result-card">
-            <button id="close-daily-result-modal" class="profile-close">âœ•</button>
-            <h3>Palavra do Dia ConcluÃ­da</h3>
+            <button id="close-daily-result-modal" class="profile-close">X</button>
+            <h3>Palavra do Dia Concluída</h3>
             <div id="daily-result-time" class="daily-result-line">Tempo: --</div>
             <div id="daily-result-attempts" class="daily-result-line">Tentativas: --</div>
             <div id="daily-result-meaning" class="daily-result-meaning">Significado: --</div>
-            <div id="daily-result-record" class="daily-result-record hidden-control">ðŸ† Esse Ã© um tempo recorde dessa palavra.</div>
+            <div id="daily-result-record" class="daily-result-record hidden-control">Recorde desta palavra.</div>
             <button id="daily-share-btn" class="profile-btn auth-main-btn">Compartilhar resultado</button>
         </div>
     </div>
@@ -392,12 +370,12 @@
 
     <div id="profile-modal" class="profile-modal hidden-control">
         <div class="profile-card arcane-profile-card">
-            <button id="close-profile-modal" class="profile-close">âœ•</button>
+            <button id="close-profile-modal" class="profile-close">X</button>
             <h3>Perfil do Jogador</h3>
 
             <div class="profile-main">
                 <div class="profile-avatar-wrap">
-                    <img id="profile-avatar" class="profile-avatar" alt="Avatar do usuÃ¡rio">
+                    <img id="profile-avatar" class="profile-avatar" alt="Avatar do usuário">
                 </div>
 
                 <div id="profile-name-title" class="profile-name-title">Jogador</div>
@@ -419,7 +397,7 @@
 
     <div id="ranking-modal" class="profile-modal hidden-control">
         <div class="profile-card ranking-card">
-            <button id="close-ranking-modal" class="profile-close">âœ•</button>
+            <button id="close-ranking-modal" class="profile-close">X</button>
             <h3>Ranking Global (Top 50)</h3>
             <div id="ranking-list" class="ranking-list"></div>
         </div>
