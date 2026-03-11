@@ -88,6 +88,22 @@ body {
     margin: 0 0 18px;
 }
 
+.book-skip-btn {
+    margin-top: 8px;
+    align-self: flex-end;
+    border: 1px solid rgba(187, 134, 252, 0.6);
+    background: rgba(187, 134, 252, 0.12);
+    color: var(--accent);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.book-skip-btn:hover {
+    background: rgba(187, 134, 252, 0.2);
+}
+
 .book-shell {
     display: grid;
     grid-template-columns: 48px 1fr 48px;

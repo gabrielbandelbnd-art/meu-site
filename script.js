@@ -1040,8 +1040,9 @@ function initBookTutorial() {
     const leftArrow = document.getElementById('book-arrow-left');
     const rightArrow = document.getElementById('book-arrow-right');
     const indicator = document.getElementById('tutorial-page-indicator');
+    const skipBtn = document.getElementById('tutorial-skip-btn');
 
-    if (!welcome || !track || !leftArrow || !rightArrow || !indicator) return;
+    if (!welcome || !track || !leftArrow || !rightArrow || !indicator || !skipBtn) return;
 
     const pages = Array.from(track.querySelectorAll('.book-page'));
     tutorialPageCount = pages.length;
@@ -1054,6 +1055,11 @@ function initBookTutorial() {
         indicator.textContent = `Página ${safeIndex + 1} de ${tutorialPageCount}`;
         leftArrow.disabled = safeIndex === 0;
         rightArrow.disabled = safeIndex === tutorialPageCount - 1;
+    };
+
+    const goToPage = (pageIndex) => {
+        tutorialPageIndex = pageIndex;
+        updatePage();
     };
 
     const nextPage = () => {
@@ -1106,6 +1112,14 @@ function initBookTutorial() {
         }
     });
 
+
+    skipBtn.addEventListener('click', () => goToPage(tutorialPageCount - 1));
+
+    bookTutorialApi = {
+        goToPage,
+        goToFirstPage: () => goToPage(0),
+        goToLastPage: () => goToPage(tutorialPageCount - 1)
+    };
     updatePage();
 }
 /* --- INICIALIZACAO --- */
@@ -1131,6 +1145,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // LOGICA DO BOTAO DE BOAS-VINDAS
 document.getElementById('start-game-btn').onclick = () => {
+    markTutorialSeen();
     // Some com o modal
     document.getElementById('welcome-screen').style.display = 'none';
     // Mostra o jogo
@@ -1149,9 +1164,8 @@ const hubPlay = document.getElementById("hub-play");
 const welcomeScreen = document.getElementById("welcome-screen");
 
 hubPlay.addEventListener("click", () => {
-    hub.style.display = "none";
-    welcomeScreen.style.display = "flex";
-    syncTopUserUi(activeUser, activeUserDoc);
+    const goToLastPage = hasSeenTutorial();
+    openWelcomeTutorial(goToLastPage);
 });
 
 // Botões futuros
@@ -1270,6 +1284,43 @@ ${DAILY_SHARE_LINK}`
 ];
 let activeUser = null;
 let activeUserDoc = null;
+const TUTORIAL_SEEN_STORAGE_KEY = 'magiclexis_tutorial_seen_v1';
+
+function getTutorialSeenKey() {
+    const uid = activeUser?.uid || 'guest';
+    return `${TUTORIAL_SEEN_STORAGE_KEY}:${uid}`;
+}
+
+function hasSeenTutorial() {
+    try {
+        return localStorage.getItem(getTutorialSeenKey()) === '1';
+    } catch (err) {
+        return false;
+    }
+}
+
+function markTutorialSeen() {
+    try {
+        localStorage.setItem(getTutorialSeenKey(), '1');
+    } catch (err) {
+        console.log('Falha ao salvar estado de tutorial:', err);
+    }
+}
+
+let bookTutorialApi = null;
+
+function openWelcomeTutorial(goToLastPage = false) {
+    if (hub) {
+        hub.style.display = 'none';
+        hub.classList.add('hidden-control');
+    }
+    if (welcomeScreen) welcomeScreen.style.display = 'flex';
+    if (bookTutorialApi) {
+        if (goToLastPage) bookTutorialApi.goToLastPage();
+        else bookTutorialApi.goToFirstPage();
+    }
+    syncTopUserUi(activeUser, activeUserDoc);
+}
 
 const DEFAULT_AVATAR = 'https://ui-avatars.com/api/?name=ML&background=1f1f1f&color=bb86fc&size=128';
 
