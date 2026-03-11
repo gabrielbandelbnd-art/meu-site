@@ -78,34 +78,51 @@
                 <div class="book-pages-window" id="book-pages-window">
                     <div class="book-pages-track" id="book-pages-track">
                         <section class="book-page">
-                            <h3>Página 1 - Introdução</h3>
-                            <p>MagicLexis é um desafio de lógica verbal. Você precisa montar a palavra correta no tabuleiro usando as regras mágicas.</p>
+                            <h3>Página 1 - Introdução ao MagicLexis</h3>
+                            <p>No MagicLexis, seu objetivo é descobrir a palavra correta proposta pelo jogo e montar esse resultado no tabuleiro.</p>
+                            <p>Você não digita a palavra de forma comum do início ao fim, porque as letras podem ser transformadas pelas regras mágicas.</p>
+                            <p>Para vencer, você precisa entender como cada regra altera a sequência e então conduzir o tabuleiro até a palavra certa.</p>
+                            <p class="book-example">Pense como um quebra-cabeça: cada letra inserida pode mudar o caminho final.</p>
                         </section>
 
                         <section class="book-page">
                             <h3>Página 2 - Regra da Vogal (+1)</h3>
-                            <p>Quando a letra anterior for vogal, a nova letra avança uma casa no alfabeto.</p>
-                            <p class="book-example">Exemplo: A vira B.</p>
+                            <p>Quando a letra anterior no tabuleiro for uma vogal, a nova letra digitada avança uma casa no alfabeto.</p>
+                            <p>Isso significa que a letra que você digitou pode não ser exatamente a letra que ficará registrada no tabuleiro.</p>
+                            <p class="book-example">Exemplos claros: A vira B, E vira F, O vira P.</p>
+                            <p>Essa regra afeta diretamente a construção da palavra, então sempre observe a letra anterior antes de jogar a próxima.</p>
                         </section>
 
                         <section class="book-page">
                             <h3>Página 3 - Regra da Consoante (Espelho)</h3>
-                            <p>Se a nova letra for consoante, a letra anterior pode ser espelhada no alfabeto.</p>
-                            <p class="book-example">Exemplo: A &lt;-&gt; Z, B &lt;-&gt; Y, C &lt;-&gt; X.</p>
-                        </section>
-                        <section class="book-page">
-                            <h3>Página 4 - Ciclo Infinito</h3>
-                            <p>Ao preencher todas as posições, o ciclo recomeça do início. Planeje cada jogada para não perder progresso.</p>
+                            <p>Quando a nova letra for consoante, a letra anterior pode ser espelhada no alfabeto.</p>
+                            <p>Em outras palavras, letras que já estavam no tabuleiro podem ser alteradas por uma jogada atual.</p>
+                            <p class="book-example">Exemplos de espelho: A vira Z, B vira Y, C vira X.</p>
+                            <p>Por isso, não basta pensar só na próxima posição: você também precisa prever como a regra pode transformar o que já foi escrito.</p>
                         </section>
 
                         <section class="book-page">
-                            <h3>Página 5 - Como Validar</h3>
-                            <p>Monte a palavra no tabuleiro e use o botão <strong>Validar</strong>. Se estiver correta, você vence e recebe o significado.</p>
+                            <h3>Página 4 - Ciclo Infinito</h3>
+                            <p>Quando o tabuleiro fica cheio, o cursor volta automaticamente para o início.</p>
+                            <p>A partir daí, você continua jogando no mesmo ciclo, com as regras mágicas ainda ativas.</p>
+                            <p>Isso quer dizer que o estado da palavra continua evoluindo, mesmo depois de completar todas as casas uma vez.</p>
+                            <p>Em muitos desafios, esse ciclo é necessário para chegar ao resultado correto.</p>
+                        </section>
+
+                        <section class="book-page">
+                            <h3>Página 5 - Como Jogar</h3>
+                            <p>Você deve colocar uma letra por vez no campo com interrogação.</p>
+                            <p>Conforme digita, a palavra vai sendo codificada automaticamente de acordo com as regras mágicas.</p>
+                            <p>Se errar o caminho ou quiser reiniciar sua tentativa, use o botão <strong>LIMPAR</strong> para limpar o tabuleiro.</p>
+                            <p>Quando achar que a palavra montada está correta, pressione <strong>VALIDAR</strong>.</p>
+                            <p>Se estiver certa, você vence e recebe o significado da palavra do desafio.</p>
                         </section>
 
                         <section class="book-page book-page-config">
                             <h3>Página 6 - Dicas Finais</h3>
-                            <p>Escolha o desafio e o modo. Depois, comece sua conjuração.</p>
+                            <p>Observe as regras com atenção antes de cada letra, porque uma única jogada pode alterar partes importantes do tabuleiro.</p>
+                            <p>Em alguns desafios, você vai precisar testar mais de uma estratégia até descobrir o caminho correto.</p>
+                            <p>MagicLexis mistura lógica, atenção e paciência. Continue praticando e você vai evoluir a cada partida.</p>
 
                             <div class="difficulty-box">
                                 <label for="length-selector">Escolha o desafio:</label>
@@ -390,6 +407,9 @@
     <script type="module" src="tutorial-control.js?v=20260310-1"></script>
 </body>
 </html>
+
+
+
 
 
 
