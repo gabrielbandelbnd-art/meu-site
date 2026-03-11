@@ -52,7 +52,7 @@ const allChallenges = [
     { word: "BOLA", hints: ["Esfera.", "Jogo.", "Redonda.", "Futebol.", "Brinquedo."], meaning: "Objeto esférico usado em jogos." },
     { word: "ANEL", hints: ["Dedo.", "Joia.", "Ouro.", "Círculo.", "Compromisso."], meaning: "Aro ornamental usado no dedo." },
     { word: "TREM", hints: ["Trilho.", "Vagão.", "Locomotiva.", "Viagem.", "Apito."], meaning: "Comboio ferroviário." },
-    { word: "FLOR", hints: ["Jardim.", "P?tala.", "Cheiro.", "Planta.", "Primavera."], meaning: "?rg?o reprodutor das plantas." },
+    { word: "FLOR", hints: ["Jardim.", "Pétala.", "Cheiro.", "Planta.", "Primavera."], meaning: "Órgão reprodutor das plantas." },
     { word: "MESA", hints: ["Móvel.", "Jantar.", "Apoio.", "Quatro pernas.", "Madeira."], meaning: "Móvel com tampo plano." },
     { word: "FOGO", hints: ["Quente.", "Queima.", "Chama.", "Incêndio.", "Luz."], meaning: "Combustão visível." },
     { word: "AGUA", hints: ["Líquido.", "Beber.", "Vida.", "Rio.", "Chuva."], meaning: "Líquido essencial à vida." },
@@ -187,7 +187,6 @@ const miniAlphabetContainer = document.getElementById('mini-alphabet');
 const hintText = document.getElementById('current-hint');
 const hintCounter = document.getElementById('hint-counter');
 const lengthSelector = document.getElementById('length-selector');
-const globalDifficultySelector = document.getElementById('global-difficulty-selector');
 
 let currentWord = [];
 let replaceIndex = 0;
@@ -328,7 +327,7 @@ function clearAllHighlights() {
     document.querySelectorAll('.rule-card').forEach(card => card.classList.remove('rule-active'));
 }
 
-/* NOVO: PREENCHE O SELETOR COM OP....ES DISPONÍVEIS */
+/* NOVO: PREENCHE O SELETOR COM OPÇÕES DISPONÍVEIS */
 function populateLengthOptions() {
     // Descobre quais tamanhos de palavra existem no banco de dados
     const lengths = [...new Set(allChallenges.map(c => c.word.length))].sort((a,b) => a-b);
@@ -341,35 +340,9 @@ function populateLengthOptions() {
     });
 }
 
-function normalizeDifficulty(raw) {
-    return raw === DIFFICULTY_EASY ? DIFFICULTY_EASY : DIFFICULTY_HARD;
-}
-
-function getSelectedNormalDifficulty() {
-    return normalizeDifficulty(globalDifficultySelector?.value || currentDifficulty);
-}
-
-function getSelectedDailyDifficulty() {
-    return normalizeDifficulty(globalDifficultySelector?.value || currentDifficulty);
-}
-
-function isHardDifficulty() {
-    return normalizeDifficulty(currentDifficulty) === DIFFICULTY_HARD;
-}
-
-function initDifficultySelectors() {
-    const defaultDifficulty = normalizeDifficulty(globalDifficultySelector?.value || DIFFICULTY_HARD);
-    currentDifficulty = defaultDifficulty;
-    if (globalDifficultySelector) globalDifficultySelector.value = defaultDifficulty;
-
-    globalDifficultySelector?.addEventListener('change', (e) => {
-        currentDifficulty = normalizeDifficulty(e.target.value);
-    });
-}
 function initChallenge() {
 
     currentGameMode = NORMAL_MODE;
-    currentDifficulty = getSelectedNormalDifficulty();
     resetDailySession();
     clearAllHighlights();
     animateMage('reset');
@@ -655,7 +628,7 @@ function addChar(char) {
         playSoundEffect('type');
         processNewChar(char, currentWord.length);
         
-        // AVISO NA PEN??LTIMA LETRA (N-1)
+        // AVISO NA PENÚLTIMA LETRA (N-1)
         if (currentWord.length === maxWordLength - 1) {
             showFloatingMessage("Próxima letra é a última! O ciclo vai reiniciar.", 2500);
             playSoundEffect('alert');
@@ -676,35 +649,17 @@ function processNewChar(char, indexToInsert) {
         charToAdd = shiftAlphabet(charToAdd);
     }
     
-    // REGRA 2: Espelhamento (somente no Difícil)
-    if (isHardDifficulty() && !isVowel(charToAdd) && indexToInsert > 0 && currentWord.length > 0) {
+    // REGRA 2: Espelhamento
+    if (!isVowel(charToAdd) && indexToInsert > 0 && currentWord.length > 0) {
         highlight('rule-consonant'); playSoundEffect('mirror');
         currentWord[indexToInsert - 1] = mirrorAlphabet(currentWord[indexToInsert - 1]);
     }
 
     currentWord.splice(indexToInsert, 0, charToAdd);
 
-    // REGRA 3: Sanduíche (somente no Difícil)
-    if (!isHardDifficulty()) {
-        render();
-        return;
-    }
-
-    const firstIdx = currentWord.indexOf(charToAdd);
-    const lastIdxFound = currentWord.lastIndexOf(charToAdd);
-    
-    if (firstIdx !== -1 && lastIdxFound !== -1 && firstIdx !== lastIdxFound) {
-            const start = firstIdx + 1;
-            const end = lastIdxFound;
-            if (end > start) {
-                highlight('rule-repeat'); playSoundEffect('reverse');
-                const mid = currentWord.slice(start, end).reverse();
-                currentWord.splice(start, mid.length, ...mid);
-            }
-    }
-    
     render();
 }
+
 
 async function validate() {
     const word = currentWord.join('').toUpperCase();
@@ -714,7 +669,7 @@ async function validate() {
 
     if (currentGameMode === DAILY_MODE && dailySession) {
         try {
-            const data = await callDailyFunction('submitDailyGuess', { guess: word, difficulty: currentDifficulty });
+            const data = await callDailyFunction('submitDailyGuess', { guess: word });
 
             if (data?.alreadyCompleted) {
                 feedback.innerText = 'Palavra do Dia já concluída hoje.';
@@ -741,7 +696,7 @@ async function validate() {
                 updateDailyTimerUi();
             }
 
-            feedback.innerText = 'ðŸ† ACERTOU A PALAVRA DO DIA!';
+            feedback.innerText = '🏆 ACERTOU A PALAVRA DO DIA!';
             feedback.style.color = 'var(--success)';
             meaningBox.innerText = data.meaning || '';
             meaningBox.classList.remove('hidden');
@@ -764,7 +719,7 @@ async function validate() {
     }
 
     if (targetChallenge && word === targetChallenge.word) {
-        feedback.innerText = "ðŸ† ACERTOU!"; feedback.style.color = "var(--success)";
+        feedback.innerText = "🏆 ACERTOU!"; feedback.style.color = "var(--success)";
         meaningBox.innerText = targetChallenge.meaning;
         meaningBox.classList.remove('hidden');
         document.body.classList.add('success-flash');
@@ -823,7 +778,7 @@ async function validate() {
                 chickenAudio.play().catch(e => console.log("Erro no áudio:", e));
 
                 const chickenEl = document.createElement('div');
-                chickenEl.innerText = 'ðŸ...';
+                chickenEl.innerText = '🐔';
                 chickenEl.className = 'flying-chicken';
                 document.body.appendChild(chickenEl);
 
@@ -1158,13 +1113,12 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.add('mobile-mode');
     }
     
-    // NOVO: Preenche as opções de desafio e inicializa dificuldade
+    // NOVO: Preenche as opções de desafio
     populateLengthOptions();
 
     if (lengthSelector.querySelector('option[value="3"]')) {
         lengthSelector.value = '3';
     }
-    initDifficultySelectors();
     setupMobileLayout();
     initBookTutorial();
 
@@ -1179,7 +1133,7 @@ document.getElementById('start-game-btn').onclick = () => {
     // Mostra o jogo
     document.getElementById('app-container').classList.remove('hidden-app');
     
-    // Inicia o jogo agora com a dificuldade selecionada
+    // Inicia o jogo agora com o desafio selecionado
     initChallenge();
 
     if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -1203,13 +1157,13 @@ document.getElementById("hub-profile").addEventListener("click", () => {
 });
 
 document.getElementById("hub-tournaments").addEventListener("click", () => {
-    alert("Torneios em breve ðŸ†");
+    alert("Torneios em breve 🏆");
 });
 
 document.getElementById("hub-ranking").addEventListener("click", () => {
     openRankingModal();
 });
-/* --- L?GICA DO SELETOR DE MODO DE JOGO --- */
+/* --- LÓGICA DO SELETOR DE MODO DE JOGO --- */
 document.addEventListener("DOMContentLoaded", () => {
     const modeSelector = document.getElementById('mode-selector');
     const modeWarning = document.getElementById('mode-warning');
@@ -1218,7 +1172,7 @@ document.addEventListener("DOMContentLoaded", () => {
         modeSelector.addEventListener('change', (e) => {
             const selectedMode = e.target.value;
 
-            // Se o modo escolhido N?O for 'solo'
+            // Se o modo escolhido NÃO for 'solo'
             if (selectedMode !== 'solo') {
                 // Toca som de erro (se o contexto de áudio estiver ativo)
                 if (typeof playSoundEffect === 'function') {
@@ -1265,10 +1219,7 @@ const FUNCTIONS_REGION = 'southamerica-east1';
 
 const DAILY_MODE = 'daily';
 const NORMAL_MODE = 'normal';
-const DIFFICULTY_EASY = 'easy';
-const DIFFICULTY_HARD = 'hard';
 let currentGameMode = NORMAL_MODE;
-let currentDifficulty = DIFFICULTY_HARD;
 let dailySession = null;
 let dailyTimerInterval = null;
 let dailyHubCountdownInterval = null;
@@ -1276,42 +1227,42 @@ let dailyShareText = '';
 let dailyHubPreviewRun = null;
 const DAILY_SHARE_LINK = 'https://magiclexis.vercel.app';
 const DAILY_SHARE_TEMPLATES = [
-    `Joguei a Palavra do Dia do MagicLexis e fiz {attempts} tentativas em {mm:ss} ??
-Ser? que voc? consegue bater meu resultado?
+    `Joguei a Palavra do Dia do MagicLexis e fiz {attempts} tentativas em {mm:ss} 🏆
+Será que você consegue bater meu resultado?
 ${DAILY_SHARE_LINK}`,
     `Eu acertei a Palavra do Dia do MagicLexis em {attempts} tentativas e {mm:ss}
-Duvido voc? fazer melhor.
+Duvido você fazer melhor.
 ${DAILY_SHARE_LINK}`,
-    `Desafio do dia conclu?do no MagicLexis ?
+    `Desafio do dia concluído no MagicLexis ⚡
 {attempts} tentativas em {mm:ss}
-Ser? que voc? descobre a palavra mais r?pido?
+Será que você descobre a palavra mais rápido?
 ${DAILY_SHARE_LINK}`,
-    `Acabei de resolver a Palavra do Dia do MagicLexis ??
+    `Acabei de resolver a Palavra do Dia do MagicLexis 🧠
 Tempo: {mm:ss}
 Tentativas: {attempts}
-Agora ? sua vez.
+Agora é sua vez.
 ${DAILY_SHARE_LINK}`,
-    `Eu sobrevivi ? Palavra do Dia do MagicLexis ??
+    `Eu sobrevivi à Palavra do Dia do MagicLexis 🧙
 Tentativas: {attempts}
 Tempo: {mm:ss}
-Voc? consegue resolver tamb?m?
+Você consegue resolver também?
 ${DAILY_SHARE_LINK}`,
-    `Consegui resolver o desafio m?gico de hoje ?
+    `Consegui resolver o desafio mágico de hoje ✨
 MagicLexis
 Tentativas: {attempts}
 Tempo: {mm:ss}
-Tente voc? tamb?m:
+Tente você também:
 ${DAILY_SHARE_LINK}`,
-    `Palavra do Dia conclu?da ??
+    `Palavra do Dia concluída 🏆
 MagicLexis
 {attempts} tentativas
 {mm:ss}
-Ser? que voc? consegue fazer melhor?
+Será que você consegue fazer melhor?
 ${DAILY_SHARE_LINK}`,
     `Resolvi a Palavra do Dia do MagicLexis!
 Tentativas: {attempts}
 Tempo: {mm:ss}
-Agora quero ver voc? tentar.
+Agora quero ver você tentar.
 ${DAILY_SHARE_LINK}`
 ];
 let activeUser = null;
@@ -1372,12 +1323,7 @@ function buildDailyShareText(payload = {}) {
     const mmss = formatDailyElapsed(payload?.elapsedMs || 0);
     const idx = Math.floor(Math.random() * DAILY_SHARE_TEMPLATES.length);
     const template = DAILY_SHARE_TEMPLATES[idx] || DAILY_SHARE_TEMPLATES[0];
-
-    const difficulty = normalizeDifficulty(payload?.difficulty || dailySession?.difficulty || currentDifficulty);
-    const isHard = difficulty === DIFFICULTY_HARD;
-    const header = isHard
-        ? '🏆💪 MagicLexis Palavra do Dia (Difícil)'
-        : '🏆 MagicLexis Palavra do Dia';
+    const header = '🏆 MagicLexis Palavra do Dia';
 
     let text = `${header}\n${template}`
         .replaceAll('{attempts}', String(attempts))
@@ -1548,9 +1494,7 @@ async function refreshDailyHubState() {
     }
 
     try {
-        const selectedDifficulty = getSelectedDailyDifficulty();
-        const data = await callDailyFunction('startDailyRun', { difficulty: selectedDifficulty });
-        if (data) data.difficulty = selectedDifficulty;
+        const data = await callDailyFunction('startDailyRun', {});
 
         if (data?.blocked) {
             startDailyHubCountdown();
@@ -1569,7 +1513,7 @@ async function refreshDailyHubState() {
 }
 function applyDailyRunData(data) {
     currentGameMode = DAILY_MODE;
-    currentDifficulty = normalizeDifficulty(data?.difficulty || getSelectedDailyDifficulty());
+    
     dailySession = {
         dateKey: data.dateKey,
         unlockedHints: data.unlockedHints || 3,
@@ -1578,7 +1522,6 @@ function applyDailyRunData(data) {
         pausedAt: null,
         baseElapsedMs: 0,
         timezone: data.timezone || 'America/Sao_Paulo',
-        difficulty: currentDifficulty
     };
 
     const dailyChallenge = {
@@ -1636,7 +1579,7 @@ async function unlockNextDailyHint() {
         hintIndex = Math.min(hintIndex + 1, (dailySession.unlockedHints || 3) - 1);
         updateHintDisplay();
         startHintCycle();
-        showFloatingMessage('Dica extra desbloqueada! ðŸ”“');
+        showFloatingMessage('Dica extra desbloqueada! 🔓');
     } catch (err) {
         showFloatingMessage('Não foi possível desbloquear a dica agora.', 2500);
         const info = normalizeCallableError(err);
@@ -1653,10 +1596,8 @@ async function startDailyModeFromHub() {
     }
 
     try {
-        const selectedDifficulty = getSelectedDailyDifficulty();
-        const canUsePreview = dailyHubPreviewRun && normalizeDifficulty(dailyHubPreviewRun.difficulty) === selectedDifficulty;
-        const data = canUsePreview ? dailyHubPreviewRun : await callDailyFunction('startDailyRun', { difficulty: selectedDifficulty });
-        if (data) data.difficulty = selectedDifficulty;
+        const canUsePreview = !!dailyHubPreviewRun;
+        const data = canUsePreview ? dailyHubPreviewRun : await callDailyFunction('startDailyRun', {});
 
         if (data?.blocked) {
             startDailyHubCountdown();
@@ -2158,22 +2099,4 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

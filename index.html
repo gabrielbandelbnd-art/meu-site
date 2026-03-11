@@ -57,13 +57,6 @@
     </div>
     <aside id="daily-hub-card" class="daily-hub-card">
         <h3>Palavra do Dia</h3>
-        <div class="daily-hub-difficulty">
-            <label for="global-difficulty-selector">Dificuldade</label>
-            <select id="global-difficulty-selector">
-                <option value="easy">Fácil</option>
-                <option value="hard" selected>Difícil</option>
-            </select>
-        </div>
         <p id="daily-hub-status-desktop" class="daily-hub-status">Carregando status...</p>
         <button id="hub-daily-btn-desktop" class="daily-hub-play-btn">▶ Jogar Palavra do Dia</button>
     </aside>
@@ -102,9 +95,9 @@
                         </section>
 
                         <section class="book-page">
-                            <h3>Página 4 - Regra do Sanduíche</h3>
-                            <p>Quando uma letra se repete em posições diferentes, o conteúdo entre elas é invertido.</p>
-                            <p class="book-example">Exemplo: MARATONA vira MARANOTA.</p>
+                            <h3>Página 4 - Fluxo da Palavra</h3>
+                            <p>Cada letra digitada pode alterar o resultado no tabuleiro por causa das regras mágicas.</p>
+                            <p class="book-example">Observe o resultado em cada jogada antes de validar.</p>
                         </section>
 
                         <section class="book-page">
@@ -177,7 +170,7 @@
                 
                 <div class="collapsible-section">
                     <div class="collapsible-header" onclick="toggleSection('rules-content', this)">
-                        Regras (Hard)
+                        Regras
                         <span class="tooltip" title="Leis mágicas que alteram o que você digita. Clique para minimizar!">?</span>
                     </div>
                     <div id="rules-content" class="collapsible-content">
@@ -187,9 +180,6 @@
                             </div>
                             <div id="rule-consonant" class="rule-card">
                                 <strong>Consoante (Espelho):</strong><br>Consoante faz a anterior virar oposto.<br><em>Ex: A&lt;-&gt;Z, B&lt;-&gt;Y, C&lt;-&gt;X</em>
-                            </div>
-                            <div id="rule-repeat" class="rule-card">
-                                <strong>Sanduíche:</strong><br>Repetidas invertem o meio.<br><em>Ex: MARATONA vira MARANOTA</em>
                             </div>
                         </div>
                     </div>
@@ -229,7 +219,7 @@
                     <div class="staff">
                         <div class="staff-head">
                             <div class="gem"></div>
-                        </div>
+                                                </div>
                     </div>
                 </div>
                 <div class="mage-effect">*</div>
@@ -313,12 +303,12 @@
                     <div class="arm right"></div>
                     <div class="feet">
                         <div class="foot left"></div>
-                        <div class="foot right"></div>
+                        <div class="foot right">                        </div>
                     </div>
                 </div>
                 <div class="staff">
                     <div class="staff-head">
-                        <div class="gem"></div>
+                        <div class="gem">                        </div>
                     </div>
                 </div>
             </div>
@@ -343,12 +333,12 @@
                     <div class="arm right"></div>
                     <div class="feet">
                         <div class="foot left"></div>
-                        <div class="foot right"></div>
+                        <div class="foot right">                        </div>
                     </div>
                 </div>
                 <div class="staff">
                     <div class="staff-head">
-                        <div class="gem"></div>
+                        <div class="gem">                        </div>
                     </div>
                 </div>
             </div>
@@ -407,7 +397,5 @@
     <script type="module" src="tutorial-control.js?v=20260310-1"></script>
 </body>
 </html>
-
-
 
 
