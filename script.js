@@ -389,6 +389,7 @@ function startChallengeEngine(challengeData, options = {}) {
     updateHintDisplay();
     startHintCycle();
     render(true);
+    saveGameSessionState();
 }
 
 function updateHintDisplay() {
@@ -582,6 +583,7 @@ if (clearBoardBtn) {
             replaceIndex = 0;
             charInput.placeholder = "?";
             render();
+            saveGameSessionState();
             resetClearButton();
             if (typeof playSoundEffect === 'function') playSoundEffect('error'); // Som de apagar
         }
@@ -638,6 +640,7 @@ function addChar(char) {
             replaceIndex = 0;
         }
     }
+    saveGameSessionState();
 }
 
 function processNewChar(char, indexToInsert) {
@@ -1310,6 +1313,7 @@ const dailyResultRecordEl = document.getElementById('daily-result-record');
 const dailyShareBtn = document.getElementById('daily-share-btn');
 
 let gateAuthMode = 'login';
+const GAME_STATE_STORAGE_KEY = 'magiclexis_game_state_v1';
 
 function formatDailyElapsed(ms = 0) {
     const total = Math.max(0, Math.floor(ms / 1000));
@@ -1486,6 +1490,125 @@ function resetDailySession() {
     showDailyStatusBar(false);
 }
 
+function getGameStateSnapshot() {
+    if (!targetChallenge || !Array.isArray(currentWord) || !activeUser) return null;
+
+    return {
+        screen: 'game',
+        mode: currentGameMode,
+        lengthSelectorValue: lengthSelector?.value || '3',
+        targetChallenge: {
+            word: targetChallenge.word || '',
+            hints: Array.isArray(targetChallenge.hints) ? targetChallenge.hints : [],
+            meaning: targetChallenge.meaning || ''
+        },
+        currentWord: [...currentWord],
+        replaceIndex,
+        hintIndex,
+        isFirstRound,
+        maxWordLength,
+        historyHtml: historyList ? historyList.innerHTML : '',
+        charPlaceholder: charInput ? charInput.placeholder : '?',
+        dailySession: currentGameMode === DAILY_MODE && dailySession ? { ...dailySession } : null,
+        savedAt: Date.now()
+    };
+}
+
+function saveGameSessionState() {
+    try {
+        const appVisible = !document.getElementById('app-container')?.classList.contains('hidden-app');
+        if (!appVisible) return;
+        const snapshot = getGameStateSnapshot();
+        if (!snapshot) return;
+        localStorage.setItem(GAME_STATE_STORAGE_KEY, JSON.stringify(snapshot));
+    } catch (err) {
+        console.log('Falha ao salvar estado da partida:', err);
+    }
+}
+
+function clearGameSessionState() {
+    try {
+        localStorage.removeItem(GAME_STATE_STORAGE_KEY);
+    } catch (err) {
+        console.log('Falha ao limpar estado da partida:', err);
+    }
+}
+
+function showGameScreen() {
+    if (hub) {
+        hub.style.display = 'none';
+        hub.classList.add('hidden-control');
+    }
+    if (welcomeScreen) welcomeScreen.style.display = 'none';
+    document.getElementById('app-container')?.classList.remove('hidden-app');
+}
+
+function showHubScreenFromGame() {
+    stopHintCycle();
+    resetDailySession();
+    clearGameSessionState();
+    document.getElementById('app-container')?.classList.add('hidden-app');
+    if (welcomeScreen) welcomeScreen.style.display = 'none';
+    showHubScreen(true);
+    syncTopUserUi(activeUser, activeUserDoc);
+}
+
+function tryRestoreGameSession() {
+    try {
+        const rawState = localStorage.getItem(GAME_STATE_STORAGE_KEY);
+        if (!rawState) return false;
+        const state = JSON.parse(rawState);
+        if (!state || state.screen !== 'game' || !state.targetChallenge) {
+            clearGameSessionState();
+            return false;
+        }
+
+        if (lengthSelector && state.lengthSelectorValue) {
+            lengthSelector.value = state.lengthSelectorValue;
+        }
+
+        currentGameMode = state.mode === DAILY_MODE ? DAILY_MODE : NORMAL_MODE;
+        targetChallenge = {
+            word: state.targetChallenge.word || '',
+            hints: Array.isArray(state.targetChallenge.hints) ? state.targetChallenge.hints : [],
+            meaning: state.targetChallenge.meaning || ''
+        };
+        currentWord = Array.isArray(state.currentWord) ? state.currentWord : [];
+        replaceIndex = Number.isInteger(state.replaceIndex) ? state.replaceIndex : 0;
+        hintIndex = Number.isInteger(state.hintIndex) ? state.hintIndex : 0;
+        isFirstRound = !!state.isFirstRound;
+        maxWordLength = Number.isInteger(state.maxWordLength) ? state.maxWordLength : (targetChallenge.word?.length || 3);
+
+        if (historyList) historyList.innerHTML = state.historyHtml || '';
+        if (charInput) charInput.placeholder = state.charPlaceholder || '?';
+
+        if (currentGameMode === DAILY_MODE && state.dailySession) {
+            dailySession = { ...state.dailySession };
+            showDailyStatusBar(true);
+            setDailyAttempts(dailySession.attempts || 0);
+            startDailyTimer();
+        } else {
+            currentGameMode = NORMAL_MODE;
+            showDailyStatusBar(false);
+            stopDailyTimer();
+            dailySession = null;
+        }
+
+        showGameScreen();
+        updateHintDisplay();
+        startHintCycle();
+        render(isFirstRound && currentWord.length === 0);
+        syncTopUserUi(activeUser, activeUserDoc);
+        saveGameSessionState();
+        return true;
+    } catch (err) {
+        console.log('Falha ao restaurar estado da partida:', err);
+        clearGameSessionState();
+        return false;
+    }
+}
+
+
 async function refreshDailyHubState() {
     if (!activeUser) {
         setDailyHubStatus('Faça login para jogar.', true);
@@ -1539,6 +1662,7 @@ function applyDailyRunData(data) {
     showDailyStatusBar(true);
     setDailyAttempts(0);
     startDailyTimer();
+    saveGameSessionState();
 }
 
 function openDailyResultModal(payload) {
@@ -1608,12 +1732,11 @@ async function startDailyModeFromHub() {
 
         setDailyHubStatus('Partida diária em andamento.', false);
         dailyHubPreviewRun = null;
-        hub.style.display = 'none';
-        welcomeScreen.style.display = 'none';
-        document.getElementById('app-container')?.classList.remove('hidden-app');
+        showGameScreen();
 
         applyDailyRunData(data);
         syncTopUserUi(activeUser, activeUserDoc);
+        saveGameSessionState();
     } catch (err) {
         const info = normalizeCallableError(err);
         console.error('startDailyRun erro', info);
@@ -2034,6 +2157,7 @@ function bindAuthUiEvents() {
     document.getElementById('hub-logout-btn')?.addEventListener('click', logoutUser);
     document.getElementById('user-logout-top')?.addEventListener('click', logoutUser);
     document.getElementById('user-open-profile')?.addEventListener('click', openProfileModal);
+    document.getElementById('user-go-menu-top')?.addEventListener('click', showHubScreenFromGame);
 
     document.getElementById('user-menu-trigger')?.addEventListener('click', () => {
         showControl(userMenuDropdown, userMenuDropdown.classList.contains('hidden-control'));
@@ -2071,6 +2195,7 @@ function initFirebase() {
             document.getElementById('app-container')?.classList.add('hidden-app');
             syncTopUserUi(null, null);
             resetDailySession();
+            clearGameSessionState();
             setDailyHubStatus("Faça login para jogar.", true);
             return;
         }
@@ -2084,9 +2209,12 @@ function initFirebase() {
         }
 
         showAuthGate(false);
-        showHubScreen(true);
-        welcomeScreen.style.display = 'none';
-        document.getElementById('app-container')?.classList.add('hidden-app');
+        const restored = tryRestoreGameSession();
+        if (!restored) {
+            showHubScreen(true);
+            welcomeScreen.style.display = 'none';
+            document.getElementById('app-container')?.classList.add('hidden-app');
+        }
 
         syncTopUserUi(user, activeUserDoc);
         await refreshDailyHubState();
@@ -2099,4 +2227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
+
+
+
 
