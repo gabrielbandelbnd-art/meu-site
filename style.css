@@ -2070,3 +2070,22 @@ button#validate-btn:active { transform: scale(0.95); }
 
 
 
+
+/* ===== Mobile ajuste fino: menu hambúrguer só no gameplay e rascunho fora do menu ===== */
+@media (max-width: 800px) {
+    .game-area > #notepad {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 10px 0 8px 0 !important;
+    }
+
+    .sidebar.mobile-open #notepad,
+    .sidebar.mobile-open #notepad.mobile-notepad-in-sidebar {
+        display: none !important;
+    }
+
+    .sidebar.mobile-open .collapsible-section:first-of-type {
+        display: none !important;
+    }
+}

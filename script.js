@@ -310,15 +310,28 @@ function checkOverlay() {
     }
 }
 
+function closeMobilePanels() {
+    if (sidebar) sidebar.classList.remove('mobile-open');
+    if (alphabetDrawer) alphabetDrawer.classList.remove('mobile-open');
+    if (mobileOverlay) mobileOverlay.classList.remove('active');
+}
+
+function setMobileGameplayMenuVisibility(visible) {
+    if (!isMobileViewport() || !mobileMenuBtn) return;
+    if (visible) mobileMenuBtn.classList.remove('hidden-control');
+    else {
+        mobileMenuBtn.classList.add('hidden-control');
+        closeMobilePanels();
+    }
+}
+
 // Eventos Mobile
 if(mobileMenuBtn) mobileMenuBtn.onclick = toggleMobileMenu;
 if(mobileAlphabetBtn) mobileAlphabetBtn.onclick = toggleAlphabetMenu;
 
 if(mobileOverlay) {
     mobileOverlay.onclick = () => {
-        sidebar.classList.remove('mobile-open');
-        alphabetDrawer.classList.remove('mobile-open');
-        mobileOverlay.classList.remove('active');
+        closeMobilePanels();
     }; 
 }
 
@@ -995,16 +1008,16 @@ function setupMobileLayout() {
         mobileToolsSlot.classList.add('hidden-control');
     }
 
-    if (sidebarContent && notepadEl) {
-        sidebarContent.appendChild(notepadEl);
-        notepadEl.classList.add('mobile-notepad-in-sidebar');
+    if (notepadEl && mobileRulesSlot && mobileRulesSlot.parentNode) {
+        mobileRulesSlot.parentNode.insertBefore(notepadEl, mobileRulesSlot);
+        notepadEl.classList.remove('mobile-notepad-in-sidebar');
     }
 
     if (sidebarContent && historySection) {
         sidebarContent.appendChild(historySection);
     }
 
-    if (mobileMenuBtn) mobileMenuBtn.classList.remove('hidden-control');
+    setMobileGameplayMenuVisibility(false);
     if (mobileAlphabetBtn) mobileAlphabetBtn.classList.add('hidden-control');
 
     if (charInput) {
@@ -1315,6 +1328,7 @@ function markTutorialSeen() {
 let bookTutorialApi = null;
 
 function openWelcomeTutorial(goToLastPage = false) {
+    setMobileGameplayMenuVisibility(false);
     const appContainer = document.getElementById('app-container');
     if (appContainer) appContainer.classList.add('hidden-app');
     if (hub) {
@@ -1599,6 +1613,7 @@ function showGameScreen() {
     }
     if (welcomeScreen) welcomeScreen.style.display = 'none';
     document.getElementById('app-container')?.classList.remove('hidden-app');
+    setMobileGameplayMenuVisibility(true);
 }
 
 function showHubScreenFromGame() {
@@ -1607,6 +1622,7 @@ function showHubScreenFromGame() {
     clearGameSessionState();
     document.getElementById('app-container')?.classList.add('hidden-app');
     if (welcomeScreen) welcomeScreen.style.display = 'none';
+    setMobileGameplayMenuVisibility(false);
     showHubScreen(true);
     syncTopUserUi(activeUser, activeUserDoc);
 }
@@ -2285,6 +2301,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
+
+
 
 
 
