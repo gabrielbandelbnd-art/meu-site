@@ -2492,3 +2492,134 @@ button#validate-btn:active { transform: scale(0.95); }
         height: 34px !important;
     }
 }
+
+/* ===== MOBILE TUNE V2 (somente gameplay + hub, sem mexer no livro) ===== */
+@media (max-width: 800px) {
+    /* ---------- GAMEPLAY ---------- */
+    body.mobile-gameplay-active .game-area {
+        gap: 11px !important;
+        padding: calc(env(safe-area-inset-top, 0px) + 66px) 11px calc(env(safe-area-inset-bottom, 0px) + 10px) 11px !important;
+    }
+
+    /* Rascunho ~5% menor */
+    body.mobile-gameplay-active .game-area > #notepad {
+        margin: 0 !important;
+    }
+    body.mobile-gameplay-active .game-area > #notepad .notepad-body {
+        height: 68px !important;
+    }
+
+    /* Regras um pouco mais para cima e com separação do tabuleiro */
+    body.mobile-gameplay-active #mobile-rules-slot {
+        margin-top: -2px !important;
+        margin-bottom: 10px !important;
+    }
+
+    body.mobile-gameplay-active .board-wrapper {
+        margin: 12px 0 6px 0 !important;
+        min-height: 72px !important;
+    }
+
+    body.mobile-gameplay-active .word-grid {
+        gap: 9px !important;
+        padding-top: 2px !important;
+    }
+
+    body.mobile-gameplay-active .letter-box {
+        width: 37px !important;
+        height: 47px !important;
+        font-size: 1.3rem !important;
+    }
+
+    body.mobile-gameplay-active .input-controls {
+        margin-top: 2px !important;
+    }
+
+    /* Mapa ligeiramente maior, mantendo encaixe na tela */
+    body.mobile-gameplay-active #alphabet-drawer {
+        margin-top: 8px !important;
+        padding: 9px !important;
+        border-radius: 10px !important;
+    }
+
+    body.mobile-gameplay-active #mini-alphabet.alphabet-content {
+        gap: 6px !important;
+        padding: 8px 5px !important;
+    }
+
+    body.mobile-gameplay-active #mini-alphabet .mini-char {
+        min-height: 38px !important;
+        height: 38px !important;
+        font-size: 0.94rem !important;
+    }
+
+    body.mobile-gameplay-active #mini-alphabet .mirrored-letter {
+        font-size: 0.56rem !important;
+    }
+
+    /* ---------- HUB / MENU ---------- */
+    body.mobile-mode:not(.mobile-gameplay-active) .hub-container {
+        padding: calc(env(safe-area-inset-top, 0px) + 10px) 14px calc(env(safe-area-inset-bottom, 0px) + 14px) 14px !important;
+        align-items: center !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .hub-content {
+        width: min(94vw, 520px) !important;
+        max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 26px) !important;
+        margin: 0 auto !important;
+        padding: 16px 14px !important;
+        border-radius: 18px !important;
+        gap: 11px !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .hub-title {
+        font-size: clamp(2.2rem, 9vw, 3.1rem) !important;
+        line-height: 1.05 !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .hub-sub {
+        margin-bottom: 2px !important;
+        font-size: clamp(1rem, 3.9vw, 1.2rem) !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .hub-buttons {
+        gap: 10px !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .hub-btn {
+        min-height: 46px !important;
+        font-size: clamp(1.18rem, 5.3vw, 1.7rem) !important;
+        border-radius: 12px !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .daily-hub-mobile {
+        margin-top: 6px !important;
+        padding: 12px !important;
+        border-radius: 12px !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .daily-hub-title {
+        margin-bottom: 4px !important;
+        font-size: clamp(1.6rem, 6vw, 2.2rem) !important;
+        line-height: 1.05 !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .daily-hub-status {
+        font-size: clamp(0.96rem, 3.8vw, 1.16rem) !important;
+        line-height: 1.26 !important;
+        margin-bottom: 10px !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .daily-hub-play-btn {
+        min-height: 50px !important;
+        font-size: clamp(1.22rem, 5.1vw, 1.6rem) !important;
+        border-radius: 12px !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .hub-logout-btn {
+        right: 14px !important;
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 14px) !important;
+        padding: 9px 12px !important;
+        border-radius: 10px !important;
+    }
+}
