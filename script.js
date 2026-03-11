@@ -1164,6 +1164,9 @@ const hubPlay = document.getElementById("hub-play");
 const welcomeScreen = document.getElementById("welcome-screen");
 
 hubPlay.addEventListener("click", () => {
+    clearGameSessionState();
+    stopHintCycle();
+    resetDailySession();
     const appContainer = document.getElementById('app-container');
     if (appContainer) appContainer.classList.add('hidden-app');
     const goToLastPage = hasSeenTutorial();
@@ -2282,6 +2285,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
+
 
 
 
