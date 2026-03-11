@@ -288,6 +288,7 @@ const mobileRulesSlot = document.getElementById('mobile-rules-slot');
 const mobileToolsSlot = document.getElementById('mobile-tools-slot');
 const mobileVictoryModal = document.getElementById('mobile-victory-modal');
 const mobileErrorModal = document.getElementById('mobile-error-modal');
+const mobileErrorPhraseEl = document.getElementById('mobile-error-phrase');
 let mobileLayoutPrepared = false;
 
 function toggleMobileMenu() {
@@ -704,7 +705,8 @@ async function validate() {
                 feedback.innerText = '⚠️ Ainda não é a Palavra do Dia.';
                 feedback.style.color = 'var(--warning)';
                 animateMage('sad');
-                showMobileErrorMagePopup();
+                const dailyFunnyPhrase = takeFunnyPhrase();
+                showMobileErrorMagePopup(dailyFunnyPhrase);
                 return;
             }
 
@@ -771,18 +773,13 @@ async function validate() {
             feedback.innerText = "⚠️ Palavra existe, mas não é a do desafio.";
             feedback.style.color = "var(--warning)";
             animateMage('reset');
-            showMobileErrorMagePopup();
+            const randomPhrase = takeFunnyPhrase();
+            showMobileErrorMagePopup(randomPhrase);
             consecutiveErrors = 0;
         } else {
             consecutiveErrors++;
-            showMobileErrorMagePopup();
-
-            if (unusedPhrases.length === 0) {
-                unusedPhrases = [...funnyPhrases];
-            }
-
-            const randomPhraseIndex = Math.floor(Math.random() * unusedPhrases.length);
-            const randomPhrase = unusedPhrases.splice(randomPhraseIndex, 1)[0];
+            const randomPhrase = takeFunnyPhrase();
+            showMobileErrorMagePopup(randomPhrase);
 
             feedback.innerHTML = `? Tente novamente<br><span style="font-size: 0.9rem; font-weight: normal; color: var(--text-dim);">${randomPhrase}</span>`;
             feedback.style.color = "var(--error)";
@@ -1040,12 +1037,23 @@ function showMobileVictoryPopup() {
     }, 2300);
 }
 
-function showMobileErrorMagePopup() {
+function takeFunnyPhrase() {
+    if (unusedPhrases.length === 0) {
+        unusedPhrases = [...funnyPhrases];
+    }
+    const randomPhraseIndex = Math.floor(Math.random() * unusedPhrases.length);
+    return unusedPhrases.splice(randomPhraseIndex, 1)[0];
+}
+
+function showMobileErrorMagePopup(message = '') {
     if (!isMobileViewport() || !mobileErrorModal) return;
+    if (mobileErrorPhraseEl) {
+        mobileErrorPhraseEl.innerText = message || '';
+    }
     mobileErrorModal.classList.remove('hidden-control');
     setTimeout(() => {
         mobileErrorModal.classList.add('hidden-control');
-    }, 1000);
+    }, 1400);
 }
 
 let tutorialPageIndex = 0;
@@ -2305,6 +2313,9 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
+
+
+
 
 
 
