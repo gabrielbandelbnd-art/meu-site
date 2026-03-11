@@ -2089,3 +2089,14 @@ button#validate-btn:active { transform: scale(0.95); }
         display: none !important;
     }
 }
+
+/* ===== Hambúrguer apenas em gameplay (mobile) ===== */
+@media (max-width: 800px) {
+    #mobile-menu-btn {
+        display: none !important;
+    }
+
+    body.mobile-gameplay-active #mobile-menu-btn {
+        display: flex !important;
+    }
+}

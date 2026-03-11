@@ -317,9 +317,13 @@ function closeMobilePanels() {
 }
 
 function setMobileGameplayMenuVisibility(visible) {
-    if (!isMobileViewport() || !mobileMenuBtn) return;
-    if (visible) mobileMenuBtn.classList.remove('hidden-control');
-    else {
+    const canUseMobileUi = isMobileViewport() && !!mobileMenuBtn;
+    document.body.classList.toggle('mobile-gameplay-active', canUseMobileUi && !!visible);
+
+    if (!canUseMobileUi) return;
+    if (visible) {
+        mobileMenuBtn.classList.remove('hidden-control');
+    } else {
         mobileMenuBtn.classList.add('hidden-control');
         closeMobilePanels();
     }
@@ -2301,6 +2305,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
+
 
 
 
