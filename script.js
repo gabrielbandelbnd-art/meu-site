@@ -1164,6 +1164,8 @@ const hubPlay = document.getElementById("hub-play");
 const welcomeScreen = document.getElementById("welcome-screen");
 
 hubPlay.addEventListener("click", () => {
+    const appContainer = document.getElementById('app-container');
+    if (appContainer) appContainer.classList.add('hidden-app');
     const goToLastPage = hasSeenTutorial();
     openWelcomeTutorial(goToLastPage);
 });
@@ -1310,6 +1312,8 @@ function markTutorialSeen() {
 let bookTutorialApi = null;
 
 function openWelcomeTutorial(goToLastPage = false) {
+    const appContainer = document.getElementById('app-container');
+    if (appContainer) appContainer.classList.add('hidden-app');
     if (hub) {
         hub.style.display = 'none';
         hub.classList.add('hidden-control');
@@ -2278,6 +2282,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
+
+
 
 
 
