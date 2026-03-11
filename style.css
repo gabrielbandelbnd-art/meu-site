@@ -2210,3 +2210,285 @@ button#validate-btn:active { transform: scale(0.95); }
     }
 }
 
+
+/* ===== MOBILE FINAL PROPORTIONAL TUNE (tutorial + gameplay sem scroll) ===== */
+@media (max-width: 800px) {
+    /* ---------- TUTORIAL ---------- */
+    body.mobile-mode:not(.mobile-gameplay-active) {
+        overflow: hidden !important;
+    }
+
+    .welcome-container {
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+        overflow: hidden !important;
+        padding: calc(env(safe-area-inset-top, 0px) + 6px) 8px calc(env(safe-area-inset-bottom, 0px) + 6px) 8px !important;
+    }
+
+    .modal-content.book-tutorial {
+        width: 100% !important;
+        max-width: none !important;
+        height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 12px) !important;
+        max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 12px) !important;
+        margin: 0 !important;
+        padding: 10px 8px 8px !important;
+        display: grid !important;
+        grid-template-rows: auto 1fr auto !important;
+        gap: 6px !important;
+        overflow: hidden !important;
+    }
+
+    .book-tutorial-header h2 {
+        margin: 0 0 2px !important;
+        font-size: clamp(1.65rem, 7.2vw, 2.5rem) !important;
+        line-height: 1.04 !important;
+    }
+
+    .book-tutorial-header p {
+        margin: 0 !important;
+        font-size: clamp(0.9rem, 3.4vw, 1.08rem) !important;
+        line-height: 1.2 !important;
+    }
+
+    .book-skip-btn {
+        margin-top: 4px !important;
+        min-height: 32px !important;
+        padding: 5px 10px !important;
+        font-size: 0.95rem !important;
+    }
+
+    .book-shell {
+        height: 100% !important;
+        min-height: 0 !important;
+        grid-template-columns: 36px 1fr 36px !important;
+        gap: 4px !important;
+        align-items: stretch !important;
+    }
+
+    .book-arrow {
+        width: 36px !important;
+        height: 36px !important;
+        align-self: center !important;
+        font-size: 1.35rem !important;
+    }
+
+    .book-pages-window,
+    .book-pages-track,
+    .book-page {
+        height: 100% !important;
+    }
+
+    .book-pages-window {
+        overflow: hidden !important;
+    }
+
+    .book-page {
+        overflow: hidden !important;
+        padding: 10px 8px 12px !important;
+    }
+
+    .book-page h3 {
+        margin: 0 0 5px !important;
+        font-size: clamp(1rem, 4.3vw, 1.32rem) !important;
+        line-height: 1.1 !important;
+    }
+
+    .book-page p {
+        margin: 0 0 5px !important;
+        font-size: clamp(0.8rem, 3.1vw, 1rem) !important;
+        line-height: 1.2 !important;
+    }
+
+    .book-page .difficulty-box {
+        margin: 5px 0 !important;
+        padding: 6px 8px !important;
+    }
+
+    .book-page #length-selector,
+    .book-page #mode-selector {
+        min-height: 36px !important;
+        height: 36px !important;
+        font-size: 0.95rem !important;
+        padding: 6px 8px !important;
+    }
+
+    .book-page #start-game-btn {
+        min-height: 40px !important;
+        height: 40px !important;
+        margin-top: 6px !important;
+        font-size: clamp(0.92rem, 4vw, 1.12rem) !important;
+        letter-spacing: 0.3px !important;
+        padding: 8px 10px !important;
+    }
+
+    .tutorial-page-indicator {
+        font-size: 0.9rem !important;
+    }
+
+    /* ---------- GAMEPLAY ---------- */
+    body.mobile-gameplay-active {
+        overflow: hidden !important;
+    }
+
+    body.mobile-gameplay-active .app-container {
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+        overflow: hidden !important;
+    }
+
+    body.mobile-gameplay-active .game-area {
+        display: grid !important;
+        grid-template-rows: auto auto auto minmax(68px, 1fr) auto auto !important;
+        gap: 10px !important;
+        height: 100dvh !important;
+        min-height: 100dvh !important;
+        overflow: hidden !important;
+        padding: calc(env(safe-area-inset-top, 0px) + 64px) 10px calc(env(safe-area-inset-bottom, 0px) + 8px) 10px !important;
+    }
+
+    body.mobile-gameplay-active .challenge-header {
+        margin: 0 !important;
+    }
+
+    body.mobile-gameplay-active .challenge-instruction {
+        margin-bottom: 5px !important;
+        font-size: 0.86rem !important;
+        line-height: 1.2 !important;
+    }
+
+    body.mobile-gameplay-active .hint-box {
+        padding: 8px 10px !important;
+    }
+
+    body.mobile-gameplay-active .hint-text {
+        font-size: 0.95rem !important;
+    }
+
+    body.mobile-gameplay-active .game-area > #notepad {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+
+    body.mobile-gameplay-active .game-area > #notepad .notepad-body {
+        height: 72px !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot {
+        margin: 0 !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot .mobile-panel-body {
+        padding: 7px !important;
+        gap: 6px !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot .rule-card {
+        font-size: 0.76rem !important;
+        line-height: 1.22 !important;
+        padding: 6px 8px !important;
+        margin-bottom: 4px !important;
+    }
+
+    body.mobile-gameplay-active .board-wrapper {
+        margin: 8px 0 4px 0 !important;
+        min-height: 72px !important;
+        align-items: center !important;
+    }
+
+    body.mobile-gameplay-active .word-grid {
+        gap: 8px !important;
+    }
+
+    body.mobile-gameplay-active .letter-box {
+        width: 38px !important;
+        height: 48px !important;
+        font-size: 1.34rem !important;
+    }
+
+    body.mobile-gameplay-active .tutorial-message {
+        font-size: 0.88rem !important;
+        padding: 9px 8px !important;
+        line-height: 1.2 !important;
+    }
+
+    body.mobile-gameplay-active .input-section {
+        margin: 0 !important;
+    }
+
+    body.mobile-gameplay-active .notification-area {
+        min-height: 22px !important;
+    }
+
+    body.mobile-gameplay-active .feedback {
+        font-size: 0.9rem !important;
+        margin: 0 !important;
+    }
+
+    body.mobile-gameplay-active .input-controls {
+        transform: none !important;
+        margin: 2px 0 2px 0 !important;
+        grid-template-columns: 1fr 60px 1fr !important;
+        gap: 8px !important;
+        align-items: stretch !important;
+    }
+
+    body.mobile-gameplay-active .input-controls #clear-board-btn,
+    body.mobile-gameplay-active .input-controls #char-input,
+    body.mobile-gameplay-active .input-controls #validate-btn {
+        min-height: 46px !important;
+        height: 46px !important;
+    }
+
+    /* Mapa um pouco maior, ainda cabendo sem scroll */
+    body.mobile-gameplay-active #alphabet-drawer {
+        margin-top: 6px !important;
+        padding: 8px !important;
+    }
+
+    body.mobile-gameplay-active #mini-alphabet.alphabet-content {
+        grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+        gap: 5px !important;
+        padding: 7px 4px !important;
+    }
+
+    body.mobile-gameplay-active #mini-alphabet .mini-char {
+        min-height: 36px !important;
+        height: 36px !important;
+        font-size: 0.9rem !important;
+        border-radius: 7px !important;
+    }
+
+    body.mobile-gameplay-active #mini-alphabet .mirrored-letter {
+        font-size: 0.54rem !important;
+        opacity: 0.92 !important;
+    }
+}
+
+@media (max-width: 800px) and (max-height: 740px) {
+    .book-page p {
+        font-size: clamp(0.76rem, 2.9vw, 0.94rem) !important;
+        line-height: 1.16 !important;
+    }
+
+    .book-page #start-game-btn {
+        min-height: 38px !important;
+        height: 38px !important;
+        font-size: 0.9rem !important;
+    }
+
+    body.mobile-gameplay-active .game-area {
+        gap: 8px !important;
+        grid-template-rows: auto auto auto minmax(62px, 1fr) auto auto !important;
+    }
+
+    body.mobile-gameplay-active .game-area > #notepad .notepad-body {
+        height: 64px !important;
+    }
+
+    body.mobile-gameplay-active #mini-alphabet .mini-char {
+        min-height: 34px !important;
+        height: 34px !important;
+    }
+}
