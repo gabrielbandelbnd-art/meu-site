@@ -765,12 +765,44 @@ async function validate() {
     }
 
     try {
-        const res = await fetch(`https://api.dicionario-aberto.net/word/${word.toLowerCase()}`);
-        const data = await res.json();
+        const dictUrl = `https://api.dicionario-aberto.net/word/${word.toLowerCase()}`;
+        const res = await fetch(dictUrl, {
+            headers: {
+                Accept: 'application/json, text/plain, */*'
+            }
+        });
+        const rawBody = await res.text();
+        const contentType = res.headers.get('content-type') || '';
 
-        if (data.length > 0) {
+        console.debug('[MagicLexis][Validar] resposta dicionario', {
+            url: dictUrl,
+            status: res.status,
+            ok: res.ok,
+            contentType,
+            preview: rawBody.slice(0, 220)
+        });
+
+        if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+        }
+
+        let parsedData = null;
+        const trimmedBody = rawBody.trim();
+        if (trimmedBody) {
+            try {
+                parsedData = JSON.parse(trimmedBody);
+            } catch (parseError) {
+                console.warn('[MagicLexis][Validar] resposta nao-JSON com HTTP 200; tratando como palavra inexistente.', parseError);
+            }
+        }
+
+        const dictionaryHasWord = Array.isArray(parsedData)
+            ? parsedData.length > 0
+            : !!(parsedData && typeof parsedData === 'object' && Object.keys(parsedData).length > 0);
+
+        if (dictionaryHasWord) {
             feedback.innerText = "";
-            
+
             animateMage('reset');
             const randomPhrase = takeFunnyPhrase();
             showMobileErrorMagePopup(randomPhrase);
@@ -781,7 +813,6 @@ async function validate() {
             showMobileErrorMagePopup(randomPhrase);
 
             feedback.innerText = "";
-            
 
             document.body.classList.add('error-flash');
             setTimeout(() => document.body.classList.remove('error-flash'), 500);
@@ -791,10 +822,10 @@ async function validate() {
 
                 const chickenAudio = new Audio('galinha.mp3');
                 chickenAudio.volume = 1.0;
-                chickenAudio.play().catch(e => console.log("Erro no Ã¡udio:", e));
+                chickenAudio.play().catch(e => console.log("Erro no áudio:", e));
 
                 const chickenEl = document.createElement('div');
-                chickenEl.innerText = 'ðŸ”';
+                chickenEl.innerText = '🐔';
                 chickenEl.className = 'flying-chicken';
                 document.body.appendChild(chickenEl);
 
@@ -805,7 +836,8 @@ async function validate() {
                 animateMage('sad');
             }
         }
-    } catch {
+    } catch (apiError) {
+        console.error('[MagicLexis][Validar] falha real de requisicao da API do dicionario.', apiError);
         feedback.innerText = "Erro na API";
     }
 
@@ -2312,6 +2344,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
+
 
 
 
