@@ -599,7 +599,7 @@ button#validate-btn:active { transform: scale(0.95); }
     .word-grid { gap: 8px; }
 
     .mobile-menu-btn {
-        display: flex;
+        display: none;
         align-items: center;
         justify-content: center;
         position: fixed;
@@ -1671,7 +1671,7 @@ button#validate-btn:active { transform: scale(0.95); }
 
 @media (max-width: 800px) {
     .mobile-menu-btn {
-        display: flex !important;
+        display: none !important;
     }
     .mobile-alphabet-btn {
         display: none !important;
@@ -2631,4 +2631,7 @@ button#validate-btn:active { transform: scale(0.95); }
         border-radius: 10px !important;
     }
 }
+
+
+
 

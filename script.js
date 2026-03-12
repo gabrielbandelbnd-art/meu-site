@@ -705,7 +705,7 @@ async function validate() {
                 feedback.innerText = '';
                 animateMage('sad');
                 const dailyFunnyPhrase = takeFunnyPhrase();
-                showMobileErrorMagePopup(dailyFunnyPhrase);
+                showErrorMageFeedback(dailyFunnyPhrase);
                 return;
             }
 
@@ -805,12 +805,12 @@ async function validate() {
 
             animateMage('reset');
             const randomPhrase = takeFunnyPhrase();
-            showMobileErrorMagePopup(randomPhrase);
+            showErrorMageFeedback(randomPhrase);
             consecutiveErrors = 0;
         } else {
             consecutiveErrors++;
             const randomPhrase = takeFunnyPhrase();
-            showMobileErrorMagePopup(randomPhrase);
+            showErrorMageFeedback(randomPhrase);
 
             feedback.innerText = "";
 
@@ -1085,6 +1085,16 @@ function showMobileErrorMagePopup(message = '') {
     setTimeout(() => {
         mobileErrorModal.classList.add('hidden-control');
     }, 3000);
+}
+
+function showErrorMageFeedback(message = '') {
+    if (isMobileViewport()) {
+        showMobileErrorMagePopup(message);
+        return;
+    }
+    // Desktop fallback: mantem as frases engracadas visiveis mesmo sem popup mobile.
+    feedback.innerHTML = `❌ Tente novamente<br><span style="font-size: 0.9rem; font-weight: normal; color: var(--text-dim);">${message || ''}</span>`;
+    feedback.style.color = "var(--error)";
 }
 
 let tutorialPageIndex = 0;
@@ -2344,6 +2354,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
+
+
 
 
 
