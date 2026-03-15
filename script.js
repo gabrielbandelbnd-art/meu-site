@@ -203,21 +203,32 @@ function sanitizeGameText(value) {
         ['interrogaÃ§Ã£o', 'interrogação'],
         ['comeÃ§ar', 'começar'],
         ['TÃ©rmino', 'Término'],
-        ['satelite', 'satélite']
+        ['satelite', 'satélite'],
+        ['interroga??o', 'interrogação'],
+        ['come?ar', 'começar'],
+        ['T??rmino', 'Término'],
+        ['T?rmino', 'Término'],
+        ['nao e um teclado musical', 'não é um teclado musical'],
+        ['Nao e um teclado musical', 'Não é um teclado musical']
     ];
 
     for (const [bad, good] of fixes) {
         text = text.split(bad).join(good);
     }
 
-    // Corrige variações quebradas vistas no mobile.
+    // Corrige variações quebradas vistas no mobile/desktop.
+    text = text.replace(/\bT[^A-Za-zÀ-ÖØ-öø-ÿ]{0,24}rmino\.?/giu, 'Término.');
     text = text.replace(/\bT\S{0,18}rmino\.?/giu, 'Término.');
-    text = text.replace(/interroga[^A-Za-zÀ-ÖØ-öø-ÿ]{0,12}o/giu, 'interrogação');
-    text = text.replace(/come[^A-Za-zÀ-ÖØ-öø-ÿ]{0,8}ar/giu, 'começar');
-    text = text.replace(/sat[^A-Za-zÀ-ÖØ-öø-ÿ]{0,8}lite/giu, 'satélite');
+    text = text.replace(/interroga\?+o/giu, 'interrogação');
+    text = text.replace(/come\?+ar/giu, 'começar');
+    text = text.replace(/interroga[^A-Za-zÀ-ÖØ-öø-ÿ]{0,20}o/giu, 'interrogação');
+    text = text.replace(/come[^A-Za-zÀ-ÖØ-öø-ÿ]{0,14}ar/giu, 'começar');
+    text = text.replace(/sat[^A-Za-zÀ-ÖØ-öø-ÿ]{0,10}lite/giu, 'satélite');
+    text = text.replace(/n[^A-Za-zÀ-ÖØ-öø-ÿ]{0,3}o e um teclado musical/giu, 'não é um teclado musical');
 
     text = text.replace(/�+/g, '');
     text = text.replace(/Ô¿½/g, '');
+    text = text.replace(/\?{2,}/g, '?');
     text = text.replace(/[^\S\r\n]{2,}/g, ' ');
     text = text.replace(/\s{2,}/g, ' ').trim();
     return text;
@@ -251,16 +262,16 @@ let chickenAlreadySummoned = false; // Trava para a galinha voar sÃƒÆ’Ã†
 let feedbackTimeout = null; // Trava para a mensagem durar exatos 6 segundos
 
 const funnyPhrases = [
-    "Que isso, voce esta inventando palavra nova?",
-    "Essa nem o dicionario reconhece.",
-    "Calma, respira... nao e um teclado musical.",
-    "Quase! So faltou acertar.",
-    "Essa passou longe, mas voce chega la.",
-    "Se errar valesse ponto, voce estava liderando.",
+    "Que isso, você está inventando palavra nova?",
+    "Essa nem o dicionário reconhece.",
+    "Calma, respira... não é um teclado musical.",
+    "Quase! Só faltou acertar.",
+    "Essa passou longe, mas você chega lá.",
+    "Se errar valesse ponto, você estava liderando.",
     "Foi ousado. Errado, mas ousado.",
-    "Essa palavra veio de outra dimensao.",
+    "Essa palavra veio de outra dimensão.",
     "Bora de novo, agora vai.",
-    "Voce consegue, so ajusta a estrategia."
+    "Você consegue, só ajusta a estratégia."
 ];
 for (let i = 0; i < funnyPhrases.length; i++) {
     funnyPhrases[i] = sanitizeGameText(funnyPhrases[i]);
@@ -1235,7 +1246,7 @@ document.getElementById("hub-profile").addEventListener("click", () => {
 });
 
 document.getElementById("hub-tournaments").addEventListener("click", () => {
-    alert("Torneios em breve ÃƒÂ°Ã…Â¸Ã‚ÂÃ¢â‚¬Â ");
+    alert("Torneios em breve 🏆");
 });
 
 document.getElementById("hub-ranking").addEventListener("click", () => {
@@ -2351,6 +2362,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
+
+
 
 
 
