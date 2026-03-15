@@ -2746,3 +2746,193 @@ button#validate-btn:active { transform: scale(0.95); }
     bottom: calc(env(safe-area-inset-bottom, 0px) + 14px) !important;
   }
 }
+
+/* ===== MOBILE STABILITY PATCH (prioridade máxima) ===== */
+@media (max-width: 800px) {
+    /* Evita que botões invadam o mapa ao atualizar a página */
+    body.mobile-gameplay-active .input-section {
+        position: relative !important;
+        z-index: 40 !important;
+        margin: 8px 0 10px 0 !important;
+    }
+
+    body.mobile-gameplay-active .input-controls {
+        position: relative !important;
+        z-index: 41 !important;
+        display: grid !important;
+        grid-template-columns: minmax(110px, 1fr) 92px minmax(120px, 1fr) !important;
+        align-items: center !important;
+        gap: 8px !important;
+        margin: 2px 0 12px 0 !important;
+    }
+
+    body.mobile-gameplay-active .notification-area {
+        min-height: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
+    body.mobile-gameplay-active #alphabet-drawer {
+        position: relative !important;
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+        width: 100% !important;
+        margin-top: 12px !important;
+        z-index: 10 !important;
+    }
+
+    body.mobile-gameplay-active .alphabet-wrapper {
+        margin-top: 12px !important;
+    }
+
+    body.mobile-gameplay-active .game-area > #notepad .notepad-body {
+        height: 52px !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot {
+        margin-bottom: 12px !important;
+    }
+
+    body.mobile-gameplay-active .board-wrapper {
+        margin: 10px 0 8px 0 !important;
+    }
+
+    /* Hub mobile: card da palavra do dia com mais respiro */
+    body.mobile-mode:not(.mobile-gameplay-active) .hub-content {
+        width: min(92vw, 520px) !important;
+        padding: 18px 16px calc(78px + env(safe-area-inset-bottom, 0px)) 16px !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .daily-hub-mobile {
+        margin: 12px 8px 0 8px !important;
+        padding: 14px !important;
+        border-radius: 14px !important;
+    }
+}
+
+/* ===== FINAL MOBILE STABILITY (refresh + spacing) ===== */
+@media (max-width: 800px) {
+    body.mobile-gameplay-active .game-area {
+        padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+
+    body.mobile-gameplay-active .game-area > #notepad .notepad-body {
+        height: 64px !important;
+    }
+
+    body.mobile-gameplay-active .input-section {
+        position: relative !important;
+        z-index: 28 !important;
+        margin: 10px 0 18px 0 !important;
+    }
+
+    body.mobile-gameplay-active .input-controls {
+        position: relative !important;
+        z-index: 29 !important;
+        gap: 10px !important;
+        margin: 6px 0 16px 0 !important;
+    }
+
+    body.mobile-gameplay-active .notification-area {
+        margin-bottom: 8px !important;
+    }
+
+    body.mobile-gameplay-active #alphabet-drawer {
+        position: relative !important;
+        top: auto !important;
+        transform: none !important;
+        margin-top: 18px !important;
+        z-index: 12 !important;
+    }
+
+    body.mobile-gameplay-active #alphabet-drawer .alphabet-content {
+        padding-top: 12px !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .hub-content {
+        width: min(92vw, 460px) !important;
+        margin: 12px auto !important;
+        padding: 16px 14px calc(74px + env(safe-area-inset-bottom, 0px)) 14px !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .daily-hub-mobile {
+        width: 100% !important;
+        max-width: 380px !important;
+        margin: 10px auto 0 !important;
+    }
+}
+
+/* ===== MOBILE FINAL STABILITY PATCH (12/03) ===== */
+@media (max-width: 800px) {
+    body.mobile-gameplay-active .game-area {
+        min-height: 100dvh !important;
+        height: auto !important;
+        overflow-y: auto !important;
+        padding: calc(env(safe-area-inset-top, 0px) + 70px) 12px calc(env(safe-area-inset-bottom, 0px) + 14px) 12px !important;
+    }
+
+    body.mobile-gameplay-active .game-area > #notepad {
+        margin: 8px 0 10px 0 !important;
+    }
+
+    body.mobile-gameplay-active .game-area > #notepad .notepad-body {
+        height: 48px !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot {
+        margin: 0 0 12px 0 !important;
+    }
+
+    body.mobile-gameplay-active .board-wrapper {
+        margin: 10px 0 8px 0 !important;
+    }
+
+    body.mobile-gameplay-active .input-section {
+        position: relative !important;
+        z-index: 40 !important;
+        margin: 8px 0 14px 0 !important;
+    }
+
+    body.mobile-gameplay-active .input-controls {
+        transform: none !important;
+        margin: 4px 0 10px 0 !important;
+        gap: 8px !important;
+        align-items: center !important;
+    }
+
+    body.mobile-gameplay-active .notification-area {
+        min-height: 0 !important;
+        margin-bottom: 8px !important;
+    }
+
+    body.mobile-gameplay-active #alphabet-drawer,
+    body.mobile-gameplay-active .alphabet-wrapper {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        left: auto !important;
+        transform: none !important;
+        width: 100% !important;
+        margin-top: 14px !important;
+        z-index: 10 !important;
+    }
+
+    body.mobile-gameplay-active #mini-alphabet.alphabet-content {
+        gap: 6px !important;
+        padding: 10px !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .hub-content {
+        width: min(92vw, 440px) !important;
+        margin: 14px auto !important;
+        padding: 18px 14px calc(env(safe-area-inset-bottom, 0px) + 78px) 14px !important;
+        border-radius: 20px !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .daily-hub-mobile {
+        width: calc(100% - 8px) !important;
+        margin: 12px auto 0 auto !important;
+        padding: 14px !important;
+        border-radius: 14px !important;
+    }
+}

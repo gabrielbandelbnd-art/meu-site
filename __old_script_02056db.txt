@@ -1,4 +1,4 @@
-﻿import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import {
     getAuth,
     onAuthStateChanged,
@@ -29,200 +29,151 @@ import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/
 const allChallenges = [
     // --- 3 LETRAS ---
     { word: "SOL", hints: ["Astro rei.", "Aquece o dia.", "Estrela.", "Luz natural.", "Calor."], meaning: "Estrela central do sistema solar." },
-    { word: "LUA", hints: ["Satélite.", "Noite.", "Fases.", "Marés.", "Branca."], meaning: "Satélite natural da Terra." },
-    { word: "MAR", hints: ["Oceano.", "Sal.", "Ondas.", "Azul.", "Praia."], meaning: "Grande massa de água salgada." },
-    { word: "CEU", hints: ["Azul.", "Nuvens.", "Alto.", "Infinito.", "Paraíso."], meaning: "Espaço acima da Terra." },
-    { word: "PAZ", hints: ["Calma.", "Branco.", "Trégua.", "Sossego.", "Harmonia."], meaning: "Estado de tranquilidade." },
-    { word: "SOM", hints: ["Ouvir.", "Música.", "Ruído.", "Vibração.", "Volume."], meaning: "Sensação auditiva." },
-    { word: "COR", hints: ["Tinta.", "Arco-íris.", "Visual.", "Pintura.", "Luz."], meaning: "Impressão visual da luz." },
-    { word: "RIO", hints: ["Água doce.", "Correnteza.", "Peixes.", "Fluxo.", "Leito."], meaning: "Curso de água natural." },
+    { word: "LUA", hints: ["Sat�lite.", "Noite.", "Fases.", "Mar�s.", "Branca."], meaning: "Sat�lite natural da Terra." },
+    { word: "MAR", hints: ["Oceano.", "Sal.", "Ondas.", "Azul.", "Praia."], meaning: "Grande massa de �gua salgada." },
+    { word: "CEU", hints: ["Azul.", "Nuvens.", "Alto.", "Infinito.", "Para�so."], meaning: "Espa�o acima da Terra." },
+    { word: "PAZ", hints: ["Calma.", "Branco.", "Tr�gua.", "Sossego.", "Harmonia."], meaning: "Estado de tranquilidade." },
+    { word: "SOM", hints: ["Ouvir.", "M�sica.", "Ru�do.", "Vibra��o.", "Volume."], meaning: "Sensa��o auditiva." },
+    { word: "COR", hints: ["Tinta.", "Arco-�ris.", "Visual.", "Pintura.", "Luz."], meaning: "Impress�o visual da luz." },
+    { word: "RIO", hints: ["�gua doce.", "Correnteza.", "Peixes.", "Fluxo.", "Leito."], meaning: "Curso de �gua natural." },
     { word: "VOZ", hints: ["Falar.", "Cantar.", "Garganta.", "Som humano.", "Grito."], meaning: "Som produzido pelas cordas vocais." },
-    { word: "LUZ", hints: ["Claridade.", "Lâmpada.", "Velocidade.", "Sol.", "Dia."], meaning: "Radiação visível." },
-    { word: "SAL", hints: ["Tempero.", "Branco.", "Mar.", "Cozinha.", "Sódio."], meaning: "Substância usada para temperar." },
-    { word: "MAE", hints: ["Geradora.", "Amor.", "Família.", "Origem.", "Cuidado."], meaning: "Genitora." },
-    { word: "PAI", hints: ["Protetor.", "Família.", "Masculino.", "Origem.", "Herói."], meaning: "Genitor." },
+    { word: "LUZ", hints: ["Claridade.", "L�mpada.", "Velocidade.", "Sol.", "Dia."], meaning: "Radia��o vis�vel." },
+    { word: "SAL", hints: ["Tempero.", "Branco.", "Mar.", "Cozinha.", "S�dio."], meaning: "Subst�ncia usada para temperar." },
+    { word: "MAE", hints: ["Geradora.", "Amor.", "Fam�lia.", "Origem.", "Cuidado."], meaning: "Genitora." },
+    { word: "PAI", hints: ["Protetor.", "Fam�lia.", "Masculino.", "Origem.", "Her�i."], meaning: "Genitor." },
     { word: "GOL", hints: ["Futebol.", "Rede.", "Ponto.", "Chute.", "Torcida."], meaning: "Ponto no futebol." },
-    { word: "FIM", hints: ["Término.", "Acabou.", "Conclusão.", "Final.", "Desfecho."], meaning: "Onde algo termina." },
+    { word: "FIM", hints: ["T�rmino.", "Acabou.", "Conclus�o.", "Final.", "Desfecho."], meaning: "Onde algo termina." },
 
     // --- 4 LETRAS ---
-    { word: "AMOR", hints: ["Coração.", "Afeto.", "Paixão.", "Sentimento.", "União."], meaning: "Forte afeição por outra pessoa." },
-    { word: "VIDA", hints: ["Viver.", "Existência.", "Nascer.", "Biologia.", "Sopro."], meaning: "Estado de atividade funcional." },
-    { word: "GATO", hints: ["Felino.", "Miau.", "Bigode.", "Animal.", "Doméstico."], meaning: "Pequeno mamífero carnívoro." },
-    { word: "CASA", hints: ["Moradia.", "Teto.", "Lar.", "Construção.", "Abrigo."], meaning: "Edifício para habitar." },
-    { word: "BOLA", hints: ["Esfera.", "Jogo.", "Redonda.", "Futebol.", "Brinquedo."], meaning: "Objeto esférico usado em jogos." },
-    { word: "ANEL", hints: ["Dedo.", "Joia.", "Ouro.", "Círculo.", "Compromisso."], meaning: "Aro ornamental usado no dedo." },
-    { word: "TREM", hints: ["Trilho.", "Vagão.", "Locomotiva.", "Viagem.", "Apito."], meaning: "Comboio ferroviário." },
-    { word: "FLOR", hints: ["Jardim.", "Pétala.", "Cheiro.", "Planta.", "Primavera."], meaning: "Órgão reprodutor das plantas." },
-    { word: "MESA", hints: ["Móvel.", "Jantar.", "Apoio.", "Quatro pernas.", "Madeira."], meaning: "Móvel com tampo plano." },
-    { word: "FOGO", hints: ["Quente.", "Queima.", "Chama.", "Incêndio.", "Luz."], meaning: "Combustão visível." },
-    { word: "AGUA", hints: ["Líquido.", "Beber.", "Vida.", "Rio.", "Chuva."], meaning: "Líquido essencial à vida." },
-    { word: "MEDO", hints: ["Susto.", "Pavor.", "Escuro.", "Terror.", "Emoção."], meaning: "Sensação de perigo." },
-    { word: "RISO", hints: ["Alegria.", "Boca.", "Piada.", "Engraçado.", "Som."], meaning: "Ato de rir." },
-    { word: "CAFE", hints: ["Bebida.", "Preto.", "Manhã.", "Acordar.", "Cafeína."], meaning: "Bebida estimulante." },
-    { word: "LIXO", hints: ["Descarte.", "Sujeira.", "Reciclar.", "Cesto.", "Resto."], meaning: "Resíduos descartados." },
+    { word: "AMOR", hints: ["Cora��o.", "Afeto.", "Paix�o.", "Sentimento.", "Uni�o."], meaning: "Forte afei��o por outra pessoa." },
+    { word: "VIDA", hints: ["Viver.", "Exist�ncia.", "Nascer.", "Biologia.", "Sopro."], meaning: "Estado de atividade funcional." },
+    { word: "GATO", hints: ["Felino.", "Miau.", "Bigode.", "Animal.", "Dom�stico."], meaning: "Pequeno mam�fero carn�voro." },
+    { word: "CASA", hints: ["Moradia.", "Teto.", "Lar.", "Constru��o.", "Abrigo."], meaning: "Edif�cio para habitar." },
+    { word: "BOLA", hints: ["Esfera.", "Jogo.", "Redonda.", "Futebol.", "Brinquedo."], meaning: "Objeto esf�rico usado em jogos." },
+    { word: "ANEL", hints: ["Dedo.", "Joia.", "Ouro.", "C�rculo.", "Compromisso."], meaning: "Aro ornamental usado no dedo." },
+    { word: "TREM", hints: ["Trilho.", "Vag�o.", "Locomotiva.", "Viagem.", "Apito."], meaning: "Comboio ferrovi�rio." },
+    { word: "FLOR", hints: ["Jardim.", "P�tala.", "Cheiro.", "Planta.", "Primavera."], meaning: "�rg�o reprodutor das plantas." },
+    { word: "MESA", hints: ["M�vel.", "Jantar.", "Apoio.", "Quatro pernas.", "Madeira."], meaning: "M�vel com tampo plano." },
+    { word: "FOGO", hints: ["Quente.", "Queima.", "Chama.", "Inc�ndio.", "Luz."], meaning: "Combust�o vis�vel." },
+    { word: "AGUA", hints: ["L�quido.", "Beber.", "Vida.", "Rio.", "Chuva."], meaning: "L�quido essencial � vida." },
+    { word: "MEDO", hints: ["Susto.", "Pavor.", "Escuro.", "Terror.", "Emo��o."], meaning: "Sensa��o de perigo." },
+    { word: "RISO", hints: ["Alegria.", "Boca.", "Piada.", "Engra�ado.", "Som."], meaning: "Ato de rir." },
+    { word: "CAFE", hints: ["Bebida.", "Preto.", "Manh�.", "Acordar.", "Cafe�na."], meaning: "Bebida estimulante." },
+    { word: "LIXO", hints: ["Descarte.", "Sujeira.", "Reciclar.", "Cesto.", "Resto."], meaning: "Res�duos descartados." },
 
     // --- 5 LETRAS ---
-    { word: "LIVRO", hints: ["Leitura.", "Páginas.", "Biblioteca.", "História.", "Capa."], meaning: "Conjunto de folhas escritas." },
-    { word: "PORTA", hints: ["Entrada.", "Abrir.", "Madeira.", "Maçaneta.", "Saída."], meaning: "Abertura em parede para passagem." },
-    { word: "NAVIO", hints: ["Mar.", "Transporte.", "Barco grande.", "Oceano.", "Cruzeiro."], meaning: "Grande embarcação." },
-    { word: "PEIXE", hints: ["Água.", "Nadar.", "Escamas.", "Rio.", "Mar."], meaning: "Animal vertebrado aquático." },
-    { word: "CARTA", hints: ["Correio.", "Papel.", "Envelope.", "Escrever.", "Mensagem."], meaning: "Mensagem escrita enviada a alguém." },
+    { word: "LIVRO", hints: ["Leitura.", "P�ginas.", "Biblioteca.", "Hist�ria.", "Capa."], meaning: "Conjunto de folhas escritas." },
+    { word: "PORTA", hints: ["Entrada.", "Abrir.", "Madeira.", "Ma�aneta.", "Sa�da."], meaning: "Abertura em parede para passagem." },
+    { word: "NAVIO", hints: ["Mar.", "Transporte.", "Barco grande.", "Oceano.", "Cruzeiro."], meaning: "Grande embarca��o." },
+    { word: "PEIXE", hints: ["�gua.", "Nadar.", "Escamas.", "Rio.", "Mar."], meaning: "Animal vertebrado aqu�tico." },
+    { word: "CARTA", hints: ["Correio.", "Papel.", "Envelope.", "Escrever.", "Mensagem."], meaning: "Mensagem escrita enviada a algu�m." },
     { word: "PLUMA", hints: ["Leve.", "Pena.", "Ave.", "Macio.", "Travesseiro."], meaning: "Pena de ave." },
-    { word: "NOITE", hints: ["Escuro.", "Lua.", "Estrelas.", "Dormir.", "Fim do dia."], meaning: "Período sem luz solar." },
-    { word: "CHUVA", hints: ["Água.", "Nuvens.", "Molhado.", "Temporal.", "Gotas."], meaning: "Precipitação atmosférica." },
-    { word: "PRAIA", hints: ["Areia.", "Mar.", "Sol.", "Verão.", "Ondas."], meaning: "Borda de terra à beira-mar." },
-    { word: "SONHO", hints: ["Dormir.", "Imaginação.", "Desejo.", "Pesadelo.", "Noite."], meaning: "Imagens vistas enquanto se dorme." },
-    { word: "RISCO", hints: ["Perigo.", "Traço.", "Aventura.", "Medo.", "Rabisco."], meaning: "Possibilidade de perigo." },
+    { word: "NOITE", hints: ["Escuro.", "Lua.", "Estrelas.", "Dormir.", "Fim do dia."], meaning: "Per�odo sem luz solar." },
+    { word: "CHUVA", hints: ["�gua.", "Nuvens.", "Molhado.", "Temporal.", "Gotas."], meaning: "Precipita��o atmosf�rica." },
+    { word: "PRAIA", hints: ["Areia.", "Mar.", "Sol.", "Ver�o.", "Ondas."], meaning: "Borda de terra � beira-mar." },
+    { word: "SONHO", hints: ["Dormir.", "Imagina��o.", "Desejo.", "Pesadelo.", "Noite."], meaning: "Imagens vistas enquanto se dorme." },
+    { word: "RISCO", hints: ["Perigo.", "Tra�o.", "Aventura.", "Medo.", "Rabisco."], meaning: "Possibilidade de perigo." },
     { word: "MUNDO", hints: ["Terra.", "Globo.", "Planeta.", "Universo.", "Pessoas."], meaning: "O planeta Terra." },
-    { word: "TEMPO", hints: ["Relógio.", "Horas.", "Clima.", "Passado.", "Futuro."], meaning: "Duração dos fatos." },
-    { word: "IDEIA", hints: ["Pensamento.", "Mente.", "Criatividade.", "Luz.", "Plano."], meaning: "Representação mental." },
-    { word: "FESTA", hints: ["Comemoração.", "Bolo.", "Música.", "Amigos.", "Dança."], meaning: "Reunião para celebrar." },
+    { word: "TEMPO", hints: ["Rel�gio.", "Horas.", "Clima.", "Passado.", "Futuro."], meaning: "Dura��o dos fatos." },
+    { word: "IDEIA", hints: ["Pensamento.", "Mente.", "Criatividade.", "Luz.", "Plano."], meaning: "Representa��o mental." },
+    { word: "FESTA", hints: ["Comemora��o.", "Bolo.", "M�sica.", "Amigos.", "Dan�a."], meaning: "Reuni�o para celebrar." },
 
     // --- 6 LETRAS ---
     { word: "ESCOLA", hints: ["Estudar.", "Alunos.", "Professor.", "Aulas.", "Saber."], meaning: "Estabelecimento de ensino." },
     { word: "JARDIM", hints: ["Flores.", "Verde.", "Grama.", "Plantas.", "Natureza."], meaning: "Terreno cultivado com plantas." },
-    { word: "VIAGEM", hints: ["Turismo.", "Malas.", "Férias.", "Avião.", "Estrada."], meaning: "Ato de deslocar-se a outro lugar." },
-    { word: "MUSICA", hints: ["Som.", "Melodia.", "Ritmo.", "Instrumento.", "Canção."], meaning: "Arte de combinar sons." },
+    { word: "VIAGEM", hints: ["Turismo.", "Malas.", "F�rias.", "Avi�o.", "Estrada."], meaning: "Ato de deslocar-se a outro lugar." },
+    { word: "MUSICA", hints: ["Som.", "Melodia.", "Ritmo.", "Instrumento.", "Can��o."], meaning: "Arte de combinar sons." },
     { word: "AMIGOS", hints: ["Parceria.", "Companhia.", "Lealdade.", "Festa.", "Grupo."], meaning: "Pessoas com quem se tem afeto." },
-    { word: "CIDADE", hints: ["Prédios.", "Ruas.", "Urbano.", "População.", "Prefeito."], meaning: "Aglomerado urbano." },
-    { word: "COMIDA", hints: ["Fome.", "Almoço.", "Jantar.", "Sabor.", "Nutrição."], meaning: "O que se come." },
-    { word: "BRASIL", hints: ["País.", "Verde e amarelo.", "Samba.", "Futebol.", "Sul-americano."], meaning: "Maior país da América do Sul." },
-    { word: "JOGADA", hints: ["Esporte.", "Movimento.", "Estratégia.", "Lance.", "Partida."], meaning: "Ato de jogar." },
-    { word: "QUARTO", hints: ["Dormir.", "Cama.", "Cômodo.", "Casa.", "Descanso."], meaning: "Aposento para dormir." },
-    { word: "ABRACO", hints: ["Carinho.", "Braços.", "Aperto.", "Afeto.", "Cumprimento."], meaning: "Enlaçamento com os braços." },
-    { word: "FUTURO", hints: ["Amanhã.", "Destino.", "Tempo.", "Vir a ser.", "Adiante."], meaning: "Tempo que há de vir." },
+    { word: "CIDADE", hints: ["Pr�dios.", "Ruas.", "Urbano.", "Popula��o.", "Prefeito."], meaning: "Aglomerado urbano." },
+    { word: "COMIDA", hints: ["Fome.", "Almo�o.", "Jantar.", "Sabor.", "Nutri��o."], meaning: "O que se come." },
+    { word: "BRASIL", hints: ["Pa�s.", "Verde e amarelo.", "Samba.", "Futebol.", "Sul-americano."], meaning: "Maior pa�s da Am�rica do Sul." },
+    { word: "JOGADA", hints: ["Esporte.", "Movimento.", "Estrat�gia.", "Lance.", "Partida."], meaning: "Ato de jogar." },
+    { word: "QUARTO", hints: ["Dormir.", "Cama.", "C�modo.", "Casa.", "Descanso."], meaning: "Aposento para dormir." },
+    { word: "ABRACO", hints: ["Carinho.", "Bra�os.", "Aperto.", "Afeto.", "Cumprimento."], meaning: "Enla�amento com os bra�os." },
+    { word: "FUTURO", hints: ["Amanh�.", "Destino.", "Tempo.", "Vir a ser.", "Adiante."], meaning: "Tempo que h� de vir." },
     { word: "POESIA", hints: ["Rima.", "Versos.", "Arte.", "Escrita.", "Amor."], meaning: "Arte de compor versos." },
-    { word: "BOSQUE", hints: ["Árvores.", "Floresta.", "Natureza.", "Verde.", "Passeio."], meaning: "Pequena floresta." },
-    { word: "TROVAO", hints: ["Barulho.", "Tempestade.", "Raio.", "Céu.", "Estrondo."], meaning: "Ruído provocado pelo raio." },
+    { word: "BOSQUE", hints: ["�rvores.", "Floresta.", "Natureza.", "Verde.", "Passeio."], meaning: "Pequena floresta." },
+    { word: "TROVAO", hints: ["Barulho.", "Tempestade.", "Raio.", "C�u.", "Estrondo."], meaning: "Ru�do provocado pelo raio." },
 
     // --- 7 LETRAS ---
-    { word: "GUITARRA", hints: ["Música.", "Cordas.", "Rock.", "Solo.", "Elétrica."], meaning: "Instrumento musical de cordas." },
-    { word: "VAMPIRO", hints: ["Sangue.", "Dentes.", "Noite.", "Morcego.", "Drácula."], meaning: "Criatura mitológica que bebe sangue." },
-    { word: "ESTRELA", hints: ["Céu.", "Brilho.", "Noite.", "Espaço.", "Pontas."], meaning: "Corpo celeste luminoso." },
-    { word: "FAMILIA", hints: ["Parentes.", "Casa.", "Sangue.", "União.", "Genealogia."], meaning: "Grupo de pessoas com laços sanguíneos." },
-    { word: "PERFUME", hints: ["Cheiro.", "Frasco.", "Aroma.", "Essência.", "Flor."], meaning: "Líquido aromático." },
-    { word: "FUTEBOL", hints: ["Esporte.", "Gol.", "Bola.", "Campo.", "Time."], meaning: "Esporte jogado com os pés." },
-    { word: "CORAGEM", hints: ["Bravura.", "Medo.", "Herói.", "Enfrentar.", "Valente."], meaning: "Moral forte perante o perigo." },
-    { word: "DESTINO", hints: ["Futuro.", "Sorte.", "Caminho.", "Fado.", "Final."], meaning: "O que está determinado a acontecer." },
-    { word: "OCEANOS", hints: ["Água.", "Azul.", "Terra.", "Mar.", "Profundo."], meaning: "Grandes massas de água salgada." },
-    { word: "FLORESTA", hints: ["Árvores.", "Selva.", "Verde.", "Animais.", "Mata."], meaning: "Grande extensão de árvores." },
-    { word: "ESPELHO", hints: ["Reflexo.", "Vidro.", "Imagem.", "Olhar.", "Vaidade."], meaning: "Superfície que reflete a imagem." },
-    { word: "RAPOSAS", hints: ["Animal.", "Esperta.", "Laranja.", "Cauda.", "Mato."], meaning: "Mamífero carnívoro." },
-    { word: "PLANETA", hints: ["Terra.", "Espaço.", "Orbita.", "Mundo.", "Sol."], meaning: "Corpo celeste que orbita uma estrela." },
-    { word: "ABELHAS", hints: ["Mel.", "Inseto.", "Colmeia.", "Ferrão.", "Rainha."], meaning: "Inseto produtor de mel." },
-    { word: "CORRIDA", hints: ["Velocidade.", "Esporte.", "Pressa.", "Pés.", "Chegada."], meaning: "Ato de correr." },
+    { word: "GUITARRA", hints: ["M�sica.", "Cordas.", "Rock.", "Solo.", "El�trica."], meaning: "Instrumento musical de cordas." },
+    { word: "VAMPIRO", hints: ["Sangue.", "Dentes.", "Noite.", "Morcego.", "Dr�cula."], meaning: "Criatura mitol�gica que bebe sangue." },
+    { word: "ESTRELA", hints: ["C�u.", "Brilho.", "Noite.", "Espa�o.", "Pontas."], meaning: "Corpo celeste luminoso." },
+    { word: "FAMILIA", hints: ["Parentes.", "Casa.", "Sangue.", "Uni�o.", "Genealogia."], meaning: "Grupo de pessoas com la�os sangu�neos." },
+    { word: "PERFUME", hints: ["Cheiro.", "Frasco.", "Aroma.", "Ess�ncia.", "Flor."], meaning: "L�quido arom�tico." },
+    { word: "FUTEBOL", hints: ["Esporte.", "Gol.", "Bola.", "Campo.", "Time."], meaning: "Esporte jogado com os p�s." },
+    { word: "CORAGEM", hints: ["Bravura.", "Medo.", "Her�i.", "Enfrentar.", "Valente."], meaning: "Moral forte perante o perigo." },
+    { word: "DESTINO", hints: ["Futuro.", "Sorte.", "Caminho.", "Fado.", "Final."], meaning: "O que est� determinado a acontecer." },
+    { word: "OCEANOS", hints: ["�gua.", "Azul.", "Terra.", "Mar.", "Profundo."], meaning: "Grandes massas de �gua salgada." },
+    { word: "FLORESTA", hints: ["�rvores.", "Selva.", "Verde.", "Animais.", "Mata."], meaning: "Grande extens�o de �rvores." },
+    { word: "ESPELHO", hints: ["Reflexo.", "Vidro.", "Imagem.", "Olhar.", "Vaidade."], meaning: "Superf�cie que reflete a imagem." },
+    { word: "RAPOSAS", hints: ["Animal.", "Esperta.", "Laranja.", "Cauda.", "Mato."], meaning: "Mam�fero carn�voro." },
+    { word: "PLANETA", hints: ["Terra.", "Espa�o.", "Orbita.", "Mundo.", "Sol."], meaning: "Corpo celeste que orbita uma estrela." },
+    { word: "ABELHAS", hints: ["Mel.", "Inseto.", "Colmeia.", "Ferr�o.", "Rainha."], meaning: "Inseto produtor de mel." },
+    { word: "CORRIDA", hints: ["Velocidade.", "Esporte.", "Pressa.", "P�s.", "Chegada."], meaning: "Ato de correr." },
 
     // --- 8 LETRAS ---
-    { word: "CACHORRO", hints: ["Latir.", "Animal.", "Amigo.", "Osso.", "Doméstico."], meaning: "Melhor amigo do homem." },
-    { word: "ELEFANTE", hints: ["Grande.", "Tromba.", "África.", "Pesado.", "Cinza."], meaning: "Maior animal terrestre." },
+    { word: "CACHORRO", hints: ["Latir.", "Animal.", "Amigo.", "Osso.", "Dom�stico."], meaning: "Melhor amigo do homem." },
+    { word: "ELEFANTE", hints: ["Grande.", "Tromba.", "�frica.", "Pesado.", "Cinza."], meaning: "Maior animal terrestre." },
     { word: "DINHEIRO", hints: ["Pagar.", "Moeda.", "Banco.", "Compra.", "Riqueza."], meaning: "Meio de troca de valores." },
-    { word: "PRESENTE", hints: ["Aniversário.", "Dar.", "Caixa.", "Agora.", "Natal."], meaning: "Objeto oferecido a alguém." },
+    { word: "PRESENTE", hints: ["Anivers�rio.", "Dar.", "Caixa.", "Agora.", "Natal."], meaning: "Objeto oferecido a algu�m." },
     { word: "HISTORIA", hints: ["Passado.", "Livro.", "Tempo.", "Fatos.", "Contar."], meaning: "Narrativa de eventos passados." },
-    { word: "NATUREZA", hints: ["Verde.", "Matas.", "Animais.", "Terra.", "Vida."], meaning: "Mundo físico e seus fenômenos." },
-    { word: "LIBERDADE", hints: ["Livre.", "Voo.", "Prisão (oposto).", "Direito.", "Escolha."], meaning: "Poder de agir segundo a própria vontade." },
-    { word: "TRABALHO", hints: ["Emprego.", "Salário.", "Ofício.", "Esforço.", "Profissão."], meaning: "Atividade produtiva." },
-    { word: "UNIVERSO", hints: ["Espaço.", "Tudo.", "Galáxias.", "Infinito.", "Estrelas."], meaning: "Conjunto de tudo o que existe." },
-    { word: "SAUDADES", hints: ["Falta.", "Lembrança.", "Distância.", "Sentimento.", "Nostalgia."], meaning: "Sentimento de falta de alguém." },
+    { word: "NATUREZA", hints: ["Verde.", "Matas.", "Animais.", "Terra.", "Vida."], meaning: "Mundo f�sico e seus fen�menos." },
+    { word: "LIBERDADE", hints: ["Livre.", "Voo.", "Pris�o (oposto).", "Direito.", "Escolha."], meaning: "Poder de agir segundo a pr�pria vontade." },
+    { word: "TRABALHO", hints: ["Emprego.", "Sal�rio.", "Of�cio.", "Esfor�o.", "Profiss�o."], meaning: "Atividade produtiva." },
+    { word: "UNIVERSO", hints: ["Espa�o.", "Tudo.", "Gal�xias.", "Infinito.", "Estrelas."], meaning: "Conjunto de tudo o que existe." },
+    { word: "SAUDADES", hints: ["Falta.", "Lembran�a.", "Dist�ncia.", "Sentimento.", "Nostalgia."], meaning: "Sentimento de falta de algu�m." },
 
     // --- 9 LETRAS ---
-    { word: "ESPERANCA", hints: ["Fé.", "Futuro.", "Acreditar.", "Verde.", "Sonho."], meaning: "Sentimento de quem vê como possível o que deseja." },
-    { word: "FELICIDADE", hints: ["Alegria.", "Sorriso.", "Bem-estar.", "Contente.", "Emoção."], meaning: "Estado de quem é feliz." },
-    { word: "BORBOLETA", hints: ["Inseto.", "Voar.", "Colorida.", "Casulo.", "Transformação."], meaning: "Inseto de asas coloridas." },
-    { word: "GEOGRAFIA", hints: ["Mapas.", "Terra.", "Países.", "Estudo.", "Relevo."], meaning: "Ciência que estuda a superfície terrestre." },
-    { word: "AVENTURA", hints: ["Risco.", "Viagem.", "Ação.", "Explorar.", "Adrenalina."], meaning: "Experiência arriscada ou emocionante." },
-    { word: "CHOCOLATE", hints: ["Doce.", "Cacau.", "Marrom.", "Páscoa.", "Comer."], meaning: "Alimento feito de cacau." },
+    { word: "ESPERANCA", hints: ["F�.", "Futuro.", "Acreditar.", "Verde.", "Sonho."], meaning: "Sentimento de quem v� como poss�vel o que deseja." },
+    { word: "FELICIDADE", hints: ["Alegria.", "Sorriso.", "Bem-estar.", "Contente.", "Emo��o."], meaning: "Estado de quem � feliz." },
+    { word: "BORBOLETA", hints: ["Inseto.", "Voar.", "Colorida.", "Casulo.", "Transforma��o."], meaning: "Inseto de asas coloridas." },
+    { word: "GEOGRAFIA", hints: ["Mapas.", "Terra.", "Pa�ses.", "Estudo.", "Relevo."], meaning: "Ci�ncia que estuda a superf�cie terrestre." },
+    { word: "AVENTURA", hints: ["Risco.", "Viagem.", "A��o.", "Explorar.", "Adrenalina."], meaning: "Experi�ncia arriscada ou emocionante." },
+    { word: "CHOCOLATE", hints: ["Doce.", "Cacau.", "Marrom.", "P�scoa.", "Comer."], meaning: "Alimento feito de cacau." },
     { word: "PRINCESA", hints: ["Reino.", "Coroa.", "Conto de fadas.", "Castelo.", "Filha do rei."], meaning: "Filha de rei ou rainha." },
-    { word: "TECNOLOGIA", hints: ["Computador.", "Futuro.", "Inovação.", "Digital.", "Máquinas."], meaning: "Aplicação de conhecimento científico." },
+    { word: "TECNOLOGIA", hints: ["Computador.", "Futuro.", "Inova��o.", "Digital.", "M�quinas."], meaning: "Aplica��o de conhecimento cient�fico." },
     { word: "LITERATURA", hints: ["Livros.", "Escrita.", "Autores.", "Poesia.", "Texto."], meaning: "Arte de escrever." },
     { word: "PROFESSOR", hints: ["Ensino.", "Escola.", "Mestre.", "Aula.", "Aprender."], meaning: "Aquele que ensina." },
 
     // --- 10 LETRAS ---
-    { word: "COMPUTADOR", hints: ["Máquina.", "Internet.", "Teclado.", "Tela.", "PC."], meaning: "Máquina eletrônica de processamento de dados." },
-    { word: "RINOCERONTE", hints: ["Animal.", "Chifre.", "Pesado.", "África.", "Forte."], meaning: "Grande mamífero com chifre no nariz." },
-    { word: "MATEMATICA", hints: ["Números.", "Contas.", "Soma.", "Escola.", "Lógica."], meaning: "Ciência dos números e formas." },
-    { word: "ANIVERSARIO", hints: ["Festa.", "Bolo.", "Idade.", "Parabéns.", "Data."], meaning: "Dia em que se completa anos." },
-    { word: "ASTRONAUTA", hints: ["Espaço.", "Lua.", "Foguete.", "Nasa.", "Capacete."], meaning: "Viajante espacial." },
-    { word: "BRINCADEIRA", hints: ["Diversão.", "Criança.", "Jogo.", "Rir.", "Passatempo."], meaning: "Ato de brincar." },
-    { word: "INTELIGENTE", hints: ["Esperto.", "Cérebro.", "Saber.", "Gênio.", "Raciocínio."], meaning: "Que tem inteligência." },
-    { word: "RESILIENCIA", hints: ["Força.", "Superar.", "Adaptar.", "Voltar.", "Persistir."], meaning: "Capacidade de se recuperar de dificuldades." },
-    { word: "SENTIMENTO", hints: ["Emoção.", "Coração.", "Amor.", "Ódio.", "Sentir."], meaning: "Ato ou efeito de sentir." },
-    { word: "CATASTROFE", hints: ["Desastre.", "Caos.", "Destruição.", "Ruim.", "Acidente."], meaning: "Grande desgraça ou infortúnio." },
+    { word: "COMPUTADOR", hints: ["M�quina.", "Internet.", "Teclado.", "Tela.", "PC."], meaning: "M�quina eletr�nica de processamento de dados." },
+    { word: "RINOCERONTE", hints: ["Animal.", "Chifre.", "Pesado.", "�frica.", "Forte."], meaning: "Grande mam�fero com chifre no nariz." },
+    { word: "MATEMATICA", hints: ["N�meros.", "Contas.", "Soma.", "Escola.", "L�gica."], meaning: "Ci�ncia dos n�meros e formas." },
+    { word: "ANIVERSARIO", hints: ["Festa.", "Bolo.", "Idade.", "Parab�ns.", "Data."], meaning: "Dia em que se completa anos." },
+    { word: "ASTRONAUTA", hints: ["Espa�o.", "Lua.", "Foguete.", "Nasa.", "Capacete."], meaning: "Viajante espacial." },
+    { word: "BRINCADEIRA", hints: ["Divers�o.", "Crian�a.", "Jogo.", "Rir.", "Passatempo."], meaning: "Ato de brincar." },
+    { word: "INTELIGENTE", hints: ["Esperto.", "C�rebro.", "Saber.", "G�nio.", "Racioc�nio."], meaning: "Que tem intelig�ncia." },
+    { word: "RESILIENCIA", hints: ["For�a.", "Superar.", "Adaptar.", "Voltar.", "Persistir."], meaning: "Capacidade de se recuperar de dificuldades." },
+    { word: "SENTIMENTO", hints: ["Emo��o.", "Cora��o.", "Amor.", "�dio.", "Sentir."], meaning: "Ato ou efeito de sentir." },
+    { word: "CATASTROFE", hints: ["Desastre.", "Caos.", "Destrui��o.", "Ruim.", "Acidente."], meaning: "Grande desgra�a ou infort�nio." },
 
     // --- 11 a 13 LETRAS ---
     { word: "CURIOSIDADE", hints: ["Saber.", "Pergunta.", "Descobrir.", "Interesse.", "Xereta."], meaning: "Vontade de ver ou aprender algo." },
     { word: "ELETRICIDADE", hints: ["Luz.", "Choque.", "Tomada.", "Energia.", "Fios."], meaning: "Forma de energia." },
-    { word: "UNIVERSIDADE", hints: ["Faculdade.", "Estudo.", "Diploma.", "Campus.", "Superior."], meaning: "Instituição de ensino superior." },
-    { word: "COMUNICACAO", hints: ["Falar.", "Mensagem.", "Troca.", "Conversa.", "Mídia."], meaning: "Ato de transmitir informação." },
-    { word: "REFRIGERANTE", hints: ["Bebida.", "Gás.", "Doce.", "Gelado.", "Soda."], meaning: "Bebida não alcoólica gaseificada." },
-    { word: "SOLIDARIEDADE", hints: ["Ajuda.", "Apoio.", "Bondade.", "Próximo.", "União."], meaning: "Cooperação mútua entre pessoas." },
-    { word: "TRANSFORMACAO", hints: ["Mudança.", "Virar.", "Evolução.", "Metamorfose.", "Diferente."], meaning: "Ato de transformar." },
-    { word: "INDEPENDENCIA", hints: ["Livre.", "País.", "Autonomia.", "Sozinho.", "7 de setembro."], meaning: "Estado de quem não depende de outro." },
-    { word: "ARQUITETURA", hints: ["Prédios.", "Projeto.", "Desenho.", "Construção.", "Arte."], meaning: "Arte de projetar e edificar." },
+    { word: "UNIVERSIDADE", hints: ["Faculdade.", "Estudo.", "Diploma.", "Campus.", "Superior."], meaning: "Institui��o de ensino superior." },
+    { word: "COMUNICACAO", hints: ["Falar.", "Mensagem.", "Troca.", "Conversa.", "M�dia."], meaning: "Ato de transmitir informa��o." },
+    { word: "REFRIGERANTE", hints: ["Bebida.", "G�s.", "Doce.", "Gelado.", "Soda."], meaning: "Bebida n�o alco�lica gaseificada." },
+    { word: "SOLIDARIEDADE", hints: ["Ajuda.", "Apoio.", "Bondade.", "Pr�ximo.", "Uni�o."], meaning: "Coopera��o m�tua entre pessoas." },
+    { word: "TRANSFORMACAO", hints: ["Mudan�a.", "Virar.", "Evolu��o.", "Metamorfose.", "Diferente."], meaning: "Ato de transformar." },
+    { word: "INDEPENDENCIA", hints: ["Livre.", "Pa�s.", "Autonomia.", "Sozinho.", "7 de setembro."], meaning: "Estado de quem n�o depende de outro." },
+    { word: "ARQUITETURA", hints: ["Pr�dios.", "Projeto.", "Desenho.", "Constru��o.", "Arte."], meaning: "Arte de projetar e edificar." },
     { word: "CONHECIMENTO", hints: ["Saber.", "Estudo.", "Mente.", "Aprender.", "Sabedoria."], meaning: "Ato de conhecer ou saber." },
 
-    // --- 14 a 20 LETRAS (DIFÍCIL) ---
-    { word: "PARALELEPIPEDO", hints: ["Rua.", "Pedra.", "Calçada.", "Bloco.", "Geometria."], meaning: "Sólido geométrico ou pedra de calçamento." },
-    { word: "DESENVOLVIMENTO", hints: ["Crescer.", "Progresso.", "Avanço.", "Melhora.", "Evoluir."], meaning: "Ato de desenvolver-se." },
-    { word: "RESPONSABILIDADE", hints: ["Dever.", "Adulto.", "Cuidar.", "Culpa.", "Sério."], meaning: "Obrigação de responder pelas próprias ações." },
+    // --- 14 a 20 LETRAS (DIF�CIL) ---
+    { word: "PARALELEPIPEDO", hints: ["Rua.", "Pedra.", "Cal�ada.", "Bloco.", "Geometria."], meaning: "S�lido geom�trico ou pedra de cal�amento." },
+    { word: "DESENVOLVIMENTO", hints: ["Crescer.", "Progresso.", "Avan�o.", "Melhora.", "Evoluir."], meaning: "Ato de desenvolver-se." },
+    { word: "RESPONSABILIDADE", hints: ["Dever.", "Adulto.", "Cuidar.", "Culpa.", "S�rio."], meaning: "Obriga��o de responder pelas pr�prias a��es." },
     { word: "SUSTENTABILIDADE", hints: ["Natureza.", "Futuro.", "Reciclar.", "Verde.", "Planeta."], meaning: "Uso consciente dos recursos naturais." },
-    { word: "INCONSTITUCIONAL", hints: ["Lei.", "Proibido.", "Contra.", "Regra.", "Jurídico."], meaning: "Que é contra a constituição." },
-    { word: "OTORRINOLARINGOLOGISTA", hints: ["Médico.", "Garganta.", "Nariz.", "Ouvido.", "Nome comprido."], meaning: "Médico especialista em ouvido, nariz e garganta." },
-    { word: "INDEPENDENTEMENTE", hints: ["Sem depender.", "Apesar.", "Livre.", "Sozinho.", "Advérbio."], meaning: "De modo independente." },
-    { word: "REVOLUCIONARIO", hints: ["Mudança.", "Guerra.", "Novo.", "Líder.", "Transformar."], meaning: "Que causa revolução." },
-    { word: "EXTRAORDINARIO", hints: ["Incrível.", "Fora do comum.", "Especial.", "Raro.", "Ótimo."], meaning: "Que não é ordinário ou comum." },
-    { word: "INTERNACIONALIZACAO", hints: ["Mundo.", "Global.", "Países.", "Exterior.", "Expandir."], meaning: "Tornar algo internacional." }
+    { word: "INCONSTITUCIONAL", hints: ["Lei.", "Proibido.", "Contra.", "Regra.", "Jur�dico."], meaning: "Que � contra a constitui��o." },
+    { word: "OTORRINOLARINGOLOGISTA", hints: ["M�dico.", "Garganta.", "Nariz.", "Ouvido.", "Nome comprido."], meaning: "M�dico especialista em ouvido, nariz e garganta." },
+    { word: "INDEPENDENTEMENTE", hints: ["Sem depender.", "Apesar.", "Livre.", "Sozinho.", "Adv�rbio."], meaning: "De modo independente." },
+    { word: "REVOLUCIONARIO", hints: ["Mudan�a.", "Guerra.", "Novo.", "L�der.", "Transformar."], meaning: "Que causa revolu��o." },
+    { word: "EXTRAORDINARIO", hints: ["Incr�vel.", "Fora do comum.", "Especial.", "Raro.", "�timo."], meaning: "Que n�o � ordin�rio ou comum." },
+    { word: "INTERNACIONALIZACAO", hints: ["Mundo.", "Global.", "Pa�ses.", "Exterior.", "Expandir."], meaning: "Tornar algo internacional." }
 ];
 
 let usedIndices = [];
-
-function sanitizeGameText(value) {
-    if (typeof value !== 'string') return value;
-    let text = value;
-
-    const mojibakeCount = (str) => (str.match(/[ÃÂÔ�]/g) || []).length;
-    const decodeLatin1Utf8 = (str) => {
-        try {
-            return decodeURIComponent(escape(str));
-        } catch {
-            return str;
-        }
-    };
-
-    if (/[ÃÂÔ�]/.test(text)) {
-        const first = decodeLatin1Utf8(text);
-        if (mojibakeCount(first) <= mojibakeCount(text)) text = first;
-
-        const second = decodeLatin1Utf8(text);
-        if (mojibakeCount(second) < mojibakeCount(text)) text = second;
-    }
-
-    const fixes = [
-        ['FaÃ§a', 'Faça'],
-        ['VocÃª', 'Você'],
-        ['nÃ£o', 'não'],
-        ['interrogaÃ§Ã£o', 'interrogação'],
-        ['comeÃ§ar', 'começar'],
-        ['TÃ©rmino', 'Término'],
-        ['satelite', 'satélite']
-    ];
-
-    for (const [bad, good] of fixes) {
-        text = text.split(bad).join(good);
-    }
-
-    // Corrige variações quebradas vistas no mobile.
-    text = text.replace(/\bT\S{0,18}rmino\.?/giu, 'Término.');
-    text = text.replace(/interroga[^A-Za-zÀ-ÖØ-öø-ÿ]{0,12}o/giu, 'interrogação');
-    text = text.replace(/come[^A-Za-zÀ-ÖØ-öø-ÿ]{0,8}ar/giu, 'começar');
-    text = text.replace(/sat[^A-Za-zÀ-ÖØ-öø-ÿ]{0,8}lite/giu, 'satélite');
-
-    text = text.replace(/�+/g, '');
-    text = text.replace(/Ô¿½/g, '');
-    text = text.replace(/[^\S\r\n]{2,}/g, ' ');
-    text = text.replace(/\s{2,}/g, ' ').trim();
-    return text;
-}
-
 
 /* --- VARIAVEIS --- */
 const wordGrid = document.getElementById('word-grid');
@@ -245,27 +196,84 @@ let hintIndex = 0;
 let hintInterval = null;
 let maxWordLength = 0;
 
-// --- VARIÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂVEIS DA GALINHA E MENSAGENS ---
+// --- VARI�VEIS DA GALINHA E MENSAGENS ---
 let consecutiveErrors = 0;
-let chickenAlreadySummoned = false; // Trava para a galinha voar sÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³ 1 vez
+let chickenAlreadySummoned = false; // Trava para a galinha voar s� 1 vez
 let feedbackTimeout = null; // Trava para a mensagem durar exatos 6 segundos
 
 const funnyPhrases = [
-    "Que isso, voce esta inventando palavra nova?",
-    "Essa nem o dicionario reconhece.",
-    "Calma, respira... nao e um teclado musical.",
-    "Quase! So faltou acertar.",
-    "Essa passou longe, mas voce chega la.",
-    "Se errar valesse ponto, voce estava liderando.",
-    "Foi ousado. Errado, mas ousado.",
-    "Essa palavra veio de outra dimensao.",
-    "Bora de novo, agora vai.",
-    "Voce consegue, so ajusta a estrategia."
+    "Que isso, cara? T� tentando inventar uma palavra nova pro dicion�rio?",
+    "Essa a� nem o Google teve coragem de reconhecer.",
+    "T� dif�cil ou voc� t� de gracinha validando tudo errado?",
+    "Quer algo mais f�cil? Vai jogar modo tr�s letras, campe�o.",
+    "Voc� digitou com o cotovelo agora, n�?",
+    "Calma, respira� n�o � um teclado musical.",
+    "Essa palavra existe s� na sua imagina��o f�rtil.",
+    "Eu at� tentei defender voc�, mas n�o deu.",
+    "Se errar mais uma, vou pedir refor�o pro professor de portugu�s.",
+    "T� treinando pra campeonato mundial de erro?",
+    "Essa passou longe� tipo, outro CEP.",
+    "Amigo� isso foi estrat�gia ou desespero?",
+    "Eu acredito em voc� mas essa a� me quebrou.",
+    "Se criatividade valesse ponto, voc� tava ganhando.",
+    "Palavra in�dita detectada. Quer patentear?",
+    "Voc� t� jogando ou testando minha paci�ncia?",
+    "Errar � humano� mas voc� t� se dedicando demais.",
+    "Quase! S� errou todas as letras.",
+    "Vou fingir que n�o vi essa e te dar outra chance.",
+    "T� me estressando� mas de um jeito carism�tico. Continua tentando",
+    "Voc� t� jogando ou digitando senha errada do WiFi?",
+    "Essa palavra foi criada agora, n�? Registro em cart�rio j�.",
+    "Calma, n�o precisa inventar idioma novo.",
+    "Eu pedi uma palavra, n�o um enigma.",
+    "T� tentando me confundir ou se confundir?",
+    "Se errar desse jeito fosse esporte, voc� tava nas Olimp�adas.",
+    "Isso a� foi ousadia� mas n�o foi acerto.",
+    "Quase acertou! S� faltou acertar.",
+    "Voc� piscou e digitou?",
+    "Essa palavra mora em N�rnia.",
+    "Digitou com pressa ou com raiva?",
+    "Eu acredito no seu potencial� mas n�o nessa palavra.",
+    "T� testando minha paci�ncia n�vel hard?",
+    "Respira, jovem gafanhoto.",
+    "Essa foi t�o errada que eu at� ri.",
+    "Voc� desbloqueou o modo criativo sem querer.",
+    "Palavra alternativa detectada. Pena que n�o existe.",
+    "T� querendo trollar o sistema?",
+    "Se fosse prova, eu chamava seus pais.",
+    "Essa a� passou voando� longe do certo.",
+    "Foi estrat�gia secreta ou s� caos mesmo?",
+    "Voc� t� aquecendo os dedos antes de acertar, n�?",
+    "Essa palavra t� pedindo socorro.",
+    "Eu n�o esperava isso� e olha que eu j� vi muita coisa.",
+    "Tentativa v�lida� s� n�o foi v�lida mesmo.",
+    "Voc� est� oficialmente improvisando.",
+    "Calma, n�o � teste de criatividade.",
+    "Se insistir assim, eu come�o a cobrar taxa de erro.",
+    "Palavra misteriosa� at� demais.",
+    "Voc� tem talento� pra errar com confian�a.",
+    "Isso foi ousado. Errado, mas ousado.",
+    "A inten��o foi boa� eu acho.",
+    "T� jogando no modo aleat�rio?",
+    "Essa palavra veio de qual dimens�o?",
+    "Voc� t� tentando desbloquear um final secreto?",
+    "Se errar fosse XP, voc� j� tava n�vel m�ximo.",
+    "Palavra quase invis�vel� porque n�o existe.",
+    "Eu vi o que voc� fez a�. N�o recomendo.",
+    "T� me desafiando ou se desafiando?",
+    "Essa foi criativa. In�til� mas criativa.",
+    "Voc� digitou e pensou depois, n�?",
+    "Quer um dicion�rio de presente?",
+    "T� fazendo speedrun de erro?",
+    "Essa a� nem a professora corrigia.",
+    "Voc� consegue� s� n�o assim.",
+    "Palavra in�dita vers�o beta.",
+    "Foi tentativa ou experimento cient�fico?",
+    "T� achando que eu n�o sei ler?",
+    "Eu sinto que voc� consegue melhor� bem melhor.",
+    "Continua tentando. Uma hora a gente acerta� eu espero."
 ];
-for (let i = 0; i < funnyPhrases.length; i++) {
-    funnyPhrases[i] = sanitizeGameText(funnyPhrases[i]);
-}
-// --- NOVA VARIÃƒÆ’Ã†â€™Ãƒâ€šÃ‚ÂVEL: SACOLA DE FRASES ---
+// --- NOVA VARI�VEL: SACOLA DE FRASES ---
 let unusedPhrases = [...funnyPhrases];
 
 /* --- MOBILE MENU LOGIC --- */
@@ -280,7 +288,6 @@ const mobileRulesSlot = document.getElementById('mobile-rules-slot');
 const mobileToolsSlot = document.getElementById('mobile-tools-slot');
 const mobileVictoryModal = document.getElementById('mobile-victory-modal');
 const mobileErrorModal = document.getElementById('mobile-error-modal');
-const mobileErrorPhraseEl = document.getElementById('mobile-error-phrase');
 let mobileLayoutPrepared = false;
 
 function toggleMobileMenu() {
@@ -303,32 +310,15 @@ function checkOverlay() {
     }
 }
 
-function closeMobilePanels() {
-    if (sidebar) sidebar.classList.remove('mobile-open');
-    if (alphabetDrawer) alphabetDrawer.classList.remove('mobile-open');
-    if (mobileOverlay) mobileOverlay.classList.remove('active');
-}
-
-function setMobileGameplayMenuVisibility(visible) {
-    const canUseMobileUi = isMobileViewport() && !!mobileMenuBtn;
-    document.body.classList.toggle('mobile-gameplay-active', canUseMobileUi && !!visible);
-
-    if (!canUseMobileUi) return;
-    if (visible) {
-        mobileMenuBtn.classList.remove('hidden-control');
-    } else {
-        mobileMenuBtn.classList.add('hidden-control');
-        closeMobilePanels();
-    }
-}
-
 // Eventos Mobile
 if(mobileMenuBtn) mobileMenuBtn.onclick = toggleMobileMenu;
 if(mobileAlphabetBtn) mobileAlphabetBtn.onclick = toggleAlphabetMenu;
 
 if(mobileOverlay) {
     mobileOverlay.onclick = () => {
-        closeMobilePanels();
+        sidebar.classList.remove('mobile-open');
+        alphabetDrawer.classList.remove('mobile-open');
+        mobileOverlay.classList.remove('active');
     }; 
 }
 
@@ -337,7 +327,7 @@ function clearAllHighlights() {
     document.querySelectorAll('.rule-card').forEach(card => card.classList.remove('rule-active'));
 }
 
-/* NOVO: PREENCHE O SELETOR COM OPÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ES DISPONÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂVEIS */
+/* NOVO: PREENCHE O SELETOR COM OP��ES DISPON�VEIS */
 function populateLengthOptions() {
     // Descobre quais tamanhos de palavra existem no banco de dados
     const lengths = [...new Set(allChallenges.map(c => c.word.length))].sort((a,b) => a-b);
@@ -351,7 +341,6 @@ function populateLengthOptions() {
 }
 
 function initChallenge() {
-
     currentGameMode = NORMAL_MODE;
     resetDailySession();
     clearAllHighlights();
@@ -399,7 +388,6 @@ function startChallengeEngine(challengeData, options = {}) {
     updateHintDisplay();
     startHintCycle();
     render(true);
-    saveGameSessionState();
 }
 
 function updateHintDisplay() {
@@ -413,19 +401,19 @@ function updateHintDisplay() {
         if (hintIndex > maxIndex) hintIndex = maxIndex;
         if (skipHintBtn) {
             skipHintBtn.innerText = unlocked < 5 && hintIndex >= maxIndex
-                ? 'Desbloquear Dica >'
-                : 'Pular Dica >';
+                ? 'Desbloquear Dica ?'
+                : 'Pular Dica ?';
         }
         hintCounter.innerText = `Dica ${Math.min(hintIndex + 1, unlocked)}/${totalHints}`;
     } else {
-        if (skipHintBtn) skipHintBtn.innerText = 'Pular Dica >';
+        if (skipHintBtn) skipHintBtn.innerText = 'Pular Dica ?';
         hintCounter.innerText = `Dica ${hintIndex + 1}/${totalHints}`;
     }
 
     hintText.classList.remove('fade-in');
     hintText.classList.add('fade-out');
     setTimeout(() => {
-        hintText.innerText = sanitizeGameText(hints[hintIndex] || '...');
+        hintText.innerText = hints[hintIndex] || '...';
         hintText.classList.remove('fade-out');
         hintText.classList.add('fade-in');
     }, 200);
@@ -492,7 +480,7 @@ alphabet.forEach((letter, index) => {
     div.className = 'mini-char'; 
     div.id = `mini-${letter}`; 
     
-    // Descobre qual ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© a letra espelhada baseada na posiÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o (A=0 vira Z=25)
+    // Descobre qual � a letra espelhada baseada na posi��o (A=0 vira Z=25)
     const mirrored = alphabet[25 - index];
     
     // Insere a letra principal e a pequena
@@ -551,7 +539,7 @@ function render(showTutorial = false) {
     if (isFirstRound && currentWord.length === 0 && showTutorial) {
         const msgDiv = document.createElement('div');
         msgDiv.className = 'tutorial-message';
-        msgDiv.innerHTML = sanitizeGameText('Digite uma letra no campo abaixo onde tem uma interrogação para começar');
+        msgDiv.innerHTML = 'Digite uma letra no campo abaixo onde tem uma interroga��o para come�ar';
         wordGrid.appendChild(msgDiv);
         return;
     }
@@ -575,13 +563,13 @@ let clearConfirmState = false;
 if (clearBoardBtn) {
     clearBoardBtn.addEventListener('click', () => {
         if (!clearConfirmState) {
-            // Primeiro clique - Pede confirmaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o
+            // Primeiro clique - Pede confirma��o
             clearBoardBtn.innerText = "CERTEZA?";
             clearBoardBtn.style.background = "var(--error)";
             clearBoardBtn.style.color = "#fff";
             clearConfirmState = true;
 
-            // Reseta o botÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o apÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³s 3 segundos se nÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o clicar novamente
+            // Reseta o bot�o ap�s 3 segundos se n�o clicar novamente
             setTimeout(() => {
                 if (clearConfirmState) {
                     resetClearButton();
@@ -593,7 +581,6 @@ if (clearBoardBtn) {
             replaceIndex = 0;
             charInput.placeholder = "?";
             render();
-            saveGameSessionState();
             resetClearButton();
             if (typeof playSoundEffect === 'function') playSoundEffect('error'); // Som de apagar
         }
@@ -624,14 +611,14 @@ function addChar(char) {
     historyList.scrollTop = historyList.scrollHeight;
 
     if (currentWord.length >= maxWordLength) {
-        // --- NOVO: LIMPA O TABULEIRO QUANDO VOLTA PRO INÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂCIO --- //
+        // --- NOVO: LIMPA O TABULEIRO QUANDO VOLTA PRO IN�CIO --- //
         playSoundEffect('overwrite');
         
-        // Resetamos o array e o ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­ndice para comeÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ar uma palavra nova "limpa"
+        // Resetamos o array e o �ndice para come�ar uma palavra nova "limpa"
         currentWord = [];
         replaceIndex = 0;
         
-        // Processa a letra que o usuÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡rio acabou de digitar na nova posiÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o 0
+        // Processa a letra que o usu�rio acabou de digitar na nova posi��o 0
         processNewChar(char, 0);
 
         showFloatingMessage("Ciclo Reiniciado! Tabuleiro limpo.", 2500);
@@ -640,9 +627,9 @@ function addChar(char) {
         playSoundEffect('type');
         processNewChar(char, currentWord.length);
         
-        // AVISO NA PENÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡LTIMA LETRA (N-1)
+        // AVISO NA PEN�LTIMA LETRA (N-1)
         if (currentWord.length === maxWordLength - 1) {
-            showFloatingMessage("Pr\u00f3xima letra \u00e9 a \u00faltima! O ciclo vai reiniciar.", 2500);
+            showFloatingMessage("Pr�xima letra � a �ltima! O ciclo vai reiniciar.", 2500);
             playSoundEffect('alert');
         }
         
@@ -650,7 +637,6 @@ function addChar(char) {
             replaceIndex = 0;
         }
     }
-    saveGameSessionState();
 }
 
 function processNewChar(char, indexToInsert) {
@@ -670,9 +656,22 @@ function processNewChar(char, indexToInsert) {
 
     currentWord.splice(indexToInsert, 0, charToAdd);
 
+    // REGRA 3: Sandu�che
+    const firstIdx = currentWord.indexOf(charToAdd);
+    const lastIdxFound = currentWord.lastIndexOf(charToAdd);
+    
+    if (firstIdx !== -1 && lastIdxFound !== -1 && firstIdx !== lastIdxFound) {
+            const start = firstIdx + 1;
+            const end = lastIdxFound;
+            if (end > start) {
+                highlight('rule-repeat'); playSoundEffect('reverse');
+                const mid = currentWord.slice(start, end).reverse();
+                currentWord.splice(start, mid.length, ...mid);
+            }
+    }
+    
     render();
 }
-
 
 async function validate() {
     const word = currentWord.join('').toUpperCase();
@@ -685,7 +684,7 @@ async function validate() {
             const data = await callDailyFunction('submitDailyGuess', { guess: word });
 
             if (data?.alreadyCompleted) {
-                feedback.innerText = 'Palavra do Dia j\u00E1 conclu\u00EDda hoje.';
+                feedback.innerText = 'Palavra do Dia j� conclu�da hoje.';
                 feedback.style.color = 'var(--warning)';
                 startDailyHubCountdown();
                 return;
@@ -694,10 +693,10 @@ async function validate() {
             if (!data?.success) {
                 dailySession.attempts = data?.attempts || ((dailySession.attempts || 0) + 1);
                 setDailyAttempts(dailySession.attempts);
-                feedback.innerText = '';
+                feedback.innerText = '?? Ainda n�o � a Palavra do Dia.';
+                feedback.style.color = 'var(--warning)';
                 animateMage('sad');
-                const dailyFunnyPhrase = takeFunnyPhrase();
-                showErrorMageFeedback(dailyFunnyPhrase);
+                showMobileErrorMagePopup();
                 return;
             }
 
@@ -709,7 +708,7 @@ async function validate() {
                 updateDailyTimerUi();
             }
 
-            feedback.innerText = '\u{1F3C6} ACERTOU A PALAVRA DO DIA!';
+            feedback.innerText = '?? ACERTOU A PALAVRA DO DIA!';
             feedback.style.color = 'var(--success)';
             meaningBox.innerText = data.meaning || '';
             meaningBox.classList.remove('hidden');
@@ -732,8 +731,8 @@ async function validate() {
     }
 
     if (targetChallenge && word === targetChallenge.word) {
-        feedback.innerText = "\u{1F3C6} ACERTOU!"; feedback.style.color = "var(--success)";
-        meaningBox.innerText = sanitizeGameText(targetChallenge.meaning);
+        feedback.innerText = "?? ACERTOU!"; feedback.style.color = "var(--success)";
+        meaningBox.innerText = targetChallenge.meaning;
         meaningBox.classList.remove('hidden');
         document.body.classList.add('success-flash');
         handleCorrectAnswer();
@@ -757,79 +756,52 @@ async function validate() {
     }
 
     try {
-        const dictUrl = `https://api.dicionario-aberto.net/word/${word.toLowerCase()}`;
-        const res = await fetch(dictUrl, {
-            headers: {
-                Accept: 'application/json, text/plain, */*'
-            }
-        });
-        const rawBody = await res.text();
-        const contentType = res.headers.get('content-type') || '';
+        const res = await fetch(`https://api.dicionario-aberto.net/word/${word.toLowerCase()}`);
+        const data = await res.json();
 
-        console.debug('[MagicLexis][Validar] resposta dicionario', {
-            url: dictUrl,
-            status: res.status,
-            ok: res.ok,
-            contentType,
-            preview: rawBody.slice(0, 220)
-        });
-
-        if (!res.ok) {
-            throw new Error(`HTTP ${res.status}`);
-        }
-
-        let parsedData = null;
-        const trimmedBody = rawBody.trim();
-        if (trimmedBody) {
-            try {
-                parsedData = JSON.parse(trimmedBody);
-            } catch (parseError) {
-                console.warn('[MagicLexis][Validar] resposta nao-JSON com HTTP 200; tratando como palavra inexistente.', parseError);
-            }
-        }
-
-        const dictionaryHasWord = Array.isArray(parsedData)
-            ? parsedData.length > 0
-            : !!(parsedData && typeof parsedData === 'object' && Object.keys(parsedData).length > 0);
-
-        consecutiveErrors++;
-
-        if (dictionaryHasWord) {
-            feedback.innerText = "";
-
+        if (data.length > 0) {
+            feedback.innerText = "?? Palavra existe, mas n�o � a do desafio.";
+            feedback.style.color = "var(--warning)";
             animateMage('reset');
-            const randomPhrase = takeFunnyPhrase();
-            showErrorMageFeedback(randomPhrase);
+            showMobileErrorMagePopup();
+            consecutiveErrors = 0;
         } else {
-            const randomPhrase = takeFunnyPhrase();
-            showErrorMageFeedback(randomPhrase);
+            consecutiveErrors++;
+            showMobileErrorMagePopup();
 
-            feedback.innerText = "";
+            if (unusedPhrases.length === 0) {
+                unusedPhrases = [...funnyPhrases];
+            }
+
+            const randomPhraseIndex = Math.floor(Math.random() * unusedPhrases.length);
+            const randomPhrase = unusedPhrases.splice(randomPhraseIndex, 1)[0];
+
+            feedback.innerHTML = `? Tente novamente<br><span style="font-size: 0.9rem; font-weight: normal; color: var(--text-dim);">${randomPhrase}</span>`;
+            feedback.style.color = "var(--error)";
 
             document.body.classList.add('error-flash');
             setTimeout(() => document.body.classList.remove('error-flash'), 500);
+
+            if (consecutiveErrors >= 3 && chickenAlreadySummoned === false) {
+                chickenAlreadySummoned = true;
+
+                const chickenAudio = new Audio('galinha.mp3');
+                chickenAudio.volume = 1.0;
+                chickenAudio.play().catch(e => console.log("Erro no �udio:", e));
+
+                const chickenEl = document.createElement('div');
+                chickenEl.innerText = '🐔';
+                chickenEl.className = 'flying-chicken';
+                document.body.appendChild(chickenEl);
+
+                setTimeout(() => chickenEl.remove(), 3000);
+
+            } else {
+                playSoundEffect('error');
+                animateMage('sad');
+            }
         }
-
-        if (consecutiveErrors >= 3 && chickenAlreadySummoned === false) {
-            chickenAlreadySummoned = true;
-
-            const chickenAudio = new Audio('galinha.mp3');
-            chickenAudio.volume = 1.0;
-            chickenAudio.play().catch(e => console.log("Erro no \u00e1udio:", e));
-
-            const chickenEl = document.createElement('div');
-            chickenEl.innerText = '\uD83D\uDC14';
-            chickenEl.className = 'flying-chicken';
-            document.body.appendChild(chickenEl);
-
-            setTimeout(() => chickenEl.remove(), 3000);
-
-        } else {
-            playSoundEffect('error');
-            animateMage('sad');
-        }
-    } catch (apiError) {
-        console.error('[MagicLexis][Validar] falha real de requisicao da API do dicionario.', apiError);
+    } catch {
         feedback.innerText = "Erro na API";
     }
 
@@ -860,18 +832,20 @@ if(toggleBtn) {
         sidebar.classList.toggle('collapsed');
         // Alterna seta
         if (sidebar.classList.contains('collapsed')) {
-            toggleBtn.innerText = '\u25B6';
+            toggleBtn.innerText = "?";
         } else {
-            toggleBtn.innerText = '\u25C0';
+            toggleBtn.innerText = "?";
         }
     };
 }
+
+
 const isMobileViewport = () => window.matchMedia('(max-width: 800px)').matches;
 
 document.body.onclick = (e) => { 
     if (audioCtx.state === 'suspended') audioCtx.resume();
     if (isMobileViewport()) return; // Evita abrir teclado a cada toque fora do input no celular
-    // Ajuste para nÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o roubar foco se clicar no sidebar mobile
+    // Ajuste para n�o roubar foco se clicar no sidebar mobile
     if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.classList.contains('letter-box') && !sidebar.contains(e.target) && !alphabetDrawer.contains(e.target)) {
         charInput.focus(); 
     }
@@ -902,7 +876,7 @@ function animateMage(action) {
     }
 }
 
-/* --- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂUDIO --- */
+/* --- �UDIO --- */
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioCtx = new AudioContext();
 
@@ -969,7 +943,7 @@ function triggerConfetti() {
     }
 }
 
-/* --- UTILITÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂRIOS --- */
+/* --- UTILIT�RIOS --- */
 function toggleSection(contentId, headerEl) {
     const content = document.getElementById(contentId);
     content.classList.toggle('hidden');
@@ -986,7 +960,7 @@ window.toggleNotepad = toggleNotepad;
 
 function showFloatingMessage(text, duration = 2000) {
     const msg = document.getElementById('floating-msg');
-    msg.innerText = sanitizeGameText(text);
+    msg.innerText = text;
     msg.classList.remove('hidden');
     setTimeout(() => { msg.classList.add('hidden'); }, duration);
 }
@@ -1030,16 +1004,16 @@ function setupMobileLayout() {
         mobileToolsSlot.classList.add('hidden-control');
     }
 
-    if (notepadEl && mobileRulesSlot && mobileRulesSlot.parentNode) {
-        mobileRulesSlot.parentNode.insertBefore(notepadEl, mobileRulesSlot);
-        notepadEl.classList.remove('mobile-notepad-in-sidebar');
+    if (sidebarContent && notepadEl) {
+        sidebarContent.appendChild(notepadEl);
+        notepadEl.classList.add('mobile-notepad-in-sidebar');
     }
 
     if (sidebarContent && historySection) {
         sidebarContent.appendChild(historySection);
     }
 
-    setMobileGameplayMenuVisibility(false);
+    if (mobileMenuBtn) mobileMenuBtn.classList.remove('hidden-control');
     if (mobileAlphabetBtn) mobileAlphabetBtn.classList.add('hidden-control');
 
     if (charInput) {
@@ -1058,126 +1032,14 @@ function showMobileVictoryPopup() {
     }, 2300);
 }
 
-function takeFunnyPhrase() {
-    if (unusedPhrases.length === 0) {
-        unusedPhrases = [...funnyPhrases];
-    }
-    const randomPhraseIndex = Math.floor(Math.random() * unusedPhrases.length);
-    return unusedPhrases.splice(randomPhraseIndex, 1)[0];
-}
-
-function showMobileErrorMagePopup(message = '') {
+function showMobileErrorMagePopup() {
     if (!isMobileViewport() || !mobileErrorModal) return;
-    if (mobileErrorPhraseEl) {
-        mobileErrorPhraseEl.innerText = sanitizeGameText(message || '');
-    }
     mobileErrorModal.classList.remove('hidden-control');
     setTimeout(() => {
         mobileErrorModal.classList.add('hidden-control');
-    }, 3000);
+    }, 1000);
 }
 
-function showErrorMageFeedback(message = '') {
-    if (isMobileViewport()) {
-        showMobileErrorMagePopup(message);
-        return;
-    }
-    // Desktop fallback: mantem as frases engracadas visiveis mesmo sem popup mobile.
-    feedback.innerHTML = `\u274c Tente novamente<br><span style="font-size: 0.9rem; font-weight: normal; color: var(--text-dim);">${sanitizeGameText(message || "")}</span>`;
-    feedback.style.color = "var(--error)";
-}
-
-let tutorialPageIndex = 0;
-let tutorialPageCount = 0;
-
-function initBookTutorial() {
-    const welcome = document.getElementById('welcome-screen');
-    const track = document.getElementById('book-pages-track');
-    const leftArrow = document.getElementById('book-arrow-left');
-    const rightArrow = document.getElementById('book-arrow-right');
-    const indicator = document.getElementById('tutorial-page-indicator');
-    const skipBtn = document.getElementById('tutorial-skip-btn');
-
-    if (!welcome || !track || !leftArrow || !rightArrow || !indicator || !skipBtn) return;
-
-    const pages = Array.from(track.querySelectorAll('.book-page'));
-    tutorialPageCount = pages.length;
-    tutorialPageIndex = 0;
-
-    const updatePage = () => {
-        const safeIndex = Math.max(0, Math.min(tutorialPageIndex, tutorialPageCount - 1));
-        tutorialPageIndex = safeIndex;
-        track.style.transform = `translateX(-${safeIndex * 100}%)`;
-        indicator.textContent = `P\u00e1gina ${safeIndex + 1} de ${tutorialPageCount}`;
-        leftArrow.disabled = safeIndex === 0;
-        rightArrow.disabled = safeIndex === tutorialPageCount - 1;
-    };
-
-    const goToPage = (pageIndex) => {
-        tutorialPageIndex = pageIndex;
-        updatePage();
-    };
-
-    const nextPage = () => {
-        if (tutorialPageIndex < tutorialPageCount - 1) {
-            tutorialPageIndex += 1;
-            updatePage();
-        }
-    };
-
-    const previousPage = () => {
-        if (tutorialPageIndex > 0) {
-            tutorialPageIndex -= 1;
-            updatePage();
-        }
-    };
-
-    leftArrow.addEventListener('click', previousPage);
-    rightArrow.addEventListener('click', nextPage);
-
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    track.addEventListener('touchstart', (event) => {
-        touchStartX = event.changedTouches[0].clientX;
-    }, { passive: true });
-
-    track.addEventListener('touchend', (event) => {
-        touchEndX = event.changedTouches[0].clientX;
-        const delta = touchStartX - touchEndX;
-        if (Math.abs(delta) < 40) return;
-        if (delta > 0) nextPage();
-        else previousPage();
-    }, { passive: true });
-
-    document.addEventListener('keydown', (event) => {
-        const welcomeVisible = window.getComputedStyle(welcome).display !== 'none';
-        if (!welcomeVisible) return;
-
-        const focusedTag = document.activeElement ? document.activeElement.tagName : '';
-        if (focusedTag === 'INPUT' || focusedTag === 'SELECT' || focusedTag === 'TEXTAREA') return;
-
-        if (event.key === 'ArrowRight') {
-            event.preventDefault();
-            nextPage();
-        }
-
-        if (event.key === 'ArrowLeft') {
-            event.preventDefault();
-            previousPage();
-        }
-    });
-
-
-    skipBtn.addEventListener('click', () => goToPage(tutorialPageCount - 1));
-
-    bookTutorialApi = {
-        goToPage,
-        goToFirstPage: () => goToPage(0),
-        goToLastPage: () => goToPage(tutorialPageCount - 1)
-    };
-    updatePage();
-}
 /* --- INICIALIZACAO --- */
 document.addEventListener("DOMContentLoaded", () => {
     // Detecta mobile (apenas para logs ou classes extras se precisar)
@@ -1186,28 +1048,22 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.add('mobile-mode');
     }
     
-    // NOVO: Preenche as opÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes de desafio
+    // NOVO: Preenche as op��es de dificuldade
     populateLengthOptions();
-
-    if (lengthSelector.querySelector('option[value="3"]')) {
-        lengthSelector.value = '3';
-    }
     setupMobileLayout();
-    initBookTutorial();
 
     startMageIdle();
-    // initChallenge ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© chamado apenas quando clica em START agora
+    // initChallenge � chamado apenas quando clica em START agora
 });
 
 // LOGICA DO BOTAO DE BOAS-VINDAS
 document.getElementById('start-game-btn').onclick = () => {
-    markTutorialSeen();
     // Some com o modal
     document.getElementById('welcome-screen').style.display = 'none';
     // Mostra o jogo
     document.getElementById('app-container').classList.remove('hidden-app');
     
-    // Inicia o jogo agora com o desafio selecionado
+    // Inicia o jogo agora com a dificuldade selecionada
     initChallenge();
 
     if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -1220,28 +1076,24 @@ const hubPlay = document.getElementById("hub-play");
 const welcomeScreen = document.getElementById("welcome-screen");
 
 hubPlay.addEventListener("click", () => {
-    clearGameSessionState();
-    stopHintCycle();
-    resetDailySession();
-    const appContainer = document.getElementById('app-container');
-    if (appContainer) appContainer.classList.add('hidden-app');
-    const goToLastPage = hasSeenTutorial();
-    openWelcomeTutorial(goToLastPage);
+    hub.style.display = "none";
+    welcomeScreen.style.display = "flex";
+    syncTopUserUi(activeUser, activeUserDoc);
 });
 
-// BotÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes futuros
+// Bot�es futuros
 document.getElementById("hub-profile").addEventListener("click", () => {
     openProfileModal();
 });
 
 document.getElementById("hub-tournaments").addEventListener("click", () => {
-    alert("Torneios em breve ÃƒÂ°Ã…Â¸Ã‚ÂÃ¢â‚¬Â ");
+    alert("Torneios em breve ??");
 });
 
 document.getElementById("hub-ranking").addEventListener("click", () => {
     openRankingModal();
 });
-/* --- LÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œGICA DO SELETOR DE MODO DE JOGO --- */
+/* --- L�GICA DO SELETOR DE MODO DE JOGO --- */
 document.addEventListener("DOMContentLoaded", () => {
     const modeSelector = document.getElementById('mode-selector');
     const modeWarning = document.getElementById('mode-warning');
@@ -1250,23 +1102,23 @@ document.addEventListener("DOMContentLoaded", () => {
         modeSelector.addEventListener('change', (e) => {
             const selectedMode = e.target.value;
 
-            // Se o modo escolhido NÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢O for 'solo'
+            // Se o modo escolhido N�O for 'solo'
             if (selectedMode !== 'solo') {
-                // Toca som de erro (se o contexto de ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡udio estiver ativo)
+                // Toca som de erro (se o contexto de �udio estiver ativo)
                 if (typeof playSoundEffect === 'function') {
                     playSoundEffect('error');
-                    // Tenta animar o mago para 'triste' se ele estiver visÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â­vel
+                    // Tenta animar o mago para 'triste' se ele estiver vis�vel
                     if (typeof animateMage === 'function') animateMage('sad');
                 }
 
                 // Mostra a mensagem de aviso
                 modeWarning.style.display = 'block';
-                modeWarning.classList.add('popIn'); // Reusa sua animaÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o de popIn
+                modeWarning.classList.add('popIn'); // Reusa sua anima��o de popIn
 
                 // Reseta o seletor para "Solo" automaticamente
                 e.target.value = 'solo';
 
-                // Esconde a mensagem apÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³s 3 segundos
+                // Esconde a mensagem ap�s 3 segundos
                 setTimeout(() => {
                     modeWarning.style.display = 'none';
                 }, 3000);
@@ -1305,90 +1157,46 @@ let dailyShareText = '';
 let dailyHubPreviewRun = null;
 const DAILY_SHARE_LINK = 'https://magiclexis.vercel.app';
 const DAILY_SHARE_TEMPLATES = [
-    `Joguei a Palavra do Dia do MagicLexis e fiz {attempts} tentativas em {mm:ss} \uD83C\uDFC6
-Sera que voce consegue bater meu resultado?
-https://magiclexis.vercel.app`,
+    `Joguei a Palavra do Dia do MagicLexis e fiz {attempts} tentativas em {mm:ss} ??
+Ser� que voc� consegue bater meu resultado?
+${DAILY_SHARE_LINK}`,
     `Eu acertei a Palavra do Dia do MagicLexis em {attempts} tentativas e {mm:ss}
-Duvido voce fazer melhor.
-https://magiclexis.vercel.app`,
-    `Desafio do dia concluido no MagicLexis \u26A1
+Duvido voc� fazer melhor.
+${DAILY_SHARE_LINK}`,
+    `Desafio do dia conclu�do no MagicLexis ?
 {attempts} tentativas em {mm:ss}
-Sera que voce descobre a palavra mais rapido?
-https://magiclexis.vercel.app`,
-    `Acabei de resolver a Palavra do Dia do MagicLexis \uD83E\uDDE0
+Ser� que voc� descobre a palavra mais r�pido?
+${DAILY_SHARE_LINK}`,
+    `Acabei de resolver a Palavra do Dia do MagicLexis ??
 Tempo: {mm:ss}
 Tentativas: {attempts}
-Agora e sua vez.
-https://magiclexis.vercel.app`,
-    `Eu sobrevivi a Palavra do Dia do MagicLexis \uD83E\uDDD9
+Agora � sua vez.
+${DAILY_SHARE_LINK}`,
+    `Eu sobrevivi � Palavra do Dia do MagicLexis ??
 Tentativas: {attempts}
 Tempo: {mm:ss}
-Voce consegue resolver tambem?
-https://magiclexis.vercel.app`,
-    `Consegui resolver o desafio magico de hoje \u2728
+Voc� consegue resolver tamb�m?
+${DAILY_SHARE_LINK}`,
+    `Consegui resolver o desafio m�gico de hoje ?
 MagicLexis
 Tentativas: {attempts}
 Tempo: {mm:ss}
-Tente voce tambem:
-https://magiclexis.vercel.app`,
-    `Palavra do Dia concluida \uD83C\uDFC6
+Tente voc� tamb�m:
+${DAILY_SHARE_LINK}`,
+    `Palavra do Dia conclu�da ??
 MagicLexis
 {attempts} tentativas
 {mm:ss}
-Sera que voce consegue fazer melhor?
-https://magiclexis.vercel.app`,
+Ser� que voc� consegue fazer melhor?
+${DAILY_SHARE_LINK}`,
     `Resolvi a Palavra do Dia do MagicLexis!
 Tentativas: {attempts}
 Tempo: {mm:ss}
-Agora quero ver voce tentar.
-https://magiclexis.vercel.app`
+Agora quero ver voc� tentar.
+${DAILY_SHARE_LINK}`
 ];
 let activeUser = null;
 let activeUserDoc = null;
-for (let i = 0; i < DAILY_SHARE_TEMPLATES.length; i++) {
-    DAILY_SHARE_TEMPLATES[i] = sanitizeGameText(DAILY_SHARE_TEMPLATES[i]);
-}
-
-const TUTORIAL_SEEN_STORAGE_KEY = 'magiclexis_tutorial_seen_v1';
-
-function getTutorialSeenKey() {
-    const uid = activeUser?.uid || 'guest';
-    return `${TUTORIAL_SEEN_STORAGE_KEY}:${uid}`;
-}
-
-function hasSeenTutorial() {
-    try {
-        return localStorage.getItem(getTutorialSeenKey()) === '1';
-    } catch (err) {
-        return false;
-    }
-}
-
-function markTutorialSeen() {
-    try {
-        localStorage.setItem(getTutorialSeenKey(), '1');
-    } catch (err) {
-        console.log('Falha ao salvar estado de tutorial:', err);
-    }
-}
-
-let bookTutorialApi = null;
-
-function openWelcomeTutorial(goToLastPage = false) {
-    setMobileGameplayMenuVisibility(false);
-    const appContainer = document.getElementById('app-container');
-    if (appContainer) appContainer.classList.add('hidden-app');
-    if (hub) {
-        hub.style.display = 'none';
-        hub.classList.add('hidden-control');
-    }
-    if (welcomeScreen) welcomeScreen.style.display = 'flex';
-    if (bookTutorialApi) {
-        if (goToLastPage) bookTutorialApi.goToLastPage();
-        else bookTutorialApi.goToFirstPage();
-    }
-    syncTopUserUi(activeUser, activeUserDoc);
-}
 
 const DEFAULT_AVATAR = 'https://ui-avatars.com/api/?name=ML&background=1f1f1f&color=bb86fc&size=128';
 
@@ -1432,7 +1240,6 @@ const dailyResultRecordEl = document.getElementById('daily-result-record');
 const dailyShareBtn = document.getElementById('daily-share-btn');
 
 let gateAuthMode = 'login';
-const GAME_STATE_STORAGE_KEY = 'magiclexis_game_state_v1';
 
 function formatDailyElapsed(ms = 0) {
     const total = Math.max(0, Math.floor(ms / 1000));
@@ -1446,14 +1253,13 @@ function buildDailyShareText(payload = {}) {
     const mmss = formatDailyElapsed(payload?.elapsedMs || 0);
     const idx = Math.floor(Math.random() * DAILY_SHARE_TEMPLATES.length);
     const template = DAILY_SHARE_TEMPLATES[idx] || DAILY_SHARE_TEMPLATES[0];
-    const header = '\uD83C\uDFC6 MagicLexis Palavra do Dia';
 
-    let text = `${header}\n${template}`
+    let text = template
         .replaceAll('{attempts}', String(attempts))
         .replaceAll('{mm:ss}', mmss);
 
     if (payload?.isRecord) {
-        text += '\n\uD83C\uDFC6 Recorde do dia!';
+        text += '\n?? Recorde do dia!';
     }
 
     return text;
@@ -1469,13 +1275,13 @@ function normalizeCallableError(err) {
 
 async function callDailyFunction(name, payload = {}) {
     if (!activeUser) {
-        const err = new Error('Usuario nao autenticado para chamada diaria.');
+        const err = new Error('Usu�rio n�o autenticado para chamada di�ria.');
         err.code = 'unauthenticated';
         throw err;
     }
 
     if (!functionsApi) {
-        const err = new Error('Firebase Functions nao inicializado.');
+        const err = new Error('Firebase Functions n�o inicializado.');
         err.code = 'functions/not-initialized';
         throw err;
     }
@@ -1489,9 +1295,8 @@ async function callDailyFunction(name, payload = {}) {
 }
 function setDailyHubStatus(message, blocked = false) {
     stopDailyHubCountdown();
-    const cleanMessage = sanitizeGameText(message || '');
-    if (dailyHubStatusDesktop) dailyHubStatusDesktop.innerText = cleanMessage;
-    if (dailyHubStatusMobile) dailyHubStatusMobile.innerText = cleanMessage;
+    if (dailyHubStatusDesktop) dailyHubStatusDesktop.innerText = message;
+    if (dailyHubStatusMobile) dailyHubStatusMobile.innerText = message;
     if (hubDailyBtnDesktop) hubDailyBtnDesktop.disabled = blocked;
     if (hubDailyBtnMobile) hubDailyBtnMobile.disabled = blocked;
 }
@@ -1538,19 +1343,17 @@ function formatDailyHubCountdown(ms = 0) {
 
 function startDailyHubCountdown() {
     stopDailyHubCountdown();
-    const cleanMessage = sanitizeGameText(message || '');
     if (hubDailyBtnDesktop) hubDailyBtnDesktop.disabled = true;
     if (hubDailyBtnMobile) hubDailyBtnMobile.disabled = true;
 
     const render = () => {
         const remainingMs = getMsUntilNextSaoPauloMidnight();
-        const text = `Conclu\u00edda hoje. Liberada em ${formatDailyHubCountdown(remainingMs)} (S\u00e3o Paulo).`;
+        const text = `Conclu�da hoje. Liberada em ${formatDailyHubCountdown(remainingMs)} (S�o Paulo).`;
         if (dailyHubStatusDesktop) dailyHubStatusDesktop.innerText = text;
         if (dailyHubStatusMobile) dailyHubStatusMobile.innerText = text;
 
         if (remainingMs <= 0) {
             stopDailyHubCountdown();
-    const cleanMessage = sanitizeGameText(message || '');
             refreshDailyHubState();
         }
     };
@@ -1612,130 +1415,9 @@ function resetDailySession() {
     showDailyStatusBar(false);
 }
 
-function getGameStateSnapshot() {
-    if (!targetChallenge || !Array.isArray(currentWord) || !activeUser) return null;
-
-    return {
-        screen: 'game',
-        mode: currentGameMode,
-        lengthSelectorValue: lengthSelector?.value || '3',
-        targetChallenge: {
-            word: targetChallenge.word || '',
-            hints: Array.isArray(targetChallenge.hints) ? targetChallenge.hints : [],
-            meaning: targetChallenge.meaning || ''
-        },
-        currentWord: [...currentWord],
-        replaceIndex,
-        hintIndex,
-        isFirstRound,
-        maxWordLength,
-        historyHtml: historyList ? historyList.innerHTML : '',
-        charPlaceholder: charInput ? charInput.placeholder : '?',
-        dailySession: currentGameMode === DAILY_MODE && dailySession ? { ...dailySession } : null,
-        savedAt: Date.now()
-    };
-}
-
-function saveGameSessionState() {
-    try {
-        const appVisible = !document.getElementById('app-container')?.classList.contains('hidden-app');
-        if (!appVisible) return;
-        const snapshot = getGameStateSnapshot();
-        if (!snapshot) return;
-        localStorage.setItem(GAME_STATE_STORAGE_KEY, JSON.stringify(snapshot));
-    } catch (err) {
-        console.log('Falha ao salvar estado da partida:', err);
-    }
-}
-
-function clearGameSessionState() {
-    try {
-        localStorage.removeItem(GAME_STATE_STORAGE_KEY);
-    } catch (err) {
-        console.log('Falha ao limpar estado da partida:', err);
-    }
-}
-
-function showGameScreen() {
-    if (hub) {
-        hub.style.display = 'none';
-        hub.classList.add('hidden-control');
-    }
-    if (welcomeScreen) welcomeScreen.style.display = 'none';
-    document.getElementById('app-container')?.classList.remove('hidden-app');
-    setMobileGameplayMenuVisibility(true);
-}
-
-function showHubScreenFromGame() {
-    stopHintCycle();
-    resetDailySession();
-    clearGameSessionState();
-    document.getElementById('app-container')?.classList.add('hidden-app');
-    if (welcomeScreen) welcomeScreen.style.display = 'none';
-    setMobileGameplayMenuVisibility(false);
-    showHubScreen(true);
-    syncTopUserUi(activeUser, activeUserDoc);
-}
-
-function tryRestoreGameSession() {
-    try {
-        const rawState = localStorage.getItem(GAME_STATE_STORAGE_KEY);
-        if (!rawState) return false;
-        const state = JSON.parse(rawState);
-        if (!state || state.screen !== 'game' || !state.targetChallenge) {
-            clearGameSessionState();
-            return false;
-        }
-
-        if (lengthSelector && state.lengthSelectorValue) {
-            lengthSelector.value = state.lengthSelectorValue;
-        }
-
-        currentGameMode = state.mode === DAILY_MODE ? DAILY_MODE : NORMAL_MODE;
-        targetChallenge = {
-            word: sanitizeGameText(state.targetChallenge.word || ''),
-            hints: Array.isArray(state.targetChallenge.hints) ? state.targetChallenge.hints.map((hint) => sanitizeGameText(hint)) : [],
-            meaning: sanitizeGameText(state.targetChallenge.meaning || '')
-        };
-        currentWord = Array.isArray(state.currentWord) ? state.currentWord : [];
-        replaceIndex = Number.isInteger(state.replaceIndex) ? state.replaceIndex : 0;
-        hintIndex = Number.isInteger(state.hintIndex) ? state.hintIndex : 0;
-        isFirstRound = !!state.isFirstRound;
-        maxWordLength = Number.isInteger(state.maxWordLength) ? state.maxWordLength : (targetChallenge.word?.length || 3);
-
-        if (historyList) historyList.innerHTML = state.historyHtml || '';
-        if (charInput) charInput.placeholder = state.charPlaceholder || '?';
-
-        if (currentGameMode === DAILY_MODE && state.dailySession) {
-            dailySession = { ...state.dailySession };
-            showDailyStatusBar(true);
-            setDailyAttempts(dailySession.attempts || 0);
-            startDailyTimer();
-        } else {
-            currentGameMode = NORMAL_MODE;
-            showDailyStatusBar(false);
-            stopDailyTimer();
-            dailySession = null;
-        }
-
-        showGameScreen();
-        updateHintDisplay();
-        startHintCycle();
-        render(isFirstRound && currentWord.length === 0);
-        syncTopUserUi(activeUser, activeUserDoc);
-        saveGameSessionState();
-        return true;
-    } catch (err) {
-        console.log('Falha ao restaurar estado da partida:', err);
-        clearGameSessionState();
-        return false;
-    }
-}
-
-
 async function refreshDailyHubState() {
     if (!activeUser) {
-        setDailyHubStatus('Fa\u00e7a login para jogar.', true);
+        setDailyHubStatus('Fa�a login para jogar.', true);
         dailyHubPreviewRun = null;
         return;
     }
@@ -1750,7 +1432,7 @@ async function refreshDailyHubState() {
         }
 
         dailyHubPreviewRun = data;
-        setDailyHubStatus('Dispon\u00edvel agora. Palavra exclusiva de hoje.', false);
+        setDailyHubStatus('Dispon�vel agora. Palavra exclusiva de hoje.', false);
     } catch (err) {
         dailyHubPreviewRun = null;
         const info = normalizeCallableError(err);
@@ -1760,7 +1442,6 @@ async function refreshDailyHubState() {
 }
 function applyDailyRunData(data) {
     currentGameMode = DAILY_MODE;
-    
     dailySession = {
         dateKey: data.dateKey,
         unlockedHints: data.unlockedHints || 3,
@@ -1768,12 +1449,12 @@ function applyDailyRunData(data) {
         startedAt: Date.now(),
         pausedAt: null,
         baseElapsedMs: 0,
-        timezone: data.timezone || 'America/Sao_Paulo',
+        timezone: data.timezone || 'America/Sao_Paulo'
     };
 
     const dailyChallenge = {
         word: '',
-        hints: Array.isArray(data.hints) ? data.hints.map((hint) => sanitizeGameText(hint)) : [],
+        hints: data.hints || [],
         meaning: ''
     };
 
@@ -1786,7 +1467,6 @@ function applyDailyRunData(data) {
     showDailyStatusBar(true);
     setDailyAttempts(0);
     startDailyTimer();
-    saveGameSessionState();
 }
 
 function openDailyResultModal(payload) {
@@ -1805,10 +1485,10 @@ async function shareDailyResult() {
             await navigator.share({ text: dailyShareText });
         } else if (navigator.clipboard) {
             await navigator.clipboard.writeText(dailyShareText);
-            showFloatingMessage('Resultado copiado para área de transferência.', 2200);
+            showFloatingMessage('Resultado copiado para �rea de transfer�ncia.', 2200);
         }
     } catch (err) {
-        console.log('Falha ao compartilhar resultado diário', err);
+        console.log('Falha ao compartilhar resultado di�rio', err);
     }
 }
 
@@ -1827,9 +1507,9 @@ async function unlockNextDailyHint() {
         hintIndex = Math.min(hintIndex + 1, (dailySession.unlockedHints || 3) - 1);
         updateHintDisplay();
         startHintCycle();
-        showFloatingMessage('Dica extra desbloqueada!');
+        showFloatingMessage('Dica extra desbloqueada! ??');
     } catch (err) {
-        showFloatingMessage('Não foi possível desbloquear a dica agora.', 2500);
+        showFloatingMessage('N�o foi poss�vel desbloquear a dica agora.', 2500);
         const info = normalizeCallableError(err);
         console.error('unlockDailyHint erro', info);
     } finally {
@@ -1839,28 +1519,28 @@ async function unlockNextDailyHint() {
 
 async function startDailyModeFromHub() {
     if (!activeUser) {
-        setDailyHubStatus('Fa\u00e7a login para jogar.', true);
+        setDailyHubStatus('Fa�a login para jogar.', true);
         return;
     }
 
     try {
-        const canUsePreview = !!dailyHubPreviewRun;
-        const data = canUsePreview ? dailyHubPreviewRun : await callDailyFunction('startDailyRun', {});
+        const data = dailyHubPreviewRun || await callDailyFunction('startDailyRun', {});
 
         if (data?.blocked) {
             startDailyHubCountdown();
-            showFloatingMessage('Palavra do Dia j\u00e1 conclu\u00edda hoje.', 2500);
+            showFloatingMessage('Palavra do Dia j� conclu�da hoje.', 2500);
             dailyHubPreviewRun = null;
             return;
         }
 
-        setDailyHubStatus('Partida di\u00e1ria em andamento.', false);
+        setDailyHubStatus('Partida di�ria em andamento.', false);
         dailyHubPreviewRun = null;
-        showGameScreen();
+        hub.style.display = 'none';
+        welcomeScreen.style.display = 'none';
+        document.getElementById('app-container')?.classList.remove('hidden-app');
 
         applyDailyRunData(data);
         syncTopUserUi(activeUser, activeUserDoc);
-        saveGameSessionState();
     } catch (err) {
         const info = normalizeCallableError(err);
         console.error('startDailyRun erro', info);
@@ -1871,7 +1551,7 @@ async function startDailyModeFromHub() {
 
 function setStatus(msg = '', isError = false) {
     if (!profileStatus) return;
-    profileStatus.innerText = sanitizeGameText(msg);
+    profileStatus.innerText = msg;
     profileStatus.style.color = isError ? 'var(--error)' : 'var(--warning)';
 }
 
@@ -1882,7 +1562,7 @@ function showControl(el, show) {
 
 function setGateStatus(msg = '', isError = false) {
     if (!gateStatus) return;
-    gateStatus.innerText = sanitizeGameText(msg);
+    gateStatus.innerText = msg;
     gateStatus.style.color = isError ? 'var(--error)' : 'var(--warning)';
 }
 
@@ -2020,7 +1700,7 @@ function openProfileModal() {
     showControl(userMenuDropdown, false);
 
     if (!activeUser) {
-        setStatus('Faça login para acessar o perfil.', true);
+        setStatus('Fa�a login para acessar o perfil.', true);
         return;
     }
 
@@ -2035,7 +1715,7 @@ function openProfileModal() {
     if (profilePhotoBtn) profilePhotoBtn.disabled = isAnon;
 
     if (isAnon) {
-        setStatus('Conta visitante: joga normal, mas não salva pontos nem ranking.');
+        setStatus('Conta visitante: joga normal, mas n�o salva pontos nem ranking.');
     } else {
         setStatus('');
     }
@@ -2067,7 +1747,7 @@ async function uploadProfilePhoto(file, uid) {
 }
 async function saveProfile() {
     if (!activeUser || !db || activeUser.isAnonymous) {
-        setStatus('Visitante não salva perfil.', true);
+        setStatus('Visitante n�o salva perfil.', true);
         return;
     }
 
@@ -2099,7 +1779,7 @@ async function saveProfile() {
 
 async function authWithGoogle() {
     if (!auth) {
-        setGateStatus('Firebase Auth não inicializado. Recarregue a página.', true);
+        setGateStatus('Firebase Auth n�o inicializado. Recarregue a p�gina.', true);
         return;
     }
     try {
@@ -2115,7 +1795,7 @@ async function authWithGoogle() {
 
 async function authAnonymously() {
     if (!auth) {
-        setGateStatus('Firebase Auth não inicializado. Recarregue a página.', true);
+        setGateStatus('Firebase Auth n�o inicializado. Recarregue a p�gina.', true);
         return;
     }
     try {
@@ -2130,7 +1810,7 @@ async function authAnonymously() {
 
 async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordFieldId = 'password-input') {
     if (!auth) {
-        setGateStatus('Firebase Auth não inicializado. Recarregue a página.', true);
+        setGateStatus('Firebase Auth n�o inicializado. Recarregue a p�gina.', true);
         return;
     }
     const email = (document.getElementById(emailFieldId)?.value || '').trim();
@@ -2150,8 +1830,8 @@ async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordF
             return;
         }
         if (password !== confirmPassword) {
-            setStatus('As senhas não coincidem.', true);
-            setGateStatus('As senhas não coincidem.', true);
+            setStatus('As senhas n�o coincidem.', true);
+            setGateStatus('As senhas n�o coincidem.', true);
             return;
         }
     }
@@ -2177,8 +1857,8 @@ async function logoutUser() {
     if (!auth) return;
     try {
         await signOut(auth);
-        setStatus('Sess\u00E3o encerrada.');
-        setGateStatus('Faça login para continuar.');
+        setStatus('Sess�o encerrada.');
+        setGateStatus('Fa�a login para continuar.');
     } catch (err) {
         setStatus('Erro ao sair: ' + (err.message || err), true);
         setGateStatus('Erro ao sair: ' + (err.message || err), true);
@@ -2209,7 +1889,7 @@ async function loadRanking() {
     if (!rankingList) return;
 
     if (!db) {
-        rankingList.innerHTML = '<div class="ranking-item">Firebase indispon\u00EDvel.</div>';
+        rankingList.innerHTML = '<div class="ranking-item">Firebase indispon�vel.</div>';
         return;
     }
 
@@ -2281,7 +1961,6 @@ function bindAuthUiEvents() {
     document.getElementById('hub-logout-btn')?.addEventListener('click', logoutUser);
     document.getElementById('user-logout-top')?.addEventListener('click', logoutUser);
     document.getElementById('user-open-profile')?.addEventListener('click', openProfileModal);
-    document.getElementById('user-go-menu-top')?.addEventListener('click', showHubScreenFromGame);
 
     document.getElementById('user-menu-trigger')?.addEventListener('click', () => {
         showControl(userMenuDropdown, userMenuDropdown.classList.contains('hidden-control'));
@@ -2319,8 +1998,7 @@ function initFirebase() {
             document.getElementById('app-container')?.classList.add('hidden-app');
             syncTopUserUi(null, null);
             resetDailySession();
-            clearGameSessionState();
-            setDailyHubStatus('Fa\u00e7a login para jogar.', true);
+            setDailyHubStatus("Fa�a login para jogar.", true);
             return;
         }
 
@@ -2329,16 +2007,13 @@ function initFirebase() {
             activeUserDoc = await ensureUserDoc(user);
         } catch (e) {
             activeUserDoc = null;
-            console.log('Falha ao carregar doc do usuario:', e);
+            console.log('Falha ao carregar doc do usu�rio:', e);
         }
 
         showAuthGate(false);
-        const restored = tryRestoreGameSession();
-        if (!restored) {
-            showHubScreen(true);
-            welcomeScreen.style.display = 'none';
-            document.getElementById('app-container')?.classList.add('hidden-app');
-        }
+        showHubScreen(true);
+        welcomeScreen.style.display = 'none';
+        document.getElementById('app-container')?.classList.add('hidden-app');
 
         syncTopUserUi(user, activeUserDoc);
         await refreshDailyHubState();
@@ -2351,38 +2026,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
