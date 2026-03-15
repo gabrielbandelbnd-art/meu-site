@@ -3000,3 +3000,107 @@ button#validate-btn:active { transform: scale(0.95); }
     border-radius: 14px !important;
   }
 }
+
+/* === Mobile stability override (final) === */
+@media (max-width: 800px) {
+  body.mobile-gameplay-active .game-area {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    gap: 6px !important;
+  }
+
+  body.mobile-gameplay-active .challenge-header { margin-bottom: 6px !important; }
+
+  body.mobile-gameplay-active .notepad-container {
+    margin: 4px 0 8px !important;
+  }
+
+  body.mobile-gameplay-active .notepad-body {
+    height: 72px !important;
+  }
+
+  body.mobile-gameplay-active .board-wrapper {
+    order: 4 !important;
+    margin: 8px 0 !important;
+    flex: 0 0 auto !important;
+    min-height: 86px !important;
+  }
+
+  body.mobile-gameplay-active .input-section {
+    order: 5 !important;
+    position: relative !important;
+    z-index: 3 !important;
+    margin: 8px 0 10px !important;
+    min-height: 0 !important;
+  }
+
+  body.mobile-gameplay-active .input-controls {
+    margin-bottom: 8px !important;
+    align-items: center !important;
+  }
+
+  body.mobile-gameplay-active .alphabet-wrapper {
+    order: 6 !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    z-index: 1 !important;
+    margin-top: 10px !important;
+    min-height: 210px !important;
+    max-height: 250px !important;
+    overflow: hidden !important;
+  }
+
+  body.mobile-gameplay-active .alphabet-wrapper .alphabet-content {
+    gap: 6px !important;
+    padding: 8px !important;
+  }
+
+  body.mobile-gameplay-active .alphabet-wrapper .mini-char {
+    min-height: 38px !important;
+  }
+
+  body.mobile-hub-active .hub-content {
+    width: calc(100% - 24px) !important;
+    margin: 0 auto !important;
+    padding: 26px 16px 22px !important;
+    border-radius: 16px !important;
+  }
+
+  body.mobile-hub-active .hub-buttons {
+    gap: 12px !important;
+  }
+
+  body.mobile-hub-active .daily-hub-card {
+    margin-top: 14px !important;
+    border-radius: 14px !important;
+  }
+}
+
+@media (max-width: 800px) {
+  /* Fallback após refresh antes de classes de estado estabilizarem */
+  #app-container:not(.hidden-app) .game-area .input-section {
+    position: relative !important;
+    z-index: 3 !important;
+    margin: 8px 0 10px !important;
+  }
+
+  #app-container:not(.hidden-app) .game-area .alphabet-wrapper {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    margin-top: 10px !important;
+    z-index: 1 !important;
+  }
+
+  #app-container:not(.hidden-app) .game-area .input-controls {
+    margin-bottom: 8px !important;
+  }
+}

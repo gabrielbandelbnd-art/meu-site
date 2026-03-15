@@ -177,7 +177,7 @@ let usedIndices = [];
 
 function sanitizeGameText(value) {
     if (typeof value !== 'string') return value;
-    let text = value;
+    let text = value.normalize('NFC');
 
     const mojibakeCount = (str) => (str.match(/[ÃÂÔ�]/g) || []).length;
     const decodeLatin1Utf8 = (str) => {
@@ -219,8 +219,11 @@ function sanitizeGameText(value) {
     // Corrige variações quebradas vistas no mobile/desktop.
     text = text.replace(/\bT[^A-Za-zÀ-ÖØ-öø-ÿ]{0,24}rmino\.?/giu, 'Término.');
     text = text.replace(/\bT\S{0,18}rmino\.?/giu, 'Término.');
+    text = text.replace(/\bT[\uFFFD?Ô¿½ÃÂ\s]{0,16}rmino\.?/giu, 'Término.');
     text = text.replace(/interroga\?+o/giu, 'interrogação');
     text = text.replace(/come\?+ar/giu, 'começar');
+    text = text.replace(/interroga[\uFFFD?Ô¿½ÃÂ\s]{0,14}o/giu, 'interrogação');
+    text = text.replace(/come[\uFFFD?Ô¿½ÃÂ\s]{0,10}ar/giu, 'começar');
     text = text.replace(/interroga[^A-Za-zÀ-ÖØ-öø-ÿ]{0,20}o/giu, 'interrogação');
     text = text.replace(/come[^A-Za-zÀ-ÖØ-öø-ÿ]{0,14}ar/giu, 'começar');
     text = text.replace(/sat[^A-Za-zÀ-ÖØ-öø-ÿ]{0,10}lite/giu, 'satélite');
@@ -229,6 +232,8 @@ function sanitizeGameText(value) {
     text = text.replace(/�+/g, '');
     text = text.replace(/Ô¿½/g, '');
     text = text.replace(/\?{2,}/g, '?');
+    text = text.replace(/\binterrogação\?o\b/giu, 'interrogação');
+    text = text.replace(/\bcome\?ar\b/giu, 'começar');
     text = text.replace(/[^\S\r\n]{2,}/g, ' ');
     text = text.replace(/\s{2,}/g, ' ').trim();
     return text;
@@ -2362,6 +2367,9 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAuthProviderLabels();
     observeLanguageChanges();
 });
+
+
+
 
 
 
