@@ -2635,3 +2635,114 @@ button#validate-btn:active { transform: scale(0.95); }
 
 
 
+
+/* ===== MOBILE HOTFIX: estabilidade visual pós-refresh ===== */
+@media (max-width: 800px) {
+    /* Evita sobreposição de botões/teclado no gameplay */
+    body.mobile-gameplay-active #alphabet-drawer {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        left: auto !important;
+        width: 100% !important;
+        height: auto !important;
+        margin-top: 12px !important;
+        z-index: 1 !important;
+    }
+
+    body.mobile-gameplay-active .input-section {
+        margin-bottom: 6px !important;
+    }
+
+    body.mobile-gameplay-active .input-controls {
+        margin: 4px 0 10px 0 !important;
+    }
+
+    /* Rascunho menor (aprox. 2 linhas úteis) */
+    body.mobile-gameplay-active .game-area > #notepad .notepad-body {
+        height: 58px !important;
+    }
+
+    /* Regras com mais respiro para o tabuleiro não encostar */
+    body.mobile-gameplay-active #mobile-rules-slot {
+        margin-bottom: 14px !important;
+    }
+
+    body.mobile-gameplay-active .board-wrapper {
+        margin: 14px 0 8px 0 !important;
+    }
+
+    /* Hub/menu mobile com mais proporção e respiro */
+    body.mobile-mode:not(.mobile-gameplay-active) .hub-content {
+        width: min(92vw, 520px) !important;
+        padding: 20px 16px !important;
+        border-radius: 20px !important;
+    }
+
+    body.mobile-mode:not(.mobile-gameplay-active) .daily-hub-mobile {
+        margin: 10px 4px 0 4px !important;
+        padding: 14px !important;
+    }
+}
+
+/* ===== MOBILE FINAL HOTFIX: estabilidade + proporção hub ===== */
+@media (max-width: 800px) {
+  body.mobile-gameplay-active .game-area {
+    padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  body.mobile-gameplay-active .input-section {
+    position: relative !important;
+    z-index: 12 !important;
+    margin: 10px 0 16px 0 !important;
+  }
+
+  body.mobile-gameplay-active .notification-area {
+    min-height: 24px !important;
+    margin-bottom: 8px !important;
+  }
+
+  body.mobile-gameplay-active .input-controls {
+    position: relative !important;
+    z-index: 13 !important;
+    margin: 6px 0 14px 0 !important;
+  }
+
+  body.mobile-gameplay-active #alphabet-drawer {
+    position: relative !important;
+    transform: none !important;
+    margin-top: 18px !important;
+    z-index: 8 !important;
+  }
+
+  body.mobile-gameplay-active .game-area > #notepad .notepad-body {
+    height: 54px !important;
+  }
+
+  body.mobile-gameplay-active #mobile-rules-slot {
+    margin-bottom: 16px !important;
+  }
+
+  body.mobile-gameplay-active .board-wrapper {
+    margin: 16px 0 10px 0 !important;
+  }
+
+  body.mobile-mode:not(.mobile-gameplay-active) .hub-content {
+    width: min(92vw, 520px) !important;
+    max-height: calc(100dvh - 22px) !important;
+    overflow-y: auto !important;
+    padding: 20px 16px calc(86px + env(safe-area-inset-bottom, 0px)) 16px !important;
+    border-radius: 20px !important;
+  }
+
+  body.mobile-mode:not(.mobile-gameplay-active) .daily-hub-mobile {
+    margin: 14px 6px 0 6px !important;
+    padding: 14px !important;
+    border-radius: 14px !important;
+  }
+
+  body.mobile-mode:not(.mobile-gameplay-active) .hub-logout-btn {
+    right: 14px !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 14px) !important;
+  }
+}
