@@ -229,7 +229,7 @@ function sanitizeGameText(value) {
     text = text.replace(/sat[^A-Za-zÃƒÆ’Ã¢â€šÂ¬-ÃƒÆ’Ã¢â‚¬â€œÃƒÆ’Ã‹Å“-ÃƒÆ’Ã‚Â¶ÃƒÆ’Ã‚Â¸-ÃƒÆ’Ã‚Â¿]{0,10}lite/giu, 'satÃƒÆ’Ã‚Â©lite');
     text = text.replace(/n[^A-Za-zÃƒÆ’Ã¢â€šÂ¬-ÃƒÆ’Ã¢â‚¬â€œÃƒÆ’Ã‹Å“-ÃƒÆ’Ã‚Â¶ÃƒÆ’Ã‚Â¸-ÃƒÆ’Ã‚Â¿]{0,3}o e um teclado musical/giu, 'nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© um teclado musical');
 
-    text = text.replace(/?+/g, '');
+    text = text.replace(/\?+/g, '');
     text = text.replace(/ÃƒÆ’Ã¢â‚¬ÂÃƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½/g, '');
     text = text.replace(/\?{2,}/g, '?');
     text = text.replace(/\binterrogaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o\?o\b/giu, 'interrogaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o');
@@ -1334,6 +1334,8 @@ let storage = null;
 let functionsApi = null;
 let dailyCallables = {};
 const FUNCTIONS_REGION = 'southamerica-east1';
+const IS_LOCAL_DEV = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
+let isUsingLocalDevSession = false;
 
 const DAILY_MODE = 'daily';
 const NORMAL_MODE = 'normal';
@@ -1943,6 +1945,37 @@ function updateAuthProviderLabels() {
     if (anonLabel) anonLabel.innerText = labels.guest;
 }
 
+function activateLocalDevSession(mode = 'guest', email = '') {
+    const normalizedEmail = String(email || '').trim();
+    const displayName = mode === 'email'
+        ? (normalizedEmail.split('@')[0] || 'Jogador')
+        : 'Visitante';
+
+    isUsingLocalDevSession = true;
+    activeUser = {
+        uid: mode === 'email' ? 'local-dev-email' : 'local-dev-guest',
+        isAnonymous: mode !== 'email',
+        email: normalizedEmail || null,
+        displayName,
+        photoURL: DEFAULT_AVATAR,
+        getIdToken: async () => 'local-dev-token'
+    };
+    activeUserDoc = activeUser.isAnonymous ? null : {
+        uid: activeUser.uid,
+        name: displayName,
+        photo: DEFAULT_AVATAR,
+        points: 0
+    };
+
+    showAuthGate(false);
+    showHubScreen(true);
+    if (welcomeScreen) welcomeScreen.style.display = 'none';
+    document.getElementById('app-container')?.classList.add('hidden-app');
+    syncTopUserUi(activeUser, activeUserDoc);
+    setGateStatus('');
+    setStatus('');
+}
+
 function observeLanguageChanges() {
     const root = document.documentElement;
     if (!root || typeof MutationObserver === 'undefined') return;
@@ -2139,6 +2172,10 @@ async function saveProfile() {
 
 async function authWithGoogle() {
     if (!auth) {
+        if (IS_LOCAL_DEV) {
+            activateLocalDevSession('guest');
+            return;
+        }
         setGateStatus('Firebase Auth nÃƒÆ’Ã‚Â£o inicializado. Recarregue a pÃƒÆ’Ã‚Â¡gina.', true);
         return;
     }
@@ -2147,6 +2184,10 @@ async function authWithGoogle() {
         setStatus('Login Google realizado.');
         setGateStatus('Login Google realizado.');
     } catch (err) {
+        if (IS_LOCAL_DEV) {
+            activateLocalDevSession('guest');
+            return;
+        }
         setStatus('Falha no login Google: ' + (err.message || err), true);
         setGateStatus('Falha no login Google: ' + (err.message || err), true);
     }
@@ -2155,6 +2196,10 @@ async function authWithGoogle() {
 
 async function authAnonymously() {
     if (!auth) {
+        if (IS_LOCAL_DEV) {
+            activateLocalDevSession('guest');
+            return;
+        }
         setGateStatus('Firebase Auth nÃƒÆ’Ã‚Â£o inicializado. Recarregue a pÃƒÆ’Ã‚Â¡gina.', true);
         return;
     }
@@ -2163,6 +2208,10 @@ async function authAnonymously() {
         setStatus('Entrou como visitante.');
         setGateStatus('Entrou como visitante.');
     } catch (err) {
+        if (IS_LOCAL_DEV) {
+            activateLocalDevSession('guest');
+            return;
+        }
         setStatus('Erro no modo visitante: ' + (err.message || err), true);
         setGateStatus('Erro no modo visitante: ' + (err.message || err), true);
     }
@@ -2170,6 +2219,11 @@ async function authAnonymously() {
 
 async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordFieldId = 'password-input') {
     if (!auth) {
+        if (IS_LOCAL_DEV) {
+            const email = (document.getElementById(emailFieldId)?.value || '').trim();
+            activateLocalDevSession('email', email);
+            return;
+        }
         setGateStatus('Firebase Auth nÃƒÆ’Ã‚Â£o inicializado. Recarregue a pÃƒÆ’Ã‚Â¡gina.', true);
         return;
     }
@@ -2197,6 +2251,7 @@ async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordF
     }
 
     try {
+        setGateStatus(isRegister ? 'Criando conta...' : 'Entrando...');
         if (isRegister) {
             await createUserWithEmailAndPassword(auth, email, password);
             setStatus('Conta criada com sucesso.');
@@ -2208,12 +2263,30 @@ async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordF
             setGateStatus('Login realizado.');
         }
     } catch (err) {
+        if (IS_LOCAL_DEV) {
+            activateLocalDevSession('email', email);
+            return;
+        }
         setStatus('Erro no login/cadastro: ' + (err.message || err), true);
         setGateStatus('Erro no login/cadastro: ' + (err.message || err), true);
     }
 }
 
 async function logoutUser() {
+    if (isUsingLocalDevSession) {
+        isUsingLocalDevSession = false;
+        activeUser = null;
+        activeUserDoc = null;
+        showAuthGate(true);
+        showHubScreen(false);
+        if (welcomeScreen) welcomeScreen.style.display = 'none';
+        document.getElementById('app-container')?.classList.add('hidden-app');
+        syncTopUserUi(null, null);
+        resetDailySession();
+        clearGameSessionState();
+        setGateStatus('FaÃƒÆ’Ã‚Â§a login para continuar.');
+        return;
+    }
     if (!auth) return;
     try {
         await signOut(auth);
@@ -2291,9 +2364,16 @@ function bindAuthUiEvents() {
     document.getElementById('profile-logout-btn')?.addEventListener('click', logoutUser);
     profilePhotoBtn?.addEventListener('click', () => profilePhotoInput?.click());
 
-    document.getElementById('gate-google-btn')?.addEventListener('click', authWithGoogle);
-    document.getElementById('gate-anon-btn')?.addEventListener('click', authAnonymously);
-    document.getElementById('gate-login-email-btn')?.addEventListener('click', () => {
+    document.getElementById('gate-google-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        authWithGoogle();
+    });
+    document.getElementById('gate-anon-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        authAnonymously();
+    });
+    document.getElementById('gate-login-email-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
         if (gateAuthMode === 'register') {
             setGateAuthMode('login');
             return;
@@ -2304,7 +2384,8 @@ function bindAuthUiEvents() {
     hubDailyBtnMobile?.addEventListener('click', startDailyModeFromHub);
     closeDailyResultModalBtn?.addEventListener('click', () => showControl(dailyResultModal, false));
     dailyShareBtn?.addEventListener('click', shareDailyResult);
-    document.getElementById('gate-register-email-btn')?.addEventListener('click', () => {
+    document.getElementById('gate-register-email-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
         if (gateAuthMode !== 'register') {
             setGateAuthMode('register');
             return;
@@ -2312,8 +2393,21 @@ function bindAuthUiEvents() {
         authWithEmail(true, 'gate-email-input', 'gate-password-input');
     });
 
+    gateEmailInput?.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        authWithEmail(gateAuthMode === 'register', 'gate-email-input', 'gate-password-input');
+    });
+
+    gatePasswordInput?.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        authWithEmail(gateAuthMode === 'register', 'gate-email-input', 'gate-password-input');
+    });
+
     gateConfirmPasswordInput?.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && gateAuthMode === 'register') {
+            e.preventDefault();
             authWithEmail(true, 'gate-email-input', 'gate-password-input');
         }
     });
