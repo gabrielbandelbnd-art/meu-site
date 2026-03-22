@@ -176,67 +176,9 @@ const allChallenges = [
 let usedIndices = [];
 
 function sanitizeGameText(value) {
-    if (typeof value !== 'string') return value;
-    let text = value.normalize('NFC');
-
-    const mojibakeCount = (str) => (str.match(/[ÃƒÆ’Ã†â€™ÃƒÆ’Ã¢â‚¬Å¡ÃƒÆ’Ã¢â‚¬Â?]/g) || []).length;
-    const decodeLatin1Utf8 = (str) => {
-        try {
-            return decodeURIComponent(escape(str));
-        } catch {
-            return str;
-        }
-    };
-
-    if (/[ÃƒÆ’Ã†â€™ÃƒÆ’Ã¢â‚¬Å¡ÃƒÆ’Ã¢â‚¬Â?]/.test(text)) {
-        const first = decodeLatin1Utf8(text);
-        if (mojibakeCount(first) <= mojibakeCount(text)) text = first;
-
-        const second = decodeLatin1Utf8(text);
-        if (mojibakeCount(second) < mojibakeCount(text)) text = second;
-    }
-
-    const fixes = [
-        ['FaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§a', 'FaÃƒÆ’Ã‚Â§a'],
-        ['VocÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Âª', 'VocÃƒÆ’Ã‚Âª'],
-        ['nÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o', 'nÃƒÆ’Ã‚Â£o'],
-        ['interrogaÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â£o', 'interrogaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o'],
-        ['comeÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â§ar', 'comeÃƒÆ’Ã‚Â§ar'],
-        ['TÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â©rmino', 'TÃƒÆ’Ã‚Â©rmino'],
-        ['satelite', 'satÃƒÆ’Ã‚Â©lite'],
-        ['interroga??o', 'interrogaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o'],
-        ['come?ar', 'comeÃƒÆ’Ã‚Â§ar'],
-        ['T??rmino', 'TÃƒÆ’Ã‚Â©rmino'],
-        ['T?rmino', 'TÃƒÆ’Ã‚Â©rmino'],
-        ['nao e um teclado musical', 'nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© um teclado musical'],
-        ['Nao e um teclado musical', 'NÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© um teclado musical']
-    ];
-
-    for (const [bad, good] of fixes) {
-        text = text.split(bad).join(good);
-    }
-
-    // Corrige variaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Âµes quebradas vistas no mobile/desktop.
-    text = text.replace(/\bT[^A-Za-zÃƒÆ’Ã¢â€šÂ¬-ÃƒÆ’Ã¢â‚¬â€œÃƒÆ’Ã‹Å“-ÃƒÆ’Ã‚Â¶ÃƒÆ’Ã‚Â¸-ÃƒÆ’Ã‚Â¿]{0,24}rmino\.?/giu, 'TÃƒÆ’Ã‚Â©rmino.');
-    text = text.replace(/\bT\S{0,18}rmino\.?/giu, 'TÃƒÆ’Ã‚Â©rmino.');
-    text = text.replace(/\bT[\uFFFD?ÃƒÆ’Ã¢â‚¬ÂÃƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½ÃƒÆ’Ã†â€™ÃƒÆ’Ã¢â‚¬Å¡\s]{0,16}rmino\.?/giu, 'TÃƒÆ’Ã‚Â©rmino.');
-    text = text.replace(/interroga\?+o/giu, 'interrogaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o');
-    text = text.replace(/come\?+ar/giu, 'comeÃƒÆ’Ã‚Â§ar');
-    text = text.replace(/interroga[\uFFFD?ÃƒÆ’Ã¢â‚¬ÂÃƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½ÃƒÆ’Ã†â€™ÃƒÆ’Ã¢â‚¬Å¡\s]{0,14}o/giu, 'interrogaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o');
-    text = text.replace(/come[\uFFFD?ÃƒÆ’Ã¢â‚¬ÂÃƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½ÃƒÆ’Ã†â€™ÃƒÆ’Ã¢â‚¬Å¡\s]{0,10}ar/giu, 'comeÃƒÆ’Ã‚Â§ar');
-    text = text.replace(/interroga[^A-Za-zÃƒÆ’Ã¢â€šÂ¬-ÃƒÆ’Ã¢â‚¬â€œÃƒÆ’Ã‹Å“-ÃƒÆ’Ã‚Â¶ÃƒÆ’Ã‚Â¸-ÃƒÆ’Ã‚Â¿]{0,20}o/giu, 'interrogaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o');
-    text = text.replace(/come[^A-Za-zÃƒÆ’Ã¢â€šÂ¬-ÃƒÆ’Ã¢â‚¬â€œÃƒÆ’Ã‹Å“-ÃƒÆ’Ã‚Â¶ÃƒÆ’Ã‚Â¸-ÃƒÆ’Ã‚Â¿]{0,14}ar/giu, 'comeÃƒÆ’Ã‚Â§ar');
-    text = text.replace(/sat[^A-Za-zÃƒÆ’Ã¢â€šÂ¬-ÃƒÆ’Ã¢â‚¬â€œÃƒÆ’Ã‹Å“-ÃƒÆ’Ã‚Â¶ÃƒÆ’Ã‚Â¸-ÃƒÆ’Ã‚Â¿]{0,10}lite/giu, 'satÃƒÆ’Ã‚Â©lite');
-    text = text.replace(/n[^A-Za-zÃƒÆ’Ã¢â€šÂ¬-ÃƒÆ’Ã¢â‚¬â€œÃƒÆ’Ã‹Å“-ÃƒÆ’Ã‚Â¶ÃƒÆ’Ã‚Â¸-ÃƒÆ’Ã‚Â¿]{0,3}o e um teclado musical/giu, 'nÃƒÆ’Ã‚Â£o ÃƒÆ’Ã‚Â© um teclado musical');
-
-    text = text.replace(/\?+/g, '');
-    text = text.replace(/ÃƒÆ’Ã¢â‚¬ÂÃƒâ€šÃ‚Â¿Ãƒâ€šÃ‚Â½/g, '');
-    text = text.replace(/\?{2,}/g, '?');
-    text = text.replace(/\binterrogaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o\?o\b/giu, 'interrogaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o');
-    text = text.replace(/\bcome\?ar\b/giu, 'comeÃƒÆ’Ã‚Â§ar');
-    text = text.replace(/[^\S\r\n]{2,}/g, ' ');
-    text = text.replace(/\s{2,}/g, ' ').trim();
-    return text;
+    if (value == null) return '';
+    if (typeof value !== 'string') return String(value);
+    return value;
 }
 
 
