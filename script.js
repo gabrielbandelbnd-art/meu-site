@@ -325,6 +325,34 @@ function closeMobilePanels() {
     if (mobileOverlay) mobileOverlay.classList.remove('active');
 }
 
+function applyMobileMenuButtonState(visible) {
+    if (!mobileMenuBtn) return;
+
+    if (!isMobileViewport()) {
+        mobileMenuBtn.style.display = 'none';
+        return;
+    }
+
+    if (visible) {
+        Object.assign(mobileMenuBtn.style, {
+            display: 'flex',
+            position: 'fixed',
+            top: 'calc(env(safe-area-inset-top, 0px) + 12px)',
+            left: '12px',
+            width: '56px',
+            height: '56px',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: '12000',
+            opacity: '1',
+            visibility: 'visible',
+            pointerEvents: 'auto'
+        });
+    } else {
+        mobileMenuBtn.style.display = 'none';
+    }
+}
+
 function setMobileGameplayMenuVisibility(visible) {
     const canUseMobileUi = isMobileViewport() && !!mobileMenuBtn;
     document.body.classList.toggle('mobile-gameplay-active', canUseMobileUi && !!visible);
@@ -332,10 +360,10 @@ function setMobileGameplayMenuVisibility(visible) {
     if (!canUseMobileUi) return;
     if (visible) {
         mobileMenuBtn.classList.remove('hidden-control');
-        mobileMenuBtn.style.display = 'flex';
+        applyMobileMenuButtonState(true);
     } else {
         mobileMenuBtn.classList.add('hidden-control');
-        mobileMenuBtn.style.display = 'none';
+        applyMobileMenuButtonState(false);
         closeMobilePanels();
     }
 }
@@ -2429,6 +2457,10 @@ function bindAuthUiEvents() {
             e.preventDefault();
         }
     }, { passive: false });
+
+    window.addEventListener('resize', () => {
+        applyMobileMenuButtonState(shouldBlockGameplayRefresh());
+    });
 }
 
 function initFirebase() {
