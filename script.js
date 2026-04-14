@@ -332,8 +332,10 @@ function setMobileGameplayMenuVisibility(visible) {
     if (!canUseMobileUi) return;
     if (visible) {
         mobileMenuBtn.classList.remove('hidden-control');
+        mobileMenuBtn.style.display = 'flex';
     } else {
         mobileMenuBtn.classList.add('hidden-control');
+        mobileMenuBtn.style.display = 'none';
         closeMobilePanels();
     }
 }

@@ -31,6 +31,27 @@ body.refresh-lock {
   }
 }
 
+@media (max-width: 800px) {
+  body.mobile-gameplay-active #mobile-menu-btn {
+    display: flex !important;
+    position: fixed !important;
+    top: calc(env(safe-area-inset-top, 0px) + 12px) !important;
+    left: 12px !important;
+    width: 56px !important;
+    height: 56px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 12000 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+
+  body.mobile-mode:not(.mobile-gameplay-active) #mobile-menu-btn {
+    display: none !important;
+  }
+}
+
 * { box-sizing: border-box; }
 
 body {
