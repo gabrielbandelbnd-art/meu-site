@@ -3407,6 +3407,114 @@ button#validate-btn:active { transform: scale(0.95); }
     box-shadow: inset 0 0 0 1px rgba(255, 198, 64, 0.18);
 }
 
+.campaign-book--highlighted {
+    border-color: rgba(255, 214, 102, 0.98);
+    box-shadow: 0 0 0 1px rgba(255, 214, 102, 0.34), 0 18px 36px rgba(255, 198, 64, 0.2);
+    transform: translateY(-1px);
+}
+
+.campaign-complete-card {
+    width: min(92vw, 560px);
+    padding: 28px 24px 24px;
+    border: 1px solid rgba(255, 210, 115, 0.72);
+    background:
+        radial-gradient(circle at top, rgba(187, 134, 252, 0.28), transparent 54%),
+        linear-gradient(180deg, rgba(42, 26, 60, 0.98), rgba(22, 18, 32, 0.98));
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(255, 210, 115, 0.12),
+        0 0 44px rgba(187, 134, 252, 0.18);
+    animation: campaignCompleteEntrance 0.28s ease;
+}
+
+.campaign-complete-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 210, 115, 0.4);
+    background: rgba(255, 210, 115, 0.08);
+    color: #ffe5a6;
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.campaign-complete-card h3 {
+    margin-bottom: 10px;
+    font-size: clamp(1.9rem, 3vw, 2.4rem);
+    color: #fff3cf;
+}
+
+.campaign-complete-copy {
+    margin: 0 0 18px;
+    color: #f2e9ff;
+    font-size: 1.04rem;
+    line-height: 1.6;
+}
+
+.campaign-complete-summary {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.campaign-complete-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.campaign-complete-line span {
+    color: var(--text-dim);
+    font-size: 0.96rem;
+}
+
+.campaign-complete-line strong {
+    color: #ffffff;
+    font-size: 1.08rem;
+}
+
+.campaign-complete-final-copy {
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 210, 115, 0.28);
+    background: rgba(255, 210, 115, 0.08);
+    color: #ffe8b6;
+    line-height: 1.55;
+}
+
+.campaign-complete-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.campaign-complete-actions .profile-btn {
+    min-width: 180px;
+}
+
+@keyframes campaignCompleteEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 @media (min-width: 1200px) {
     .campaign-books-grid {
         grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -3465,5 +3573,51 @@ button#validate-btn:active { transform: scale(0.95); }
     .campaign-book-state,
     .campaign-book-progress {
         font-size: 0.92rem;
+    }
+
+    .campaign-complete-card {
+        width: min(94vw, 520px);
+        padding: 24px 16px 18px;
+        border-radius: 18px;
+    }
+
+    .campaign-complete-badge {
+        margin-bottom: 12px;
+        padding: 7px 12px;
+        font-size: 0.8rem;
+    }
+
+    .campaign-complete-copy {
+        font-size: 0.97rem;
+        margin-bottom: 16px;
+    }
+
+    .campaign-complete-line {
+        padding: 12px 13px;
+        gap: 10px;
+    }
+
+    .campaign-complete-line span {
+        font-size: 0.88rem;
+    }
+
+    .campaign-complete-line strong {
+        font-size: 0.98rem;
+        text-align: right;
+    }
+
+    .campaign-complete-final-copy {
+        padding: 12px 13px;
+        font-size: 0.92rem;
+    }
+
+    .campaign-complete-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .campaign-complete-actions .profile-btn {
+        width: 100%;
+        min-width: 0;
     }
 }

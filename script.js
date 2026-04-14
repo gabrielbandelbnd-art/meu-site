@@ -273,6 +273,15 @@ const campaignScreen = document.getElementById('campaign-screen');
 const campaignBooksGrid = document.getElementById('campaign-books-grid');
 const campaignBackBtn = document.getElementById('campaign-back-btn');
 const campaignProgressSummary = document.getElementById('campaign-progress-summary');
+const campaignCompleteModal = document.getElementById('campaign-level-complete-modal');
+const closeCampaignCompleteModalBtn = document.getElementById('close-campaign-complete-modal');
+const campaignCompleteTitle = document.getElementById('campaign-complete-title');
+const campaignCompleteCopy = document.getElementById('campaign-complete-copy');
+const campaignCompleteCurrentLevel = document.getElementById('campaign-complete-current-level');
+const campaignCompleteNextLevel = document.getElementById('campaign-complete-next-level');
+const campaignCompleteFinalCopy = document.getElementById('campaign-complete-final-copy');
+const campaignCompleteNextBtn = document.getElementById('campaign-complete-next-btn');
+const campaignCompleteBooksBtn = document.getElementById('campaign-complete-books-btn');
 
 let currentWord = [];
 let replaceIndex = 0;
@@ -284,6 +293,8 @@ let maxWordLength = 0;
 let lastTouchStartY = 0;
 let currentCampaignLevel = null;
 let campaignProgress = null;
+let highlightedCampaignLevel = null;
+let pendingCampaignCompletion = null;
 
 // --- VARIÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂVEIS DA GALINHA E MENSAGENS ---
 let consecutiveErrors = 0;
@@ -530,6 +541,7 @@ function startCampaignLevel(level) {
 
     currentGameMode = CAMPAIGN_MODE;
     currentCampaignLevel = level;
+    highlightedCampaignLevel = null;
     resetDailySession();
     clearAllHighlights();
     animateMage('reset');
@@ -907,7 +919,9 @@ async function validate() {
 
         successSound.play(); playSoundEffect('victory'); triggerConfetti();
         animateMage('win');
-        showMobileVictoryPopup();
+        if (!campaignResult?.completedNow) {
+            showMobileVictoryPopup();
+        }
 
         stopHintCycle(); clearAllHighlights();
 
@@ -916,18 +930,11 @@ async function validate() {
 
             if (currentGameMode === CAMPAIGN_MODE && currentCampaignLevel) {
                 if (campaignResult?.completedNow) {
-                    showCampaignScreen();
                     feedback.innerText = "";
-                    const unlockedText = (campaignResult.unlockedLevels || [])
-                        .filter((level) => level !== currentCampaignLevel && hasCampaignContent(level))
-                        .map((level) => `${level} letras`)
-                        .join(', ');
-
-                    if (unlockedText) {
-                        showFloatingMessage(`Livro concluido! Novo livro liberado: ${unlockedText}.`, 3200);
-                    } else {
-                        showFloatingMessage('Livro concluido! Progresso da campanha salvo.', 3000);
-                    }
+                    openCampaignCompleteModal({
+                        currentLevel: currentCampaignLevel,
+                        nextLevel: campaignResult?.nextLevel || null
+                    });
                 } else {
                     startCampaignLevel(currentCampaignLevel);
                     feedback.innerText = "Novo desafio do livro iniciado!";
@@ -1692,6 +1699,76 @@ function updateCampaignProgressSummary() {
     campaignProgressSummary.innerText = sanitizeGameText(getCampaignSummaryText());
 }
 
+function getNextCampaignPlayableLevel(fromLevel, unlockedLevels = []) {
+    return [...unlockedLevels]
+        .sort((a, b) => a - b)
+        .find((level) => level > fromLevel && hasCampaignContent(level)) || null;
+}
+
+function closeCampaignCompleteModal() {
+    pendingCampaignCompletion = null;
+    showControl(campaignCompleteModal, false);
+}
+
+function goToCampaignBooks(focusLevel = null) {
+    highlightedCampaignLevel = focusLevel;
+    closeCampaignCompleteModal();
+    showCampaignScreen();
+}
+
+function continueToNextCampaignBook() {
+    const nextLevel = pendingCampaignCompletion?.nextLevel || null;
+    closeCampaignCompleteModal();
+
+    if (nextLevel) {
+        startCampaignLevel(nextLevel);
+        return;
+    }
+
+    showCampaignScreen();
+}
+
+function openCampaignCompleteModal(payload = {}) {
+    if (!campaignCompleteModal) return;
+
+    const currentLevel = Number(payload.currentLevel || currentCampaignLevel || CAMPAIGN_LEVEL_START);
+    const nextLevel = Number(payload.nextLevel || 0) || null;
+    pendingCampaignCompletion = { currentLevel, nextLevel };
+    highlightedCampaignLevel = nextLevel || currentLevel;
+
+    if (campaignCompleteTitle) {
+        campaignCompleteTitle.innerText = nextLevel ? 'Livro Concluido!' : 'Campanha Avancada!';
+    }
+
+    if (campaignCompleteCopy) {
+        campaignCompleteCopy.innerText = nextLevel
+            ? 'O tomo foi dominado com sucesso. Um novo desafio magico acaba de ser desbloqueado.'
+            : 'Voce concluiu o ultimo livro disponivel desta fase do grimorio.';
+    }
+
+    if (campaignCompleteCurrentLevel) {
+        campaignCompleteCurrentLevel.innerText = `${currentLevel} letras`;
+    }
+
+    if (campaignCompleteNextLevel) {
+        campaignCompleteNextLevel.innerText = nextLevel ? `${nextLevel} letras` : 'Nenhum livro novo';
+    }
+
+    if (campaignCompleteFinalCopy) {
+        const showFinalMessage = !nextLevel;
+        campaignCompleteFinalCopy.innerText = showFinalMessage
+            ? 'Voce dominou este ciclo do grimorio! Novos livros poderao surgir em futuras atualizacoes.'
+            : '';
+        campaignCompleteFinalCopy.classList.toggle('hidden-control', !showFinalMessage);
+    }
+
+    if (campaignCompleteNextBtn) {
+        campaignCompleteNextBtn.innerText = nextLevel ? 'Próximo Livro' : 'Voltar aos Livros';
+    }
+
+    showControl(campaignCompleteModal, true);
+}
+
 function syncModeSelectionUi() {
     if (!lengthSelector || !modeSelector) return;
 
@@ -1736,6 +1813,9 @@ function renderCampaignBooks() {
         const card = document.createElement('button');
         card.type = 'button';
         card.className = `campaign-book campaign-book--${tier} campaign-book--${state}`;
+        if (highlightedCampaignLevel === level) {
+            card.classList.add('campaign-book--highlighted');
+        }
         card.disabled = state === 'locked';
         card.setAttribute('data-level', String(level));
 
@@ -1888,7 +1968,8 @@ async function recordCampaignWordCompletion(level) {
 
     return {
         completedNow,
-        unlockedLevels: nextProgress.unlockedLevels.filter((item) => !unlockedBefore.has(item))
+        unlockedLevels: nextProgress.unlockedLevels.filter((item) => !unlockedBefore.has(item)),
+        nextLevel: getNextCampaignPlayableLevel(level, nextProgress.unlockedLevels)
     };
 }
 
@@ -2843,6 +2924,13 @@ function bindAuthUiEvents() {
     document.getElementById('save-profile-btn')?.addEventListener('click', saveProfile);
     document.getElementById('profile-logout-btn')?.addEventListener('click', logoutUser);
     profilePhotoBtn?.addEventListener('click', () => profilePhotoInput?.click());
+    closeCampaignCompleteModalBtn?.addEventListener('click', () => {
+        goToCampaignBooks(pendingCampaignCompletion?.nextLevel || pendingCampaignCompletion?.currentLevel || null);
+    });
+    campaignCompleteBooksBtn?.addEventListener('click', () => {
+        goToCampaignBooks(pendingCampaignCompletion?.nextLevel || pendingCampaignCompletion?.currentLevel || null);
+    });
+    campaignCompleteNextBtn?.addEventListener('click', continueToNextCampaignBook);
 
     document.getElementById('gate-google-btn')?.addEventListener('click', (e) => {
         e.preventDefault();
@@ -2906,6 +2994,9 @@ function bindAuthUiEvents() {
         if (e.target === profileModal) closeProfileModal();
         if (e.target === rankingModal) closeRankingModal();
         if (e.target === dailyResultModal) showControl(dailyResultModal, false);
+        if (e.target === campaignCompleteModal) {
+            goToCampaignBooks(pendingCampaignCompletion?.nextLevel || pendingCampaignCompletion?.currentLevel || null);
+        }
     });
 
     window.addEventListener('beforeunload', (e) => {
