@@ -130,18 +130,19 @@
                                 <select id="length-selector">
                                     <option value="any">Aleatório (Qualquer tamanho)</option>
                                 </select>
+                                <p id="challenge-selector-help" class="selector-help">
+                                    No modo campanha, o livro é escolhido na próxima tela.
+                                </p>
                             </div>
 
                             <div class="difficulty-box">
                                 <label for="mode-selector">Modo de Jogo:</label>
                                 <select id="mode-selector">
-                                    <option value="solo">👤 Solo (Aventura)</option>
-                                    <option value="1v1">⚔️ 1 vs 1</option>
-                                    <option value="2v2">🛡️ 2 vs 2</option>
-                                    <option value="4v4">🏰 4 vs 4</option>
+                                    <option value="campaign">📚 Campanha (Livros)</option>
+                                    <option value="random">🎲 Aleatório</option>
                                 </select>
                                 <p id="mode-warning" style="color: var(--warning); font-size: 0.9rem; margin-top: 5px; display: none;">
-                                    ⚠️ As arenas de batalha estarão disponíveis em breve!
+                                    ⚠️ No aleatório, a quantidade de letras é sorteada automaticamente.
                                 </p>
                             </div>
 
@@ -155,6 +156,21 @@
             <div class="book-nav">
                 <span class="tutorial-page-indicator" id="tutorial-page-indicator">Página 1 de 6</span>
             </div>
+        </div>
+    </div>
+    <div id="campaign-screen" class="campaign-screen hidden-control">
+        <div class="campaign-shell">
+            <div class="campaign-header">
+                <button id="campaign-back-btn" type="button" class="campaign-back-btn">← Voltar</button>
+                <div class="campaign-header-copy">
+                    <h2>Campanha dos Livros</h2>
+                    <p>Complete 5 palavras por livro para desbloquear o próximo tomo.</p>
+                </div>
+            </div>
+            <div id="campaign-progress-summary" class="campaign-progress-summary">
+                Livro inicial desbloqueado.
+            </div>
+            <div id="campaign-books-grid" class="campaign-books-grid"></div>
         </div>
     </div>
     <div id="app-container" class="app-container hidden-app">

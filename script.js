@@ -174,6 +174,23 @@ const allChallenges = [
 ];
 
 let usedIndices = [];
+const CAMPAIGN_LEVEL_START = 3;
+const CAMPAIGN_LEVEL_END = 22;
+const CAMPAIGN_WORDS_TO_COMPLETE = 5;
+const CAMPAIGN_PROGRESS_STORAGE_KEY = 'magiclexis_campaign_progress_v1';
+const CAMPAIGN_LEVELS = Array.from(
+    { length: CAMPAIGN_LEVEL_END - CAMPAIGN_LEVEL_START + 1 },
+    (_, index) => CAMPAIGN_LEVEL_START + index
+);
+const challengesByLength = new Map();
+
+allChallenges.forEach((challenge) => {
+    const wordLength = challenge.word.length;
+    if (!challengesByLength.has(wordLength)) {
+        challengesByLength.set(wordLength, []);
+    }
+    challengesByLength.get(wordLength).push(challenge);
+});
 
 function sanitizeGameText(value) {
     if (value == null) return '';
@@ -249,6 +266,13 @@ const miniAlphabetContainer = document.getElementById('mini-alphabet');
 const hintText = document.getElementById('current-hint');
 const hintCounter = document.getElementById('hint-counter');
 const lengthSelector = document.getElementById('length-selector');
+const modeSelector = document.getElementById('mode-selector');
+const modeWarning = document.getElementById('mode-warning');
+const challengeSelectorHelp = document.getElementById('challenge-selector-help');
+const campaignScreen = document.getElementById('campaign-screen');
+const campaignBooksGrid = document.getElementById('campaign-books-grid');
+const campaignBackBtn = document.getElementById('campaign-back-btn');
+const campaignProgressSummary = document.getElementById('campaign-progress-summary');
 
 let currentWord = [];
 let replaceIndex = 0;
@@ -258,6 +282,8 @@ let hintIndex = 0;
 let hintInterval = null;
 let maxWordLength = 0;
 let lastTouchStartY = 0;
+let currentCampaignLevel = null;
+let campaignProgress = null;
 
 // --- VARIÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂVEIS DA GALINHA E MENSAGENS ---
 let consecutiveErrors = 0;
@@ -448,9 +474,8 @@ function clearAllHighlights() {
 
 /* NOVO: PREENCHE O SELETOR COM OPÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ES DISPONÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂVEIS */
 function populateLengthOptions() {
-    // Descobre quais tamanhos de palavra existem no banco de dados
-    const lengths = [...new Set(allChallenges.map(c => c.word.length))].sort((a,b) => a-b);
-    
+    const lengths = [...challengesByLength.keys()].sort((a, b) => a - b);
+
     lengths.forEach(len => {
         const option = document.createElement('option');
         option.value = len;
@@ -459,31 +484,65 @@ function populateLengthOptions() {
     });
 }
 
-function initChallenge() {
+function pickRandomChallengeByLength(wordLength) {
+    const pool = challengesByLength.get(wordLength) || [];
+    if (!pool.length) return null;
+    const randIdx = Math.floor(Math.random() * pool.length);
+    return pool[randIdx];
+}
 
-    currentGameMode = NORMAL_MODE;
+function pickRandomCampaignChallenge(wordLength) {
+    const pool = challengesByLength.get(wordLength) || [];
+    if (!pool.length) return null;
+
+    const lastWord = targetChallenge?.word || '';
+    const filteredPool = pool.length > 1
+        ? pool.filter((challenge) => challenge.word !== lastWord)
+        : pool;
+
+    const randIdx = Math.floor(Math.random() * filteredPool.length);
+    return filteredPool[randIdx] || pool[0];
+}
+
+function startRandomChallenge() {
+    currentGameMode = RANDOM_MODE;
+    currentCampaignLevel = null;
     resetDailySession();
     clearAllHighlights();
     animateMage('reset');
-    
-    // FILTRAGEM PELA ESCOLHA DO USUARIO
-    const selectedLen = lengthSelector.value;
-    let pool = allChallenges;
-    
-    if (selectedLen !== 'any') {
-        pool = allChallenges.filter(c => c.word.length === parseInt(selectedLen));
-    }
 
-    if (pool.length === 0) pool = allChallenges; // Fallback se der erro
+    const eligibleLengths = CAMPAIGN_LEVELS.filter((level) => (challengesByLength.get(level) || []).length > 0);
+    const randomLength = eligibleLengths[Math.floor(Math.random() * eligibleLengths.length)] || 3;
+    const selectedChallenge = pickRandomChallengeByLength(randomLength) || allChallenges[0];
 
-    // Sorteio
-    const randIdx = Math.floor(Math.random() * pool.length);
-    targetChallenge = pool[randIdx];
-
-    startChallengeEngine(targetChallenge, {
-        wordLength: targetChallenge.word.length,
+    startChallengeEngine(selectedChallenge, {
+        wordLength: selectedChallenge.word.length,
         resetHistory: false
     });
+}
+
+function startCampaignLevel(level) {
+    const challenge = pickRandomCampaignChallenge(level);
+    if (!challenge) {
+        showFloatingMessage('Esse livro ainda nao possui palavras cadastradas.', 2600);
+        return;
+    }
+
+    currentGameMode = CAMPAIGN_MODE;
+    currentCampaignLevel = level;
+    resetDailySession();
+    clearAllHighlights();
+    animateMage('reset');
+    showGameScreen();
+
+    startChallengeEngine(challenge, {
+        wordLength: level,
+        resetHistory: false
+    });
+}
+
+function initChallenge() {
+    startRandomChallenge();
 }
 
 function startChallengeEngine(challengeData, options = {}) {
@@ -844,7 +903,7 @@ async function validate() {
         meaningBox.innerText = sanitizeGameText(targetChallenge.meaning);
         meaningBox.classList.remove('hidden');
         document.body.classList.add('success-flash');
-        handleCorrectAnswer();
+        const campaignResult = await handleCorrectAnswer();
 
         successSound.play(); playSoundEffect('victory'); triggerConfetti();
         animateMage('win');
@@ -854,8 +913,29 @@ async function validate() {
 
         setTimeout(() => {
             document.body.classList.remove('success-flash');
-            initChallenge();
-            feedback.innerText = "Novo desafio iniciado!";
+
+            if (currentGameMode === CAMPAIGN_MODE && currentCampaignLevel) {
+                if (campaignResult?.completedNow) {
+                    showCampaignScreen();
+                    feedback.innerText = "";
+                    const unlockedText = (campaignResult.unlockedLevels || [])
+                        .filter((level) => level !== currentCampaignLevel && hasCampaignContent(level))
+                        .map((level) => `${level} letras`)
+                        .join(', ');
+
+                    if (unlockedText) {
+                        showFloatingMessage(`Livro concluido! Novo livro liberado: ${unlockedText}.`, 3200);
+                    } else {
+                        showFloatingMessage('Livro concluido! Progresso da campanha salvo.', 3000);
+                    }
+                } else {
+                    startCampaignLevel(currentCampaignLevel);
+                    feedback.innerText = "Novo desafio do livro iniciado!";
+                }
+            } else {
+                startRandomChallenge();
+                feedback.innerText = "Novo desafio iniciado!";
+            }
 
             if (feedbackTimeout) clearTimeout(feedbackTimeout);
             feedbackTimeout = setTimeout(() => { feedback.innerText = ""; }, 2000);
@@ -1328,6 +1408,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (lengthSelector.querySelector('option[value="3"]')) {
         lengthSelector.value = '3';
     }
+    syncModeSelectionUi();
     setupMobileLayout();
     initBookTutorial();
 
@@ -1338,13 +1419,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // LOGICA DO BOTAO DE BOAS-VINDAS
 document.getElementById('start-game-btn').onclick = () => {
     markTutorialSeen();
-    // Some com o modal
-    document.getElementById('welcome-screen').style.display = 'none';
-    // Mostra o jogo
-    document.getElementById('app-container').classList.remove('hidden-app');
-    
-    // Inicia o jogo agora com o desafio selecionado
-    initChallenge();
+    beginSelectedGameFlow();
 
     if (audioCtx.state === 'suspended') audioCtx.resume();
     syncTopUserUi(activeUser, activeUserDoc);
@@ -1363,6 +1438,10 @@ hubPlay.addEventListener("click", () => {
     if (appContainer) appContainer.classList.add('hidden-app');
     const goToLastPage = hasSeenTutorial();
     openWelcomeTutorial(goToLastPage);
+});
+
+campaignBackBtn?.addEventListener('click', () => {
+    openWelcomeTutorial(true);
 });
 
 // BotÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes futuros
@@ -1385,6 +1464,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modeSelector) {
         modeSelector.addEventListener('change', (e) => {
             const selectedMode = e.target.value;
+            if (selectedMode === CAMPAIGN_MODE || selectedMode === RANDOM_MODE) {
+                syncModeSelectionUi();
+                return;
+            }
 
             // Se o modo escolhido NÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¾ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢O for 'solo'
             if (selectedMode !== 'solo') {
@@ -1434,8 +1517,9 @@ const IS_LOCAL_DEV = ['127.0.0.1', 'localhost'].includes(window.location.hostnam
 let isUsingLocalDevSession = false;
 
 const DAILY_MODE = 'daily';
-const NORMAL_MODE = 'normal';
-let currentGameMode = NORMAL_MODE;
+const RANDOM_MODE = 'random';
+const CAMPAIGN_MODE = 'campaign';
+let currentGameMode = RANDOM_MODE;
 let dailySession = null;
 let dailyTimerInterval = null;
 let dailyHubCountdownInterval = null;
@@ -1510,12 +1594,311 @@ function markTutorialSeen() {
     }
 }
 
+function getCampaignProgressStorageKey() {
+    const uid = activeUser?.uid || 'guest';
+    return `${CAMPAIGN_PROGRESS_STORAGE_KEY}:${uid}`;
+}
+
+function getDefaultCampaignProgress() {
+    return {
+        unlockedLevels: [CAMPAIGN_LEVEL_START],
+        completedLevels: [],
+        levelProgress: {
+            [CAMPAIGN_LEVEL_START]: 0
+        }
+    };
+}
+
+function hasCampaignContent(level) {
+    return (challengesByLength.get(level) || []).length > 0;
+}
+
+function normalizeCampaignProgress(rawProgress) {
+    const base = rawProgress && typeof rawProgress === 'object' ? rawProgress : {};
+    const unlockedSet = new Set(
+        Array.isArray(base.unlockedLevels)
+            ? base.unlockedLevels.map(Number).filter((level) => CAMPAIGN_LEVELS.includes(level))
+            : []
+    );
+    const completedSet = new Set(
+        Array.isArray(base.completedLevels)
+            ? base.completedLevels.map(Number).filter((level) => CAMPAIGN_LEVELS.includes(level))
+            : []
+    );
+
+    unlockedSet.add(CAMPAIGN_LEVEL_START);
+
+    const levelProgress = {};
+    CAMPAIGN_LEVELS.forEach((level) => {
+        const rawValue = Number(base?.levelProgress?.[level] ?? 0);
+        levelProgress[level] = Math.max(0, Math.min(CAMPAIGN_WORDS_TO_COMPLETE, Number.isFinite(rawValue) ? rawValue : 0));
+    });
+
+    completedSet.forEach((level) => {
+        levelProgress[level] = CAMPAIGN_WORDS_TO_COMPLETE;
+        unlockedSet.add(level);
+    });
+
+    return {
+        unlockedLevels: [...unlockedSet].sort((a, b) => a - b),
+        completedLevels: [...completedSet].sort((a, b) => a - b),
+        levelProgress
+    };
+}
+
+function unlockNextCampaignLevels(progress, completedLevel) {
+    const unlockedSet = new Set(progress.unlockedLevels);
+    let nextLevel = completedLevel + 1;
+
+    while (nextLevel <= CAMPAIGN_LEVEL_END) {
+        unlockedSet.add(nextLevel);
+        if (hasCampaignContent(nextLevel)) break;
+        nextLevel += 1;
+    }
+
+    progress.unlockedLevels = [...unlockedSet].sort((a, b) => a - b);
+    return progress;
+}
+
+function getCampaignBookTier(level) {
+    if (level >= 20) return 'gold';
+    if (level >= 19) return 'silver';
+    if (level >= 14) return 'bronze';
+    return 'standard';
+}
+
+function getCampaignBookState(level) {
+    if (campaignProgress?.completedLevels?.includes(level)) return 'completed';
+    if (campaignProgress?.unlockedLevels?.includes(level)) return 'available';
+    return 'locked';
+}
+
+function getCampaignSummaryText() {
+    if (!campaignProgress) return 'Carregando campanha...';
+
+    const completedCount = campaignProgress.completedLevels.length;
+    const nextPlayable = CAMPAIGN_LEVELS.find((level) => getCampaignBookState(level) === 'available' && hasCampaignContent(level));
+
+    if (!nextPlayable) {
+        return `Campanha em andamento. ${completedCount} livro(s) concluido(s).`;
+    }
+
+    const currentProgress = campaignProgress.levelProgress[nextPlayable] || 0;
+    return `Proximo livro jogavel: ${nextPlayable} letras. Progresso atual: ${currentProgress}/${CAMPAIGN_WORDS_TO_COMPLETE}.`;
+}
+
+function updateCampaignProgressSummary() {
+    if (!campaignProgressSummary) return;
+    campaignProgressSummary.innerText = sanitizeGameText(getCampaignSummaryText());
+}
+
+function syncModeSelectionUi() {
+    if (!lengthSelector || !modeSelector) return;
+
+    const selectedMode = modeSelector.value || CAMPAIGN_MODE;
+    lengthSelector.disabled = true;
+
+    if (selectedMode === CAMPAIGN_MODE) {
+        lengthSelector.value = String(CAMPAIGN_LEVEL_START);
+        if (challengeSelectorHelp) {
+            challengeSelectorHelp.innerText = 'Na campanha, voce escolhe um livro na proxima tela.';
+        }
+        if (modeWarning) modeWarning.style.display = 'none';
+        return;
+    }
+
+    lengthSelector.value = 'any';
+    if (challengeSelectorHelp) {
+        challengeSelectorHelp.innerText = 'No aleatorio, o jogo sorteia automaticamente a quantidade de letras.';
+    }
+    if (modeWarning) modeWarning.style.display = 'block';
+}
+
+function hideCampaignScreen() {
+    if (campaignScreen) campaignScreen.classList.add('hidden-control');
+}
+
+function renderCampaignBooks() {
+    if (!campaignBooksGrid) return;
+    if (!campaignProgress) {
+        campaignBooksGrid.innerHTML = '';
+        updateCampaignProgressSummary();
+        return;
+    }
+
+    campaignBooksGrid.innerHTML = '';
+
+    CAMPAIGN_LEVELS.forEach((level) => {
+        const state = getCampaignBookState(level);
+        const tier = getCampaignBookTier(level);
+        const progressValue = campaignProgress.levelProgress[level] || 0;
+        const playable = hasCampaignContent(level);
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = `campaign-book campaign-book--${tier} campaign-book--${state}`;
+        card.disabled = state === 'locked';
+        card.setAttribute('data-level', String(level));
+
+        let stateIcon = '🔒';
+        let stateText = 'Bloqueado';
+        if (state === 'available') {
+            stateIcon = '🔓';
+            stateText = playable ? 'Disponivel' : 'Disponivel (sem paginas)';
+        } else if (state === 'completed') {
+            stateIcon = '✅';
+            stateText = 'Concluido';
+        }
+
+        card.innerHTML = `
+            <div class="campaign-book-title">${level} letras</div>
+            <div class="campaign-book-state">${stateIcon} ${stateText}</div>
+            <div class="campaign-book-progress">${progressValue}/${CAMPAIGN_WORDS_TO_COMPLETE} palavras</div>
+        `;
+
+        card.addEventListener('click', () => {
+            if (state === 'locked') {
+                showFloatingMessage('Conclua o livro anterior para desbloquear este.', 2200);
+                return;
+            }
+
+            if (!playable) {
+                showFloatingMessage('Esse livro ainda nao possui palavras cadastradas.', 2400);
+                return;
+            }
+
+            startCampaignLevel(level);
+        });
+
+        campaignBooksGrid.appendChild(card);
+    });
+
+    updateCampaignProgressSummary();
+}
+
+function showCampaignScreen() {
+    setMobileGameplayMenuVisibility(false);
+    if (hub) {
+        hub.style.display = 'none';
+        hub.classList.add('hidden-control');
+    }
+    if (welcomeScreen) welcomeScreen.style.display = 'none';
+    document.getElementById('app-container')?.classList.add('hidden-app');
+    campaignScreen?.classList.remove('hidden-control');
+    renderCampaignBooks();
+    syncTopUserUi(activeUser, activeUserDoc);
+    syncRefreshLockState();
+}
+
+function getSelectedStartMode() {
+    return modeSelector?.value === RANDOM_MODE ? RANDOM_MODE : CAMPAIGN_MODE;
+}
+
+function beginSelectedGameFlow() {
+    const selectedMode = getSelectedStartMode();
+    if (selectedMode === CAMPAIGN_MODE) {
+        showCampaignScreen();
+        return;
+    }
+
+    showGameScreen();
+    startRandomChallenge();
+}
+
+function getCampaignProgressSource() {
+    if (activeUser && !activeUser.isAnonymous && !isUsingLocalDevSession && db) {
+        return 'firebase';
+    }
+    return 'local';
+}
+
+function loadGuestCampaignProgress() {
+    try {
+        const stored = localStorage.getItem(getCampaignProgressStorageKey());
+        return normalizeCampaignProgress(stored ? JSON.parse(stored) : null);
+    } catch (err) {
+        console.log('Falha ao carregar progresso local da campanha:', err);
+        return normalizeCampaignProgress(null);
+    }
+}
+
+async function saveCampaignProgress(progress) {
+    const normalized = normalizeCampaignProgress(progress);
+    campaignProgress = normalized;
+
+    if (getCampaignProgressSource() === 'firebase' && activeUser) {
+        const userRef = doc(db, 'users', activeUser.uid);
+        await setDoc(userRef, { campaignProgress: normalized }, { merge: true });
+        activeUserDoc = { ...(activeUserDoc || {}), campaignProgress: normalized };
+    } else {
+        try {
+            localStorage.setItem(getCampaignProgressStorageKey(), JSON.stringify(normalized));
+        } catch (err) {
+            console.log('Falha ao salvar progresso local da campanha:', err);
+        }
+    }
+
+    renderCampaignBooks();
+    syncTopUserUi(activeUser, activeUserDoc);
+    return normalized;
+}
+
+async function loadCampaignProgress() {
+    if (getCampaignProgressSource() === 'firebase') {
+        const normalized = normalizeCampaignProgress(activeUserDoc?.campaignProgress);
+        campaignProgress = normalized;
+        return normalized;
+    }
+
+    const normalized = loadGuestCampaignProgress();
+    campaignProgress = normalized;
+    return normalized;
+}
+
+async function recordCampaignWordCompletion(level) {
+    if (currentGameMode !== CAMPAIGN_MODE || !level) return { completedNow: false, unlockedLevels: [] };
+
+    const progress = normalizeCampaignProgress(campaignProgress);
+    const nextProgress = normalizeCampaignProgress({
+        ...progress,
+        unlockedLevels: [...progress.unlockedLevels],
+        completedLevels: [...progress.completedLevels],
+        levelProgress: { ...progress.levelProgress }
+    });
+
+    nextProgress.unlockedLevels = [...new Set([...nextProgress.unlockedLevels, level])].sort((a, b) => a - b);
+    nextProgress.levelProgress[level] = Math.min(
+        CAMPAIGN_WORDS_TO_COMPLETE,
+        (nextProgress.levelProgress[level] || 0) + 1
+    );
+
+    let completedNow = false;
+    const unlockedBefore = new Set(progress.unlockedLevels);
+
+    if (nextProgress.levelProgress[level] >= CAMPAIGN_WORDS_TO_COMPLETE) {
+        if (!nextProgress.completedLevels.includes(level)) {
+            nextProgress.completedLevels.push(level);
+            nextProgress.completedLevels.sort((a, b) => a - b);
+        }
+        nextProgress.levelProgress[level] = CAMPAIGN_WORDS_TO_COMPLETE;
+        unlockNextCampaignLevels(nextProgress, level);
+        completedNow = !progress.completedLevels.includes(level);
+    }
+
+    await saveCampaignProgress(nextProgress);
+
+    return {
+        completedNow,
+        unlockedLevels: nextProgress.unlockedLevels.filter((item) => !unlockedBefore.has(item))
+    };
+}
+
 let bookTutorialApi = null;
 
 function openWelcomeTutorial(goToLastPage = false) {
     setMobileGameplayMenuVisibility(false);
     const appContainer = document.getElementById('app-container');
     if (appContainer) appContainer.classList.add('hidden-app');
+    hideCampaignScreen();
     if (hub) {
         hub.style.display = 'none';
         hub.classList.add('hidden-control');
@@ -1809,6 +2192,7 @@ function syncRefreshLockState() {
 }
 
 function showGameScreen() {
+    hideCampaignScreen();
     if (hub) {
         hub.style.display = 'none';
         hub.classList.add('hidden-control');
@@ -1823,8 +2207,10 @@ function showHubScreenFromGame() {
     stopHintCycle();
     resetDailySession();
     clearGameSessionState();
+    currentCampaignLevel = null;
     document.getElementById('app-container')?.classList.add('hidden-app');
     if (welcomeScreen) welcomeScreen.style.display = 'none';
+    hideCampaignScreen();
     setMobileGameplayMenuVisibility(false);
     showHubScreen(true);
     syncTopUserUi(activeUser, activeUserDoc);
@@ -2032,8 +2418,10 @@ function activateLocalDevSession(mode = 'guest', email = '') {
         uid: activeUser.uid,
         name: displayName,
         photo: DEFAULT_AVATAR,
-        points: 0
+        points: 0,
+        campaignProgress: getDefaultCampaignProgress()
     };
+    campaignProgress = normalizeCampaignProgress(activeUserDoc?.campaignProgress);
 
     showAuthGate(false);
     showHubScreen(true);
@@ -2078,6 +2466,7 @@ function showHubScreen(show) {
     if (show) {
         hub.classList.remove('hidden-control');
         hub.style.display = 'flex';
+        hideCampaignScreen();
     } else {
         hub.classList.add('hidden-control');
     }
@@ -2086,6 +2475,7 @@ function showHubScreen(show) {
 
 function showAuthGate(show) {
     showControl(authGate, show);
+    if (show) hideCampaignScreen();
     if (show) setGateAuthMode('login');
 }
 function getModeVisitor(user) {
@@ -2096,6 +2486,7 @@ async function ensureUserDoc(user) {
     if (!db || !user || user.isAnonymous) return null;
     const userRef = doc(db, 'users', user.uid);
     const snap = await getDoc(userRef);
+    const defaultCampaignProgress = getDefaultCampaignProgress();
 
     if (!snap.exists()) {
         const baseName = user.displayName || (user.email ? user.email.split('@')[0] : 'Jogador');
@@ -2103,8 +2494,16 @@ async function ensureUserDoc(user) {
             uid: user.uid,
             name: baseName,
             photo: user.photoURL || DEFAULT_AVATAR,
-            points: 0
+            points: 0,
+            campaignProgress: defaultCampaignProgress
         }, { merge: true });
+    } else {
+        const currentData = snap.data() || {};
+        if (!currentData.campaignProgress) {
+            await setDoc(userRef, {
+                campaignProgress: defaultCampaignProgress
+            }, { merge: true });
+        }
     }
 
     const fresh = await getDoc(userRef);
@@ -2368,7 +2767,17 @@ async function logoutUser() {
 }
 
 async function handleCorrectAnswer() {
-    if (!activeUser || !db || activeUser.isAnonymous) return;
+    let campaignResult = { completedNow: false, unlockedLevels: [] };
+
+    if (currentGameMode === CAMPAIGN_MODE && currentCampaignLevel) {
+        try {
+            campaignResult = await recordCampaignWordCompletion(currentCampaignLevel);
+        } catch (err) {
+            console.log('Erro ao salvar progresso da campanha:', err);
+        }
+    }
+
+    if (!activeUser || !db || activeUser.isAnonymous) return campaignResult;
 
     try {
         const userRef = doc(db, 'users', activeUser.uid);
@@ -2385,6 +2794,8 @@ async function handleCorrectAnswer() {
     } catch (err) {
         console.log('Erro ao somar pontos:', err);
     }
+
+    return campaignResult;
 }
 async function loadRanking() {
     const rankingList = document.getElementById('ranking-list');
@@ -2568,6 +2979,7 @@ function initFirebase() {
             activeUserDoc = null;
             console.log('Falha ao carregar doc do usuario:', e);
         }
+        await loadCampaignProgress();
 
         showAuthGate(false);
         clearGameSessionState();
@@ -2578,6 +2990,7 @@ function initFirebase() {
         syncRefreshLockState();
 
         syncTopUserUi(user, activeUserDoc);
+        renderCampaignBooks();
         await refreshDailyHubState();
     });
 }
