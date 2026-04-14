@@ -41,27 +41,21 @@ service cloud.firestore {
     }
 
     match /rooms/{roomCode} {
+      allow get: if isSignedIn();
+      allow list: if false;
+
       allow create: if isSignedIn()
+        && !exists(/databases/$(database)/documents/rooms/$(roomCode))
         && request.resource.data.roomCode == roomCode
         && request.resource.data.gameMode == 'online_1v1'
         && request.resource.data.status == 'waiting'
-        && request.resource.data.startedAt == null
-        && request.resource.data.completedAt == null
         && request.resource.data.hostUid == request.auth.uid
         && request.resource.data.winnerUid == null
-        && request.resource.data.abandonMessage is string
-        && request.resource.data.letterCount is int
+        && request.resource.data.letterCount is number
+        && request.resource.data.challenge is map
         && request.resource.data.challenge.word is string
         && request.resource.data.players.player1.uid == request.auth.uid
-        && request.resource.data.players.player1.finished == false
-        && request.resource.data.players.player1.progress == 0
-        && request.resource.data.players.player2.uid == null
-        && request.resource.data.players.player2.connected == false
-        && request.resource.data.players.player2.ready == false
-        && request.resource.data.players.player2.finished == false;
-
-      allow read: if isSignedIn()
-        && (isRoomParticipant(resource.data) || resource.data.status == 'waiting');
+        && request.resource.data.players.player2.uid == null;
 
       allow update: if isSignedIn()
         && request.resource.data.roomCode == resource.data.roomCode

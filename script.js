@@ -1959,7 +1959,27 @@ function buildOnlineRoomCode() {
 async function generateUniqueOnlineRoomCode() {
     for (let attempt = 0; attempt < 8; attempt++) {
         const code = buildOnlineRoomCode();
-        const existing = await getDoc(doc(db, ONLINE_ROOM_COLLECTION, code));
+        const path = `${ONLINE_ROOM_COLLECTION}/${code}`;
+        console.log('[Online 1x1] Verificando codigo existente', {
+            operation: 'getDoc',
+            path,
+            attempt: attempt + 1,
+            authUid: auth?.currentUser?.uid || null
+        });
+        let existing;
+        try {
+            existing = await getDoc(doc(db, ONLINE_ROOM_COLLECTION, code));
+        } catch (err) {
+            err.operation = 'getDoc-check-room-code';
+            err.path = path;
+            throw err;
+        }
+        console.log('[Online 1x1] Resultado da verificacao do codigo', {
+            operation: 'getDoc',
+            path,
+            attempt: attempt + 1,
+            exists: existing.exists()
+        });
         if (!existing.exists()) return code;
     }
     throw new Error('Nao foi possivel gerar um codigo de sala livre.');
@@ -2195,7 +2215,17 @@ async function attachOnlineRoomListener(roomCode) {
     cleanupOnlineRoomListener();
     currentOnlineRoomCode = roomCode;
     const roomRef = getOnlineRoomRef(roomCode);
+    console.log('[Online 1x1] Iniciando listener da sala', {
+        operation: 'onSnapshot',
+        path: `${ONLINE_ROOM_COLLECTION}/${roomCode}`,
+        authUid: auth?.currentUser?.uid || null
+    });
     onlineRoomUnsubscribe = onSnapshot(roomRef, (snap) => {
+        console.log('[Online 1x1] Snapshot recebido da sala', {
+            operation: 'onSnapshot',
+            path: `${ONLINE_ROOM_COLLECTION}/${roomCode}`,
+            exists: snap.exists()
+        });
         if (!snap.exists()) {
             showFloatingMessage('A sala online foi encerrada.', 2400);
             resetOnlineRoomState();
@@ -2232,9 +2262,16 @@ async function createOnlineRoom() {
     }
     onlineCreateRoomBtn && (onlineCreateRoomBtn.disabled = true);
     try {
+        console.log('[Online 1x1] Iniciando criacao de sala', {
+            operation: 'createOnlineRoom:start',
+            collection: ONLINE_ROOM_COLLECTION,
+            authUid: auth?.currentUser?.uid || null,
+            activeUid: onlineUser.uid
+        });
         const roomCode = await generateUniqueOnlineRoomCode();
         const payload = getRandomOnlineChallengePayload();
         const roomRef = getOnlineRoomRef(roomCode);
+        const roomPath = `${ONLINE_ROOM_COLLECTION}/${roomCode}`;
         const roomPayload = {
             roomCode,
             status: 'waiting',
@@ -2274,7 +2311,9 @@ async function createOnlineRoom() {
         };
 
         console.log('[Online 1x1] Criando sala', {
+            operation: 'setDoc',
             collection: ONLINE_ROOM_COLLECTION,
+            path: roomPath,
             roomCode,
             uid: onlineUser.uid,
             authUid: auth.currentUser?.uid || null,
@@ -2283,18 +2322,51 @@ async function createOnlineRoom() {
             payload: roomPayload
         });
 
-        await setDoc(roomRef, roomPayload);
-        console.log('[Online 1x1] Sala criada com sucesso', { roomCode, uid: onlineUser.uid });
+        try {
+            await setDoc(roomRef, roomPayload);
+        } catch (err) {
+            err.operation = 'setDoc-create-room';
+            err.path = roomPath;
+            err.payload = roomPayload;
+            throw err;
+        }
+        console.log('[Online 1x1] Sala criada com sucesso', {
+            operation: 'setDoc',
+            path: roomPath,
+            roomCode,
+            uid: onlineUser.uid
+        });
+        console.log('[Online 1x1] Lendo documento criado', {
+            operation: 'getDoc-after-create',
+            path: roomPath,
+            authUid: auth?.currentUser?.uid || null
+        });
+        let createdSnap;
+        try {
+            createdSnap = await getDoc(roomRef);
+        } catch (err) {
+            err.operation = 'getDoc-after-create';
+            err.path = roomPath;
+            throw err;
+        }
+        console.log('[Online 1x1] Resultado da leitura apos criar', {
+            operation: 'getDoc-after-create',
+            path: roomPath,
+            exists: createdSnap.exists()
+        });
         currentOnlinePlayerSlot = 'player1';
         await attachOnlineRoomListener(roomCode);
         showFloatingMessage(`Sala ${roomCode} criada.`, 2200);
     } catch (err) {
         console.log('[Online 1x1] Erro ao criar sala online', {
+            operation: err?.operation || 'unknown',
+            path: err?.path || null,
             collection: ONLINE_ROOM_COLLECTION,
             uid: onlineUser?.uid || activeUser?.uid || null,
             authUid: auth.currentUser?.uid || null,
             isAnonymous: !!onlineUser?.isAnonymous,
             isUsingLocalDevSession,
+            payload: err?.payload || null,
             code: err?.code || null,
             message: err?.message || err
         });
