@@ -257,6 +257,7 @@ let targetChallenge = null;
 let hintIndex = 0;
 let hintInterval = null;
 let maxWordLength = 0;
+let lastTouchStartY = 0;
 
 // --- VARIÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂVEIS DA GALINHA E MENSAGENS ---
 let consecutiveErrors = 0;
@@ -1041,17 +1042,17 @@ function setupMobileLayout() {
         mobileRulesSlot.appendChild(rulesPanel.panel);
     }
 
+    if (sidebarContent && historySection) {
+        sidebarContent.appendChild(historySection);
+    }
+
     if (mobileToolsSlot) {
         mobileToolsSlot.classList.add('hidden-control');
     }
 
-    if (notepadEl && mobileRulesSlot && mobileRulesSlot.parentNode) {
-        mobileRulesSlot.parentNode.insertBefore(notepadEl, mobileRulesSlot);
-        notepadEl.classList.remove('mobile-notepad-in-sidebar');
-    }
-
-    if (sidebarContent && historySection) {
-        sidebarContent.appendChild(historySection);
+    if (notepadEl && sidebarContent) {
+        sidebarContent.appendChild(notepadEl);
+        notepadEl.classList.add('mobile-notepad-in-sidebar');
     }
 
     setMobileGameplayMenuVisibility(false);
@@ -1695,6 +1696,20 @@ function clearGameSessionState() {
     }
 }
 
+function isGameScreenVisible() {
+    return !document.getElementById('app-container')?.classList.contains('hidden-app');
+}
+
+function shouldBlockGameplayRefresh() {
+    return isGameScreenVisible();
+}
+
+function syncRefreshLockState() {
+    const locked = shouldBlockGameplayRefresh();
+    document.documentElement.classList.toggle('refresh-lock', locked);
+    document.body.classList.toggle('refresh-lock', locked);
+}
+
 function showGameScreen() {
     if (hub) {
         hub.style.display = 'none';
@@ -1703,6 +1718,7 @@ function showGameScreen() {
     if (welcomeScreen) welcomeScreen.style.display = 'none';
     document.getElementById('app-container')?.classList.remove('hidden-app');
     setMobileGameplayMenuVisibility(true);
+    syncRefreshLockState();
 }
 
 function showHubScreenFromGame() {
@@ -1714,56 +1730,13 @@ function showHubScreenFromGame() {
     setMobileGameplayMenuVisibility(false);
     showHubScreen(true);
     syncTopUserUi(activeUser, activeUserDoc);
+    syncRefreshLockState();
 }
 
 function tryRestoreGameSession() {
     try {
-        const rawState = localStorage.getItem(GAME_STATE_STORAGE_KEY);
-        if (!rawState) return false;
-        const state = JSON.parse(rawState);
-        if (!state || state.screen !== 'game' || !state.targetChallenge) {
-            clearGameSessionState();
-            return false;
-        }
-
-        if (lengthSelector && state.lengthSelectorValue) {
-            lengthSelector.value = state.lengthSelectorValue;
-        }
-
-        currentGameMode = state.mode === DAILY_MODE ? DAILY_MODE : NORMAL_MODE;
-        targetChallenge = {
-            word: sanitizeGameText(state.targetChallenge.word || ''),
-            hints: Array.isArray(state.targetChallenge.hints) ? state.targetChallenge.hints.map((hint) => sanitizeGameText(hint)) : [],
-            meaning: sanitizeGameText(state.targetChallenge.meaning || '')
-        };
-        currentWord = Array.isArray(state.currentWord) ? state.currentWord : [];
-        replaceIndex = Number.isInteger(state.replaceIndex) ? state.replaceIndex : 0;
-        hintIndex = Number.isInteger(state.hintIndex) ? state.hintIndex : 0;
-        isFirstRound = !!state.isFirstRound;
-        maxWordLength = Number.isInteger(state.maxWordLength) ? state.maxWordLength : (targetChallenge.word?.length || 3);
-
-        if (historyList) historyList.innerHTML = state.historyHtml || '';
-        if (charInput) charInput.placeholder = state.charPlaceholder || '?';
-
-        if (currentGameMode === DAILY_MODE && state.dailySession) {
-            dailySession = { ...state.dailySession };
-            showDailyStatusBar(true);
-            setDailyAttempts(dailySession.attempts || 0);
-            startDailyTimer();
-        } else {
-            currentGameMode = NORMAL_MODE;
-            showDailyStatusBar(false);
-            stopDailyTimer();
-            dailySession = null;
-        }
-
-        showGameScreen();
-        updateHintDisplay();
-        startHintCycle();
-        render(isFirstRound && currentWord.length === 0);
-        syncTopUserUi(activeUser, activeUserDoc);
-        saveGameSessionState();
-        return true;
+        clearGameSessionState();
+        return false;
     } catch (err) {
         console.log('Falha ao restaurar estado da partida:', err);
         clearGameSessionState();
@@ -2010,6 +1983,7 @@ function showHubScreen(show) {
     } else {
         hub.classList.add('hidden-control');
     }
+    syncRefreshLockState();
 }
 
 function showAuthGate(show) {
@@ -2424,6 +2398,35 @@ function bindAuthUiEvents() {
         if (e.target === rankingModal) closeRankingModal();
         if (e.target === dailyResultModal) showControl(dailyResultModal, false);
     });
+
+    window.addEventListener('beforeunload', (e) => {
+        if (!shouldBlockGameplayRefresh()) return;
+        e.preventDefault();
+        e.returnValue = '';
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (!shouldBlockGameplayRefresh()) return;
+        const key = (e.key || '').toLowerCase();
+        const isRefreshShortcut = e.key === 'F5' || ((e.ctrlKey || e.metaKey) && key === 'r');
+        if (!isRefreshShortcut) return;
+        e.preventDefault();
+        showFloatingMessage('Volte ao menu antes de atualizar.', 2200);
+    });
+
+    document.addEventListener('touchstart', (e) => {
+        if (!isMobileViewport()) return;
+        lastTouchStartY = e.touches?.[0]?.clientY || 0;
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!shouldBlockGameplayRefresh() || !isMobileViewport()) return;
+        const currentTouchY = e.touches?.[0]?.clientY || 0;
+        const isPullingDown = currentTouchY > lastTouchStartY + 12;
+        if (window.scrollY <= 0 && isPullingDown) {
+            e.preventDefault();
+        }
+    }, { passive: false });
 }
 
 function initFirebase() {
@@ -2451,6 +2454,7 @@ function initFirebase() {
             syncTopUserUi(null, null);
             resetDailySession();
             clearGameSessionState();
+            syncRefreshLockState();
             setDailyHubStatus('Fa\u00e7a login para jogar.', true);
             return;
         }
@@ -2464,12 +2468,12 @@ function initFirebase() {
         }
 
         showAuthGate(false);
-        const restored = tryRestoreGameSession();
-        if (!restored) {
-            showHubScreen(true);
-            welcomeScreen.style.display = 'none';
-            document.getElementById('app-container')?.classList.add('hidden-app');
-        }
+        clearGameSessionState();
+        showHubScreen(true);
+        welcomeScreen.style.display = 'none';
+        document.getElementById('app-container')?.classList.add('hidden-app');
+        setMobileGameplayMenuVisibility(false);
+        syncRefreshLockState();
 
         syncTopUserUi(user, activeUserDoc);
         await refreshDailyHubState();
@@ -2478,6 +2482,7 @@ function initFirebase() {
 document.addEventListener('DOMContentLoaded', () => {
     bindAuthUiEvents();
     setGateAuthMode('login');
+    syncRefreshLockState();
     initFirebase();
     updateAuthProviderLabels();
     observeLanguageChanges();

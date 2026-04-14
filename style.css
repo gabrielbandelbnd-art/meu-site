@@ -14,6 +14,23 @@
     --warning: #ffb74d;
 }
 
+html.refresh-lock,
+body.refresh-lock {
+  overscroll-behavior-y: none;
+}
+
+@media (max-width: 800px) {
+  body.refresh-lock {
+    overflow: hidden;
+    height: 100svh;
+  }
+
+  body.refresh-lock .app-container,
+  body.refresh-lock .game-area {
+    overscroll-behavior-y: none;
+  }
+}
+
 * { box-sizing: border-box; }
 
 body {
