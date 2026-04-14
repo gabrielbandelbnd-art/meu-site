@@ -50,6 +50,10 @@ body.refresh-lock {
   body.mobile-mode:not(.mobile-gameplay-active) #mobile-menu-btn {
     display: none !important;
   }
+
+  body.mobile-gameplay-active .daily-status-bar {
+    display: none !important;
+  }
 }
 
 * { box-sizing: border-box; }

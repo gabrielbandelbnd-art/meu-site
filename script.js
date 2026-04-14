@@ -298,6 +298,7 @@ const mobileErrorPhraseEl = document.getElementById('mobile-error-phrase');
 const sidebarMageContainer = document.querySelector('.mage-container');
 let mobileLayoutPrepared = false;
 let popupHidDesktopMage = false;
+let lastMobileMenuToggleAt = 0;
 
 function applyMobileSidebarState(open) {
     if (!sidebar || !mobileOverlay || !isMobileViewport()) return;
@@ -332,6 +333,10 @@ function applyMobileSidebarState(open) {
 }
 
 function toggleMobileMenu() {
+    const now = Date.now();
+    if (now - lastMobileMenuToggleAt < 250) return;
+    lastMobileMenuToggleAt = now;
+
     const isOpen = sidebar?.classList.contains('mobile-open');
     applyMobileSidebarState(!isOpen);
     if (alphabetDrawer) alphabetDrawer.classList.remove('mobile-open');
@@ -402,12 +407,11 @@ function setMobileGameplayMenuVisibility(visible) {
 }
 
 // Eventos Mobile
-if(mobileMenuBtn) {
-    mobileMenuBtn.onclick = toggleMobileMenu;
-    mobileMenuBtn.addEventListener('touchend', (e) => {
+if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('pointerup', (e) => {
         e.preventDefault();
         toggleMobileMenu();
-    }, { passive: false });
+    });
 }
 if(mobileAlphabetBtn) mobileAlphabetBtn.onclick = toggleAlphabetMenu;
 
