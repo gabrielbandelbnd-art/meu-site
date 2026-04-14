@@ -56,6 +56,75 @@ body.refresh-lock {
   }
 }
 
+.mobile-gameplay-drawer {
+  display: none;
+}
+
+@media (max-width: 800px) {
+  .mobile-gameplay-drawer {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: min(88vw, 360px);
+    height: 100dvh;
+    background: var(--sidebar-bg);
+    z-index: 11000;
+    box-shadow: 5px 0 20px rgba(0,0,0,0.45);
+    transition: left 0.25s ease;
+    padding: calc(env(safe-area-inset-top, 0px) + 78px) 14px calc(env(safe-area-inset-bottom, 0px) + 20px);
+    overflow-y: auto;
+  }
+
+  .mobile-gameplay-drawer.mobile-open {
+    display: block !important;
+    left: 0 !important;
+  }
+
+  .mobile-gameplay-drawer-header {
+    color: var(--accent);
+    font-size: 1rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .mobile-gameplay-drawer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .mobile-gameplay-drawer .collapsible-section {
+    margin-top: 0 !important;
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  .mobile-gameplay-drawer #notepad,
+  .mobile-gameplay-drawer #notepad.mobile-notepad-in-sidebar {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .mobile-gameplay-drawer #notepad .notepad-body {
+    height: 120px !important;
+  }
+
+  .mobile-gameplay-drawer #notepad textarea {
+    font-size: 16px !important;
+  }
+
+  .mobile-gameplay-drawer .history-list {
+    min-height: 220px;
+  }
+
+  #sidebar {
+    display: none !important;
+  }
+}
+
 * { box-sizing: border-box; }
 
 body {

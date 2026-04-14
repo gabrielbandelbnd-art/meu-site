@@ -286,6 +286,9 @@ let unusedPhrases = [...funnyPhrases];
 const sidebar = document.getElementById('sidebar');
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
 const mobileOverlay = document.getElementById('mobile-overlay');
+const mobileGameplayDrawer = document.getElementById('mobile-gameplay-drawer');
+const mobileHistorySlot = document.getElementById('mobile-history-slot');
+const mobileNotepadSlot = document.getElementById('mobile-notepad-slot');
 
 // MENU DO ALFABETO
 const alphabetDrawer = document.getElementById('alphabet-drawer');
@@ -301,30 +304,30 @@ let popupHidDesktopMage = false;
 let lastMobileMenuToggleAt = 0;
 
 function applyMobileSidebarState(open) {
-    if (!sidebar || !mobileOverlay || !isMobileViewport()) return;
+    if (!mobileOverlay || !isMobileViewport()) return;
 
     if (open) {
-        sidebar.classList.add('mobile-open');
-        Object.assign(sidebar.style, {
-            left: '0',
-            visibility: 'visible',
-            pointerEvents: 'auto',
-            zIndex: '11000'
-        });
-        mobileOverlay.classList.add('active');
+        if (mobileGameplayDrawer) {
+            mobileGameplayDrawer.classList.remove('hidden-control');
+            mobileGameplayDrawer.classList.add('mobile-open');
+        }
         Object.assign(mobileOverlay.style, {
             display: 'block',
             pointerEvents: 'auto'
         });
+        if (sidebar) {
+            Object.assign(sidebar.style, {
+                left: '',
+                visibility: '',
+                pointerEvents: '',
+                zIndex: ''
+            });
+        }
     } else {
-        sidebar.classList.remove('mobile-open');
-        Object.assign(sidebar.style, {
-            left: '',
-            visibility: '',
-            pointerEvents: '',
-            zIndex: ''
-        });
-        mobileOverlay.classList.remove('active');
+        if (mobileGameplayDrawer) {
+            mobileGameplayDrawer.classList.add('hidden-control');
+            mobileGameplayDrawer.classList.remove('mobile-open');
+        }
         Object.assign(mobileOverlay.style, {
             display: '',
             pointerEvents: ''
@@ -332,25 +335,40 @@ function applyMobileSidebarState(open) {
     }
 }
 
+function isMobileGameplayDrawerOpen() {
+    return !!mobileGameplayDrawer && mobileGameplayDrawer.classList.contains('mobile-open');
+}
+
+function applyLegacySidebarReset() {
+    if (!sidebar) return;
+    Object.assign(sidebar.style, {
+        left: '',
+        visibility: '',
+        pointerEvents: '',
+        zIndex: ''
+    });
+}
+
 function toggleMobileMenu() {
     const now = Date.now();
     if (now - lastMobileMenuToggleAt < 250) return;
     lastMobileMenuToggleAt = now;
 
-    const isOpen = sidebar?.classList.contains('mobile-open');
+    const isOpen = isMobileGameplayDrawerOpen();
     applyMobileSidebarState(!isOpen);
+    applyLegacySidebarReset();
     if (alphabetDrawer) alphabetDrawer.classList.remove('mobile-open');
     checkOverlay();
 }
 
 function toggleAlphabetMenu() {
     alphabetDrawer.classList.toggle('mobile-open');
-    sidebar.classList.remove('mobile-open'); // Fecha o outro
+    applyMobileSidebarState(false);
     checkOverlay();
 }
 
 function checkOverlay() {
-    if (sidebar.classList.contains('mobile-open') || alphabetDrawer.classList.contains('mobile-open')) {
+    if (isMobileGameplayDrawerOpen() || alphabetDrawer.classList.contains('mobile-open')) {
         mobileOverlay.classList.add('active');
     } else {
         mobileOverlay.classList.remove('active');
@@ -358,7 +376,7 @@ function checkOverlay() {
 }
 
 function closeMobilePanels() {
-    if (sidebar) applyMobileSidebarState(false);
+    applyMobileSidebarState(false);
     if (alphabetDrawer) alphabetDrawer.classList.remove('mobile-open');
     if (mobileOverlay) mobileOverlay.classList.remove('active');
 }
@@ -368,6 +386,7 @@ function applyMobileMenuButtonState(visible) {
 
     if (!isMobileViewport()) {
         mobileMenuBtn.style.display = 'none';
+        applyMobileSidebarState(false);
         return;
     }
 
@@ -388,6 +407,7 @@ function applyMobileMenuButtonState(visible) {
         });
     } else {
         mobileMenuBtn.style.display = 'none';
+        applyMobileSidebarState(false);
     }
 }
 
@@ -966,6 +986,11 @@ document.body.onclick = (e) => {
     }
 };
 
+window.addEventListener('pageshow', () => {
+    if (!isMobileViewport() || !charInput) return;
+    charInput.blur();
+});
+
 /* --- MAGE LOGIC (CSS CUSTOM) --- */
 const mageEl = document.getElementById('mage-character');
 const mageEffect = document.querySelector('.mage-effect');
@@ -1115,16 +1140,16 @@ function setupMobileLayout() {
         mobileRulesSlot.appendChild(rulesPanel.panel);
     }
 
-    if (sidebarContent && historySection) {
-        sidebarContent.appendChild(historySection);
+    if (mobileHistorySlot && historySection) {
+        mobileHistorySlot.appendChild(historySection);
     }
 
     if (mobileToolsSlot) {
         mobileToolsSlot.classList.add('hidden-control');
     }
 
-    if (notepadEl && sidebarContent) {
-        sidebarContent.appendChild(notepadEl);
+    if (notepadEl && mobileNotepadSlot) {
+        mobileNotepadSlot.appendChild(notepadEl);
         notepadEl.classList.add('mobile-notepad-in-sidebar');
     }
 

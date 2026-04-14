@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MagicLexis - Master Edition</title>
-    <link rel="stylesheet" href="style.css?v=20260414-2">
+    <link rel="stylesheet" href="style.css?v=20260414-3">
 </head>
 <body>
     <div id="auth-gate" class="auth-gate">
@@ -159,6 +159,13 @@
     </div>
     <div id="app-container" class="app-container hidden-app">
         <div id="mobile-overlay" class="mobile-overlay"></div>
+        <aside id="mobile-gameplay-drawer" class="mobile-gameplay-drawer hidden-control">
+            <div class="mobile-gameplay-drawer-header">Menu do Jogo</div>
+            <div class="mobile-gameplay-drawer-content">
+                <div id="mobile-history-slot"></div>
+                <div id="mobile-notepad-slot"></div>
+            </div>
+        </aside>
         <div id="user-menu" class="user-menu hidden-control">
             <button id="user-menu-trigger" class="user-menu-trigger">
                 <img id="user-avatar-top" class="user-avatar-top" alt="Avatar">
@@ -277,7 +284,7 @@
                 <div class="input-controls">
                     <button id="clear-board-btn" style="background: transparent; color: var(--error); border: 1px solid var(--error); padding: 10px 20px; font-weight: bold; font-size: 1.1rem; border-radius: 8px; cursor: pointer; transition: 0.2s;">LIMPAR</button>
                     
-                    <input type="text" id="char-input" maxlength="1" autofocus placeholder="?">
+                    <input type="text" id="char-input" maxlength="1" placeholder="?">
                     <button id="validate-btn">Validar</button>
                 </div>
                 
@@ -406,7 +413,7 @@
         </div>
     </div>
 
-    <script type="module" src="script.js?v=20260414-2"></script>
+    <script type="module" src="script.js?v=20260414-3"></script>
     </body>
 </html>
 
