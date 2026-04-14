@@ -15,13 +15,17 @@ import {
     doc,
     getDoc,
     setDoc,
+    updateDoc,
     collection,
     query,
     where,
     getDocs,
     orderBy,
     limit,
-    increment
+    increment,
+    onSnapshot,
+    serverTimestamp,
+    runTransaction
 } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js';
 import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-functions.js';
@@ -273,6 +277,23 @@ const campaignScreen = document.getElementById('campaign-screen');
 const campaignBooksGrid = document.getElementById('campaign-books-grid');
 const campaignBackBtn = document.getElementById('campaign-back-btn');
 const campaignProgressSummary = document.getElementById('campaign-progress-summary');
+const onlineScreen = document.getElementById('online-screen');
+const onlineBackBtn = document.getElementById('online-back-btn');
+const onlineStatusBanner = document.getElementById('online-status-banner');
+const onlineCreateRoomBtn = document.getElementById('online-create-room-btn');
+const onlineJoinRoomBtn = document.getElementById('online-join-room-btn');
+const onlineRoomCodeInput = document.getElementById('online-room-code-input');
+const onlineRoomPanel = document.getElementById('online-room-panel');
+const onlineRoomCodeDisplay = document.getElementById('online-room-code-display');
+const onlineCopyCodeBtn = document.getElementById('online-copy-code-btn');
+const onlineRoomState = document.getElementById('online-room-state');
+const onlinePlayerSelf = document.getElementById('online-player-self');
+const onlinePlayerOpponent = document.getElementById('online-player-opponent');
+const onlineRoomOpponentStatus = document.getElementById('online-room-opponent-status');
+const onlineRoomLeaveBtn = document.getElementById('online-room-leave-btn');
+const onlineMatchBanner = document.getElementById('online-match-banner');
+const onlineRoomBannerCode = document.getElementById('online-room-banner-code');
+const onlineOpponentBannerStatus = document.getElementById('online-opponent-banner-status');
 const campaignCompleteModal = document.getElementById('campaign-level-complete-modal');
 const closeCampaignCompleteModalBtn = document.getElementById('close-campaign-complete-modal');
 const campaignCompleteTitle = document.getElementById('campaign-complete-title');
@@ -282,6 +303,16 @@ const campaignCompleteNextLevel = document.getElementById('campaign-complete-nex
 const campaignCompleteFinalCopy = document.getElementById('campaign-complete-final-copy');
 const campaignCompleteNextBtn = document.getElementById('campaign-complete-next-btn');
 const campaignCompleteBooksBtn = document.getElementById('campaign-complete-books-btn');
+const onlineResultModal = document.getElementById('online-result-modal');
+const closeOnlineResultModalBtn = document.getElementById('close-online-result-modal');
+const onlineResultTitle = document.getElementById('online-result-title');
+const onlineResultCopy = document.getElementById('online-result-copy');
+const onlineResultSelfTime = document.getElementById('online-result-self-time');
+const onlineResultOpponentTime = document.getElementById('online-result-opponent-time');
+const onlineResultSelfErrors = document.getElementById('online-result-self-errors');
+const onlineResultOpponentErrors = document.getElementById('online-result-opponent-errors');
+const onlineResultRematchBtn = document.getElementById('online-result-rematch-btn');
+const onlineResultMenuBtn = document.getElementById('online-result-menu-btn');
 
 let currentWord = [];
 let replaceIndex = 0;
@@ -295,6 +326,18 @@ let currentCampaignLevel = null;
 let campaignProgress = null;
 let highlightedCampaignLevel = null;
 let pendingCampaignCompletion = null;
+let isValidationInProgress = false;
+let isGameplayTransitionLocked = false;
+let onlineRoomUnsubscribe = null;
+let currentOnlineRoomCode = null;
+let currentOnlinePlayerSlot = null;
+let currentOnlineRoom = null;
+let currentOnlineStartedAt = null;
+let currentOnlineStartedRoomToken = null;
+let currentOnlineLocalErrors = 0;
+let currentOnlineResultShown = false;
+let currentOnlineLeaving = false;
+let onlineProgressSyncTimeout = null;
 
 // --- VARIÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂVEIS DA GALINHA E MENSAGENS ---
 let consecutiveErrors = 0;
@@ -558,6 +601,8 @@ function initChallenge() {
 }
 
 function startChallengeEngine(challengeData, options = {}) {
+    isGameplayTransitionLocked = false;
+    isValidationInProgress = false;
     targetChallenge = challengeData;
     maxWordLength = options.wordLength || challengeData?.word?.length || 3;
     currentWord = [];
@@ -580,6 +625,9 @@ function startChallengeEngine(challengeData, options = {}) {
     startHintCycle();
     render(true);
     saveGameSessionState();
+    if (currentGameMode !== ONLINE_MODE) {
+        showControl(onlineMatchBanner, false);
+    }
 }
 
 function updateHintDisplay() {
@@ -774,6 +822,7 @@ if (clearBoardBtn) {
             charInput.placeholder = "?";
             render();
             saveGameSessionState();
+            queueOnlineProgressSync();
             resetClearButton();
             if (typeof playSoundEffect === 'function') playSoundEffect('error'); // Som de apagar
         }
@@ -790,6 +839,7 @@ function resetClearButton() {
 }
 
 function addChar(char) {
+    if (isGameplayTransitionLocked) return;
     if (!/^[a-zA-Z]$/.test(char)) return;
 
     if (isFirstRound) {
@@ -831,6 +881,7 @@ function addChar(char) {
         }
     }
     saveGameSessionState();
+    queueOnlineProgressSync();
 }
 
 function processNewChar(char, indexToInsert) {
@@ -855,8 +906,10 @@ function processNewChar(char, indexToInsert) {
 
 
 async function validate() {
+    if (isGameplayTransitionLocked || isValidationInProgress) return;
     const word = currentWord.join('').toUpperCase();
     if (word.length < 2) return;
+    isValidationInProgress = true;
 
     feedback.innerText = "Verificando...";
 
@@ -907,19 +960,30 @@ async function validate() {
             feedback.style.color = 'var(--error)';
             showErrorMageFeedback(takeFunnyPhrase());
             return;
+        } finally {
+            isValidationInProgress = false;
         }
     }
 
     if (targetChallenge && word === targetChallenge.word) {
+        isGameplayTransitionLocked = true;
+        isValidationInProgress = false;
+        validateBtn?.blur();
+        if (typeof document.activeElement?.blur === 'function') {
+            document.activeElement.blur();
+        }
         feedback.innerText = "\u{1F3C6} ACERTOU!"; feedback.style.color = "var(--success)";
         meaningBox.innerText = sanitizeGameText(targetChallenge.meaning);
         meaningBox.classList.remove('hidden');
         document.body.classList.add('success-flash');
         const campaignResult = await handleCorrectAnswer();
+        if (currentGameMode === ONLINE_MODE) {
+            await finalizeOnlineMatch();
+        }
 
         successSound.play(); playSoundEffect('victory'); triggerConfetti();
         animateMage('win');
-        if (!campaignResult?.completedNow) {
+        if (!campaignResult?.completedNow && currentGameMode !== ONLINE_MODE) {
             showMobileVictoryPopup();
         }
 
@@ -939,6 +1003,9 @@ async function validate() {
                     startCampaignLevel(currentCampaignLevel);
                     feedback.innerText = "Novo desafio do livro iniciado!";
                 }
+            } else if (currentGameMode === ONLINE_MODE) {
+                feedback.innerText = "Resultado enviado. Aguardando o duelo finalizar...";
+                updateOnlineBanner();
             } else {
                 startRandomChallenge();
                 feedback.innerText = "Novo desafio iniciado!";
@@ -988,6 +1055,10 @@ async function validate() {
             : !!(parsedData && typeof parsedData === 'object' && Object.keys(parsedData).length > 0);
 
         consecutiveErrors++;
+        if (currentGameMode === ONLINE_MODE) {
+            currentOnlineLocalErrors += 1;
+            queueOnlineProgressSync();
+        }
 
         if (dictionaryHasWord) {
             feedback.innerText = "";
@@ -1027,6 +1098,8 @@ async function validate() {
         console.error('[MagicLexis][Validar] falha real de requisicao da API do dicionario.', apiError);
         feedback.style.color = 'var(--error)';
         showErrorMageFeedback(takeFunnyPhrase());
+    } finally {
+        isValidationInProgress = false;
     }
 
     if (feedbackTimeout) clearTimeout(feedbackTimeout);
@@ -1471,7 +1544,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (modeSelector) {
         modeSelector.addEventListener('change', (e) => {
             const selectedMode = e.target.value;
-            if (selectedMode === CAMPAIGN_MODE || selectedMode === RANDOM_MODE) {
+            if (selectedMode === CAMPAIGN_MODE || selectedMode === RANDOM_MODE || selectedMode === ONLINE_MODE) {
                 syncModeSelectionUi();
                 return;
             }
@@ -1526,6 +1599,9 @@ let isUsingLocalDevSession = false;
 const DAILY_MODE = 'daily';
 const RANDOM_MODE = 'random';
 const CAMPAIGN_MODE = 'campaign';
+const ONLINE_MODE = 'online_1v1';
+const ONLINE_ROOM_COLLECTION = 'rooms';
+const ONLINE_ROOM_CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 let currentGameMode = RANDOM_MODE;
 let dailySession = null;
 let dailyTimerInterval = null;
@@ -1784,15 +1860,596 @@ function syncModeSelectionUi() {
         return;
     }
 
+    if (selectedMode === ONLINE_MODE) {
+        lengthSelector.value = String(CAMPAIGN_LEVEL_START);
+        if (challengeSelectorHelp) {
+            challengeSelectorHelp.innerText = 'No online 1x1, a sala define a mesma palavra para os dois jogadores.';
+        }
+        if (modeWarning) {
+            modeWarning.style.display = 'block';
+            modeWarning.innerText = '⚠️ No online, a sala sorteia automaticamente a quantidade de letras.';
+        }
+        return;
+    }
+
     lengthSelector.value = 'any';
     if (challengeSelectorHelp) {
         challengeSelectorHelp.innerText = 'No aleatorio, o jogo sorteia automaticamente a quantidade de letras.';
     }
-    if (modeWarning) modeWarning.style.display = 'block';
+    if (modeWarning) {
+        modeWarning.style.display = 'block';
+        modeWarning.innerText = '⚠️ No aleatório, a quantidade de letras é sorteada automaticamente.';
+    }
 }
 
 function hideCampaignScreen() {
     if (campaignScreen) campaignScreen.classList.add('hidden-control');
+}
+
+function hideOnlineScreen() {
+    if (onlineScreen) onlineScreen.classList.add('hidden-control');
+}
+
+function formatOnlineTime(ms) {
+    if (!Number.isFinite(ms) || ms < 0) return '--';
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+    const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+    const centiseconds = Math.floor((ms % 1000) / 10).toString().padStart(2, '0');
+    return `${minutes}:${seconds}.${centiseconds}`;
+}
+
+function getOnlinePlayerName() {
+    return activeUserDoc?.name || activeUser?.displayName || activeUser?.email?.split('@')[0] || 'Visitante';
+}
+
+function getOnlinePlayerPhoto() {
+    return activeUserDoc?.photo || activeUser?.photoURL || DEFAULT_AVATAR;
+}
+
+function getOnlineOpponentSlot(slot) {
+    return slot === 'player1' ? 'player2' : 'player1';
+}
+
+function getRoomPlayerSlot(roomData, uid = activeUser?.uid) {
+    if (!roomData?.players || !uid) return null;
+    if (roomData.players.player1?.uid === uid) return 'player1';
+    if (roomData.players.player2?.uid === uid) return 'player2';
+    return null;
+}
+
+function getOnlineCurrentPlayer(roomData = currentOnlineRoom) {
+    const slot = currentOnlinePlayerSlot || getRoomPlayerSlot(roomData);
+    return slot ? roomData?.players?.[slot] || null : null;
+}
+
+function getOnlineOpponentPlayer(roomData = currentOnlineRoom) {
+    const slot = currentOnlinePlayerSlot || getRoomPlayerSlot(roomData);
+    if (!slot) return null;
+    return roomData?.players?.[getOnlineOpponentSlot(slot)] || null;
+}
+
+function getOnlinePlayableLengths() {
+    return CAMPAIGN_LEVELS.filter((level) => hasCampaignContent(level));
+}
+
+function getRandomOnlineChallengePayload() {
+    const availableLengths = getOnlinePlayableLengths();
+    const letterCount = availableLengths[Math.floor(Math.random() * availableLengths.length)] || CAMPAIGN_LEVEL_START;
+    const challenge = pickRandomChallengeByLength(letterCount) || pickRandomCampaignChallenge(CAMPAIGN_LEVEL_START) || allChallenges[0];
+    return {
+        letterCount,
+        challenge: {
+            word: challenge?.word || '',
+            hints: Array.isArray(challenge?.hints) ? challenge.hints : [],
+            meaning: challenge?.meaning || ''
+        }
+    };
+}
+
+function buildOnlineRoomCode() {
+    let code = '';
+    for (let i = 0; i < 4; i++) {
+        code += ONLINE_ROOM_CODE_CHARS[Math.floor(Math.random() * ONLINE_ROOM_CODE_CHARS.length)];
+    }
+    return code;
+}
+
+async function generateUniqueOnlineRoomCode() {
+    for (let attempt = 0; attempt < 8; attempt++) {
+        const code = buildOnlineRoomCode();
+        const existing = await getDoc(doc(db, ONLINE_ROOM_COLLECTION, code));
+        if (!existing.exists()) return code;
+    }
+    throw new Error('Nao foi possivel gerar um codigo de sala livre.');
+}
+
+function cleanupOnlineRoomListener() {
+    if (typeof onlineRoomUnsubscribe === 'function') {
+        onlineRoomUnsubscribe();
+    }
+    onlineRoomUnsubscribe = null;
+}
+
+function resetOnlineRoomState() {
+    cleanupOnlineRoomListener();
+    currentOnlineRoomCode = null;
+    currentOnlinePlayerSlot = null;
+    currentOnlineRoom = null;
+    currentOnlineStartedAt = null;
+    currentOnlineStartedRoomToken = null;
+    currentOnlineLocalErrors = 0;
+    currentOnlineResultShown = false;
+    currentOnlineLeaving = false;
+    if (onlineProgressSyncTimeout) {
+        clearTimeout(onlineProgressSyncTimeout);
+        onlineProgressSyncTimeout = null;
+    }
+    showControl(onlineRoomPanel, false);
+    showControl(onlineMatchBanner, false);
+    showControl(onlineResultModal, false);
+    if (onlineRoomCodeDisplay) onlineRoomCodeDisplay.innerText = '----';
+    if (onlineRoomState) onlineRoomState.innerText = 'Aguardando outro jogador...';
+    if (onlinePlayerSelf) onlinePlayerSelf.innerText = getOnlinePlayerName();
+    if (onlinePlayerOpponent) onlinePlayerOpponent.innerText = 'Aguardando...';
+    if (onlineRoomOpponentStatus) onlineRoomOpponentStatus.innerText = 'Esperando conexão';
+    if (onlineStatusBanner) onlineStatusBanner.innerText = 'Entre em uma sala para iniciar um duelo mágico.';
+}
+
+function updateOnlineBanner(roomData = currentOnlineRoom) {
+    const isOnlineMatch = currentGameMode === ONLINE_MODE && !!roomData && isGameScreenVisible();
+    showControl(onlineMatchBanner, isOnlineMatch);
+    if (!isOnlineMatch) return;
+
+    const opponent = getOnlineOpponentPlayer(roomData);
+    if (onlineRoomBannerCode) {
+        onlineRoomBannerCode.innerText = `Sala ${roomData?.roomCode || currentOnlineRoomCode || '----'}`;
+    }
+    if (onlineOpponentBannerStatus) {
+        if (!opponent?.uid) {
+            onlineOpponentBannerStatus.innerText = 'Oponente: aguardando...';
+        } else if (roomData?.status === 'finished') {
+            onlineOpponentBannerStatus.innerText = opponent.finished ? `Oponente: terminou em ${formatOnlineTime(opponent.finishTimeMs || 0)}` : 'Oponente: não concluiu';
+        } else if (opponent.connected === false) {
+            onlineOpponentBannerStatus.innerText = 'Oponente: desconectado';
+        } else if (opponent.finished) {
+            onlineOpponentBannerStatus.innerText = 'Oponente: terminou';
+        } else {
+            onlineOpponentBannerStatus.innerText = 'Oponente: jogando...';
+        }
+    }
+}
+
+function renderOnlineRoomPanel(roomData = currentOnlineRoom) {
+    const hasRoom = !!roomData && !!currentOnlineRoomCode;
+    showControl(onlineRoomPanel, hasRoom);
+    if (!hasRoom) {
+        if (onlineStatusBanner) {
+            onlineStatusBanner.innerText = 'Entre em uma sala para iniciar um duelo mágico.';
+        }
+        return;
+    }
+
+    const me = getOnlineCurrentPlayer(roomData);
+    const opponent = getOnlineOpponentPlayer(roomData);
+    const waiting = roomData.status === 'waiting';
+    const playing = roomData.status === 'playing';
+    const finished = roomData.status === 'finished';
+    const abandoned = roomData.status === 'abandoned';
+
+    if (onlineStatusBanner) {
+        if (waiting) onlineStatusBanner.innerText = 'Sala criada. Compartilhe o código e aguarde seu adversário.';
+        else if (playing) onlineStatusBanner.innerText = 'Duelo em andamento. Os dois jogadores receberam a mesma palavra.';
+        else if (finished) onlineStatusBanner.innerText = 'Duelo encerrado. Veja o resultado e crie outra sala quando quiser.';
+        else if (abandoned) onlineStatusBanner.innerText = 'A sala foi encerrada antes do final da partida.';
+        else onlineStatusBanner.innerText = 'Estado da sala atualizado.';
+    }
+
+    if (onlineRoomCodeDisplay) onlineRoomCodeDisplay.innerText = roomData.roomCode || currentOnlineRoomCode || '----';
+    if (onlinePlayerSelf) onlinePlayerSelf.innerText = me?.name || getOnlinePlayerName();
+    if (onlinePlayerOpponent) onlinePlayerOpponent.innerText = opponent?.name || 'Aguardando...';
+    if (onlineRoomState) {
+        if (waiting) onlineRoomState.innerText = 'Aguardando outro jogador entrar com o código desta sala.';
+        else if (playing) onlineRoomState.innerText = `Partida iniciada com ${roomData.letterCount || '--'} letras.`;
+        else if (finished) onlineRoomState.innerText = 'Partida concluída. O grimório já definiu o vencedor.';
+        else if (abandoned) onlineRoomState.innerText = roomData.abandonMessage || 'Seu oponente saiu da partida.';
+    }
+    if (onlineRoomOpponentStatus) {
+        if (!opponent?.uid) onlineRoomOpponentStatus.innerText = 'Esperando conexão';
+        else if (opponent.connected === false) onlineRoomOpponentStatus.innerText = 'Desconectado';
+        else if (opponent.finished) onlineRoomOpponentStatus.innerText = 'Terminou';
+        else onlineRoomOpponentStatus.innerText = playing ? 'Jogando...' : 'Conectado';
+    }
+
+    updateOnlineBanner(roomData);
+}
+
+function showOnlineScreen() {
+    setMobileGameplayMenuVisibility(false);
+    if (hub) {
+        hub.style.display = 'none';
+        hub.classList.add('hidden-control');
+    }
+    if (welcomeScreen) welcomeScreen.style.display = 'none';
+    hideCampaignScreen();
+    document.getElementById('app-container')?.classList.add('hidden-app');
+    onlineScreen?.classList.remove('hidden-control');
+    renderOnlineRoomPanel();
+    syncTopUserUi(activeUser, activeUserDoc);
+    syncRefreshLockState();
+}
+
+function sanitizeOnlineCodeInput() {
+    if (!onlineRoomCodeInput) return '';
+    const cleaned = (onlineRoomCodeInput.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+    onlineRoomCodeInput.value = cleaned;
+    return cleaned;
+}
+
+async function copyOnlineRoomCode() {
+    const code = currentOnlineRoomCode || currentOnlineRoom?.roomCode || '';
+    if (!code) return;
+    try {
+        await navigator.clipboard.writeText(code);
+        showFloatingMessage('Codigo copiado.', 1800);
+    } catch (err) {
+        showFloatingMessage(`Codigo da sala: ${code}`, 2600);
+    }
+}
+
+function getOnlineRoomRef(roomCode = currentOnlineRoomCode) {
+    return roomCode ? doc(db, ONLINE_ROOM_COLLECTION, roomCode) : null;
+}
+
+async function syncOnlinePlayerPatch(patch = {}) {
+    if (!db || !currentOnlineRoomCode || !currentOnlinePlayerSlot || currentOnlineLeaving) return;
+    const roomRef = getOnlineRoomRef();
+    if (!roomRef) return;
+    const updates = {};
+    Object.entries(patch).forEach(([key, value]) => {
+        updates[`players.${currentOnlinePlayerSlot}.${key}`] = value;
+    });
+    if (!Object.keys(updates).length) return;
+    try {
+        await updateDoc(roomRef, updates);
+    } catch (err) {
+        console.log('Falha ao sincronizar estado online:', err);
+    }
+}
+
+function queueOnlineProgressSync() {
+    if (currentGameMode !== ONLINE_MODE || !currentOnlineRoomCode || !currentOnlinePlayerSlot) return;
+    if (onlineProgressSyncTimeout) clearTimeout(onlineProgressSyncTimeout);
+    onlineProgressSyncTimeout = setTimeout(() => {
+        onlineProgressSyncTimeout = null;
+        const progressValue = maxWordLength > 0 ? Math.min(99, Math.round((currentWord.length / maxWordLength) * 100)) : 0;
+        syncOnlinePlayerPatch({ progress: progressValue, errors: currentOnlineLocalErrors, connected: true });
+    }, 120);
+}
+
+function getOnlineElapsedMs() {
+    if (!currentOnlineStartedAt) return 0;
+    return Math.max(0, Date.now() - currentOnlineStartedAt);
+}
+
+async function attachOnlineRoomListener(roomCode) {
+    cleanupOnlineRoomListener();
+    currentOnlineRoomCode = roomCode;
+    const roomRef = getOnlineRoomRef(roomCode);
+    onlineRoomUnsubscribe = onSnapshot(roomRef, (snap) => {
+        if (!snap.exists()) {
+            showFloatingMessage('A sala online foi encerrada.', 2400);
+            resetOnlineRoomState();
+            showOnlineScreen();
+            return;
+        }
+        const roomData = snap.data();
+        currentOnlineRoom = roomData;
+        currentOnlinePlayerSlot = currentOnlinePlayerSlot || getRoomPlayerSlot(roomData);
+        renderOnlineRoomPanel(roomData);
+        handleOnlineRoomSnapshot(roomData);
+    }, (err) => {
+        console.log('Erro no listener da sala online:', err);
+        showFloatingMessage('Erro ao acompanhar a sala online.', 2400);
+    });
+}
+
+async function createOnlineRoom() {
+    if (!db || !activeUser) {
+        showFloatingMessage('Entre no jogo para criar uma sala.', 2200);
+        return;
+    }
+
+    if (currentOnlineRoomCode) {
+        await leaveOnlineRoom({ abandon: true });
+    } else {
+        resetOnlineRoomState();
+    }
+    onlineCreateRoomBtn && (onlineCreateRoomBtn.disabled = true);
+    try {
+        const roomCode = await generateUniqueOnlineRoomCode();
+        const payload = getRandomOnlineChallengePayload();
+        const roomRef = getOnlineRoomRef(roomCode);
+        await setDoc(roomRef, {
+            roomCode,
+            status: 'waiting',
+            createdAt: serverTimestamp(),
+            startedAt: null,
+            completedAt: null,
+            hostUid: activeUser.uid,
+            winnerUid: null,
+            abandonMessage: '',
+            gameMode: ONLINE_MODE,
+            letterCount: payload.letterCount,
+            challenge: payload.challenge,
+            players: {
+                player1: {
+                    uid: activeUser.uid,
+                    name: getOnlinePlayerName(),
+                    photo: getOnlinePlayerPhoto(),
+                    connected: true,
+                    ready: true,
+                    finished: false,
+                    finishTimeMs: null,
+                    errors: 0,
+                    progress: 0
+                },
+                player2: {
+                    uid: null,
+                    name: '',
+                    photo: '',
+                    connected: false,
+                    ready: false,
+                    finished: false,
+                    finishTimeMs: null,
+                    errors: 0,
+                    progress: 0
+                }
+            }
+        });
+        currentOnlinePlayerSlot = 'player1';
+        await attachOnlineRoomListener(roomCode);
+        showFloatingMessage(`Sala ${roomCode} criada.`, 2200);
+    } catch (err) {
+        console.log('Erro ao criar sala online:', err);
+        showFloatingMessage('Nao foi possivel criar a sala agora.', 2400);
+    } finally {
+        if (onlineCreateRoomBtn) onlineCreateRoomBtn.disabled = false;
+    }
+}
+
+async function joinOnlineRoom() {
+    if (!db || !activeUser) {
+        showFloatingMessage('Entre no jogo para participar de uma sala.', 2200);
+        return;
+    }
+
+    if (currentOnlineRoomCode) {
+        await leaveOnlineRoom({ abandon: true });
+    } else {
+        resetOnlineRoomState();
+    }
+    const roomCode = sanitizeOnlineCodeInput();
+    if (roomCode.length !== 4) {
+        showFloatingMessage('Digite um codigo valido com 4 caracteres.', 2200);
+        return;
+    }
+
+    if (onlineJoinRoomBtn) onlineJoinRoomBtn.disabled = true;
+    try {
+        const roomRef = getOnlineRoomRef(roomCode);
+        await runTransaction(db, async (transaction) => {
+            const snap = await transaction.get(roomRef);
+            if (!snap.exists()) throw new Error('not-found');
+            const room = snap.data();
+            if (room.hostUid === activeUser.uid) throw new Error('self-room');
+            if (room.status === 'finished') throw new Error('finished');
+            if (room.status === 'abandoned') throw new Error('abandoned');
+            if (room.players?.player2?.uid && room.players.player2.uid !== activeUser.uid) throw new Error('full');
+
+            transaction.update(roomRef, {
+                status: 'playing',
+                startedAt: serverTimestamp(),
+                abandonMessage: '',
+                'players.player2.uid': activeUser.uid,
+                'players.player2.name': getOnlinePlayerName(),
+                'players.player2.photo': getOnlinePlayerPhoto(),
+                'players.player2.connected': true,
+                'players.player2.ready': true,
+                'players.player2.finished': false,
+                'players.player2.finishTimeMs': null,
+                'players.player2.errors': 0,
+                'players.player2.progress': 0
+            });
+        });
+
+        currentOnlinePlayerSlot = 'player2';
+        await attachOnlineRoomListener(roomCode);
+        showFloatingMessage(`Entrou na sala ${roomCode}.`, 2200);
+    } catch (err) {
+        const code = err?.message || 'unknown';
+        if (code === 'not-found') showFloatingMessage('Sala nao encontrada.', 2200);
+        else if (code === 'self-room') showFloatingMessage('Voce ja e o anfitriao desta sala.', 2200);
+        else if (code === 'full') showFloatingMessage('Essa sala ja esta cheia.', 2200);
+        else if (code === 'finished') showFloatingMessage('Essa sala ja foi finalizada.', 2200);
+        else if (code === 'abandoned') showFloatingMessage('Essa sala foi encerrada.', 2200);
+        else {
+            console.log('Erro ao entrar na sala online:', err);
+            showFloatingMessage('Nao foi possivel entrar na sala.', 2400);
+        }
+    } finally {
+        if (onlineJoinRoomBtn) onlineJoinRoomBtn.disabled = false;
+    }
+}
+
+function startOnlineMatchFromRoom(roomData) {
+    const roomToken = roomData.roomCode;
+    if (currentOnlineStartedRoomToken === roomToken) return;
+
+    const challenge = roomData.challenge;
+    if (!challenge?.word) {
+        showFloatingMessage('Sala online sem desafio valido.', 2400);
+        return;
+    }
+
+    currentOnlineStartedRoomToken = roomToken;
+    currentOnlineStartedAt = Date.now();
+    currentOnlineLocalErrors = Number(getOnlineCurrentPlayer(roomData)?.errors || 0);
+    currentOnlineResultShown = false;
+    currentGameMode = ONLINE_MODE;
+    currentCampaignLevel = null;
+    resetDailySession();
+    clearAllHighlights();
+    animateMage('reset');
+    showGameScreen();
+    startChallengeEngine({
+        word: challenge.word,
+        hints: Array.isArray(challenge.hints) ? challenge.hints : [],
+        meaning: challenge.meaning || ''
+    }, {
+        wordLength: roomData.letterCount || challenge.word.length || 3,
+        resetHistory: true
+    });
+    feedback.innerText = 'Duelo online iniciado!';
+    updateOnlineBanner(roomData);
+    queueOnlineProgressSync();
+}
+
+function openOnlineResultModal(roomData) {
+    if (!onlineResultModal || currentOnlineResultShown) return;
+    currentOnlineResultShown = true;
+    const me = getOnlineCurrentPlayer(roomData);
+    const opponent = getOnlineOpponentPlayer(roomData);
+    const isWinner = !!roomData?.winnerUid && roomData.winnerUid === activeUser?.uid;
+    const opponentName = opponent?.name || 'oponente';
+
+    if (onlineResultTitle) {
+        if (roomData?.status === 'abandoned' && opponent?.connected === false) {
+            onlineResultTitle.innerText = 'Oponente saiu!';
+        } else {
+            onlineResultTitle.innerText = isWinner ? 'Você venceu!' : 'Você perdeu!';
+        }
+    }
+    if (onlineResultCopy) {
+        if (roomData?.status === 'abandoned' && opponent?.connected === false) {
+            onlineResultCopy.innerText = 'Seu oponente deixou a sala antes do final do duelo.';
+        } else if (isWinner) {
+            onlineResultCopy.innerText = `Sua conjuracao foi mais rapida que a de ${opponentName}.`;
+        } else {
+            onlineResultCopy.innerText = `${opponentName} concluiu o grimorio antes desta rodada.`;
+        }
+    }
+    if (onlineResultSelfTime) onlineResultSelfTime.innerText = formatOnlineTime(me?.finishTimeMs ?? getOnlineElapsedMs());
+    if (onlineResultOpponentTime) onlineResultOpponentTime.innerText = opponent?.finished ? formatOnlineTime(opponent.finishTimeMs || 0) : '--';
+    if (onlineResultSelfErrors) onlineResultSelfErrors.innerText = String(me?.errors || currentOnlineLocalErrors || 0);
+    if (onlineResultOpponentErrors) onlineResultOpponentErrors.innerText = String(opponent?.errors || 0);
+
+    showControl(onlineResultModal, true);
+}
+
+async function finalizeOnlineMatch() {
+    if (!db || !currentOnlineRoomCode || !currentOnlinePlayerSlot) return;
+    const roomRef = getOnlineRoomRef();
+    const mySlot = currentOnlinePlayerSlot;
+    const otherSlot = getOnlineOpponentSlot(mySlot);
+    const finishTimeMs = getOnlineElapsedMs();
+    currentOnlineLocalErrors = Math.max(currentOnlineLocalErrors, 0);
+
+    try {
+        await runTransaction(db, async (transaction) => {
+            const snap = await transaction.get(roomRef);
+            if (!snap.exists()) return;
+            const room = snap.data();
+            const me = room.players?.[mySlot] || {};
+            const opponent = room.players?.[otherSlot] || {};
+
+            const updates = {
+                status: 'finished',
+                completedAt: serverTimestamp(),
+                [`players.${mySlot}.finished`]: true,
+                [`players.${mySlot}.finishTimeMs`]: finishTimeMs,
+                [`players.${mySlot}.errors`]: currentOnlineLocalErrors,
+                [`players.${mySlot}.progress`]: 100,
+                [`players.${mySlot}.connected`]: true
+            };
+
+            if (!room.winnerUid) {
+                let winnerUid = me.uid || activeUser?.uid || null;
+                if (opponent.finished) {
+                    const myTime = finishTimeMs;
+                    const opponentTime = Number(opponent.finishTimeMs || Number.MAX_SAFE_INTEGER);
+                    const opponentErrors = Number(opponent.errors || 0);
+                    if (opponentTime < myTime || (opponentTime === myTime && opponentErrors < currentOnlineLocalErrors)) {
+                        winnerUid = opponent.uid || winnerUid;
+                    }
+                }
+                updates.winnerUid = winnerUid;
+            }
+
+            transaction.update(roomRef, updates);
+        });
+    } catch (err) {
+        console.log('Erro ao finalizar duelo online:', err);
+    }
+}
+
+async function leaveOnlineRoom(options = {}) {
+    if (!db || !currentOnlineRoomCode || !currentOnlinePlayerSlot) {
+        resetOnlineRoomState();
+        return;
+    }
+
+    if (currentOnlineLeaving) return;
+    currentOnlineLeaving = true;
+
+    const roomRef = getOnlineRoomRef();
+    const mySlot = currentOnlinePlayerSlot;
+    const otherSlot = getOnlineOpponentSlot(mySlot);
+    const shouldAbandon = options.abandon !== false;
+
+    try {
+        await runTransaction(db, async (transaction) => {
+            const snap = await transaction.get(roomRef);
+            if (!snap.exists()) return;
+            const room = snap.data();
+            const opponent = room.players?.[otherSlot] || {};
+            const updates = {
+                [`players.${mySlot}.connected`]: false
+            };
+
+            if (shouldAbandon && room.status !== 'finished') {
+                updates.status = 'abandoned';
+                updates.completedAt = serverTimestamp();
+                updates.abandonMessage = 'Seu oponente saiu da partida.';
+                if (opponent.uid) {
+                    updates.winnerUid = opponent.uid;
+                }
+            }
+
+            transaction.update(roomRef, updates);
+        });
+    } catch (err) {
+        console.log('Erro ao sair da sala online:', err);
+    } finally {
+        resetOnlineRoomState();
+    }
+}
+
+function handleOnlineRoomSnapshot(roomData) {
+    if (!roomData || !currentOnlineRoomCode) return;
+
+    if (roomData.status === 'playing') {
+        startOnlineMatchFromRoom(roomData);
+        return;
+    }
+
+    if (roomData.status === 'finished' || roomData.status === 'abandoned') {
+        if (isGameScreenVisible()) {
+            updateOnlineBanner(roomData);
+            openOnlineResultModal(roomData);
+        }
+        return;
+    }
 }
 
 function renderCampaignBooks() {
@@ -1862,6 +2519,7 @@ function showCampaignScreen() {
         hub.classList.add('hidden-control');
     }
     if (welcomeScreen) welcomeScreen.style.display = 'none';
+    hideOnlineScreen();
     document.getElementById('app-container')?.classList.add('hidden-app');
     campaignScreen?.classList.remove('hidden-control');
     renderCampaignBooks();
@@ -1870,13 +2528,21 @@ function showCampaignScreen() {
 }
 
 function getSelectedStartMode() {
-    return modeSelector?.value === RANDOM_MODE ? RANDOM_MODE : CAMPAIGN_MODE;
+    if (modeSelector?.value === RANDOM_MODE) return RANDOM_MODE;
+    if (modeSelector?.value === ONLINE_MODE) return ONLINE_MODE;
+    return CAMPAIGN_MODE;
 }
 
 function beginSelectedGameFlow() {
     const selectedMode = getSelectedStartMode();
     if (selectedMode === CAMPAIGN_MODE) {
         showCampaignScreen();
+        return;
+    }
+
+    if (selectedMode === ONLINE_MODE) {
+        resetOnlineRoomState();
+        showOnlineScreen();
         return;
     }
 
@@ -1980,6 +2646,7 @@ function openWelcomeTutorial(goToLastPage = false) {
     const appContainer = document.getElementById('app-container');
     if (appContainer) appContainer.classList.add('hidden-app');
     hideCampaignScreen();
+    hideOnlineScreen();
     if (hub) {
         hub.style.display = 'none';
         hub.classList.add('hidden-control');
@@ -2215,7 +2882,7 @@ function resetDailySession() {
 }
 
 function getGameStateSnapshot() {
-    if (!targetChallenge || !Array.isArray(currentWord) || !activeUser) return null;
+    if (!targetChallenge || !Array.isArray(currentWord) || !activeUser || currentGameMode === ONLINE_MODE) return null;
 
     return {
         screen: 'game',
@@ -2274,6 +2941,7 @@ function syncRefreshLockState() {
 
 function showGameScreen() {
     hideCampaignScreen();
+    hideOnlineScreen();
     if (hub) {
         hub.style.display = 'none';
         hub.classList.add('hidden-control');
@@ -2284,14 +2952,18 @@ function showGameScreen() {
     syncRefreshLockState();
 }
 
-function showHubScreenFromGame() {
+async function showHubScreenFromGame() {
     stopHintCycle();
     resetDailySession();
     clearGameSessionState();
+    if (currentGameMode === ONLINE_MODE || currentOnlineRoomCode) {
+        await leaveOnlineRoom({ abandon: true });
+    }
     currentCampaignLevel = null;
     document.getElementById('app-container')?.classList.add('hidden-app');
     if (welcomeScreen) welcomeScreen.style.display = 'none';
     hideCampaignScreen();
+    hideOnlineScreen();
     setMobileGameplayMenuVisibility(false);
     showHubScreen(true);
     syncTopUserUi(activeUser, activeUserDoc);
@@ -2548,6 +3220,7 @@ function showHubScreen(show) {
         hub.classList.remove('hidden-control');
         hub.style.display = 'flex';
         hideCampaignScreen();
+        hideOnlineScreen();
     } else {
         hub.classList.add('hidden-control');
     }
@@ -2557,6 +3230,7 @@ function showHubScreen(show) {
 function showAuthGate(show) {
     showControl(authGate, show);
     if (show) hideCampaignScreen();
+    if (show) hideOnlineScreen();
     if (show) setGateAuthMode('login');
 }
 function getModeVisitor(user) {
@@ -2822,6 +3496,9 @@ async function authWithEmail(isRegister, emailFieldId = 'email-input', passwordF
 }
 
 async function logoutUser() {
+    if (currentOnlineRoomCode) {
+        await leaveOnlineRoom({ abandon: true });
+    }
     if (isUsingLocalDevSession) {
         isUsingLocalDevSession = false;
         activeUser = null;
@@ -2924,6 +3601,23 @@ function bindAuthUiEvents() {
     document.getElementById('save-profile-btn')?.addEventListener('click', saveProfile);
     document.getElementById('profile-logout-btn')?.addEventListener('click', logoutUser);
     profilePhotoBtn?.addEventListener('click', () => profilePhotoInput?.click());
+    onlineBackBtn?.addEventListener('click', async () => {
+        await leaveOnlineRoom({ abandon: !!currentOnlineRoomCode });
+        openWelcomeTutorial(true);
+    });
+    onlineCreateRoomBtn?.addEventListener('click', createOnlineRoom);
+    onlineJoinRoomBtn?.addEventListener('click', joinOnlineRoom);
+    onlineCopyCodeBtn?.addEventListener('click', copyOnlineRoomCode);
+    onlineRoomLeaveBtn?.addEventListener('click', async () => {
+        await leaveOnlineRoom({ abandon: true });
+        showOnlineScreen();
+    });
+    onlineRoomCodeInput?.addEventListener('input', sanitizeOnlineCodeInput);
+    onlineRoomCodeInput?.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        joinOnlineRoom();
+    });
     closeCampaignCompleteModalBtn?.addEventListener('click', () => {
         goToCampaignBooks(pendingCampaignCompletion?.nextLevel || pendingCampaignCompletion?.currentLevel || null);
     });
@@ -2931,6 +3625,27 @@ function bindAuthUiEvents() {
         goToCampaignBooks(pendingCampaignCompletion?.nextLevel || pendingCampaignCompletion?.currentLevel || null);
     });
     campaignCompleteNextBtn?.addEventListener('click', continueToNextCampaignBook);
+    closeOnlineResultModalBtn?.addEventListener('click', async () => {
+        showControl(onlineResultModal, false);
+        await leaveOnlineRoom({ abandon: false });
+        showOnlineScreen();
+    });
+    onlineResultRematchBtn?.addEventListener('click', async () => {
+        showControl(onlineResultModal, false);
+        await leaveOnlineRoom({ abandon: false });
+        showOnlineScreen();
+    });
+    onlineResultMenuBtn?.addEventListener('click', async () => {
+        showControl(onlineResultModal, false);
+        await leaveOnlineRoom({ abandon: false });
+        document.getElementById('app-container')?.classList.add('hidden-app');
+        if (welcomeScreen) welcomeScreen.style.display = 'none';
+        hideOnlineScreen();
+        setMobileGameplayMenuVisibility(false);
+        showHubScreen(true);
+        syncTopUserUi(activeUser, activeUserDoc);
+        syncRefreshLockState();
+    });
 
     document.getElementById('gate-google-btn')?.addEventListener('click', (e) => {
         e.preventDefault();
@@ -2997,6 +3712,13 @@ function bindAuthUiEvents() {
         if (e.target === campaignCompleteModal) {
             goToCampaignBooks(pendingCampaignCompletion?.nextLevel || pendingCampaignCompletion?.currentLevel || null);
         }
+        if (e.target === onlineResultModal) {
+            void (async () => {
+                showControl(onlineResultModal, false);
+                await leaveOnlineRoom({ abandon: false });
+                showOnlineScreen();
+            })();
+        }
     });
 
     window.addEventListener('beforeunload', (e) => {
@@ -3031,6 +3753,11 @@ function bindAuthUiEvents() {
     window.addEventListener('resize', () => {
         applyMobileMenuButtonState(shouldBlockGameplayRefresh());
     });
+
+    window.addEventListener('pagehide', () => {
+        if (!currentOnlineRoomCode || currentOnlineLeaving) return;
+        leaveOnlineRoom({ abandon: true });
+    });
 }
 
 function initFirebase() {
@@ -3049,6 +3776,7 @@ function initFirebase() {
 
     onAuthStateChanged(auth, async (user) => {
         if (!user) {
+            resetOnlineRoomState();
             activeUser = null;
             activeUserDoc = null;
             showAuthGate(true);
@@ -3064,6 +3792,7 @@ function initFirebase() {
         }
 
         activeUser = user;
+        resetOnlineRoomState();
         try {
             activeUserDoc = await ensureUserDoc(user);
         } catch (e) {

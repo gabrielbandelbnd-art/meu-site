@@ -3337,6 +3337,135 @@ button#validate-btn:active { transform: scale(0.95); }
     font-size: 0.98rem;
 }
 
+.online-status-banner {
+    margin-bottom: 20px;
+}
+
+.online-shell {
+    width: min(900px, 100%);
+}
+
+.online-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.online-card,
+.online-room-panel {
+    border-radius: 20px;
+    border: 1px solid rgba(187, 134, 252, 0.24);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+    padding: 20px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.online-card h3 {
+    margin: 0 0 10px;
+    color: #f5e8ff;
+    font-size: 1.3rem;
+}
+
+.online-card p,
+.online-room-state,
+.online-room-panel-label,
+.online-room-meta-line span {
+    color: var(--text-dim);
+    line-height: 1.55;
+}
+
+.online-card .profile-btn,
+.online-room-actions .profile-btn {
+    width: 100%;
+    margin-top: 14px;
+}
+
+.online-room-code-input {
+    width: 100%;
+    margin-top: 12px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(187, 134, 252, 0.34);
+    background: rgba(12, 12, 18, 0.88);
+    color: #fff;
+    font-size: 1.18rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 0.18em;
+}
+
+.online-room-code-input:focus {
+    outline: none;
+    border-color: rgba(255, 210, 115, 0.66);
+    box-shadow: 0 0 0 3px rgba(255, 210, 115, 0.12);
+}
+
+.online-room-panel {
+    margin-top: 18px;
+}
+
+.online-room-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.online-room-code-display {
+    display: inline-block;
+    margin-top: 6px;
+    color: #fff2c7;
+    font-size: clamp(1.9rem, 4vw, 2.5rem);
+    letter-spacing: 0.18em;
+}
+
+.online-room-state {
+    margin-bottom: 14px;
+    color: #f6f0ff;
+    font-size: 1rem;
+}
+
+.online-room-meta {
+    display: grid;
+    gap: 10px;
+}
+
+.online-room-meta-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.online-room-meta-line strong {
+    color: #ffffff;
+    font-size: 1rem;
+    text-align: right;
+}
+
+.online-room-actions {
+    margin-top: 14px;
+}
+
+.online-match-banner {
+    margin-top: 12px;
+    background: rgba(255, 210, 115, 0.12);
+    border: 1px solid rgba(255, 210, 115, 0.32);
+}
+
+.online-result-card {
+    width: min(92vw, 520px);
+}
+
+.online-result-summary {
+    margin-bottom: 8px;
+}
+
 .campaign-books-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -3548,6 +3677,47 @@ button#validate-btn:active { transform: scale(0.95); }
     .campaign-progress-summary,
     .selector-help {
         font-size: 0.95rem;
+    }
+
+    .online-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .online-card,
+    .online-room-panel {
+        padding: 16px 14px;
+        border-radius: 18px;
+    }
+
+    .online-card h3 {
+        font-size: 1.16rem;
+    }
+
+    .online-room-code-input {
+        font-size: 1.05rem;
+        padding: 13px 14px;
+        letter-spacing: 0.14em;
+    }
+
+    .online-room-panel-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .online-room-code-display {
+        font-size: clamp(1.6rem, 8vw, 2.1rem);
+    }
+
+    .online-room-meta-line {
+        padding: 11px 12px;
+        gap: 10px;
+    }
+
+    .online-room-meta-line span,
+    .online-room-meta-line strong,
+    .online-room-state {
+        font-size: 0.92rem;
     }
 
     .campaign-back-btn {

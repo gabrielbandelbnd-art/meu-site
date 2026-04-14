@@ -10,6 +10,32 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == uid;
     }
 
+    function roomHasPlayer(data, uid) {
+      return uid != null && (
+        data.players.player1.uid == uid ||
+        data.players.player2.uid == uid
+      );
+    }
+
+    function isRoomParticipant() {
+      return isSignedIn() && roomHasPlayer(resource.data, request.auth.uid);
+    }
+
+    function isJoiningPlayer2() {
+      return isSignedIn() &&
+        resource.data.players.player2.uid == null &&
+        request.resource.data.players.player2.uid == request.auth.uid;
+    }
+
+    function validRoomStatusTransition() {
+      return (
+        (resource.data.status == 'waiting' && request.resource.data.status in ['waiting', 'playing', 'abandoned']) ||
+        (resource.data.status == 'playing' && request.resource.data.status in ['playing', 'finished', 'abandoned']) ||
+        (resource.data.status == 'finished' && request.resource.data.status == 'finished') ||
+        (resource.data.status == 'abandoned' && request.resource.data.status == 'abandoned')
+      );
+    }
+
     match /users/{uid} {
       allow read: if true;
       allow create: if isOwner(uid);
@@ -27,6 +53,37 @@ service cloud.firestore {
 
     match /daily_leaderboard/{dateKey} {
       allow read: if true;
+    }
+
+    match /rooms/{roomCode} {
+      allow create: if isSignedIn()
+        && request.resource.data.roomCode == roomCode
+        && request.resource.data.gameMode == 'online_1v1'
+        && request.resource.data.status == 'waiting'
+        && request.resource.data.hostUid == request.auth.uid
+        && request.resource.data.winnerUid == null
+        && request.resource.data.players.player1.uid == request.auth.uid
+        && request.resource.data.players.player2.uid == null;
+
+      allow read: if isRoomParticipant() || (isSignedIn() && resource.data.status == 'waiting');
+
+      allow update: if isSignedIn()
+        && (isRoomParticipant() || isJoiningPlayer2())
+        && request.resource.data.roomCode == resource.data.roomCode
+        && request.resource.data.hostUid == resource.data.hostUid
+        && request.resource.data.gameMode == resource.data.gameMode
+        && request.resource.data.letterCount == resource.data.letterCount
+        && request.resource.data.challenge == resource.data.challenge
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.players.player1.uid == resource.data.players.player1.uid
+        && (
+          resource.data.players.player2.uid == null ||
+          request.resource.data.players.player2.uid == resource.data.players.player2.uid ||
+          request.resource.data.players.player2.uid == request.auth.uid
+        )
+        && validRoomStatusTransition();
+
+      allow delete: if false;
     }
 
     match /{document=**} {

@@ -140,6 +140,7 @@
                                 <select id="mode-selector">
                                     <option value="campaign">📚 Campanha (Livros)</option>
                                     <option value="random">🎲 Aleatório</option>
+                                    <option value="online_1v1">⚔️ Online 1x1</option>
                                 </select>
                                 <p id="mode-warning" style="color: var(--warning); font-size: 0.9rem; margin-top: 5px; display: none;">
                                     ⚠️ No aleatório, a quantidade de letras é sorteada automaticamente.
@@ -171,6 +172,64 @@
                 Livro inicial desbloqueado.
             </div>
             <div id="campaign-books-grid" class="campaign-books-grid"></div>
+        </div>
+    </div>
+    <div id="online-screen" class="campaign-screen online-screen hidden-control">
+        <div class="campaign-shell online-shell">
+            <div class="campaign-header online-header">
+                <button id="online-back-btn" type="button" class="campaign-back-btn">← Voltar</button>
+                <div class="campaign-header-copy">
+                    <h2>Online 1x1</h2>
+                    <p>Crie uma sala por código e dispute a mesma palavra em tempo real.</p>
+                </div>
+            </div>
+
+            <div id="online-status-banner" class="campaign-progress-summary online-status-banner">
+                Entre em uma sala para iniciar um duelo mágico.
+            </div>
+
+            <div class="online-grid">
+                <section class="online-card">
+                    <h3>Criar sala</h3>
+                    <p>Gere um código curto, compartilhe com um amigo e aguarde a conexão.</p>
+                    <button id="online-create-room-btn" type="button" class="profile-btn auth-main-btn">Criar sala</button>
+                </section>
+
+                <section class="online-card">
+                    <h3>Entrar em sala</h3>
+                    <p>Digite o código de 4 caracteres para entrar em um duelo já criado.</p>
+                    <input id="online-room-code-input" class="online-room-code-input" type="text" maxlength="4" placeholder="AB12" autocomplete="off" autocapitalize="characters" spellcheck="false">
+                    <button id="online-join-room-btn" type="button" class="profile-btn auth-main-btn">Entrar na sala</button>
+                </section>
+            </div>
+
+            <section id="online-room-panel" class="online-room-panel hidden-control">
+                <div class="online-room-panel-header">
+                    <div>
+                        <div class="online-room-panel-label">Sala atual</div>
+                        <strong id="online-room-code-display" class="online-room-code-display">----</strong>
+                    </div>
+                    <button id="online-copy-code-btn" type="button" class="profile-btn profile-ghost-btn">Copiar código</button>
+                </div>
+                <div id="online-room-state" class="online-room-state">Aguardando outro jogador...</div>
+                <div class="online-room-meta">
+                    <div class="online-room-meta-line">
+                        <span>Você</span>
+                        <strong id="online-player-self">Visitante</strong>
+                    </div>
+                    <div class="online-room-meta-line">
+                        <span>Oponente</span>
+                        <strong id="online-player-opponent">Aguardando...</strong>
+                    </div>
+                    <div class="online-room-meta-line">
+                        <span>Status</span>
+                        <strong id="online-room-opponent-status">Esperando conexão</strong>
+                    </div>
+                </div>
+                <div class="online-room-actions">
+                    <button id="online-room-leave-btn" type="button" class="profile-btn profile-ghost-btn">Sair da sala</button>
+                </div>
+            </section>
         </div>
     </div>
     <div id="app-container" class="app-container hidden-app">
@@ -277,6 +336,11 @@
                     <span class="daily-status-mode">Palavra do Dia</span>
                     <span id="daily-timer">00:00</span>
                     <span id="daily-attempts">Tentativas: 0</span>
+                </div>
+                <div id="online-match-banner" class="daily-status-bar online-match-banner hidden-control">
+                    <span class="daily-status-mode">Online 1x1</span>
+                    <span id="online-room-banner-code">Sala ----</span>
+                    <span id="online-opponent-banner-status">Oponente: aguardando...</span>
                 </div>
             </div>
                 
@@ -416,6 +480,36 @@
             <div class="campaign-complete-actions">
                 <button id="campaign-complete-next-btn" class="profile-btn auth-main-btn">Próximo Livro</button>
                 <button id="campaign-complete-books-btn" class="profile-btn profile-ghost-btn">Voltar aos Livros</button>
+            </div>
+        </div>
+    </div>
+    <div id="online-result-modal" class="profile-modal hidden-control">
+        <div class="profile-card online-result-card">
+            <button id="close-online-result-modal" class="profile-close">X</button>
+            <div class="campaign-complete-badge">✦ Duelo Arcano ✦</div>
+            <h3 id="online-result-title">Você venceu!</h3>
+            <p id="online-result-copy" class="campaign-complete-copy">Sua conjuração foi mais rápida que a do adversário.</p>
+            <div class="campaign-complete-summary online-result-summary">
+                <div class="campaign-complete-line">
+                    <span>Seu tempo</span>
+                    <strong id="online-result-self-time">--</strong>
+                </div>
+                <div class="campaign-complete-line">
+                    <span>Tempo do adversário</span>
+                    <strong id="online-result-opponent-time">--</strong>
+                </div>
+                <div class="campaign-complete-line">
+                    <span>Seus erros</span>
+                    <strong id="online-result-self-errors">0</strong>
+                </div>
+                <div class="campaign-complete-line">
+                    <span>Erros do adversário</span>
+                    <strong id="online-result-opponent-errors">0</strong>
+                </div>
+            </div>
+            <div class="campaign-complete-actions">
+                <button id="online-result-rematch-btn" class="profile-btn auth-main-btn">Jogar novamente</button>
+                <button id="online-result-menu-btn" class="profile-btn profile-ghost-btn">Voltar ao menu</button>
             </div>
         </div>
     </div>
