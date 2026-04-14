@@ -299,9 +299,42 @@ const sidebarMageContainer = document.querySelector('.mage-container');
 let mobileLayoutPrepared = false;
 let popupHidDesktopMage = false;
 
+function applyMobileSidebarState(open) {
+    if (!sidebar || !mobileOverlay || !isMobileViewport()) return;
+
+    if (open) {
+        sidebar.classList.add('mobile-open');
+        Object.assign(sidebar.style, {
+            left: '0',
+            visibility: 'visible',
+            pointerEvents: 'auto',
+            zIndex: '11000'
+        });
+        mobileOverlay.classList.add('active');
+        Object.assign(mobileOverlay.style, {
+            display: 'block',
+            pointerEvents: 'auto'
+        });
+    } else {
+        sidebar.classList.remove('mobile-open');
+        Object.assign(sidebar.style, {
+            left: '',
+            visibility: '',
+            pointerEvents: '',
+            zIndex: ''
+        });
+        mobileOverlay.classList.remove('active');
+        Object.assign(mobileOverlay.style, {
+            display: '',
+            pointerEvents: ''
+        });
+    }
+}
+
 function toggleMobileMenu() {
-    sidebar.classList.toggle('mobile-open');
-    alphabetDrawer.classList.remove('mobile-open'); // Fecha o outro
+    const isOpen = sidebar?.classList.contains('mobile-open');
+    applyMobileSidebarState(!isOpen);
+    if (alphabetDrawer) alphabetDrawer.classList.remove('mobile-open');
     checkOverlay();
 }
 
@@ -320,7 +353,7 @@ function checkOverlay() {
 }
 
 function closeMobilePanels() {
-    if (sidebar) sidebar.classList.remove('mobile-open');
+    if (sidebar) applyMobileSidebarState(false);
     if (alphabetDrawer) alphabetDrawer.classList.remove('mobile-open');
     if (mobileOverlay) mobileOverlay.classList.remove('active');
 }
@@ -369,7 +402,13 @@ function setMobileGameplayMenuVisibility(visible) {
 }
 
 // Eventos Mobile
-if(mobileMenuBtn) mobileMenuBtn.onclick = toggleMobileMenu;
+if(mobileMenuBtn) {
+    mobileMenuBtn.onclick = toggleMobileMenu;
+    mobileMenuBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        toggleMobileMenu();
+    }, { passive: false });
+}
 if(mobileAlphabetBtn) mobileAlphabetBtn.onclick = toggleAlphabetMenu;
 
 if(mobileOverlay) {
