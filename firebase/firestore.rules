@@ -17,23 +17,8 @@ service cloud.firestore {
       );
     }
 
-    function isRoomParticipant() {
-      return isSignedIn() && roomHasPlayer(resource.data, request.auth.uid);
-    }
-
-    function isJoiningPlayer2() {
-      return isSignedIn() &&
-        resource.data.players.player2.uid == null &&
-        request.resource.data.players.player2.uid == request.auth.uid;
-    }
-
-    function validRoomStatusTransition() {
-      return (
-        (resource.data.status == 'waiting' && request.resource.data.status in ['waiting', 'playing', 'abandoned']) ||
-        (resource.data.status == 'playing' && request.resource.data.status in ['playing', 'finished', 'abandoned']) ||
-        (resource.data.status == 'finished' && request.resource.data.status == 'finished') ||
-        (resource.data.status == 'abandoned' && request.resource.data.status == 'abandoned')
-      );
+    function isRoomParticipant(data) {
+      return isSignedIn() && roomHasPlayer(data, request.auth.uid);
     }
 
     match /users/{uid} {
@@ -60,28 +45,39 @@ service cloud.firestore {
         && request.resource.data.roomCode == roomCode
         && request.resource.data.gameMode == 'online_1v1'
         && request.resource.data.status == 'waiting'
+        && request.resource.data.startedAt == null
+        && request.resource.data.completedAt == null
         && request.resource.data.hostUid == request.auth.uid
         && request.resource.data.winnerUid == null
+        && request.resource.data.abandonMessage is string
+        && request.resource.data.letterCount is int
+        && request.resource.data.challenge.word is string
         && request.resource.data.players.player1.uid == request.auth.uid
-        && request.resource.data.players.player2.uid == null;
+        && request.resource.data.players.player1.finished == false
+        && request.resource.data.players.player1.progress == 0
+        && request.resource.data.players.player2.uid == null
+        && request.resource.data.players.player2.connected == false
+        && request.resource.data.players.player2.ready == false
+        && request.resource.data.players.player2.finished == false;
 
-      allow read: if isRoomParticipant() || (isSignedIn() && resource.data.status == 'waiting');
+      allow read: if isSignedIn()
+        && (isRoomParticipant(resource.data) || resource.data.status == 'waiting');
 
       allow update: if isSignedIn()
-        && (isRoomParticipant() || isJoiningPlayer2())
         && request.resource.data.roomCode == resource.data.roomCode
         && request.resource.data.hostUid == resource.data.hostUid
         && request.resource.data.gameMode == resource.data.gameMode
         && request.resource.data.letterCount == resource.data.letterCount
         && request.resource.data.challenge == resource.data.challenge
         && request.resource.data.createdAt == resource.data.createdAt
-        && request.resource.data.players.player1.uid == resource.data.players.player1.uid
         && (
-          resource.data.players.player2.uid == null ||
-          request.resource.data.players.player2.uid == resource.data.players.player2.uid ||
-          request.resource.data.players.player2.uid == request.auth.uid
-        )
-        && validRoomStatusTransition();
+          isRoomParticipant(resource.data) ||
+          (
+            resource.data.status == 'waiting' &&
+            resource.data.players.player2.uid == null &&
+            request.resource.data.players.player2.uid == request.auth.uid
+          )
+        );
 
       allow delete: if false;
     }

@@ -338,6 +338,7 @@ let currentOnlineLocalErrors = 0;
 let currentOnlineResultShown = false;
 let currentOnlineLeaving = false;
 let onlineProgressSyncTimeout = null;
+let preserveCurrentViewOnAuthSync = false;
 
 // --- VARIÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂVEIS DA GALINHA E MENSAGENS ---
 let consecutiveErrors = 0;
@@ -2101,6 +2102,64 @@ function getOnlineRoomRef(roomCode = currentOnlineRoomCode) {
     return roomCode ? doc(db, ONLINE_ROOM_COLLECTION, roomCode) : null;
 }
 
+async function ensureOnlineFirebaseIdentity() {
+    if (!auth || !db) {
+        console.log('[Online 1x1] Firebase indisponivel para salas online.', {
+            hasAuth: !!auth,
+            hasDb: !!db
+        });
+        return null;
+    }
+
+    if (auth.currentUser) {
+        if (!activeUser || activeUser.uid !== auth.currentUser.uid || isUsingLocalDevSession) {
+            activeUser = auth.currentUser;
+            isUsingLocalDevSession = false;
+            syncTopUserUi(activeUser, activeUserDoc);
+        }
+        console.log('[Online 1x1] Sessao Firebase pronta para usar salas.', {
+            uid: auth.currentUser.uid,
+            isAnonymous: !!auth.currentUser.isAnonymous
+        });
+        return auth.currentUser;
+    }
+
+    if (!activeUser) {
+        console.log('[Online 1x1] Nao ha usuario ativo para criar/entrar em sala.');
+        return null;
+    }
+
+    if (IS_LOCAL_DEV && isUsingLocalDevSession) {
+        console.log('[Online 1x1] Sessao local detectada. Tentando autenticar anonimamente no Firebase para liberar a sala.');
+        try {
+            preserveCurrentViewOnAuthSync = true;
+            const credential = await signInAnonymously(auth);
+            activeUser = credential.user;
+            isUsingLocalDevSession = false;
+            syncTopUserUi(activeUser, activeUserDoc);
+            console.log('[Online 1x1] Conversao para auth anonima concluida.', {
+                uid: credential.user.uid,
+                isAnonymous: !!credential.user.isAnonymous
+            });
+            return credential.user;
+        } catch (err) {
+            preserveCurrentViewOnAuthSync = false;
+            console.log('[Online 1x1] Falha ao autenticar anonimamente para o online.', {
+                code: err?.code || null,
+                message: err?.message || err
+            });
+            return null;
+        }
+    }
+
+    console.log('[Online 1x1] Usuario ativo sem sessao Firebase valida para a sala.', {
+        activeUid: activeUser?.uid || null,
+        authUid: auth.currentUser?.uid || null,
+        isUsingLocalDevSession
+    });
+    return null;
+}
+
 async function syncOnlinePlayerPatch(patch = {}) {
     if (!db || !currentOnlineRoomCode || !currentOnlinePlayerSlot || currentOnlineLeaving) return;
     const roomRef = getOnlineRoomRef();
@@ -2155,8 +2214,14 @@ async function attachOnlineRoomListener(roomCode) {
 }
 
 async function createOnlineRoom() {
-    if (!db || !activeUser) {
+    if (!db) {
         showFloatingMessage('Entre no jogo para criar uma sala.', 2200);
+        return;
+    }
+
+    const onlineUser = await ensureOnlineFirebaseIdentity();
+    if (!onlineUser) {
+        showFloatingMessage('Nao foi possivel autenticar a sala online agora.', 2600);
         return;
     }
 
@@ -2170,13 +2235,13 @@ async function createOnlineRoom() {
         const roomCode = await generateUniqueOnlineRoomCode();
         const payload = getRandomOnlineChallengePayload();
         const roomRef = getOnlineRoomRef(roomCode);
-        await setDoc(roomRef, {
+        const roomPayload = {
             roomCode,
             status: 'waiting',
             createdAt: serverTimestamp(),
             startedAt: null,
             completedAt: null,
-            hostUid: activeUser.uid,
+            hostUid: onlineUser.uid,
             winnerUid: null,
             abandonMessage: '',
             gameMode: ONLINE_MODE,
@@ -2184,7 +2249,7 @@ async function createOnlineRoom() {
             challenge: payload.challenge,
             players: {
                 player1: {
-                    uid: activeUser.uid,
+                    uid: onlineUser.uid,
                     name: getOnlinePlayerName(),
                     photo: getOnlinePlayerPhoto(),
                     connected: true,
@@ -2206,21 +2271,52 @@ async function createOnlineRoom() {
                     progress: 0
                 }
             }
+        };
+
+        console.log('[Online 1x1] Criando sala', {
+            collection: ONLINE_ROOM_COLLECTION,
+            roomCode,
+            uid: onlineUser.uid,
+            authUid: auth.currentUser?.uid || null,
+            isAnonymous: !!onlineUser.isAnonymous,
+            isUsingLocalDevSession,
+            payload: roomPayload
         });
+
+        await setDoc(roomRef, roomPayload);
+        console.log('[Online 1x1] Sala criada com sucesso', { roomCode, uid: onlineUser.uid });
         currentOnlinePlayerSlot = 'player1';
         await attachOnlineRoomListener(roomCode);
         showFloatingMessage(`Sala ${roomCode} criada.`, 2200);
     } catch (err) {
-        console.log('Erro ao criar sala online:', err);
-        showFloatingMessage('Nao foi possivel criar a sala agora.', 2400);
+        console.log('[Online 1x1] Erro ao criar sala online', {
+            collection: ONLINE_ROOM_COLLECTION,
+            uid: onlineUser?.uid || activeUser?.uid || null,
+            authUid: auth.currentUser?.uid || null,
+            isAnonymous: !!onlineUser?.isAnonymous,
+            isUsingLocalDevSession,
+            code: err?.code || null,
+            message: err?.message || err
+        });
+        if (err?.code === 'permission-denied') {
+            showFloatingMessage('Permissao do Firestore negada para criar sala.', 2600);
+        } else {
+            showFloatingMessage('Nao foi possivel criar a sala agora.', 2400);
+        }
     } finally {
         if (onlineCreateRoomBtn) onlineCreateRoomBtn.disabled = false;
     }
 }
 
 async function joinOnlineRoom() {
-    if (!db || !activeUser) {
+    if (!db) {
         showFloatingMessage('Entre no jogo para participar de uma sala.', 2200);
+        return;
+    }
+
+    const onlineUser = await ensureOnlineFirebaseIdentity();
+    if (!onlineUser) {
+        showFloatingMessage('Nao foi possivel autenticar a sala online agora.', 2600);
         return;
     }
 
@@ -2238,20 +2334,28 @@ async function joinOnlineRoom() {
     if (onlineJoinRoomBtn) onlineJoinRoomBtn.disabled = true;
     try {
         const roomRef = getOnlineRoomRef(roomCode);
+        console.log('[Online 1x1] Tentando entrar na sala', {
+            collection: ONLINE_ROOM_COLLECTION,
+            roomCode,
+            uid: onlineUser.uid,
+            authUid: auth.currentUser?.uid || null,
+            isAnonymous: !!onlineUser.isAnonymous,
+            isUsingLocalDevSession
+        });
         await runTransaction(db, async (transaction) => {
             const snap = await transaction.get(roomRef);
             if (!snap.exists()) throw new Error('not-found');
             const room = snap.data();
-            if (room.hostUid === activeUser.uid) throw new Error('self-room');
+            if (room.hostUid === onlineUser.uid) throw new Error('self-room');
             if (room.status === 'finished') throw new Error('finished');
             if (room.status === 'abandoned') throw new Error('abandoned');
-            if (room.players?.player2?.uid && room.players.player2.uid !== activeUser.uid) throw new Error('full');
+            if (room.players?.player2?.uid && room.players.player2.uid !== onlineUser.uid) throw new Error('full');
 
             transaction.update(roomRef, {
                 status: 'playing',
                 startedAt: serverTimestamp(),
                 abandonMessage: '',
-                'players.player2.uid': activeUser.uid,
+                'players.player2.uid': onlineUser.uid,
                 'players.player2.name': getOnlinePlayerName(),
                 'players.player2.photo': getOnlinePlayerPhoto(),
                 'players.player2.connected': true,
@@ -2265,14 +2369,25 @@ async function joinOnlineRoom() {
 
         currentOnlinePlayerSlot = 'player2';
         await attachOnlineRoomListener(roomCode);
+        console.log('[Online 1x1] Entrada na sala concluida', { roomCode, uid: onlineUser.uid });
         showFloatingMessage(`Entrou na sala ${roomCode}.`, 2200);
     } catch (err) {
+        console.log('[Online 1x1] Erro ao entrar na sala', {
+            collection: ONLINE_ROOM_COLLECTION,
+            roomCode,
+            uid: onlineUser?.uid || activeUser?.uid || null,
+            authUid: auth.currentUser?.uid || null,
+            isUsingLocalDevSession,
+            code: err?.code || err?.message || null,
+            message: err?.message || err
+        });
         const code = err?.message || 'unknown';
         if (code === 'not-found') showFloatingMessage('Sala nao encontrada.', 2200);
         else if (code === 'self-room') showFloatingMessage('Voce ja e o anfitriao desta sala.', 2200);
         else if (code === 'full') showFloatingMessage('Essa sala ja esta cheia.', 2200);
         else if (code === 'finished') showFloatingMessage('Essa sala ja foi finalizada.', 2200);
         else if (code === 'abandoned') showFloatingMessage('Essa sala foi encerrada.', 2200);
+        else if (err?.code === 'permission-denied') showFloatingMessage('Permissao do Firestore negada para entrar na sala.', 2600);
         else {
             console.log('Erro ao entrar na sala online:', err);
             showFloatingMessage('Nao foi possivel entrar na sala.', 2400);
@@ -3801,13 +3916,18 @@ function initFirebase() {
         }
         await loadCampaignProgress();
 
+        const shouldPreserveCurrentView = preserveCurrentViewOnAuthSync;
+        preserveCurrentViewOnAuthSync = false;
+
         showAuthGate(false);
-        clearGameSessionState();
-        showHubScreen(true);
-        welcomeScreen.style.display = 'none';
-        document.getElementById('app-container')?.classList.add('hidden-app');
-        setMobileGameplayMenuVisibility(false);
-        syncRefreshLockState();
+        if (!shouldPreserveCurrentView) {
+            clearGameSessionState();
+            showHubScreen(true);
+            welcomeScreen.style.display = 'none';
+            document.getElementById('app-container')?.classList.add('hidden-app');
+            setMobileGameplayMenuVisibility(false);
+            syncRefreshLockState();
+        }
 
         syncTopUserUi(user, activeUserDoc);
         renderCampaignBooks();
