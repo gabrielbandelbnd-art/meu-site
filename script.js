@@ -282,6 +282,7 @@ const onlineBackBtn = document.getElementById('online-back-btn');
 const onlineStatusBanner = document.getElementById('online-status-banner');
 const onlineCreateRoomBtn = document.getElementById('online-create-room-btn');
 const onlineJoinRoomBtn = document.getElementById('online-join-room-btn');
+const onlineLetterCountSelect = document.getElementById('online-letter-count-select');
 const onlineRoomCodeInput = document.getElementById('online-room-code-input');
 const onlineRoomPanel = document.getElementById('online-room-panel');
 const onlineRoomCodeDisplay = document.getElementById('online-room-code-display');
@@ -294,6 +295,7 @@ const onlineRoomLeaveBtn = document.getElementById('online-room-leave-btn');
 const onlineMatchBanner = document.getElementById('online-match-banner');
 const onlineRoomBannerCode = document.getElementById('online-room-banner-code');
 const onlineOpponentBannerStatus = document.getElementById('online-opponent-banner-status');
+const onlineMatchLeaveBtn = document.getElementById('online-match-leave-btn');
 const campaignCompleteModal = document.getElementById('campaign-level-complete-modal');
 const closeCampaignCompleteModalBtn = document.getElementById('close-campaign-complete-modal');
 const campaignCompleteTitle = document.getElementById('campaign-complete-title');
@@ -1934,9 +1936,38 @@ function getOnlinePlayableLengths() {
     return CAMPAIGN_LEVELS.filter((level) => hasCampaignContent(level));
 }
 
-function getRandomOnlineChallengePayload() {
+function populateOnlineLetterCountOptions() {
+    if (!onlineLetterCountSelect) return;
     const availableLengths = getOnlinePlayableLengths();
-    const letterCount = availableLengths[Math.floor(Math.random() * availableLengths.length)] || CAMPAIGN_LEVEL_START;
+    onlineLetterCountSelect.innerHTML = '';
+
+    const randomOption = document.createElement('option');
+    randomOption.value = '';
+    randomOption.innerText = 'Aleatorio';
+    onlineLetterCountSelect.appendChild(randomOption);
+
+    availableLengths.forEach((length) => {
+        const option = document.createElement('option');
+        option.value = String(length);
+        option.innerText = `${length} letras`;
+        onlineLetterCountSelect.appendChild(option);
+    });
+
+    if (!onlineLetterCountSelect.value) {
+        onlineLetterCountSelect.value = '';
+    }
+}
+
+function getSelectedOnlineLetterCount() {
+    const selectedValue = Number(onlineLetterCountSelect?.value || 0);
+    return getOnlinePlayableLengths().includes(selectedValue) ? selectedValue : null;
+}
+
+function getRandomOnlineChallengePayload(preferredLetterCount = null) {
+    const availableLengths = getOnlinePlayableLengths();
+    const letterCount = preferredLetterCount && availableLengths.includes(preferredLetterCount)
+        ? preferredLetterCount
+        : (availableLengths[Math.floor(Math.random() * availableLengths.length)] || CAMPAIGN_LEVEL_START);
     const challenge = pickRandomChallengeByLength(letterCount) || pickRandomCampaignChallenge(CAMPAIGN_LEVEL_START) || allChallenges[0];
     return {
         letterCount,
@@ -2266,10 +2297,11 @@ async function createOnlineRoom() {
             operation: 'createOnlineRoom:start',
             collection: ONLINE_ROOM_COLLECTION,
             authUid: auth?.currentUser?.uid || null,
-            activeUid: onlineUser.uid
+            activeUid: onlineUser.uid,
+            selectedLetterCount: getSelectedOnlineLetterCount()
         });
         const roomCode = await generateUniqueOnlineRoomCode();
-        const payload = getRandomOnlineChallengePayload();
+        const payload = getRandomOnlineChallengePayload(getSelectedOnlineLetterCount());
         const roomRef = getOnlineRoomRef(roomCode);
         const roomPath = `${ONLINE_ROOM_COLLECTION}/${roomCode}`;
         const roomPayload = {
@@ -3799,6 +3831,10 @@ function bindAuthUiEvents() {
         await leaveOnlineRoom({ abandon: true });
         showOnlineScreen();
     });
+    onlineMatchLeaveBtn?.addEventListener('click', async () => {
+        await leaveOnlineRoom({ abandon: true });
+        showOnlineScreen();
+    });
     onlineRoomCodeInput?.addEventListener('input', sanitizeOnlineCodeInput);
     onlineRoomCodeInput?.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter') return;
@@ -3945,6 +3981,8 @@ function bindAuthUiEvents() {
         if (!currentOnlineRoomCode || currentOnlineLeaving) return;
         leaveOnlineRoom({ abandon: true });
     });
+
+    populateOnlineLetterCountOptions();
 }
 
 function initFirebase() {

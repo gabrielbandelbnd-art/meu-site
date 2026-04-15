@@ -3374,13 +3374,23 @@ button#validate-btn:active { transform: scale(0.95); }
     line-height: 1.55;
 }
 
+.online-field-label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 8px;
+    color: #f1e7ff;
+    font-size: 0.96rem;
+    font-weight: 700;
+}
+
 .online-card .profile-btn,
 .online-room-actions .profile-btn {
     width: 100%;
     margin-top: 14px;
 }
 
-.online-room-code-input {
+.online-room-code-input,
+.online-letter-count-select {
     width: 100%;
     margin-top: 12px;
     padding: 14px 16px;
@@ -3390,12 +3400,25 @@ button#validate-btn:active { transform: scale(0.95); }
     color: #fff;
     font-size: 1.18rem;
     font-weight: 800;
-    text-transform: uppercase;
     text-align: center;
+}
+
+.online-room-code-input {
+    text-transform: uppercase;
     letter-spacing: 0.18em;
 }
 
-.online-room-code-input:focus {
+.online-letter-count-select {
+    appearance: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: left;
+    letter-spacing: normal;
+}
+
+.online-room-code-input:focus,
+.online-letter-count-select:focus {
     outline: none;
     border-color: rgba(255, 210, 115, 0.66);
     box-shadow: 0 0 0 3px rgba(255, 210, 115, 0.12);
@@ -3456,6 +3479,29 @@ button#validate-btn:active { transform: scale(0.95); }
     margin-top: 12px;
     background: rgba(255, 210, 115, 0.12);
     border: 1px solid rgba(255, 210, 115, 0.32);
+    display: grid;
+    grid-template-columns: auto 1fr 1fr auto;
+    align-items: center;
+    gap: 14px;
+}
+
+.online-match-leave-btn {
+    justify-self: end;
+    min-height: 38px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 150, 150, 0.36);
+    background: rgba(20, 12, 14, 0.88);
+    color: #ffb8c1;
+    font-size: 0.94rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.online-match-leave-btn:hover {
+    border-color: rgba(255, 180, 180, 0.56);
+    transform: translateY(-1px);
 }
 
 .online-result-card {
@@ -3700,6 +3746,11 @@ button#validate-btn:active { transform: scale(0.95); }
         letter-spacing: 0.14em;
     }
 
+    .online-letter-count-select {
+        font-size: 0.96rem;
+        padding: 13px 14px;
+    }
+
     .online-room-panel-header {
         flex-direction: column;
         align-items: stretch;
@@ -3718,6 +3769,16 @@ button#validate-btn:active { transform: scale(0.95); }
     .online-room-meta-line strong,
     .online-room-state {
         font-size: 0.92rem;
+    }
+
+    .online-match-banner {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .online-match-leave-btn {
+        width: 100%;
+        justify-self: stretch;
     }
 
     .campaign-back-btn {
