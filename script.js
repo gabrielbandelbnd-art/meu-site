@@ -183,6 +183,7 @@ const CAMPAIGN_LEVEL_END = 22;
 const CAMPAIGN_WORDS_TO_COMPLETE = 5;
 const CAMPAIGN_PROGRESS_STORAGE_KEY = 'magiclexis_campaign_progress_v1';
 const PLAYER_STATS_STORAGE_KEY = 'magiclexis_player_stats_v1';
+const AUDIO_SETTINGS_STORAGE_KEY = 'magiclexis_audio_settings_v1';
 const GAMEPLAY_IDLE_TIMEOUT_MS = 60000;
 const CAMPAIGN_LEVELS = Array.from(
     { length: CAMPAIGN_LEVEL_END - CAMPAIGN_LEVEL_START + 1 },
@@ -1027,7 +1028,7 @@ async function validate() {
             await finalizeOnlineMatch();
         }
 
-        successSound.play(); playSoundEffect('victory'); triggerConfetti();
+        playMediaSound(successSound, 0.7); playSoundEffect('victory'); triggerConfetti();
         animateMage('win');
         if (!campaignResult?.completedNow && !isOnlineGameplayMode()) {
             showMobileVictoryPopup();
@@ -1134,8 +1135,7 @@ async function validate() {
             incrementPlayerStat('galinhasInvocadas', 1);
 
             const chickenAudio = new Audio('galinha.mp3');
-            chickenAudio.volume = 1.0;
-            chickenAudio.play().catch(e => console.log("Erro no \u00e1udio:", e));
+            playMediaSound(chickenAudio, 1);
 
             const chickenEl = document.createElement('div');
             chickenEl.innerText = '\uD83D\uDC14';
@@ -1227,6 +1227,7 @@ const MUSIC_CONTEXT_VOLUME = {
 let initialLoadingStarted = false;
 let menuMusicUnlocked = false;
 let playerStats = null;
+let audioSettings = null;
 let gameplayTimeIntervalId = null;
 let gameplayTimeLastTick = 0;
 let gameplayLastActivityAt = 0;
@@ -1246,7 +1247,10 @@ const audioManager = {
         return Array.isArray(MUSIC_TRACK_LIBRARY[context]) ? MUSIC_TRACK_LIBRARY[context] : [];
     },
     getContextVolume(context) {
-        return MUSIC_CONTEXT_VOLUME[context] ?? 0.4;
+        const baseVolume = MUSIC_CONTEXT_VOLUME[context] ?? 0.4;
+        const settings = ensureAudioSettingsLoaded();
+        if (!settings.musicEnabled) return 0;
+        return Math.max(0, Math.min(1, baseVolume * settings.musicVolume));
     },
     bindUnlock() {
         if (this.unlockBound) return;
@@ -1406,6 +1410,10 @@ const audioManager = {
     stopAll({ fadeOut = false } = {}) {
         this.transitionToken += 1;
         this.stopCurrentAudio({ fadeOut });
+    },
+    applyCurrentVolume() {
+        if (!this.currentAudio || !this.currentContext) return;
+        this.currentAudio.volume = this.getContextVolume(this.currentContext);
     }
 };
 
@@ -1430,9 +1438,95 @@ function getDesiredMusicContext() {
     return MUSIC_CONTEXT_MENU;
 }
 
+function getDefaultAudioSettings() {
+    return {
+        musicEnabled: true,
+        musicVolume: 1,
+        sfxEnabled: true,
+        sfxVolume: 1
+    };
+}
+
+function normalizeAudioSettings(rawSettings) {
+    const base = rawSettings && typeof rawSettings === 'object' ? rawSettings : {};
+    return {
+        musicEnabled: base.musicEnabled !== false,
+        musicVolume: Math.max(0, Math.min(1, Number.isFinite(Number(base.musicVolume)) ? Number(base.musicVolume) : 1)),
+        sfxEnabled: base.sfxEnabled !== false,
+        sfxVolume: Math.max(0, Math.min(1, Number.isFinite(Number(base.sfxVolume)) ? Number(base.sfxVolume) : 1))
+    };
+}
+
+function ensureAudioSettingsLoaded() {
+    if (!audioSettings) {
+        loadAudioSettings();
+    }
+    return audioSettings;
+}
+
+function loadAudioSettings() {
+    try {
+        const stored = localStorage.getItem(AUDIO_SETTINGS_STORAGE_KEY);
+        audioSettings = normalizeAudioSettings(stored ? JSON.parse(stored) : getDefaultAudioSettings());
+    } catch (err) {
+        console.log('Falha ao carregar configurações de áudio:', err);
+        audioSettings = normalizeAudioSettings(getDefaultAudioSettings());
+    }
+    return audioSettings;
+}
+
+function saveAudioSettings(nextSettings = audioSettings) {
+    audioSettings = normalizeAudioSettings(nextSettings);
+    try {
+        localStorage.setItem(AUDIO_SETTINGS_STORAGE_KEY, JSON.stringify(audioSettings));
+    } catch (err) {
+        console.log('Falha ao salvar configurações de áudio:', err);
+    }
+    return audioSettings;
+}
+
+function updateAudioSettingsUi() {
+    const settings = ensureAudioSettingsLoaded();
+    if (audioMusicEnabledInput) audioMusicEnabledInput.checked = !!settings.musicEnabled;
+    if (audioMusicVolumeInput) audioMusicVolumeInput.value = String(Math.round(settings.musicVolume * 100));
+    if (audioMusicVolumeValue) audioMusicVolumeValue.innerText = `${Math.round(settings.musicVolume * 100)}%`;
+    if (audioSfxEnabledInput) audioSfxEnabledInput.checked = !!settings.sfxEnabled;
+    if (audioSfxVolumeInput) audioSfxVolumeInput.value = String(Math.round(settings.sfxVolume * 100));
+    if (audioSfxVolumeValue) audioSfxVolumeValue.innerText = `${Math.round(settings.sfxVolume * 100)}%`;
+}
+
+function getEffectiveSfxVolume(baseVolume = 1) {
+    const settings = ensureAudioSettingsLoaded();
+    if (!settings.sfxEnabled) return 0;
+    return Math.max(0, Math.min(1, Number(baseVolume || 0) * settings.sfxVolume));
+}
+
+function applyAudioSettings() {
+    const settings = ensureAudioSettingsLoaded();
+    applySfxSettingsToAudioGraph();
+    if (successSound) {
+        successSound.volume = getEffectiveSfxVolume(0.7);
+    }
+    if (!settings.musicEnabled) {
+        audioManager.stopAll({ fadeOut: true });
+    } else {
+        audioManager.applyCurrentVolume();
+        syncDynamicMusicState();
+    }
+    updateAudioSettingsUi();
+}
+
+function updateAudioSetting(key, value) {
+    const settings = ensureAudioSettingsLoaded();
+    settings[key] = value;
+    saveAudioSettings(settings);
+    applyAudioSettings();
+}
+
 function syncDynamicMusicState({ forceRestart = false } = {}) {
     const context = getDesiredMusicContext();
     if (!context) return;
+    if (!ensureAudioSettingsLoaded().musicEnabled) return;
     audioManager.setContext(context, { forceRestart }).catch((err) => {
         console.log('Falha ao sincronizar trilha dinâmica:', err);
     });
@@ -1461,7 +1555,7 @@ function bindMenuMusicUnlock() {
 
 function hasBlockingGameplayOverlayOpen() {
     return !!document.querySelector(
-        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control)'
+        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control)'
     );
 }
 
@@ -1560,13 +1654,30 @@ function animateMage(action) {
 /* --- ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂUDIO --- */
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const audioCtx = new AudioContext();
+const sfxMasterGain = audioCtx.createGain();
+sfxMasterGain.connect(audioCtx.destination);
+
+function applySfxSettingsToAudioGraph() {
+    const settings = ensureAudioSettingsLoaded();
+    sfxMasterGain.gain.setValueAtTime(getEffectiveSfxVolume(1), audioCtx.currentTime);
+}
+
+function playMediaSound(audio, baseVolume = 1) {
+    if (!audio) return;
+    const volume = getEffectiveSfxVolume(baseVolume);
+    if (volume <= 0) return;
+    audio.volume = volume;
+    audio.currentTime = 0;
+    audio.play().catch((err) => console.log('Erro no áudio:', err));
+}
 
 function playSoundEffect(type) {
+    if (getEffectiveSfxVolume(1) <= 0) return;
     if (audioCtx.state === 'suspended') audioCtx.resume();
     const osc = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
     osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
+    gainNode.connect(sfxMasterGain);
     const now = audioCtx.currentTime;
 
     if (type === 'type') {
@@ -1577,7 +1688,7 @@ function playSoundEffect(type) {
         [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
             const oscV = audioCtx.createOscillator(); const gainV = audioCtx.createGain();
             oscV.type = 'triangle'; oscV.frequency.setValueAtTime(freq, now + i*0.1);
-            oscV.connect(gainV); gainV.connect(audioCtx.destination);
+            oscV.connect(gainV); gainV.connect(sfxMasterGain);
             gainV.gain.setValueAtTime(0, now + i*0.1); gainV.gain.linearRampToValueAtTime(0.2, now + i*0.1 + 0.05);
             gainV.gain.exponentialRampToValueAtTime(0.01, now + i*0.1 + 0.6);
             oscV.start(now + i*0.1); oscV.stop(now + i*0.1 + 0.6);
@@ -4364,6 +4475,15 @@ const profileNameTitle = document.getElementById('profile-name-title');
 const profileAvatar = document.getElementById('profile-avatar');
 const profilePoints = document.getElementById('profile-points');
 const profileRank = document.getElementById('profile-rank');
+const audioSettingsModal = document.getElementById('audio-settings-modal');
+const openAudioSettingsBtn = document.getElementById('open-audio-settings-btn');
+const closeAudioSettingsModalBtn = document.getElementById('close-audio-settings-modal');
+const audioMusicEnabledInput = document.getElementById('audio-music-enabled');
+const audioMusicVolumeInput = document.getElementById('audio-music-volume');
+const audioMusicVolumeValue = document.getElementById('audio-music-volume-value');
+const audioSfxEnabledInput = document.getElementById('audio-sfx-enabled');
+const audioSfxVolumeInput = document.getElementById('audio-sfx-volume');
+const audioSfxVolumeValue = document.getElementById('audio-sfx-volume-value');
 const userMenu = document.getElementById('user-menu');
 const userMenuDropdown = document.getElementById('user-menu-dropdown');
 const userAvatarTop = document.getElementById('user-avatar-top');
@@ -5054,7 +5174,17 @@ function openProfileModal() {
 
 function closeProfileModal() {
     showControl(profileModal, false);
+    closeAudioSettingsModal();
     setStatus('');
+}
+
+function openAudioSettingsModal() {
+    updateAudioSettingsUi();
+    showControl(audioSettingsModal, true);
+}
+
+function closeAudioSettingsModal() {
+    showControl(audioSettingsModal, false);
 }
 
 async function openRankingModal() {
@@ -5310,9 +5440,11 @@ async function loadRanking() {
 
 function bindAuthUiEvents() {
     document.getElementById('close-profile-modal')?.addEventListener('click', closeProfileModal);
+    closeAudioSettingsModalBtn?.addEventListener('click', closeAudioSettingsModal);
     document.getElementById('close-ranking-modal')?.addEventListener('click', closeRankingModal);
     document.getElementById('save-profile-btn')?.addEventListener('click', saveProfile);
     document.getElementById('profile-logout-btn')?.addEventListener('click', logoutUser);
+    openAudioSettingsBtn?.addEventListener('click', openAudioSettingsModal);
     profilePhotoBtn?.addEventListener('click', () => profilePhotoInput?.click());
     onlineBackBtn?.addEventListener('click', async () => {
         await leaveOnlineRoom({ abandon: !!currentOnlineRoomCode });
@@ -5430,9 +5562,23 @@ function bindAuthUiEvents() {
         showControl(userMenuDropdown, userMenuDropdown.classList.contains('hidden-control'));
     });
 
+    audioMusicEnabledInput?.addEventListener('change', () => {
+        updateAudioSetting('musicEnabled', !!audioMusicEnabledInput.checked);
+    });
+    audioMusicVolumeInput?.addEventListener('input', () => {
+        updateAudioSetting('musicVolume', Number(audioMusicVolumeInput.value || 0) / 100);
+    });
+    audioSfxEnabledInput?.addEventListener('change', () => {
+        updateAudioSetting('sfxEnabled', !!audioSfxEnabledInput.checked);
+    });
+    audioSfxVolumeInput?.addEventListener('input', () => {
+        updateAudioSetting('sfxVolume', Number(audioSfxVolumeInput.value || 0) / 100);
+    });
+
     window.addEventListener('click', (e) => {
         if (!userMenu?.contains(e.target)) showControl(userMenuDropdown, false);
         if (e.target === profileModal) closeProfileModal();
+        if (e.target === audioSettingsModal) closeAudioSettingsModal();
         if (e.target === rankingModal) closeRankingModal();
         if (e.target === dailyResultModal) showControl(dailyResultModal, false);
         if (e.target === campaignCompleteModal) {
@@ -5611,6 +5757,9 @@ function initInitialLoadingScreen() {
 document.addEventListener('DOMContentLoaded', () => {
     initInitialLoadingScreen();
     loadPlayerStats();
+    loadAudioSettings();
+    applySfxSettingsToAudioGraph();
+    applyAudioSettings();
     bindAuthUiEvents();
     setGateAuthMode('login');
     syncRefreshLockState();

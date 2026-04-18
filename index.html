@@ -698,9 +698,58 @@
                 <input id="profile-name-input" type="text" maxlength="24" class="profile-name-edit" placeholder="Alterar nome">
 
                 <button id="save-profile-btn" class="profile-btn auth-main-btn">Salvar perfil</button>
+                <button id="open-audio-settings-btn" class="profile-btn profile-ghost-btn">Configurações de áudio</button>
                 <button id="profile-logout-btn" class="profile-btn profile-danger-btn">Sair da conta</button>
 
                 <div id="profile-status" class="profile-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="audio-settings-modal" class="profile-modal hidden-control">
+        <div class="profile-card audio-settings-card">
+            <button id="close-audio-settings-modal" class="profile-close">X</button>
+            <h3>Áudio Arcano</h3>
+            <p class="audio-settings-copy">Ajuste músicas e efeitos para deixar o grimório do seu jeito.</p>
+
+            <div class="audio-settings-section">
+                <div class="audio-settings-row">
+                    <div>
+                        <strong>Música</strong>
+                        <span>Menu, gameplay e fim de jogo</span>
+                    </div>
+                    <label class="audio-toggle">
+                        <input id="audio-music-enabled" type="checkbox">
+                        <span class="audio-toggle-track">
+                            <span class="audio-toggle-knob"></span>
+                        </span>
+                    </label>
+                </div>
+                <div class="audio-slider-row">
+                    <label for="audio-music-volume">Volume da música</label>
+                    <strong id="audio-music-volume-value">100%</strong>
+                </div>
+                <input id="audio-music-volume" class="audio-slider" type="range" min="0" max="100" step="1" value="100">
+            </div>
+
+            <div class="audio-settings-section">
+                <div class="audio-settings-row">
+                    <div>
+                        <strong>Efeitos sonoros</strong>
+                        <span>Validação, vitória, alertas e surpresas</span>
+                    </div>
+                    <label class="audio-toggle">
+                        <input id="audio-sfx-enabled" type="checkbox">
+                        <span class="audio-toggle-track">
+                            <span class="audio-toggle-knob"></span>
+                        </span>
+                    </label>
+                </div>
+                <div class="audio-slider-row">
+                    <label for="audio-sfx-volume">Volume dos efeitos</label>
+                    <strong id="audio-sfx-volume-value">100%</strong>
+                </div>
+                <input id="audio-sfx-volume" class="audio-slider" type="range" min="0" max="100" step="1" value="100">
             </div>
         </div>
     </div>
