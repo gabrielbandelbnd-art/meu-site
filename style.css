@@ -194,6 +194,19 @@ body {
     overflow: hidden;
 }
 
+.book-tutorial-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 4px;
+}
+
+.book-tutorial-header-copy {
+    flex: 1;
+    text-align: center;
+}
+
 .book-tutorial-header h2 {
     color: var(--accent);
     font-size: clamp(1.75rem, 3vw, 2.45rem);
@@ -201,10 +214,9 @@ body {
 }
 
 .tutorial-back-btn {
-    position: absolute;
-    top: 18px;
-    left: 22px;
-    z-index: 2;
+    position: static;
+    flex-shrink: 0;
+    margin-top: 4px;
 }
 
 .book-tutorial-header p {
@@ -2550,8 +2562,7 @@ button#validate-btn:active { transform: scale(0.95); }
     }
 
     .tutorial-back-btn {
-        top: 10px !important;
-        left: 10px !important;
+        margin-top: 0 !important;
         min-height: 40px !important;
         padding: 9px 14px !important;
     }
