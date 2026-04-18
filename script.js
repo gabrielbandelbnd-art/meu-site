@@ -1153,6 +1153,72 @@ if(toggleBtn) {
 }
 const isMobileViewport = () => window.matchMedia('(max-width: 800px)').matches;
 const isGameplayAppVisible = () => !document.getElementById('app-container')?.classList.contains('hidden-app');
+const MENU_MUSIC_SRC = encodeURI('MUSICAS/MENU/Arcane Reading Room.mp3');
+let menuMusicAudio = null;
+let menuMusicUnlockBound = false;
+let initialLoadingStarted = false;
+let menuMusicUnlocked = false;
+
+function getMenuMusicAudio() {
+    if (!menuMusicAudio) {
+        menuMusicAudio = new Audio(MENU_MUSIC_SRC);
+        menuMusicAudio.loop = true;
+        menuMusicAudio.volume = 0.42;
+        menuMusicAudio.preload = 'auto';
+        menuMusicAudio.playsInline = true;
+        menuMusicAudio.addEventListener('ended', () => {
+            menuMusicAudio.currentTime = 0;
+            menuMusicAudio.play().catch(() => {
+                bindMenuMusicUnlock();
+            });
+        });
+    }
+    return menuMusicAudio;
+}
+
+function stopMenuMusic() {
+    if (!menuMusicAudio) return;
+    menuMusicAudio.pause();
+    menuMusicAudio.currentTime = 0;
+}
+
+function tryStartMenuMusic(forceRestart = false) {
+    if (!menuMusicUnlocked) return;
+    if (isGameplayAppVisible()) {
+        stopMenuMusic();
+        return;
+    }
+
+    const audio = getMenuMusicAudio();
+    if (forceRestart) {
+        audio.pause();
+        audio.currentTime = 0;
+    }
+    const playPromise = audio.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(() => {
+            bindMenuMusicUnlock();
+        });
+    }
+}
+
+function bindMenuMusicUnlock() {
+    if (menuMusicUnlockBound) return;
+    menuMusicUnlockBound = true;
+
+    const unlock = () => {
+        menuMusicUnlocked = true;
+        menuMusicUnlockBound = false;
+        document.removeEventListener('pointerdown', unlock, true);
+        document.removeEventListener('keydown', unlock, true);
+        document.removeEventListener('touchstart', unlock, true);
+        tryStartMenuMusic();
+    };
+
+    document.addEventListener('pointerdown', unlock, true);
+    document.addEventListener('keydown', unlock, true);
+    document.addEventListener('touchstart', unlock, true);
+}
 
 function hasBlockingGameplayOverlayOpen() {
     return !!document.querySelector(
@@ -1180,6 +1246,11 @@ document.body.onclick = (e) => {
 window.addEventListener('pageshow', () => {
     if (!isMobileViewport() || !charInput) return;
     charInput.blur();
+});
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    tryStartMenuMusic();
 });
 
 document.addEventListener('keydown', (event) => {
@@ -2310,6 +2381,7 @@ function renderOnlineRoomPanel(roomData = currentOnlineRoom) {
 }
 
 function showOnlineScreen() {
+    tryStartMenuMusic();
     setMobileGameplayMenuVisibility(false);
     if (hub) {
         hub.style.display = 'none';
@@ -3504,6 +3576,7 @@ function renderCampaignBooks() {
 }
 
 function showCampaignScreen() {
+    tryStartMenuMusic();
     setMobileGameplayMenuVisibility(false);
     if (hub) {
         hub.style.display = 'none';
@@ -3633,6 +3706,7 @@ async function recordCampaignWordCompletion(level) {
 let bookTutorialApi = null;
 
 function openWelcomeTutorial(goToLastPage = false) {
+    tryStartMenuMusic();
     setMobileGameplayMenuVisibility(false);
     const appContainer = document.getElementById('app-container');
     if (appContainer) appContainer.classList.add('hidden-app');
@@ -3931,6 +4005,7 @@ function syncRefreshLockState() {
 }
 
 function showGameScreen() {
+    stopMenuMusic();
     hideCampaignScreen();
     hideOnlineScreen();
     if (hub) {
@@ -4209,6 +4284,7 @@ function setGateAuthMode(mode = 'login') {
 function showHubScreen(show) {
     if (!hub) return;
     if (show) {
+        tryStartMenuMusic();
         hub.classList.remove('hidden-control');
         hub.style.display = 'flex';
         hideCampaignScreen();
@@ -4221,6 +4297,7 @@ function showHubScreen(show) {
 
 function showAuthGate(show) {
     showControl(authGate, show);
+    if (show) tryStartMenuMusic();
     if (show) hideCampaignScreen();
     if (show) hideOnlineScreen();
     if (show) setGateAuthMode('login');
@@ -4822,44 +4899,59 @@ function initFirebase() {
 
 function initInitialLoadingScreen() {
     const loadingScreen = document.getElementById('initial-loading-screen');
+    const loadingEntry = document.getElementById('initial-loading-entry');
+    const loadingPlayBtn = document.getElementById('initial-loading-play-btn');
+    const loadingStatus = document.getElementById('initial-loading-status');
     const loadingBar = document.getElementById('initial-loading-bar');
     const loadingPercent = document.getElementById('initial-loading-percent');
-    if (!loadingScreen || !loadingBar || !loadingPercent) return;
+    if (!loadingScreen || !loadingPlayBtn || !loadingStatus || !loadingBar || !loadingPercent) return;
 
     document.body.classList.add('loading-screen-active');
 
-    const totalDurationMs = 1500;
-    const fadeOutDurationMs = 420;
-    const startTime = performance.now();
+    const startInitialLoading = () => {
+        if (initialLoadingStarted) return;
+        initialLoadingStarted = true;
+        menuMusicUnlocked = true;
+        tryStartMenuMusic(true);
 
-    const tick = (now) => {
-        const elapsed = Math.min(totalDurationMs, now - startTime);
-        const progress = Math.min(1, elapsed / totalDurationMs);
-        const easedProgress = 1 - Math.pow(1 - progress, 2.6);
-        const percent = Math.round(easedProgress * 100);
+        if (loadingEntry) loadingEntry.classList.add('hidden-control');
+        loadingStatus.classList.remove('hidden-control');
 
-        loadingBar.style.width = `${percent}%`;
-        loadingPercent.innerText = `${percent}%`;
+        const totalDurationMs = 1500;
+        const fadeOutDurationMs = 420;
+        const startTime = performance.now();
 
-        if (elapsed < totalDurationMs) {
-            window.requestAnimationFrame(tick);
-            return;
-        }
+        const tick = (now) => {
+            const elapsed = Math.min(totalDurationMs, now - startTime);
+            const progress = Math.min(1, elapsed / totalDurationMs);
+            const easedProgress = 1 - Math.pow(1 - progress, 2.6);
+            const percent = Math.round(easedProgress * 100);
 
-        loadingBar.style.width = '100%';
-        loadingPercent.innerText = '100%';
+            loadingBar.style.width = `${percent}%`;
+            loadingPercent.innerText = `${percent}%`;
 
-        window.setTimeout(() => {
-            loadingScreen.classList.add('is-hidden');
-            document.body.classList.remove('loading-screen-active');
+            if (elapsed < totalDurationMs) {
+                window.requestAnimationFrame(tick);
+                return;
+            }
+
+            loadingBar.style.width = '100%';
+            loadingPercent.innerText = '100%';
 
             window.setTimeout(() => {
-                loadingScreen.remove();
-            }, fadeOutDurationMs);
-        }, 110);
+                loadingScreen.classList.add('is-hidden');
+                document.body.classList.remove('loading-screen-active');
+
+                window.setTimeout(() => {
+                    loadingScreen.remove();
+                }, fadeOutDurationMs);
+            }, 110);
+        };
+
+        window.requestAnimationFrame(tick);
     };
 
-    window.requestAnimationFrame(tick);
+    loadingPlayBtn.addEventListener('click', startInitialLoading);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
