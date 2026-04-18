@@ -637,6 +637,7 @@ function startChallengeEngine(challengeData, options = {}) {
     isGameplayTransitionLocked = false;
     isValidationInProgress = false;
     targetChallenge = challengeData;
+    currentChallengeStartedAt = Date.now();
     maxWordLength = options.wordLength || challengeData?.word?.length || 3;
     currentWord = [];
     replaceIndex = 0;
@@ -661,6 +662,7 @@ function startChallengeEngine(challengeData, options = {}) {
     if (!isOnlineGameplayMode()) {
         showControl(onlineMatchBanner, false);
     }
+    syncDynamicMusicState();
 }
 
 function updateHintDisplay() {
@@ -970,6 +972,7 @@ async function validate() {
                 feedback.innerText = '';
                 animateMage('sad');
                 incrementPlayerStat('erros', 1);
+                syncDynamicMusicState();
                 const dailyFunnyPhrase = takeFunnyPhrase();
                 showErrorMageFeedback(dailyFunnyPhrase);
                 return;
@@ -1104,6 +1107,7 @@ async function validate() {
 
         consecutiveErrors++;
         incrementPlayerStat('erros', 1);
+        syncDynamicMusicState();
         if (isOnlineGameplayMode()) {
             currentOnlineLocalErrors += 1;
             queueOnlineProgressSync();
@@ -1187,79 +1191,272 @@ if(toggleBtn) {
 }
 const isMobileViewport = () => window.matchMedia('(max-width: 800px)').matches;
 const isGameplayAppVisible = () => !document.getElementById('app-container')?.classList.contains('hidden-app');
-const MENU_MUSIC_SRC = encodeURI('MUSICAS/MENU/Arcane Reading Room.mp3');
-const ENDING_MUSIC_SRC = encodeURI("MUSICAS/FIM DO JOGO/Puzzle’s Quiet Victory.mp3");
-let menuMusicAudio = null;
-let endingMusicAudio = null;
-let menuMusicUnlockBound = false;
+const MUSIC_CONTEXT_MENU = 'menu';
+const MUSIC_CONTEXT_GAMEPLAY_NORMAL = 'gameplay_normal';
+const MUSIC_CONTEXT_GAMEPLAY_TENSAO = 'gameplay_tensao';
+const MUSIC_CONTEXT_GAMEPLAY_RELAX = 'gameplay_relax';
+const MUSIC_CONTEXT_FIM_JOGO = 'fim_jogo';
+const MUSIC_TRACK_LIBRARY = {
+    [MUSIC_CONTEXT_MENU]: [
+        encodeURI('MUSICAS/MENU/Arcane Reading Room.mp3')
+    ],
+    [MUSIC_CONTEXT_GAMEPLAY_NORMAL]: [
+        encodeURI('MUSICAS/FOCO INTELIGENTE/Arcane Reading Room (1).mp3'),
+        encodeURI('MUSICAS/FOCO INTELIGENTE/Arcane Reading Room (2).mp3')
+    ],
+    [MUSIC_CONTEXT_GAMEPLAY_TENSAO]: [
+        encodeURI('MUSICAS/FOCO COM TENSAO/Arcane Lattice.mp3'),
+        encodeURI('MUSICAS/FOCO COM TENSAO/Arcane Logic Loop.mp3'),
+        encodeURI('MUSICAS/FOCO COM TENSAO/Runes in Motion.mp3')
+    ],
+    [MUSIC_CONTEXT_GAMEPLAY_RELAX]: [
+        encodeURI('MUSICAS/FOCO RELAXANTE (anti-estresse)/Moonlit Puzzle Grove (1).mp3'),
+        encodeURI('MUSICAS/FOCO RELAXANTE (anti-estresse)/Moonlit Puzzle Grove.mp3')
+    ],
+    [MUSIC_CONTEXT_FIM_JOGO]: [
+        encodeURI("MUSICAS/FIM DO JOGO/Puzzle’s Quiet Victory.mp3")
+    ]
+};
+const MUSIC_CONTEXT_VOLUME = {
+    [MUSIC_CONTEXT_MENU]: 0.42,
+    [MUSIC_CONTEXT_GAMEPLAY_NORMAL]: 0.38,
+    [MUSIC_CONTEXT_GAMEPLAY_TENSAO]: 0.4,
+    [MUSIC_CONTEXT_GAMEPLAY_RELAX]: 0.37,
+    [MUSIC_CONTEXT_FIM_JOGO]: 0.5
+};
 let initialLoadingStarted = false;
 let menuMusicUnlocked = false;
 let playerStats = null;
 let gameplayTimeIntervalId = null;
 let gameplayTimeLastTick = 0;
 let gameplayLastActivityAt = 0;
+let currentChallengeStartedAt = 0;
 let journeyFinaleShown = false;
 let journeyFinaleCounterRaf = 0;
+const audioManager = {
+    unlocked: false,
+    unlockBound: false,
+    currentContext: '',
+    currentTrackIndex: -1,
+    currentAudio: null,
+    transitionToken: 0,
+    lastTrackIndexByContext: {},
+    nextTrackPreloader: null,
+    getPlaylist(context) {
+        return Array.isArray(MUSIC_TRACK_LIBRARY[context]) ? MUSIC_TRACK_LIBRARY[context] : [];
+    },
+    getContextVolume(context) {
+        return MUSIC_CONTEXT_VOLUME[context] ?? 0.4;
+    },
+    bindUnlock() {
+        if (this.unlockBound) return;
+        this.unlockBound = true;
 
-function getMenuMusicAudio() {
-    if (!menuMusicAudio) {
-        menuMusicAudio = new Audio(MENU_MUSIC_SRC);
-        menuMusicAudio.loop = true;
-        menuMusicAudio.volume = 0.42;
-        menuMusicAudio.preload = 'auto';
-        menuMusicAudio.playsInline = true;
-        menuMusicAudio.addEventListener('ended', () => {
-            menuMusicAudio.currentTime = 0;
-            menuMusicAudio.play().catch(() => {
-                bindMenuMusicUnlock();
+        const unlock = () => {
+            this.unlocked = true;
+            menuMusicUnlocked = true;
+            this.unlockBound = false;
+            document.removeEventListener('pointerdown', unlock, true);
+            document.removeEventListener('keydown', unlock, true);
+            document.removeEventListener('touchstart', unlock, true);
+            syncDynamicMusicState();
+        };
+
+        document.addEventListener('pointerdown', unlock, true);
+        document.addEventListener('keydown', unlock, true);
+        document.addEventListener('touchstart', unlock, true);
+    },
+    preloadUpcomingTrack(context, nextIndex) {
+        const playlist = this.getPlaylist(context);
+        const nextSrc = playlist[nextIndex];
+        if (!nextSrc) {
+            this.nextTrackPreloader = null;
+            return;
+        }
+        const preloader = new Audio(nextSrc);
+        preloader.preload = 'auto';
+        preloader.playsInline = true;
+        this.nextTrackPreloader = preloader;
+    },
+    createAudio(src) {
+        const audio = new Audio(src);
+        audio.preload = 'auto';
+        audio.playsInline = true;
+        return audio;
+    },
+    stopCurrentAudio({ fadeOut = false, durationMs = 550 } = {}) {
+        const audio = this.currentAudio;
+        if (!audio) return;
+
+        const finishStop = () => {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.volume = 0;
+            audio.onended = null;
+            if (this.currentAudio === audio) {
+                this.currentAudio = null;
+                this.currentContext = '';
+                this.currentTrackIndex = -1;
+            }
+        };
+
+        if (!fadeOut) {
+            finishStop();
+            return;
+        }
+
+        fadeAudioVolume(audio, audio.volume, 0, durationMs, finishStop);
+    },
+    async playTrack(context, trackIndex, options = {}) {
+        const playlist = this.getPlaylist(context);
+        if (!playlist.length) return;
+
+        const safeIndex = ((trackIndex % playlist.length) + playlist.length) % playlist.length;
+        const src = playlist[safeIndex];
+        const token = ++this.transitionToken;
+        const previousAudio = this.currentAudio;
+        const previousContext = this.currentContext;
+        const shouldFadeOutPrevious = !!previousAudio && !previousAudio.paused && options.fadeOutPrevious !== false;
+        const startNext = async () => {
+            if (token !== this.transitionToken) return;
+
+            const audio = this.createAudio(src);
+            audio.volume = 0;
+            audio.onended = () => {
+                if (this.currentAudio !== audio || this.currentContext !== context) return;
+                this.lastTrackIndexByContext[context] = safeIndex;
+                const nextIndex = (safeIndex + 1) % playlist.length;
+                this.playTrack(context, nextIndex, { fadeOutPrevious: false, fadeIn: true }).catch((err) => {
+                    console.log('Falha ao avançar playlist:', err);
+                });
+            };
+
+            this.currentAudio = audio;
+            this.currentContext = context;
+            this.currentTrackIndex = safeIndex;
+            this.lastTrackIndexByContext[context] = safeIndex;
+            this.preloadUpcomingTrack(context, (safeIndex + 1) % playlist.length);
+
+            try {
+                await audio.play();
+                if (token !== this.transitionToken) {
+                    audio.pause();
+                    return;
+                }
+                fadeAudioVolume(audio, 0, this.getContextVolume(context), options.fadeIn === false ? 0 : 850);
+            } catch (err) {
+                if (token !== this.transitionToken) return;
+                console.log('Falha ao tocar trilha:', err);
+                this.currentAudio = null;
+                this.currentContext = '';
+                this.currentTrackIndex = -1;
+                this.bindUnlock();
+            }
+        };
+
+        if (previousAudio && previousAudio !== this.currentAudio) {
+            previousAudio.pause();
+        }
+
+        if (shouldFadeOutPrevious) {
+            fadeAudioVolume(previousAudio, previousAudio.volume, 0, 420, () => {
+                previousAudio.pause();
+                previousAudio.currentTime = 0;
+                previousAudio.onended = null;
+                if (this.currentAudio === previousAudio) {
+                    this.currentAudio = null;
+                }
+                startNext();
             });
-        });
+            return;
+        }
+
+        if (previousAudio) {
+            previousAudio.pause();
+            previousAudio.currentTime = 0;
+            previousAudio.onended = null;
+            if (previousContext === this.currentContext) {
+                this.currentAudio = null;
+            }
+        }
+
+        await startNext();
+    },
+    async setContext(context, { forceRestart = false } = {}) {
+        if (!this.unlocked) {
+            this.bindUnlock();
+            return;
+        }
+
+        const playlist = this.getPlaylist(context);
+        if (!playlist.length) return;
+
+        if (!forceRestart && this.currentContext === context && this.currentAudio && !this.currentAudio.paused) {
+            return;
+        }
+
+        let nextIndex = 0;
+        if (!forceRestart) {
+            const lastIndex = Number(this.lastTrackIndexByContext[context]);
+            nextIndex = Number.isFinite(lastIndex) ? (lastIndex + 1) % playlist.length : 0;
+        }
+
+        await this.playTrack(context, nextIndex, { fadeOutPrevious: true, fadeIn: true });
+    },
+    stopAll({ fadeOut = false } = {}) {
+        this.transitionToken += 1;
+        this.stopCurrentAudio({ fadeOut });
     }
-    return menuMusicAudio;
+};
+
+function getDesiredGameplayMusicContext() {
+    const challengeElapsedMs = currentChallengeStartedAt ? Date.now() - currentChallengeStartedAt : 0;
+    if (challengeElapsedMs >= 420000 || consecutiveErrors >= 5) {
+        return MUSIC_CONTEXT_GAMEPLAY_RELAX;
+    }
+    if (consecutiveErrors >= 2 || challengeElapsedMs >= 150000) {
+        return MUSIC_CONTEXT_GAMEPLAY_TENSAO;
+    }
+    return MUSIC_CONTEXT_GAMEPLAY_NORMAL;
+}
+
+function getDesiredMusicContext() {
+    const isFinaleVisible = !!journeyFinaleModal && !journeyFinaleModal.classList.contains('hidden-control');
+    if (isFinaleVisible) return MUSIC_CONTEXT_FIM_JOGO;
+    if (!menuMusicUnlocked) return '';
+    if (isGameplayAppVisible()) {
+        return getDesiredGameplayMusicContext();
+    }
+    return MUSIC_CONTEXT_MENU;
+}
+
+function syncDynamicMusicState({ forceRestart = false } = {}) {
+    const context = getDesiredMusicContext();
+    if (!context) return;
+    audioManager.setContext(context, { forceRestart }).catch((err) => {
+        console.log('Falha ao sincronizar trilha dinâmica:', err);
+    });
 }
 
 function stopMenuMusic() {
-    if (!menuMusicAudio) return;
-    menuMusicAudio.pause();
-    menuMusicAudio.currentTime = 0;
+    if (audioManager.currentContext !== MUSIC_CONTEXT_MENU) return;
+    audioManager.stopAll({ fadeOut: false });
 }
 
 function tryStartMenuMusic(forceRestart = false) {
-    if (!menuMusicUnlocked) return;
+    if (!menuMusicUnlocked) {
+        audioManager.bindUnlock();
+        return;
+    }
     if (isGameplayAppVisible()) {
         stopMenuMusic();
         return;
     }
-
-    const audio = getMenuMusicAudio();
-    if (forceRestart) {
-        audio.pause();
-        audio.currentTime = 0;
-    }
-    const playPromise = audio.play();
-    if (playPromise && typeof playPromise.catch === 'function') {
-        playPromise.catch(() => {
-            bindMenuMusicUnlock();
-        });
-    }
+    syncDynamicMusicState({ forceRestart });
 }
 
 function bindMenuMusicUnlock() {
-    if (menuMusicUnlockBound) return;
-    menuMusicUnlockBound = true;
-
-    const unlock = () => {
-        menuMusicUnlocked = true;
-        menuMusicUnlockBound = false;
-        document.removeEventListener('pointerdown', unlock, true);
-        document.removeEventListener('keydown', unlock, true);
-        document.removeEventListener('touchstart', unlock, true);
-        tryStartMenuMusic();
-    };
-
-    document.addEventListener('pointerdown', unlock, true);
-    document.addEventListener('keydown', unlock, true);
-    document.addEventListener('touchstart', unlock, true);
+    audioManager.bindUnlock();
 }
 
 function hasBlockingGameplayOverlayOpen() {
@@ -1293,7 +1490,7 @@ window.addEventListener('pageshow', () => {
 document.addEventListener('visibilitychange', () => {
     syncGameplayTimeTracking();
     if (document.hidden) return;
-    tryStartMenuMusic();
+    syncDynamicMusicState();
 });
 
 document.addEventListener('keydown', (event) => {
@@ -2454,6 +2651,7 @@ function showOnlineScreen() {
     syncTopUserUi(activeUser, activeUserDoc);
     syncRefreshLockState();
     syncGameplayTimeTracking();
+    syncDynamicMusicState();
 }
 
 function sanitizeOnlineCodeInput() {
@@ -3651,6 +3849,7 @@ function showCampaignScreen() {
     syncTopUserUi(activeUser, activeUserDoc);
     syncRefreshLockState();
     syncGameplayTimeTracking();
+    syncDynamicMusicState();
 }
 
 function getSelectedStartMode() {
@@ -3906,6 +4105,7 @@ function flushGameplayTime() {
         savePlayerStats(stats);
     }
     gameplayTimeLastTick = now;
+    syncDynamicMusicState();
 }
 
 // Conta tempo só enquanto a tela de jogo estiver ativa e com atividade recente.
@@ -4020,56 +4220,15 @@ function fadeAudioVolume(audio, fromVolume, toVolume, durationMs = 600, onComple
     audio._magicLexisFadeRaf = requestAnimationFrame(step);
 }
 
-// Trilha final isolada para a conclusão completa da campanha.
-function getEndingMusicAudio() {
-    if (!endingMusicAudio) {
-        endingMusicAudio = new Audio(ENDING_MUSIC_SRC);
-        endingMusicAudio.loop = true;
-        endingMusicAudio.volume = 0;
-        endingMusicAudio.preload = 'auto';
-        endingMusicAudio.playsInline = true;
-    }
-    return endingMusicAudio;
-}
-
 function stopEndingMusic({ fadeOut = false } = {}) {
-    if (!endingMusicAudio) return;
-    const stopTrack = () => {
-        endingMusicAudio.pause();
-        endingMusicAudio.currentTime = 0;
-        endingMusicAudio.volume = 0;
-    };
-
-    if (!fadeOut) {
-        stopTrack();
-        return;
-    }
-
-    fadeAudioVolume(endingMusicAudio, endingMusicAudio.volume, 0, 550, stopTrack);
+    if (audioManager.currentContext !== MUSIC_CONTEXT_FIM_JOGO) return;
+    audioManager.stopAll({ fadeOut });
 }
 
 function startJourneyFinaleMusic() {
-    if (menuMusicAudio && !menuMusicAudio.paused) {
-        fadeAudioVolume(menuMusicAudio, menuMusicAudio.volume, 0, 500, stopMenuMusic);
-    } else {
-        stopMenuMusic();
-    }
-    const audio = getEndingMusicAudio();
-    audio.pause();
-    audio.currentTime = 0;
-    audio.volume = 0;
-    const playPromise = audio.play();
-
-    if (playPromise && typeof playPromise.then === 'function') {
-        playPromise.then(() => {
-            fadeAudioVolume(audio, 0, 0.5, 900);
-        }).catch((err) => {
-            console.log('Falha ao iniciar trilha final:', err);
-        });
-        return;
-    }
-
-    fadeAudioVolume(audio, 0, 0.5, 900);
+    audioManager.setContext(MUSIC_CONTEXT_FIM_JOGO, { forceRestart: true }).catch((err) => {
+        console.log('Falha ao iniciar trilha final:', err);
+    });
 }
 
 function animateJourneyFinaleIq(targetValue) {
@@ -4190,6 +4349,7 @@ function openWelcomeTutorial(goToLastPage = false) {
     }
     syncTopUserUi(activeUser, activeUserDoc);
     syncGameplayTimeTracking();
+    syncDynamicMusicState();
 }
 
 const DEFAULT_AVATAR = 'https://ui-avatars.com/api/?name=ML&background=1f1f1f&color=bb86fc&size=128';
@@ -4473,8 +4633,6 @@ function syncRefreshLockState() {
 }
 
 function showGameScreen() {
-    stopMenuMusic();
-    stopEndingMusic();
     hideCampaignScreen();
     hideOnlineScreen();
     if (hub) {
@@ -4489,6 +4647,7 @@ function showGameScreen() {
     markGameplayDay();
     noteGameplayActivity();
     syncGameplayTimeTracking();
+    syncDynamicMusicState({ forceRestart: false });
 }
 
 async function showHubScreenFromGame() {
@@ -4772,6 +4931,7 @@ function showHubScreen(show) {
     }
     syncRefreshLockState();
     syncGameplayTimeTracking();
+    if (show) syncDynamicMusicState();
 }
 
 function showAuthGate(show) {
@@ -4784,6 +4944,7 @@ function showAuthGate(show) {
     if (show) hideOnlineScreen();
     if (show) setGateAuthMode('login');
     syncGameplayTimeTracking();
+    if (show) syncDynamicMusicState();
 }
 function getModeVisitor(user) {
     return !!(user && user.isAnonymous);
@@ -5404,6 +5565,7 @@ function initInitialLoadingScreen() {
         if (initialLoadingStarted) return;
         initialLoadingStarted = true;
         menuMusicUnlocked = true;
+        audioManager.unlocked = true;
         tryStartMenuMusic(true);
 
         if (loadingEntry) loadingEntry.classList.add('hidden-control');
