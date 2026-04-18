@@ -271,6 +271,8 @@ const hintText = document.getElementById('current-hint');
 const hintCounter = document.getElementById('hint-counter');
 const lengthSelector = document.getElementById('length-selector');
 const modeSelector = document.getElementById('mode-selector');
+const modeButtonGroup = document.getElementById('mode-button-group');
+const startGameBtn = document.getElementById('start-game-btn');
 const modeWarning = document.getElementById('mode-warning');
 const challengeSelectorHelp = document.getElementById('challenge-selector-help');
 const campaignScreen = document.getElementById('campaign-screen');
@@ -1407,8 +1409,9 @@ function initBookTutorial() {
     const rightArrow = document.getElementById('book-arrow-right');
     const indicator = document.getElementById('tutorial-page-indicator');
     const skipBtn = document.getElementById('tutorial-skip-btn');
+    const backBtn = document.getElementById('tutorial-back-btn');
 
-    if (!welcome || !track || !leftArrow || !rightArrow || !indicator || !skipBtn) return;
+    if (!welcome || !track || !leftArrow || !rightArrow || !indicator || !skipBtn || !backBtn) return;
 
     const pages = Array.from(track.querySelectorAll('.book-page'));
     tutorialPageCount = pages.length;
@@ -1421,6 +1424,7 @@ function initBookTutorial() {
         indicator.textContent = `P\u00e1gina ${safeIndex + 1} de ${tutorialPageCount}`;
         leftArrow.disabled = safeIndex === 0;
         rightArrow.disabled = safeIndex === tutorialPageCount - 1;
+        skipBtn.style.display = safeIndex === tutorialPageCount - 1 ? 'none' : 'inline-flex';
     };
 
     const goToPage = (pageIndex) => {
@@ -1480,6 +1484,16 @@ function initBookTutorial() {
 
 
     skipBtn.addEventListener('click', () => goToPage(tutorialPageCount - 1));
+    backBtn.addEventListener('click', () => {
+        if (welcomeScreen) welcomeScreen.style.display = 'none';
+        document.getElementById('app-container')?.classList.add('hidden-app');
+        hideCampaignScreen();
+        hideOnlineScreen();
+        setMobileGameplayMenuVisibility(false);
+        showHubScreen(true);
+        syncTopUserUi(activeUser, activeUserDoc);
+        syncRefreshLockState();
+    });
 
     bookTutorialApi = {
         goToPage,
@@ -1502,6 +1516,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (lengthSelector.querySelector('option[value="3"]')) {
         lengthSelector.value = '3';
     }
+    if (modeSelector) {
+        modeSelector.value = '';
+    }
     syncModeSelectionUi();
     setupMobileLayout();
     initBookTutorial();
@@ -1512,6 +1529,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // LOGICA DO BOTAO DE BOAS-VINDAS
 document.getElementById('start-game-btn').onclick = () => {
+    if (!modeSelector?.value) return;
     markTutorialSeen();
     beginSelectedGameFlow();
 
@@ -1554,6 +1572,7 @@ document.getElementById("hub-ranking").addEventListener("click", () => {
 document.addEventListener("DOMContentLoaded", () => {
     const modeSelector = document.getElementById('mode-selector');
     const modeWarning = document.getElementById('mode-warning');
+    const modeButtons = document.querySelectorAll('.mode-option-btn');
 
     if (modeSelector) {
         modeSelector.addEventListener('change', (e) => {
@@ -1589,6 +1608,19 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    modeButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            if (!modeSelector) return;
+            const nextMode = button.dataset.mode;
+            if (!nextMode || modeSelector.value === nextMode) {
+                syncModeSelectionUi();
+                return;
+            }
+            modeSelector.value = nextMode;
+            modeSelector.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+    });
 });
 /* ================= FIREBASE AUTH / PERFIL / RANKING ================= */
 const firebaseConfig = {
@@ -1866,40 +1898,49 @@ function openCampaignCompleteModal(payload = {}) {
 }
 
 function syncModeSelectionUi() {
-    if (!lengthSelector || !modeSelector) return;
+    if (!modeSelector) return;
 
-    const selectedMode = modeSelector.value || CAMPAIGN_MODE;
-    lengthSelector.disabled = true;
+    const selectedMode = modeSelector.value || '';
+    if (lengthSelector) {
+        lengthSelector.disabled = true;
+    }
+
+    if (modeButtonGroup) {
+        modeButtonGroup.querySelectorAll('.mode-option-btn').forEach((button) => {
+            const isSelected = button.dataset.mode === selectedMode;
+            button.classList.toggle('mode-option-selected', isSelected);
+            button.setAttribute('aria-checked', isSelected ? 'true' : 'false');
+        });
+    }
+
+    if (startGameBtn) {
+        const hasSelection = !!selectedMode;
+        startGameBtn.disabled = !hasSelection;
+        startGameBtn.setAttribute('aria-disabled', hasSelection ? 'false' : 'true');
+    }
+
+    if (!selectedMode) {
+        if (modeWarning) {
+            modeWarning.style.display = 'block';
+            modeWarning.innerText = 'Escolha um modo de jogo para continuar.';
+        }
+        return;
+    }
 
     if (selectedMode === CAMPAIGN_MODE) {
-        lengthSelector.value = String(CAMPAIGN_LEVEL_START);
-        if (challengeSelectorHelp) {
-            challengeSelectorHelp.innerText = 'Na campanha, voce escolhe um livro na proxima tela.';
-        }
+        if (lengthSelector) lengthSelector.value = String(CAMPAIGN_LEVEL_START);
         if (modeWarning) modeWarning.style.display = 'none';
         return;
     }
 
     if (selectedMode === ONLINE_MODE) {
-        lengthSelector.value = String(CAMPAIGN_LEVEL_START);
-        if (challengeSelectorHelp) {
-            challengeSelectorHelp.innerText = 'No online, a sala define a mesma palavra para todos os jogadores.';
-        }
-        if (modeWarning) {
-            modeWarning.style.display = 'block';
-            modeWarning.innerText = '⚠️ No online, a sala sorteia automaticamente a quantidade de letras.';
-        }
+        if (lengthSelector) lengthSelector.value = String(CAMPAIGN_LEVEL_START);
+        if (modeWarning) modeWarning.style.display = 'none';
         return;
     }
 
-    lengthSelector.value = 'any';
-    if (challengeSelectorHelp) {
-        challengeSelectorHelp.innerText = 'No aleatorio, o jogo sorteia automaticamente a quantidade de letras.';
-    }
-    if (modeWarning) {
-        modeWarning.style.display = 'block';
-        modeWarning.innerText = '⚠️ No aleatório, a quantidade de letras é sorteada automaticamente.';
-    }
+    if (lengthSelector) lengthSelector.value = 'any';
+    if (modeWarning) modeWarning.style.display = 'none';
 }
 
 function hideCampaignScreen() {
@@ -3860,6 +3901,7 @@ function showGameScreen() {
     if (welcomeScreen) welcomeScreen.style.display = 'none';
     document.getElementById('app-container')?.classList.remove('hidden-app');
     setMobileGameplayMenuVisibility(true);
+    syncTopUserUi(activeUser, activeUserDoc);
     syncRefreshLockState();
 }
 

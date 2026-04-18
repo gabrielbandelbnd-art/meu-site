@@ -69,6 +69,7 @@
     <div id="welcome-screen" class="welcome-container">
         <div class="modal-content book-tutorial" aria-label="Tutorial do Grimório Arcano">
             <div class="book-tutorial-header">
+                <button id="tutorial-back-btn" type="button" class="campaign-back-btn tutorial-back-btn">← Voltar</button>
                 <h2>Grimório de MagicLexis</h2>
                 <p>Folheie as páginas para aprender as leis arcanas antes da partida.</p>
                 <button id="tutorial-skip-btn" class="book-skip-btn" type="button">Pular tutorial</button>
@@ -126,28 +127,45 @@
                             <p>MagicLexis mistura lógica, atenção e paciência. Continue praticando e você vai evoluir a cada partida.</p>
 
                             <div class="difficulty-box">
-                                <label for="length-selector">Escolha o desafio:</label>
-                                <select id="length-selector">
+                                <label for="mode-selector">Modo de Jogo:</label>
+                                <select id="length-selector" hidden aria-hidden="true" tabindex="-1">
                                     <option value="any">Aleatório (Qualquer tamanho)</option>
                                 </select>
-                                <p id="challenge-selector-help" class="selector-help">
-                                    No modo campanha, o livro é escolhido na próxima tela.
-                                </p>
-                            </div>
-
-                            <div class="difficulty-box">
-                                <label for="mode-selector">Modo de Jogo:</label>
-                                <select id="mode-selector">
+                                <select id="mode-selector" hidden aria-hidden="true" tabindex="-1">
+                                    <option value="">Selecione um modo</option>
                                     <option value="campaign">📚 Campanha (Livros)</option>
-                                    <option value="random">🎲 Aleatório</option>
-                                    <option value="online_1v1">⚔️ Online 1x1</option>
+                                    <option value="random">🎲 Palavra Surpresa</option>
+                                    <option value="online_1v1">⚔️ Online</option>
                                 </select>
-                                <p id="mode-warning" style="color: var(--warning); font-size: 0.9rem; margin-top: 5px; display: none;">
-                                    ⚠️ No aleatório, a quantidade de letras é sorteada automaticamente.
+                                <div id="mode-button-group" class="mode-button-group" role="radiogroup" aria-label="Modo de jogo">
+                                    <button type="button" class="profile-btn auth-main-btn mode-option-btn" data-mode="campaign" role="radio" aria-checked="false">
+                                        <span class="mode-option-icon" aria-hidden="true">📚</span>
+                                        <span class="mode-option-copy">
+                                            <span class="mode-option-text">Campanha (Livros)</span>
+                                            <span class="mode-option-subtext">Avance pelos livros e desbloqueie novos desafios.</span>
+                                        </span>
+                                    </button>
+                                    <button type="button" class="profile-btn auth-main-btn mode-option-btn" data-mode="random" role="radio" aria-checked="false">
+                                        <span class="mode-option-icon" aria-hidden="true">🎲</span>
+                                        <span class="mode-option-copy">
+                                            <span class="mode-option-text">Palavra Surpresa</span>
+                                            <span class="mode-option-subtext">Receba uma palavra surpresa com tamanho sorteado automaticamente.</span>
+                                        </span>
+                                    </button>
+                                    <button type="button" class="profile-btn auth-main-btn mode-option-btn" data-mode="online_1v1" role="radio" aria-checked="false">
+                                        <span class="mode-option-icon" aria-hidden="true">⚔️</span>
+                                        <span class="mode-option-copy">
+                                            <span class="mode-option-text">Online</span>
+                                            <span class="mode-option-subtext">Jogue online com amigos e pessoas desconhecidas. Beta.</span>
+                                        </span>
+                                    </button>
+                                </div>
+                                <p id="mode-warning" class="mode-warning" style="display: none;">
+                                    Escolha um modo para habilitar o botão abaixo.
                                 </p>
                             </div>
 
-                            <button id="start-game-btn">ENTENDI, VAMOS CONJURAR!</button>
+                            <button id="start-game-btn" disabled aria-disabled="true">ENTENDI, VAMOS CONJURAR!</button>
                         </section>
                     </div>
                 </div>
