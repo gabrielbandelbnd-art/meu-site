@@ -182,6 +182,8 @@ const CAMPAIGN_LEVEL_START = 3;
 const CAMPAIGN_LEVEL_END = 22;
 const CAMPAIGN_WORDS_TO_COMPLETE = 5;
 const CAMPAIGN_PROGRESS_STORAGE_KEY = 'magiclexis_campaign_progress_v1';
+const PLAYER_STATS_STORAGE_KEY = 'magiclexis_player_stats_v1';
+const GAMEPLAY_IDLE_TIMEOUT_MS = 60000;
 const CAMPAIGN_LEVELS = Array.from(
     { length: CAMPAIGN_LEVEL_END - CAMPAIGN_LEVEL_START + 1 },
     (_, index) => CAMPAIGN_LEVEL_START + index
@@ -317,6 +319,23 @@ const campaignCompleteNextBtn = document.getElementById('campaign-complete-next-
 const campaignCompleteBooksBtn = document.getElementById('campaign-complete-books-btn');
 const onlineResultModal = document.getElementById('online-result-modal');
 const closeOnlineResultModalBtn = document.getElementById('close-online-result-modal');
+const journeyFinaleModal = document.getElementById('journey-finale-modal');
+const journeyFinaleIqEl = document.getElementById('journey-finale-iq');
+const journeyFinaleRankEl = document.getElementById('journey-finale-rank');
+const journeyFinaleReplayBtn = document.getElementById('journey-finale-replay-btn');
+const journeyFinaleMenuBtn = document.getElementById('journey-finale-menu-btn');
+const journeyFinaleShareBtn = document.getElementById('journey-finale-share-btn');
+const journeyStatLettersEl = document.getElementById('journey-stat-letters');
+const journeyStatValidationsEl = document.getElementById('journey-stat-validations');
+const journeyStatWinsEl = document.getElementById('journey-stat-wins');
+const journeyStatErrorsEl = document.getElementById('journey-stat-errors');
+const journeyStatClearsEl = document.getElementById('journey-stat-clears');
+const journeyStatCyclesEl = document.getElementById('journey-stat-cycles');
+const journeyStatDaysEl = document.getElementById('journey-stat-days');
+const journeyStatTotalTimeEl = document.getElementById('journey-stat-total-time');
+const journeyStatAverageTimeEl = document.getElementById('journey-stat-average-time');
+const journeyStatChickensEl = document.getElementById('journey-stat-chickens');
+const journeyStatSharesEl = document.getElementById('journey-stat-shares');
 const onlineResultTitle = document.getElementById('online-result-title');
 const onlineResultCopy = document.getElementById('online-result-copy');
 const onlineResultSelfTime = document.getElementById('online-result-self-time');
@@ -831,6 +850,8 @@ if (clearBoardBtn) {
             }, 3000);
         } else {
             // Segundo clique - Limpa o tabuleiro
+            incrementPlayerStat('limpezasTabuleiro', 1);
+            noteGameplayActivity();
             currentWord = [];
             replaceIndex = 0;
             charInput.placeholder = "?";
@@ -855,6 +876,8 @@ function resetClearButton() {
 function addChar(char) {
     if (isGameplayTransitionLocked) return;
     if (!/^[a-zA-Z]$/.test(char)) return;
+    incrementPlayerStat('letrasConjuradas', 1);
+    noteGameplayActivity();
 
     if (isFirstRound) {
         isFirstRound = false; 
@@ -868,6 +891,7 @@ function addChar(char) {
     historyList.scrollTop = historyList.scrollHeight;
 
     if (currentWord.length >= maxWordLength) {
+        incrementPlayerStat('ciclosReiniciados', 1);
         // --- NOVO: LIMPA O TABULEIRO QUANDO VOLTA PRO INÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂCIO --- //
         playSoundEffect('overwrite');
         
@@ -921,6 +945,8 @@ function processNewChar(char, indexToInsert) {
 
 async function validate() {
     if (isGameplayTransitionLocked || isValidationInProgress) return;
+    incrementPlayerStat('validacoesFeitas', 1);
+    noteGameplayActivity();
     const word = currentWord.join('').toUpperCase();
     if (word.length < 2) return;
     isValidationInProgress = true;
@@ -943,6 +969,7 @@ async function validate() {
                 setDailyAttempts(dailySession.attempts);
                 feedback.innerText = '';
                 animateMage('sad');
+                incrementPlayerStat('erros', 1);
                 const dailyFunnyPhrase = takeFunnyPhrase();
                 showErrorMageFeedback(dailyFunnyPhrase);
                 return;
@@ -961,6 +988,7 @@ async function validate() {
             meaningBox.innerText = data.meaning || '';
             meaningBox.classList.remove('hidden');
             animateMage('win');
+            incrementPlayerStat('vitorias', 1);
             triggerConfetti();
             showMobileVictoryPopup();
 
@@ -990,6 +1018,7 @@ async function validate() {
         meaningBox.innerText = sanitizeGameText(targetChallenge.meaning);
         meaningBox.classList.remove('hidden');
         document.body.classList.add('success-flash');
+        incrementPlayerStat('vitorias', 1);
         const campaignResult = await handleCorrectAnswer();
         if (isOnlineGameplayMode()) {
             await finalizeOnlineMatch();
@@ -1007,7 +1036,10 @@ async function validate() {
             document.body.classList.remove('success-flash');
 
             if (currentGameMode === CAMPAIGN_MODE && currentCampaignLevel) {
-                if (campaignResult?.completedNow) {
+                if (campaignResult?.journeyCompletedNow) {
+                    feedback.innerText = "";
+                    showJourneyFinaleScreen();
+                } else if (campaignResult?.completedNow) {
                     feedback.innerText = "";
                     openCampaignCompleteModal({
                         currentLevel: currentCampaignLevel,
@@ -1071,6 +1103,7 @@ async function validate() {
             : !!(parsedData && typeof parsedData === 'object' && Object.keys(parsedData).length > 0);
 
         consecutiveErrors++;
+        incrementPlayerStat('erros', 1);
         if (isOnlineGameplayMode()) {
             currentOnlineLocalErrors += 1;
             queueOnlineProgressSync();
@@ -1094,6 +1127,7 @@ async function validate() {
 
         if (consecutiveErrors >= 3 && chickenAlreadySummoned === false) {
             chickenAlreadySummoned = true;
+            incrementPlayerStat('galinhasInvocadas', 1);
 
             const chickenAudio = new Audio('galinha.mp3');
             chickenAudio.volume = 1.0;
@@ -1154,10 +1188,18 @@ if(toggleBtn) {
 const isMobileViewport = () => window.matchMedia('(max-width: 800px)').matches;
 const isGameplayAppVisible = () => !document.getElementById('app-container')?.classList.contains('hidden-app');
 const MENU_MUSIC_SRC = encodeURI('MUSICAS/MENU/Arcane Reading Room.mp3');
+const ENDING_MUSIC_SRC = encodeURI("MUSICAS/FIM DO JOGO/Puzzle’s Quiet Victory.mp3");
 let menuMusicAudio = null;
+let endingMusicAudio = null;
 let menuMusicUnlockBound = false;
 let initialLoadingStarted = false;
 let menuMusicUnlocked = false;
+let playerStats = null;
+let gameplayTimeIntervalId = null;
+let gameplayTimeLastTick = 0;
+let gameplayLastActivityAt = 0;
+let journeyFinaleShown = false;
+let journeyFinaleCounterRaf = 0;
 
 function getMenuMusicAudio() {
     if (!menuMusicAudio) {
@@ -1222,7 +1264,7 @@ function bindMenuMusicUnlock() {
 
 function hasBlockingGameplayOverlayOpen() {
     return !!document.querySelector(
-        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control)'
+        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control)'
     );
 }
 
@@ -1249,6 +1291,7 @@ window.addEventListener('pageshow', () => {
 });
 
 document.addEventListener('visibilitychange', () => {
+    syncGameplayTimeTracking();
     if (document.hidden) return;
     tryStartMenuMusic();
 });
@@ -1276,6 +1319,21 @@ document.addEventListener('keydown', (event) => {
         return;
     }
 });
+
+document.addEventListener('pointerdown', () => {
+    if (!isGameScreenVisible()) return;
+    noteGameplayActivity();
+}, true);
+
+document.addEventListener('touchstart', () => {
+    if (!isGameScreenVisible()) return;
+    noteGameplayActivity();
+}, true);
+
+document.addEventListener('keydown', () => {
+    if (!isGameScreenVisible()) return;
+    noteGameplayActivity();
+}, true);
 
 /* --- MAGE LOGIC (CSS CUSTOM) --- */
 const mageEl = document.getElementById('mage-character');
@@ -2381,6 +2439,7 @@ function renderOnlineRoomPanel(roomData = currentOnlineRoom) {
 }
 
 function showOnlineScreen() {
+    stopEndingMusic();
     tryStartMenuMusic();
     setMobileGameplayMenuVisibility(false);
     if (hub) {
@@ -2394,6 +2453,7 @@ function showOnlineScreen() {
     renderOnlineRoomPanel();
     syncTopUserUi(activeUser, activeUserDoc);
     syncRefreshLockState();
+    syncGameplayTimeTracking();
 }
 
 function sanitizeOnlineCodeInput() {
@@ -3576,6 +3636,7 @@ function renderCampaignBooks() {
 }
 
 function showCampaignScreen() {
+    stopEndingMusic();
     tryStartMenuMusic();
     setMobileGameplayMenuVisibility(false);
     if (hub) {
@@ -3589,6 +3650,7 @@ function showCampaignScreen() {
     renderCampaignBooks();
     syncTopUserUi(activeUser, activeUserDoc);
     syncRefreshLockState();
+    syncGameplayTimeTracking();
 }
 
 function getSelectedStartMode() {
@@ -3698,14 +3760,419 @@ async function recordCampaignWordCompletion(level) {
 
     return {
         completedNow,
+        completedLevel: level,
+        journeyCompletedNow: completedNow && isCampaignJourneyFullyCompleted(nextProgress),
         unlockedLevels: nextProgress.unlockedLevels.filter((item) => !unlockedBefore.has(item)),
         nextLevel: getNextCampaignPlayableLevel(level, nextProgress.unlockedLevels)
     };
 }
 
+function getCampaignLevelsWithContent() {
+    return CAMPAIGN_LEVELS.filter((level) => hasCampaignContent(level));
+}
+
+function isCampaignJourneyFullyCompleted(progress = campaignProgress) {
+    const normalized = normalizeCampaignProgress(progress);
+    const completedSet = new Set(normalized.completedLevels || []);
+    const campaignLevels = getCampaignLevelsWithContent();
+    return campaignLevels.length > 0 && campaignLevels.every((level) => completedSet.has(level));
+}
+
+// Estatísticas persistidas localmente por jogador para manter a jornada entre sessões.
+function getPlayerStatsStorageKey() {
+    const uid = activeUser?.uid || 'guest';
+    return `${PLAYER_STATS_STORAGE_KEY}:${uid}`;
+}
+
+function getDefaultPlayerStats() {
+    return {
+        letrasConjuradas: 0,
+        validacoesFeitas: 0,
+        vitorias: 0,
+        erros: 0,
+        limpezasTabuleiro: 0,
+        ciclosReiniciados: 0,
+        diasJogados: 0,
+        tempoTotalJogadoMs: 0,
+        galinhasInvocadas: 0,
+        vitoriasCompartilhadas: 0,
+        playedDayKeys: []
+    };
+}
+
+function normalizePlayerStats(rawStats) {
+    const base = rawStats && typeof rawStats === 'object' ? rawStats : {};
+    const normalized = getDefaultPlayerStats();
+    const numericKeys = [
+        'letrasConjuradas',
+        'validacoesFeitas',
+        'vitorias',
+        'erros',
+        'limpezasTabuleiro',
+        'ciclosReiniciados',
+        'diasJogados',
+        'tempoTotalJogadoMs',
+        'galinhasInvocadas',
+        'vitoriasCompartilhadas'
+    ];
+
+    numericKeys.forEach((key) => {
+        const value = Number(base[key] ?? 0);
+        normalized[key] = Math.max(0, Number.isFinite(value) ? value : 0);
+    });
+
+    normalized.playedDayKeys = Array.from(
+        new Set(
+            Array.isArray(base.playedDayKeys)
+                ? base.playedDayKeys.map((item) => String(item || '').trim()).filter(Boolean)
+                : []
+        )
+    ).sort();
+    normalized.diasJogados = Math.max(normalized.diasJogados, normalized.playedDayKeys.length);
+
+    return normalized;
+}
+
+function loadPlayerStats() {
+    try {
+        const stored = localStorage.getItem(getPlayerStatsStorageKey());
+        playerStats = normalizePlayerStats(stored ? JSON.parse(stored) : null);
+    } catch (err) {
+        console.log('Falha ao carregar estatisticas locais:', err);
+        playerStats = normalizePlayerStats(null);
+    }
+    return playerStats;
+}
+
+function savePlayerStats(stats = playerStats) {
+    playerStats = normalizePlayerStats(stats);
+    try {
+        localStorage.setItem(getPlayerStatsStorageKey(), JSON.stringify(playerStats));
+    } catch (err) {
+        console.log('Falha ao salvar estatisticas locais:', err);
+    }
+    return playerStats;
+}
+
+function ensurePlayerStatsLoaded() {
+    if (!playerStats) {
+        loadPlayerStats();
+    }
+    return playerStats;
+}
+
+function incrementPlayerStat(key, amount = 1) {
+    const stats = ensurePlayerStatsLoaded();
+    const safeAmount = Number(amount);
+    if (!Number.isFinite(safeAmount)) return stats;
+    stats[key] = Math.max(0, Number(stats[key] || 0) + safeAmount);
+    return savePlayerStats(stats);
+}
+
+function getLocalDateKey() {
+    return new Intl.DateTimeFormat('sv-SE', {
+        timeZone: 'America/Sao_Paulo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    }).format(new Date());
+}
+
+function markGameplayDay() {
+    const stats = ensurePlayerStatsLoaded();
+    const dateKey = getLocalDateKey();
+    if (stats.playedDayKeys.includes(dateKey)) return stats;
+    stats.playedDayKeys.push(dateKey);
+    stats.playedDayKeys.sort();
+    stats.diasJogados = stats.playedDayKeys.length;
+    return savePlayerStats(stats);
+}
+
+function noteGameplayActivity() {
+    gameplayLastActivityAt = Date.now();
+    if (isGameScreenVisible()) {
+        markGameplayDay();
+    }
+}
+
+function flushGameplayTime() {
+    if (!gameplayTimeLastTick) return;
+    const now = Date.now();
+    const activeUntil = Math.min(now, (gameplayLastActivityAt || gameplayTimeLastTick) + GAMEPLAY_IDLE_TIMEOUT_MS);
+    const delta = Math.max(0, activeUntil - gameplayTimeLastTick);
+    if (delta > 0) {
+        const stats = ensurePlayerStatsLoaded();
+        stats.tempoTotalJogadoMs = Math.max(0, Number(stats.tempoTotalJogadoMs || 0) + delta);
+        savePlayerStats(stats);
+    }
+    gameplayTimeLastTick = now;
+}
+
+// Conta tempo só enquanto a tela de jogo estiver ativa e com atividade recente.
+function syncGameplayTimeTracking() {
+    const isFinaleVisible = !!journeyFinaleModal && !journeyFinaleModal.classList.contains('hidden-control');
+    const shouldTrack = isGameScreenVisible() && !document.hidden && !isFinaleVisible;
+
+    if (shouldTrack) {
+        if (!gameplayTimeIntervalId) {
+            const now = Date.now();
+            gameplayTimeLastTick = now;
+            gameplayLastActivityAt = now;
+            markGameplayDay();
+            gameplayTimeIntervalId = window.setInterval(flushGameplayTime, 5000);
+        }
+        return;
+    }
+
+    if (gameplayTimeIntervalId) {
+        flushGameplayTime();
+        window.clearInterval(gameplayTimeIntervalId);
+        gameplayTimeIntervalId = null;
+    }
+    gameplayTimeLastTick = 0;
+}
+
+function formatGameplayDuration(ms = 0) {
+    const totalSeconds = Math.max(0, Math.round(Number(ms || 0) / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    if (hours > 0) return `${hours}h ${minutes}min`;
+    if (minutes > 0) return `${minutes} min ${seconds}s`;
+    return `${seconds}s`;
+}
+
+function getAverageMinutesPerDay(stats = playerStats) {
+    const safeStats = normalizePlayerStats(stats);
+    if (!safeStats.diasJogados) return 0;
+    const averageMinutes = (safeStats.tempoTotalJogadoMs / 60000) / safeStats.diasJogados;
+    return Number.isFinite(averageMinutes) ? averageMinutes : 0;
+}
+
+function formatAverageMinutesPerDay(stats = playerStats) {
+    const averageMinutes = getAverageMinutesPerDay(stats);
+    if (averageMinutes <= 0) return '0 min/dia';
+    if (averageMinutes < 1) return '< 1 min/dia';
+    return `${Math.round(averageMinutes)} min/dia`;
+}
+
+function calculateMagicIq(stats = playerStats) {
+    const safeStats = normalizePlayerStats(stats);
+    const averageMinutes = getAverageMinutesPerDay(safeStats);
+    const rawValue =
+        (safeStats.letrasConjuradas * 1) +
+        (safeStats.validacoesFeitas * 2) +
+        (safeStats.vitorias * 50) +
+        (safeStats.diasJogados * 20) +
+        (averageMinutes * 1.5) +
+        (safeStats.vitoriasCompartilhadas * 30) -
+        (safeStats.erros * 10) -
+        (safeStats.limpezasTabuleiro * 3) -
+        (safeStats.ciclosReiniciados * 2) +
+        (safeStats.galinhasInvocadas * 1);
+
+    const normalizedValue = Math.max(0, Math.round(Number.isFinite(rawValue) ? rawValue : 0));
+    return normalizedValue;
+}
+
+function getMagicIqRank(iqValue = 0) {
+    if (iqValue >= 20000) return 'Lenda Arcana';
+    if (iqValue >= 5000) return 'Arquimago Lexical';
+    if (iqValue >= 1000) return 'Mago das Letras';
+    return 'Aprendiz Arcano';
+}
+
+function formatMagicIq(iqValue = 0) {
+    return Number(iqValue || 0).toLocaleString('pt-BR');
+}
+
+function fadeAudioVolume(audio, fromVolume, toVolume, durationMs = 600, onComplete = null) {
+    if (!audio) {
+        if (typeof onComplete === 'function') onComplete();
+        return;
+    }
+
+    const start = performance.now();
+    const safeFrom = Math.max(0, Math.min(1, Number(fromVolume ?? audio.volume ?? 1)));
+    const safeTo = Math.max(0, Math.min(1, Number(toVolume ?? 0)));
+
+    if (audio._magicLexisFadeRaf) {
+        cancelAnimationFrame(audio._magicLexisFadeRaf);
+    }
+
+    audio.volume = safeFrom;
+
+    const step = (now) => {
+        const progress = Math.min(1, (now - start) / durationMs);
+        audio.volume = safeFrom + ((safeTo - safeFrom) * progress);
+
+        if (progress < 1) {
+            audio._magicLexisFadeRaf = requestAnimationFrame(step);
+            return;
+        }
+
+        audio.volume = safeTo;
+        audio._magicLexisFadeRaf = 0;
+        if (typeof onComplete === 'function') onComplete();
+    };
+
+    audio._magicLexisFadeRaf = requestAnimationFrame(step);
+}
+
+// Trilha final isolada para a conclusão completa da campanha.
+function getEndingMusicAudio() {
+    if (!endingMusicAudio) {
+        endingMusicAudio = new Audio(ENDING_MUSIC_SRC);
+        endingMusicAudio.loop = true;
+        endingMusicAudio.volume = 0;
+        endingMusicAudio.preload = 'auto';
+        endingMusicAudio.playsInline = true;
+    }
+    return endingMusicAudio;
+}
+
+function stopEndingMusic({ fadeOut = false } = {}) {
+    if (!endingMusicAudio) return;
+    const stopTrack = () => {
+        endingMusicAudio.pause();
+        endingMusicAudio.currentTime = 0;
+        endingMusicAudio.volume = 0;
+    };
+
+    if (!fadeOut) {
+        stopTrack();
+        return;
+    }
+
+    fadeAudioVolume(endingMusicAudio, endingMusicAudio.volume, 0, 550, stopTrack);
+}
+
+function startJourneyFinaleMusic() {
+    if (menuMusicAudio && !menuMusicAudio.paused) {
+        fadeAudioVolume(menuMusicAudio, menuMusicAudio.volume, 0, 500, stopMenuMusic);
+    } else {
+        stopMenuMusic();
+    }
+    const audio = getEndingMusicAudio();
+    audio.pause();
+    audio.currentTime = 0;
+    audio.volume = 0;
+    const playPromise = audio.play();
+
+    if (playPromise && typeof playPromise.then === 'function') {
+        playPromise.then(() => {
+            fadeAudioVolume(audio, 0, 0.5, 900);
+        }).catch((err) => {
+            console.log('Falha ao iniciar trilha final:', err);
+        });
+        return;
+    }
+
+    fadeAudioVolume(audio, 0, 0.5, 900);
+}
+
+function animateJourneyFinaleIq(targetValue) {
+    if (!journeyFinaleIqEl) return;
+    if (journeyFinaleCounterRaf) {
+        cancelAnimationFrame(journeyFinaleCounterRaf);
+        journeyFinaleCounterRaf = 0;
+    }
+
+    const start = performance.now();
+    const durationMs = 1500;
+
+    const tick = (now) => {
+        const progress = Math.min(1, (now - start) / durationMs);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const currentValue = Math.round(targetValue * eased);
+        journeyFinaleIqEl.innerText = formatMagicIq(currentValue);
+        if (progress < 1) {
+            journeyFinaleCounterRaf = requestAnimationFrame(tick);
+        } else {
+            journeyFinaleCounterRaf = 0;
+        }
+    };
+
+    journeyFinaleCounterRaf = requestAnimationFrame(tick);
+}
+
+function renderJourneyFinaleStats() {
+    const stats = ensurePlayerStatsLoaded();
+    flushGameplayTime();
+    const safeStats = normalizePlayerStats(stats);
+    const iqValue = calculateMagicIq(safeStats);
+
+    if (journeyStatLettersEl) journeyStatLettersEl.innerText = String(safeStats.letrasConjuradas);
+    if (journeyStatValidationsEl) journeyStatValidationsEl.innerText = String(safeStats.validacoesFeitas);
+    if (journeyStatWinsEl) journeyStatWinsEl.innerText = String(safeStats.vitorias);
+    if (journeyStatErrorsEl) journeyStatErrorsEl.innerText = String(safeStats.erros);
+    if (journeyStatClearsEl) journeyStatClearsEl.innerText = String(safeStats.limpezasTabuleiro);
+    if (journeyStatCyclesEl) journeyStatCyclesEl.innerText = String(safeStats.ciclosReiniciados);
+    if (journeyStatDaysEl) journeyStatDaysEl.innerText = String(safeStats.diasJogados);
+    if (journeyStatTotalTimeEl) journeyStatTotalTimeEl.innerText = formatGameplayDuration(safeStats.tempoTotalJogadoMs);
+    if (journeyStatAverageTimeEl) journeyStatAverageTimeEl.innerText = formatAverageMinutesPerDay(safeStats);
+    if (journeyStatChickensEl) journeyStatChickensEl.innerText = String(safeStats.galinhasInvocadas);
+    if (journeyStatSharesEl) journeyStatSharesEl.innerText = String(safeStats.vitoriasCompartilhadas);
+    if (journeyFinaleRankEl) journeyFinaleRankEl.innerText = getMagicIqRank(iqValue);
+
+    animateJourneyFinaleIq(iqValue);
+    return { stats: safeStats, iqValue };
+}
+
+function buildJourneyShareText(iqValue) {
+    return `Eu concluí minha jornada em MagicLexis e alcancei um QI Mágico de ${formatMagicIq(iqValue)}.`;
+}
+
+function showJourneyFinaleScreen() {
+    if (!journeyFinaleModal || journeyFinaleShown) return;
+    journeyFinaleShown = true;
+    showControl(journeyFinaleModal, true);
+    syncGameplayTimeTracking();
+    renderJourneyFinaleStats();
+    startJourneyFinaleMusic();
+}
+
+function hideJourneyFinaleScreen({ stopMusic = true } = {}) {
+    if (!journeyFinaleModal) return;
+    showControl(journeyFinaleModal, false);
+    if (stopMusic) {
+        stopEndingMusic({ fadeOut: true });
+    }
+    syncGameplayTimeTracking();
+}
+
+async function shareJourneyFinale() {
+    const { iqValue } = renderJourneyFinaleStats();
+    const shareText = buildJourneyShareText(iqValue);
+
+    try {
+        if (navigator.share) {
+            await navigator.share({ text: shareText });
+        } else if (navigator.clipboard) {
+            await navigator.clipboard.writeText(shareText);
+            showFloatingMessage('Jornada copiada para a área de transferência.', 2200);
+        } else {
+            return;
+        }
+        incrementPlayerStat('vitoriasCompartilhadas', 1);
+        renderJourneyFinaleStats();
+    } catch (err) {
+        console.log('Falha ao compartilhar jornada final:', err);
+    }
+}
+
+async function restartCampaignJourney() {
+    hideJourneyFinaleScreen({ stopMusic: true });
+    journeyFinaleShown = false;
+    await saveCampaignProgress(getDefaultCampaignProgress());
+    startCampaignLevel(CAMPAIGN_LEVEL_START);
+}
+
 let bookTutorialApi = null;
 
 function openWelcomeTutorial(goToLastPage = false) {
+    stopEndingMusic();
     tryStartMenuMusic();
     setMobileGameplayMenuVisibility(false);
     const appContainer = document.getElementById('app-container');
@@ -3722,6 +4189,7 @@ function openWelcomeTutorial(goToLastPage = false) {
         else bookTutorialApi.goToFirstPage();
     }
     syncTopUserUi(activeUser, activeUserDoc);
+    syncGameplayTimeTracking();
 }
 
 const DEFAULT_AVATAR = 'https://ui-avatars.com/api/?name=ML&background=1f1f1f&color=bb86fc&size=128';
@@ -4006,6 +4474,7 @@ function syncRefreshLockState() {
 
 function showGameScreen() {
     stopMenuMusic();
+    stopEndingMusic();
     hideCampaignScreen();
     hideOnlineScreen();
     if (hub) {
@@ -4017,9 +4486,14 @@ function showGameScreen() {
     setMobileGameplayMenuVisibility(true);
     syncTopUserUi(activeUser, activeUserDoc);
     syncRefreshLockState();
+    markGameplayDay();
+    noteGameplayActivity();
+    syncGameplayTimeTracking();
 }
 
 async function showHubScreenFromGame() {
+    hideJourneyFinaleScreen({ stopMusic: true });
+    journeyFinaleShown = false;
     stopHintCycle();
     resetDailySession();
     clearGameSessionState();
@@ -4035,6 +4509,7 @@ async function showHubScreenFromGame() {
     showHubScreen(true);
     syncTopUserUi(activeUser, activeUserDoc);
     syncRefreshLockState();
+    syncGameplayTimeTracking();
 }
 
 function tryRestoreGameSession() {
@@ -4123,6 +4598,7 @@ async function shareDailyResult() {
             await navigator.clipboard.writeText(dailyShareText);
             showFloatingMessage('Resultado copiado para ÃƒÆ’Ã‚Â¡rea de transferÃƒÆ’Ã‚Âªncia.', 2200);
         }
+        incrementPlayerStat('vitoriasCompartilhadas', 1);
     } catch (err) {
         console.log('Falha ao compartilhar resultado diÃƒÆ’Ã‚Â¡rio', err);
     }
@@ -4242,6 +4718,7 @@ function activateLocalDevSession(mode = 'guest', email = '') {
         campaignProgress: getDefaultCampaignProgress()
     };
     campaignProgress = normalizeCampaignProgress(activeUserDoc?.campaignProgress);
+    loadPlayerStats();
 
     showAuthGate(false);
     showHubScreen(true);
@@ -4284,6 +4761,7 @@ function setGateAuthMode(mode = 'login') {
 function showHubScreen(show) {
     if (!hub) return;
     if (show) {
+        stopEndingMusic();
         tryStartMenuMusic();
         hub.classList.remove('hidden-control');
         hub.style.display = 'flex';
@@ -4293,14 +4771,19 @@ function showHubScreen(show) {
         hub.classList.add('hidden-control');
     }
     syncRefreshLockState();
+    syncGameplayTimeTracking();
 }
 
 function showAuthGate(show) {
     showControl(authGate, show);
-    if (show) tryStartMenuMusic();
+    if (show) {
+        stopEndingMusic();
+        tryStartMenuMusic();
+    }
     if (show) hideCampaignScreen();
     if (show) hideOnlineScreen();
     if (show) setGateAuthMode('login');
+    syncGameplayTimeTracking();
 }
 function getModeVisitor(user) {
     return !!(user && user.isAnonymous);
@@ -4700,6 +5183,13 @@ function bindAuthUiEvents() {
         goToCampaignBooks(pendingCampaignCompletion?.nextLevel || pendingCampaignCompletion?.currentLevel || null);
     });
     campaignCompleteNextBtn?.addEventListener('click', continueToNextCampaignBook);
+    journeyFinaleReplayBtn?.addEventListener('click', restartCampaignJourney);
+    journeyFinaleMenuBtn?.addEventListener('click', async () => {
+        hideJourneyFinaleScreen({ stopMusic: true });
+        journeyFinaleShown = false;
+        await showHubScreenFromGame();
+    });
+    journeyFinaleShareBtn?.addEventListener('click', shareJourneyFinale);
     closeOnlineResultModalBtn?.addEventListener('click', async () => {
         showControl(onlineResultModal, false);
         await leaveOnlineRoom({ abandon: false });
@@ -4856,6 +5346,7 @@ function initFirebase() {
             resetOnlineRoomState();
             activeUser = null;
             activeUserDoc = null;
+            loadPlayerStats();
             showAuthGate(true);
             showHubScreen(false);
             welcomeScreen.style.display = 'none';
@@ -4877,6 +5368,7 @@ function initFirebase() {
             console.log('Falha ao carregar doc do usuario:', e);
         }
         await loadCampaignProgress();
+        loadPlayerStats();
 
         const shouldPreserveCurrentView = preserveCurrentViewOnAuthSync;
         preserveCurrentViewOnAuthSync = false;
@@ -4956,6 +5448,7 @@ function initInitialLoadingScreen() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initInitialLoadingScreen();
+    loadPlayerStats();
     bindAuthUiEvents();
     setGateAuthMode('login');
     syncRefreshLockState();
