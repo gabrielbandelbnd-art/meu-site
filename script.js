@@ -1152,6 +1152,21 @@ if(toggleBtn) {
     };
 }
 const isMobileViewport = () => window.matchMedia('(max-width: 800px)').matches;
+const isGameplayAppVisible = () => !document.getElementById('app-container')?.classList.contains('hidden-app');
+
+function hasBlockingGameplayOverlayOpen() {
+    return !!document.querySelector(
+        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control)'
+    );
+}
+
+function isTypingContextTarget(target) {
+    if (!target) return false;
+    if (target === charInput) return false;
+    if (target.isContentEditable) return true;
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' || tagName === 'SELECT' || tagName === 'BUTTON';
+}
 
 document.body.onclick = (e) => { 
     if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -1165,6 +1180,30 @@ document.body.onclick = (e) => {
 window.addEventListener('pageshow', () => {
     if (!isMobileViewport() || !charInput) return;
     charInput.blur();
+});
+
+document.addEventListener('keydown', (event) => {
+    if (isMobileViewport() || !isGameplayAppVisible() || hasBlockingGameplayOverlayOpen()) return;
+    if (isTypingContextTarget(event.target)) return;
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+
+    const key = event.key || '';
+
+    if (/^[a-zA-Z]$/.test(key)) {
+        event.preventDefault();
+        addChar(key);
+        if (charInput) {
+            charInput.value = '';
+            charInput.focus();
+        }
+        return;
+    }
+
+    if (key === 'Enter') {
+        event.preventDefault();
+        validate();
+        return;
+    }
 });
 
 /* --- MAGE LOGIC (CSS CUSTOM) --- */
