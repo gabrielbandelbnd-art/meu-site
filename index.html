@@ -27,6 +27,25 @@
     <link rel="stylesheet" href="style.css?v=20260414-3">
 </head>
 <body>
+    <div id="initial-loading-screen" class="initial-loading-screen" aria-live="polite" aria-label="Tela de carregamento inicial do MagicLexis">
+        <div class="initial-loading-backdrop"></div>
+        <div class="initial-loading-content">
+            <img
+                id="initial-loading-image"
+                class="initial-loading-image"
+                src="Tela%20de%20Carregamento.png"
+                alt="Ilustração principal do mago do MagicLexis"
+                fetchpriority="high"
+                decoding="async"
+            >
+            <div class="initial-loading-status">
+                <div class="initial-loading-bar-shell">
+                    <div id="initial-loading-bar" class="initial-loading-bar"></div>
+                </div>
+                <div id="initial-loading-percent" class="initial-loading-percent">0%</div>
+            </div>
+        </div>
+    </div>
     <div id="auth-gate" class="auth-gate">
         <div class="auth-gate-card">
             <div class="auth-brand">MagicLexis</div>

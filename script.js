@@ -4819,7 +4819,51 @@ function initFirebase() {
         await refreshDailyHubState();
     });
 }
+
+function initInitialLoadingScreen() {
+    const loadingScreen = document.getElementById('initial-loading-screen');
+    const loadingBar = document.getElementById('initial-loading-bar');
+    const loadingPercent = document.getElementById('initial-loading-percent');
+    if (!loadingScreen || !loadingBar || !loadingPercent) return;
+
+    document.body.classList.add('loading-screen-active');
+
+    const totalDurationMs = 1500;
+    const fadeOutDurationMs = 420;
+    const startTime = performance.now();
+
+    const tick = (now) => {
+        const elapsed = Math.min(totalDurationMs, now - startTime);
+        const progress = Math.min(1, elapsed / totalDurationMs);
+        const easedProgress = 1 - Math.pow(1 - progress, 2.6);
+        const percent = Math.round(easedProgress * 100);
+
+        loadingBar.style.width = `${percent}%`;
+        loadingPercent.innerText = `${percent}%`;
+
+        if (elapsed < totalDurationMs) {
+            window.requestAnimationFrame(tick);
+            return;
+        }
+
+        loadingBar.style.width = '100%';
+        loadingPercent.innerText = '100%';
+
+        window.setTimeout(() => {
+            loadingScreen.classList.add('is-hidden');
+            document.body.classList.remove('loading-screen-active');
+
+            window.setTimeout(() => {
+                loadingScreen.remove();
+            }, fadeOutDurationMs);
+        }, 110);
+    };
+
+    window.requestAnimationFrame(tick);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    initInitialLoadingScreen();
     bindAuthUiEvents();
     setGateAuthMode('login');
     syncRefreshLockState();
