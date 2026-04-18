@@ -17,8 +17,106 @@ service cloud.firestore {
       );
     }
 
+    function roomHasPartyPlayer(data, uid) {
+      return uid != null
+        && data.players is list
+        && (
+          (data.players.size() > 0 && data.players[0].uid == uid) ||
+          (data.players.size() > 1 && data.players[1].uid == uid) ||
+          (data.players.size() > 2 && data.players[2].uid == uid) ||
+          (data.players.size() > 3 && data.players[3].uid == uid)
+        );
+    }
+
+    function isDuelRoom(data) {
+      return data.roomType == 'duel';
+    }
+
+    function isPartyRoom(data) {
+      return data.roomType == 'party';
+    }
+
     function isRoomParticipant(data) {
-      return isSignedIn() && roomHasPlayer(data, request.auth.uid);
+      return isSignedIn() && (
+        (isDuelRoom(data) && roomHasPlayer(data, request.auth.uid)) ||
+        (isPartyRoom(data) && roomHasPartyPlayer(data, request.auth.uid))
+      );
+    }
+
+    function isValidDuelCreate(roomCode) {
+      return request.resource.data.roomCode == roomCode
+        && request.resource.data.roomType == 'duel'
+        && request.resource.data.gameMode == 'online_1v1'
+        && request.resource.data.status == 'waiting'
+        && request.resource.data.hostUid == request.auth.uid
+        && request.resource.data.winnerUid == null
+        && request.resource.data.letterCount is number
+        && request.resource.data.challenge is map
+        && request.resource.data.challenge.word is string
+        && request.resource.data.players.player1.uid == request.auth.uid
+        && request.resource.data.players.player2.uid == null;
+    }
+
+    function isValidPartyCreate(roomCode) {
+      return request.resource.data.roomCode == roomCode
+        && request.resource.data.roomType == 'party'
+        && request.resource.data.gameMode == 'online_party'
+        && request.resource.data.status == 'waiting'
+        && request.resource.data.hostUid == request.auth.uid
+        && request.resource.data.winnerUid == null
+        && request.resource.data.maxPlayers == 4
+        && request.resource.data.letterCount is number
+        && request.resource.data.word is string
+        && request.resource.data.challenge is map
+        && request.resource.data.challenge.word is string
+        && request.resource.data.players is list
+        && request.resource.data.players.size() == 1
+        && request.resource.data.players[0].uid == request.auth.uid;
+    }
+
+    function isValidDuelUpdate() {
+      return request.resource.data.roomCode == resource.data.roomCode
+        && request.resource.data.roomType == resource.data.roomType
+        && request.resource.data.hostUid == resource.data.hostUid
+        && request.resource.data.gameMode == resource.data.gameMode
+        && request.resource.data.letterCount == resource.data.letterCount
+        && request.resource.data.challenge == resource.data.challenge
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (
+          isRoomParticipant(resource.data) ||
+          (
+            resource.data.status == 'waiting' &&
+            resource.data.players.player2.uid == null &&
+            request.resource.data.players.player2.uid == request.auth.uid
+          )
+        );
+    }
+
+    function isValidPartyJoin() {
+      return resource.data.status == 'waiting'
+        && resource.data.players is list
+        && request.resource.data.players is list
+        && resource.data.players.size() < resource.data.maxPlayers
+        && request.resource.data.players.size() == resource.data.players.size() + 1
+        && request.resource.data.players[resource.data.players.size()].uid == request.auth.uid;
+    }
+
+    function isValidPartyUpdate() {
+      return request.resource.data.roomCode == resource.data.roomCode
+        && request.resource.data.roomType == resource.data.roomType
+        && request.resource.data.hostUid is string
+        && request.resource.data.gameMode == resource.data.gameMode
+        && request.resource.data.maxPlayers == resource.data.maxPlayers
+        && request.resource.data.letterCount == resource.data.letterCount
+        && request.resource.data.word == resource.data.word
+        && request.resource.data.challenge == resource.data.challenge
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.players is list
+        && request.resource.data.players.size() <= request.resource.data.maxPlayers
+        && (
+          isRoomParticipant(resource.data) ||
+          isValidPartyJoin()
+        );
     }
 
     match /users/{uid} {
@@ -46,33 +144,24 @@ service cloud.firestore {
 
       allow create: if isSignedIn()
         && !exists(/databases/$(database)/documents/rooms/$(roomCode))
-        && request.resource.data.roomCode == roomCode
-        && request.resource.data.gameMode == 'online_1v1'
-        && request.resource.data.status == 'waiting'
-        && request.resource.data.hostUid == request.auth.uid
-        && request.resource.data.winnerUid == null
-        && request.resource.data.letterCount is number
-        && request.resource.data.challenge is map
-        && request.resource.data.challenge.word is string
-        && request.resource.data.players.player1.uid == request.auth.uid
-        && request.resource.data.players.player2.uid == null;
-
-      allow update: if isSignedIn()
-        && request.resource.data.roomCode == resource.data.roomCode
-        && request.resource.data.hostUid == resource.data.hostUid
-        && request.resource.data.gameMode == resource.data.gameMode
-        && request.resource.data.letterCount == resource.data.letterCount
-        && request.resource.data.challenge == resource.data.challenge
-        && request.resource.data.createdAt == resource.data.createdAt
         && (
-          isRoomParticipant(resource.data) ||
-          (
-            resource.data.status == 'waiting' &&
-            resource.data.players.player2.uid == null &&
-            request.resource.data.players.player2.uid == request.auth.uid
-          )
+          isValidDuelCreate(roomCode) ||
+          isValidPartyCreate(roomCode)
         );
 
+      allow update: if isSignedIn()
+        && (
+          (isDuelRoom(resource.data) && isValidDuelUpdate()) ||
+          (isPartyRoom(resource.data) && isValidPartyUpdate())
+        );
+
+      allow delete: if false;
+    }
+
+    match /matchmaking/{queueId} {
+      allow get: if isSignedIn();
+      allow list: if false;
+      allow create, update: if isSignedIn();
       allow delete: if false;
     }
 

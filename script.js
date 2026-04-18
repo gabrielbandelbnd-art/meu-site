@@ -289,11 +289,18 @@ const onlineRoomPanel = document.getElementById('online-room-panel');
 const onlineRoomCodeDisplay = document.getElementById('online-room-code-display');
 const onlineCopyCodeBtn = document.getElementById('online-copy-code-btn');
 const onlineRoomState = document.getElementById('online-room-state');
+const onlineRoomTypeLabel = document.getElementById('online-room-type-label');
+const onlineRoomOpponentLabel = document.getElementById('online-room-opponent-label');
 const onlinePlayerSelf = document.getElementById('online-player-self');
 const onlinePlayerOpponent = document.getElementById('online-player-opponent');
 const onlineRoomOpponentStatus = document.getElementById('online-room-opponent-status');
+const onlinePartyPanel = document.getElementById('online-party-panel');
+const onlinePartySummary = document.getElementById('online-party-summary');
+const onlinePartyPlayersList = document.getElementById('online-party-players-list');
+const onlinePartyStartBtn = document.getElementById('online-party-start-btn');
 const onlineRoomLeaveBtn = document.getElementById('online-room-leave-btn');
 const onlineMatchBanner = document.getElementById('online-match-banner');
+const onlineMatchModeLabel = document.getElementById('online-match-mode-label');
 const onlineRoomBannerCode = document.getElementById('online-room-banner-code');
 const onlineOpponentBannerStatus = document.getElementById('online-opponent-banner-status');
 const onlineMatchLeaveBtn = document.getElementById('online-match-leave-btn');
@@ -630,7 +637,7 @@ function startChallengeEngine(challengeData, options = {}) {
     startHintCycle();
     render(true);
     saveGameSessionState();
-    if (currentGameMode !== ONLINE_MODE) {
+    if (!isOnlineGameplayMode()) {
         showControl(onlineMatchBanner, false);
     }
 }
@@ -982,13 +989,13 @@ async function validate() {
         meaningBox.classList.remove('hidden');
         document.body.classList.add('success-flash');
         const campaignResult = await handleCorrectAnswer();
-        if (currentGameMode === ONLINE_MODE) {
+        if (isOnlineGameplayMode()) {
             await finalizeOnlineMatch();
         }
 
         successSound.play(); playSoundEffect('victory'); triggerConfetti();
         animateMage('win');
-        if (!campaignResult?.completedNow && currentGameMode !== ONLINE_MODE) {
+        if (!campaignResult?.completedNow && !isOnlineGameplayMode()) {
             showMobileVictoryPopup();
         }
 
@@ -1008,8 +1015,10 @@ async function validate() {
                     startCampaignLevel(currentCampaignLevel);
                     feedback.innerText = "Novo desafio do livro iniciado!";
                 }
-            } else if (currentGameMode === ONLINE_MODE) {
-                feedback.innerText = "Resultado enviado. Aguardando o duelo finalizar...";
+            } else if (isOnlineGameplayMode()) {
+                feedback.innerText = currentGameMode === ONLINE_PARTY_MODE
+                    ? "Resultado enviado. Aguardando a party finalizar..."
+                    : "Resultado enviado. Aguardando o duelo finalizar...";
                 updateOnlineBanner();
             } else {
                 startRandomChallenge();
@@ -1060,7 +1069,7 @@ async function validate() {
             : !!(parsedData && typeof parsedData === 'object' && Object.keys(parsedData).length > 0);
 
         consecutiveErrors++;
-        if (currentGameMode === ONLINE_MODE) {
+        if (isOnlineGameplayMode()) {
             currentOnlineLocalErrors += 1;
             queueOnlineProgressSync();
         }
@@ -1605,9 +1614,13 @@ const DAILY_MODE = 'daily';
 const RANDOM_MODE = 'random';
 const CAMPAIGN_MODE = 'campaign';
 const ONLINE_MODE = 'online_1v1';
+const ONLINE_PARTY_MODE = 'online_party';
 const ONLINE_ROOM_COLLECTION = 'rooms';
 const ONLINE_MATCHMAKING_COLLECTION = 'matchmaking';
 const ONLINE_MATCHMAKING_DOC = 'online_1v1';
+const ONLINE_ROOM_TYPE_DUEL = 'duel';
+const ONLINE_ROOM_TYPE_PARTY = 'party';
+const ONLINE_PARTY_MAX_PLAYERS = 4;
 const ONLINE_ROOM_CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 let currentGameMode = RANDOM_MODE;
 let dailySession = null;
@@ -1870,7 +1883,7 @@ function syncModeSelectionUi() {
     if (selectedMode === ONLINE_MODE) {
         lengthSelector.value = String(CAMPAIGN_LEVEL_START);
         if (challengeSelectorHelp) {
-            challengeSelectorHelp.innerText = 'No online 1x1, a sala define a mesma palavra para os dois jogadores.';
+            challengeSelectorHelp.innerText = 'No online, a sala define a mesma palavra para todos os jogadores.';
         }
         if (modeWarning) {
             modeWarning.style.display = 'block';
@@ -1914,12 +1927,50 @@ function getOnlinePlayerPhoto() {
     return activeUserDoc?.photo || activeUser?.photoURL || DEFAULT_AVATAR;
 }
 
+function isOnlineGameplayMode(mode = currentGameMode) {
+    return mode === ONLINE_MODE || mode === ONLINE_PARTY_MODE;
+}
+
+function getOnlineRoomType(roomData = currentOnlineRoom) {
+    return roomData?.roomType || ONLINE_ROOM_TYPE_DUEL;
+}
+
+function isPartyRoom(roomData = currentOnlineRoom) {
+    return getOnlineRoomType(roomData) === ONLINE_ROOM_TYPE_PARTY;
+}
+
+function getOnlinePlayersList(roomData = currentOnlineRoom) {
+    if (!roomData?.players) return [];
+    if (Array.isArray(roomData.players)) {
+        return roomData.players.filter((player) => !!player?.uid);
+    }
+    return ['player1', 'player2']
+        .map((slot) => roomData.players?.[slot] || null)
+        .filter(Boolean);
+}
+
+function getOnlinePlayerEntryBySlot(roomData = currentOnlineRoom, slot = currentOnlinePlayerSlot) {
+    if (!roomData?.players || slot === null || slot === undefined) return null;
+    if (Array.isArray(roomData.players)) {
+        const index = Number(slot);
+        return Number.isInteger(index) ? roomData.players[index] || null : null;
+    }
+    return roomData.players?.[slot] || null;
+}
+
+function getOnlinePlayerIndexByUid(roomData = currentOnlineRoom, uid = activeUser?.uid) {
+    if (!Array.isArray(roomData?.players) || !uid) return null;
+    const index = roomData.players.findIndex((player) => player?.uid === uid);
+    return index >= 0 ? String(index) : null;
+}
+
 function getOnlineOpponentSlot(slot) {
     return slot === 'player1' ? 'player2' : 'player1';
 }
 
 function getRoomPlayerSlot(roomData, uid = activeUser?.uid) {
     if (!roomData?.players || !uid) return null;
+    if (Array.isArray(roomData.players)) return getOnlinePlayerIndexByUid(roomData, uid);
     if (roomData.players.player1?.uid === uid) return 'player1';
     if (roomData.players.player2?.uid === uid) return 'player2';
     return null;
@@ -1927,10 +1978,11 @@ function getRoomPlayerSlot(roomData, uid = activeUser?.uid) {
 
 function getOnlineCurrentPlayer(roomData = currentOnlineRoom) {
     const slot = currentOnlinePlayerSlot || getRoomPlayerSlot(roomData);
-    return slot ? roomData?.players?.[slot] || null : null;
+    return getOnlinePlayerEntryBySlot(roomData, slot);
 }
 
 function getOnlineOpponentPlayer(roomData = currentOnlineRoom) {
+    if (isPartyRoom(roomData)) return null;
     const slot = currentOnlinePlayerSlot || getRoomPlayerSlot(roomData);
     if (!slot) return null;
     return roomData?.players?.[getOnlineOpponentSlot(slot)] || null;
@@ -2046,25 +2098,39 @@ function resetOnlineRoomState() {
     showControl(onlineRoomPanel, false);
     showControl(onlineMatchBanner, false);
     showControl(onlineResultModal, false);
+    showControl(onlinePartyPanel, false);
     if (onlineRoomCodeDisplay) onlineRoomCodeDisplay.innerText = '----';
     if (onlineRoomState) onlineRoomState.innerText = 'Aguardando outro jogador...';
+    if (onlineRoomTypeLabel) onlineRoomTypeLabel.innerText = 'Duelo 1x1';
+    if (onlineRoomOpponentLabel) onlineRoomOpponentLabel.innerText = 'Oponente';
     if (onlinePlayerSelf) onlinePlayerSelf.innerText = getOnlinePlayerName();
     if (onlinePlayerOpponent) onlinePlayerOpponent.innerText = 'Aguardando...';
     if (onlineRoomOpponentStatus) onlineRoomOpponentStatus.innerText = 'Esperando conexão';
+    if (onlinePartySummary) onlinePartySummary.innerText = '1 / 4 jogadores conectados';
+    if (onlinePartyPlayersList) onlinePartyPlayersList.innerHTML = '';
+    if (onlineMatchModeLabel) onlineMatchModeLabel.innerText = 'Online 1x1';
     if (onlineStatusBanner) onlineStatusBanner.innerText = 'Escolha entre match rápido ou sala por código para iniciar um duelo mágico.';
 }
 
 function updateOnlineBanner(roomData = currentOnlineRoom) {
-    const isOnlineMatch = currentGameMode === ONLINE_MODE && !!roomData && isGameScreenVisible();
+    const isOnlineMatch = isOnlineGameplayMode() && !!roomData && isGameScreenVisible();
     showControl(onlineMatchBanner, isOnlineMatch);
     if (!isOnlineMatch) return;
 
+    const partyRoom = isPartyRoom(roomData);
     const opponent = getOnlineOpponentPlayer(roomData);
+    const players = getOnlinePlayersList(roomData);
+    const finishedPlayers = players.filter((player) => player?.finished).length;
+    if (onlineMatchModeLabel) {
+        onlineMatchModeLabel.innerText = partyRoom ? 'Contra todos' : 'Online 1x1';
+    }
     if (onlineRoomBannerCode) {
         onlineRoomBannerCode.innerText = `Sala ${roomData?.roomCode || currentOnlineRoomCode || '----'}`;
     }
     if (onlineOpponentBannerStatus) {
-        if (!opponent?.uid) {
+        if (partyRoom) {
+            onlineOpponentBannerStatus.innerText = `Jogadores: ${players.length}/${roomData?.maxPlayers || ONLINE_PARTY_MAX_PLAYERS} • Finalizaram: ${finishedPlayers}`;
+        } else if (!opponent?.uid) {
             onlineOpponentBannerStatus.innerText = 'Oponente: aguardando...';
         } else if (roomData?.status === 'finished') {
             onlineOpponentBannerStatus.innerText = opponent.finished ? `Oponente: terminou em ${formatOnlineTime(opponent.finishTimeMs || 0)}` : 'Oponente: não concluiu';
@@ -2090,6 +2156,9 @@ function renderOnlineRoomPanel(roomData = currentOnlineRoom) {
 
     const me = getOnlineCurrentPlayer(roomData);
     const opponent = getOnlineOpponentPlayer(roomData);
+    const partyRoom = isPartyRoom(roomData);
+    const players = getOnlinePlayersList(roomData);
+    const isHost = roomData?.hostUid && roomData.hostUid === activeUser?.uid;
     const entryMode = getOnlineRoomEntryMode(roomData);
     const quickMatch = entryMode === 'quick';
     const waiting = roomData.status === 'waiting';
@@ -2098,32 +2167,64 @@ function renderOnlineRoomPanel(roomData = currentOnlineRoom) {
     const abandoned = roomData.status === 'abandoned';
 
     if (onlineStatusBanner) {
-        if (waiting) onlineStatusBanner.innerText = quickMatch
+        if (waiting) onlineStatusBanner.innerText = partyRoom
+            ? 'Sala contra todos criada. Aguarde os jogadores e inicie quando todos estiverem prontos.'
+            : quickMatch
             ? 'Match rápido ativo. Procurando outro jogador em tempo real.'
             : 'Sala criada. Compartilhe o código e aguarde seu adversário.';
-        else if (playing) onlineStatusBanner.innerText = 'Duelo em andamento. Os dois jogadores receberam a mesma palavra.';
-        else if (finished) onlineStatusBanner.innerText = 'Duelo encerrado. Veja o resultado e crie outra sala quando quiser.';
+        else if (playing) onlineStatusBanner.innerText = partyRoom
+            ? 'Partida contra todos em andamento. Todos receberam a mesma palavra.'
+            : 'Duelo em andamento. Os dois jogadores receberam a mesma palavra.';
+        else if (finished) onlineStatusBanner.innerText = partyRoom
+            ? 'Partida contra todos encerrada. Veja o progresso final dos jogadores.'
+            : 'Duelo encerrado. Veja o resultado e crie outra sala quando quiser.';
         else if (abandoned) onlineStatusBanner.innerText = 'A sala foi encerrada antes do final da partida.';
         else onlineStatusBanner.innerText = 'Estado da sala atualizado.';
     }
 
     if (onlineRoomCodeDisplay) onlineRoomCodeDisplay.innerText = roomData.roomCode || currentOnlineRoomCode || '----';
+    if (onlineRoomTypeLabel) onlineRoomTypeLabel.innerText = partyRoom ? 'Contra todos (ate 4)' : 'Duelo 1x1';
+    if (onlineRoomOpponentLabel) onlineRoomOpponentLabel.innerText = partyRoom ? 'Host' : 'Oponente';
     if (onlinePlayerSelf) onlinePlayerSelf.innerText = me?.name || getOnlinePlayerName();
-    if (onlinePlayerOpponent) onlinePlayerOpponent.innerText = opponent?.name || 'Aguardando...';
+    if (onlinePlayerOpponent) onlinePlayerOpponent.innerText = partyRoom
+        ? (players.find((player) => player?.uid === roomData?.hostUid)?.name || 'Aguardando...')
+        : (opponent?.name || 'Aguardando...');
     if (onlineRoomState) {
-        if (waiting) onlineRoomState.innerText = quickMatch
+        if (waiting) onlineRoomState.innerText = partyRoom
+            ? `Aguardando jogadores. ${players.length}/${roomData?.maxPlayers || ONLINE_PARTY_MAX_PLAYERS} conectados.`
+            : quickMatch
             ? 'Aguardando outro jogador entrar no match rápido.'
             : 'Aguardando outro jogador entrar com o código desta sala.';
-        else if (playing) onlineRoomState.innerText = `Partida iniciada com ${roomData.letterCount || '--'} letras.`;
-        else if (finished) onlineRoomState.innerText = 'Partida concluída. O grimório já definiu o vencedor.';
+        else if (playing) onlineRoomState.innerText = partyRoom
+            ? `Contra todos iniciado com ${roomData.letterCount || '--'} letras para ${players.length} jogadores.`
+            : `Partida iniciada com ${roomData.letterCount || '--'} letras.`;
+        else if (finished) onlineRoomState.innerText = partyRoom
+            ? 'Contra todos concluido. Todos os progressos foram sincronizados.'
+            : 'Partida concluída. O grimório já definiu o vencedor.';
         else if (abandoned) onlineRoomState.innerText = roomData.abandonMessage || 'Seu oponente saiu da partida.';
     }
     if (onlineRoomOpponentStatus) {
-        if (!opponent?.uid) onlineRoomOpponentStatus.innerText = 'Esperando conexão';
+        if (partyRoom) {
+            onlineRoomOpponentStatus.innerText = isHost
+                ? (waiting ? 'Voce pode iniciar a sala' : playing ? 'Voce e o host da sala' : 'Host da sala')
+                : `Host: ${players.find((player) => player?.uid === roomData?.hostUid)?.name || 'Aguardando'}`;
+        } else if (!opponent?.uid) onlineRoomOpponentStatus.innerText = 'Esperando conexão';
         else if (opponent.connected === false) onlineRoomOpponentStatus.innerText = 'Desconectado';
         else if (opponent.finished) onlineRoomOpponentStatus.innerText = 'Terminou';
         else onlineRoomOpponentStatus.innerText = playing ? 'Jogando...' : 'Conectado';
     }
+
+    showControl(onlinePartyPanel, partyRoom);
+    if (onlinePartySummary && partyRoom) {
+        const finishedPlayers = players.filter((player) => player?.finished).length;
+        onlinePartySummary.innerText = `${players.length} / ${roomData?.maxPlayers || ONLINE_PARTY_MAX_PLAYERS} jogadores • ${finishedPlayers} finalizaram`;
+    }
+    if (onlinePartyStartBtn) {
+        const canStartParty = partyRoom && waiting && isHost && players.length >= 2;
+        onlinePartyStartBtn.disabled = !canStartParty;
+        onlinePartyStartBtn.innerText = players.length >= 2 ? 'Iniciar sala' : 'Aguardando 2+ jogadores';
+    }
+    renderPartyPlayersList(roomData);
 
     updateOnlineBanner(roomData);
 }
@@ -2144,6 +2245,13 @@ function showOnlineScreen() {
 }
 
 function sanitizeOnlineCodeInput() {
+    if (!onlineRoomCodeInput) return '';
+    const cleaned = (onlineRoomCodeInput.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
+    onlineRoomCodeInput.value = cleaned;
+    return cleaned;
+}
+
+function sanitizePartyRoomCodeInput() {
     if (!onlineRoomCodeInput) return '';
     const cleaned = (onlineRoomCodeInput.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4);
     onlineRoomCodeInput.value = cleaned;
@@ -2180,6 +2288,7 @@ function setOnlineLobbyBusy(isBusy) {
 function buildOnlineRoomPayload({ roomCode, onlineUser, payload, matchType = 'code' }) {
     return {
         roomCode,
+        roomType: ONLINE_ROOM_TYPE_DUEL,
         status: 'waiting',
         createdAt: serverTimestamp(),
         startedAt: null,
@@ -2218,8 +2327,86 @@ function buildOnlineRoomPayload({ roomCode, onlineUser, payload, matchType = 'co
     };
 }
 
+function buildPartyRoomPayload({ roomCode, onlineUser, payload }) {
+    return {
+        roomCode,
+        roomType: ONLINE_ROOM_TYPE_PARTY,
+        status: 'waiting',
+        maxPlayers: ONLINE_PARTY_MAX_PLAYERS,
+        createdAt: serverTimestamp(),
+        startedAt: null,
+        completedAt: null,
+        hostUid: onlineUser.uid,
+        winnerUid: null,
+        abandonMessage: '',
+        gameMode: ONLINE_PARTY_MODE,
+        matchType: 'party',
+        letterCount: payload.letterCount,
+        word: payload.challenge.word || '',
+        challenge: payload.challenge,
+        players: [
+            {
+                uid: onlineUser.uid,
+                name: getOnlinePlayerName(),
+                photo: getOnlinePlayerPhoto(),
+                connected: true,
+                ready: true,
+                finished: false,
+                finishTimeMs: null,
+                errors: 0,
+                progress: 0,
+                joinedAt: Date.now()
+            }
+        ]
+    };
+}
+
 function getOnlineRoomEntryMode(roomData = currentOnlineRoom) {
     return roomData?.matchType || currentOnlineEntryMode || 'code';
+}
+
+function getPartyPlayerStatusLabel(player = {}) {
+    if (!player?.uid) return 'Aguardando';
+    if (player.connected === false) return 'Saiu';
+    if (player.finished) return `Terminou em ${formatOnlineTime(player.finishTimeMs || 0)}`;
+    if (Number(player.progress || 0) > 0) return `Jogando ${Math.round(Number(player.progress || 0))}%`;
+    return 'Pronto';
+}
+
+function renderPartyPlayersList(roomData = currentOnlineRoom) {
+    if (!onlinePartyPlayersList) return;
+    if (!isPartyRoom(roomData)) {
+        onlinePartyPlayersList.innerHTML = '';
+        return;
+    }
+
+    const players = getOnlinePlayersList(roomData);
+    onlinePartyPlayersList.innerHTML = '';
+
+    players.forEach((player) => {
+        const row = document.createElement('div');
+        row.className = 'online-party-player-row';
+
+        const me = player.uid === activeUser?.uid;
+        const host = player.uid === roomData?.hostUid;
+        const progress = Math.max(0, Math.min(100, Math.round(Number(player.progress || 0))));
+
+        row.innerHTML = `
+            <div class="online-party-player-top">
+                <strong>${sanitizeGameText(player.name || 'Jogador')}</strong>
+                <span>${me ? 'Você' : host ? 'Host' : getPartyPlayerStatusLabel(player)}</span>
+            </div>
+            <div class="online-party-progress-track">
+                <div class="online-party-progress-fill" style="width:${progress}%"></div>
+            </div>
+            <div class="online-party-player-bottom">
+                <span>${getPartyPlayerStatusLabel(player)}</span>
+                <span>${progress}%</span>
+            </div>
+        `;
+
+        onlinePartyPlayersList.appendChild(row);
+    });
 }
 
 async function ensureOnlineFirebaseIdentity() {
@@ -2297,7 +2484,7 @@ async function syncOnlinePlayerPatch(patch = {}) {
 }
 
 function queueOnlineProgressSync() {
-    if (currentGameMode !== ONLINE_MODE || !currentOnlineRoomCode || !currentOnlinePlayerSlot) return;
+    if (!isOnlineGameplayMode() || !currentOnlineRoomCode || !currentOnlinePlayerSlot) return;
     if (onlineProgressSyncTimeout) clearTimeout(onlineProgressSyncTimeout);
     onlineProgressSyncTimeout = setTimeout(() => {
         onlineProgressSyncTimeout = null;
@@ -2335,13 +2522,194 @@ async function attachOnlineRoomListener(roomCode) {
         const roomData = snap.data();
         currentOnlineRoom = roomData;
         currentOnlineEntryMode = roomData?.matchType || currentOnlineEntryMode || 'code';
-        currentOnlinePlayerSlot = currentOnlinePlayerSlot || getRoomPlayerSlot(roomData);
+        currentOnlinePlayerSlot = isPartyRoom(roomData)
+            ? (getRoomPlayerSlot(roomData) || currentOnlinePlayerSlot)
+            : (currentOnlinePlayerSlot || getRoomPlayerSlot(roomData));
         renderOnlineRoomPanel(roomData);
         handleOnlineRoomSnapshot(roomData);
     }, (err) => {
         console.log('Erro no listener da sala online:', err);
         showFloatingMessage('Erro ao acompanhar a sala online.', 2400);
     });
+}
+
+async function createPartyRoom() {
+    if (!db) {
+        showFloatingMessage('Entre no jogo para criar uma sala.', 2200);
+        return;
+    }
+
+    const onlineUser = await ensureOnlineFirebaseIdentity();
+    if (!onlineUser) {
+        showFloatingMessage('Nao foi possivel autenticar a sala agora.', 2600);
+        return;
+    }
+
+    if (currentOnlineRoomCode) {
+        await leaveOnlineRoom({ abandon: true });
+    } else {
+        resetOnlineRoomState();
+    }
+
+    setOnlineLobbyBusy(true);
+    try {
+        const roomCode = await generateUniqueOnlineRoomCode();
+        const payload = getRandomOnlineChallengePayload(getSelectedOnlineLetterCount());
+        const roomRef = getOnlineRoomRef(roomCode);
+        const roomPayload = buildPartyRoomPayload({ roomCode, onlineUser, payload });
+
+        console.log('[Online Party] Criando sala', {
+            operation: 'createPartyRoom',
+            roomCode,
+            uid: onlineUser.uid,
+            maxPlayers: ONLINE_PARTY_MAX_PLAYERS
+        });
+
+        await setDoc(roomRef, roomPayload);
+        currentOnlineEntryMode = 'party';
+        currentOnlinePlayerSlot = '0';
+        await attachOnlineRoomListener(roomCode);
+        showFloatingMessage(`Sala ${roomCode} criada.`, 2200);
+    } catch (err) {
+        console.log('[Online Room] Erro ao criar sala contra todos', {
+            code: err?.code || null,
+            message: err?.message || err
+        });
+        showFloatingMessage('Nao foi possivel criar a sala agora.', 2400);
+    } finally {
+        setOnlineLobbyBusy(false);
+    }
+}
+
+async function joinPartyRoom() {
+    if (!db) {
+        showFloatingMessage('Entre no jogo para participar de uma sala.', 2200);
+        return;
+    }
+
+    const onlineUser = await ensureOnlineFirebaseIdentity();
+    if (!onlineUser) {
+        showFloatingMessage('Nao foi possivel autenticar a sala agora.', 2600);
+        return;
+    }
+
+    if (currentOnlineRoomCode) {
+        await leaveOnlineRoom({ abandon: true });
+    } else {
+        resetOnlineRoomState();
+    }
+
+    const roomCode = sanitizePartyRoomCodeInput();
+    if (roomCode.length !== 4) {
+        showFloatingMessage('Digite um codigo valido de 4 caracteres para a sala.', 2200);
+        return;
+    }
+
+    setOnlineLobbyBusy(true);
+    try {
+        const roomRef = getOnlineRoomRef(roomCode);
+        const slot = await runTransaction(db, async (transaction) => {
+            const snap = await transaction.get(roomRef);
+            if (!snap.exists()) throw new Error('not-found');
+
+            const room = snap.data();
+            if (getOnlineRoomType(room) !== ONLINE_ROOM_TYPE_PARTY) throw new Error('wrong-type');
+            if (room.status !== 'waiting') throw new Error(room.status === 'playing' ? 'already-started' : 'unavailable');
+
+            const players = Array.isArray(room.players) ? [...room.players] : [];
+            const existingIndex = players.findIndex((player) => player?.uid === onlineUser.uid);
+            if (existingIndex >= 0) {
+                players[existingIndex] = {
+                    ...players[existingIndex],
+                    connected: true
+                };
+                transaction.update(roomRef, { players });
+                return String(existingIndex);
+            }
+
+            if (players.length >= Number(room.maxPlayers || ONLINE_PARTY_MAX_PLAYERS)) throw new Error('full');
+
+            players.push({
+                uid: onlineUser.uid,
+                name: getOnlinePlayerName(),
+                photo: getOnlinePlayerPhoto(),
+                connected: true,
+                ready: true,
+                finished: false,
+                finishTimeMs: null,
+                errors: 0,
+                progress: 0,
+                joinedAt: Date.now()
+            });
+
+            console.log('[Online Party] Entrando em sala', {
+                operation: 'joinPartyRoom',
+                roomCode,
+                uid: onlineUser.uid,
+                playerCount: players.length
+            });
+
+            transaction.update(roomRef, { players });
+            return String(players.length - 1);
+        });
+
+        currentOnlineEntryMode = 'party';
+        currentOnlinePlayerSlot = slot;
+        await attachOnlineRoomListener(roomCode);
+        showFloatingMessage(`Entrou na sala ${roomCode}.`, 2200);
+    } catch (err) {
+        const code = err?.message || 'unknown';
+        if (code === 'not-found') showFloatingMessage('Sala nao encontrada.', 2200);
+        else if (code === 'wrong-type') showFloatingMessage('Esse codigo pertence a uma sala 1x1.', 2200);
+        else if (code === 'full') showFloatingMessage('Essa sala ja esta cheia.', 2200);
+        else if (code === 'already-started') showFloatingMessage('Essa sala ja foi iniciada.', 2200);
+        else showFloatingMessage('Nao foi possivel entrar na sala.', 2400);
+        console.log('[Online Room] Erro ao entrar na sala contra todos', {
+            code,
+            message: err?.message || err
+        });
+    } finally {
+        setOnlineLobbyBusy(false);
+    }
+}
+
+async function startPartyRoom() {
+    if (!db || !currentOnlineRoomCode) return;
+    const roomRef = getOnlineRoomRef();
+
+    try {
+        await runTransaction(db, async (transaction) => {
+            const snap = await transaction.get(roomRef);
+            if (!snap.exists()) throw new Error('not-found');
+
+            const room = snap.data();
+            if (getOnlineRoomType(room) !== ONLINE_ROOM_TYPE_PARTY) throw new Error('wrong-type');
+            if (room.hostUid !== activeUser?.uid) throw new Error('not-host');
+            if (room.status !== 'waiting') throw new Error('already-started');
+
+            const players = getOnlinePlayersList(room);
+            if (players.length < 2) throw new Error('need-more-players');
+
+            console.log('[Online Party] Iniciando sala', {
+                operation: 'startPartyRoom',
+                roomCode: room.roomCode,
+                uid: activeUser?.uid || null,
+                playerCount: players.length
+            });
+
+            transaction.update(roomRef, {
+                status: 'playing',
+                startedAt: serverTimestamp(),
+                abandonMessage: ''
+            });
+        });
+    } catch (err) {
+        const code = err?.message || 'unknown';
+        if (code === 'not-host') showFloatingMessage('Apenas o host pode iniciar a sala.', 2200);
+        else if (code === 'need-more-players') showFloatingMessage('A sala precisa de pelo menos 2 jogadores.', 2200);
+        else if (code === 'already-started') showFloatingMessage('Essa sala ja foi iniciada.', 2200);
+        else showFloatingMessage('Nao foi possivel iniciar a sala.', 2400);
+    }
 }
 
 async function findOrCreateQuickMatchRoom(onlineUser) {
@@ -2663,6 +3031,7 @@ async function joinOnlineRoom() {
             const snap = await transaction.get(roomRef);
             if (!snap.exists()) throw new Error('not-found');
             const room = snap.data();
+            if (getOnlineRoomType(room) !== ONLINE_ROOM_TYPE_DUEL) throw new Error('wrong-type');
             if (room.hostUid === onlineUser.uid) throw new Error('self-room');
             if (room.status === 'finished') throw new Error('finished');
             if (room.status === 'abandoned') throw new Error('abandoned');
@@ -2701,6 +3070,7 @@ async function joinOnlineRoom() {
         });
         const code = err?.message || 'unknown';
         if (code === 'not-found') showFloatingMessage('Sala nao encontrada.', 2200);
+        else if (code === 'wrong-type') showFloatingMessage('Esse codigo pertence a uma party multiplayer.', 2200);
         else if (code === 'self-room') showFloatingMessage('Voce ja e o anfitriao desta sala.', 2200);
         else if (code === 'full') showFloatingMessage('Essa sala ja esta cheia.', 2200);
         else if (code === 'finished') showFloatingMessage('Essa sala ja foi finalizada.', 2200);
@@ -2719,7 +3089,11 @@ function startOnlineMatchFromRoom(roomData) {
     const roomToken = roomData.roomCode;
     if (currentOnlineStartedRoomToken === roomToken) return;
 
-    const challenge = roomData.challenge;
+    const challenge = roomData.challenge || {
+        word: roomData.word || '',
+        hints: [],
+        meaning: ''
+    };
     if (!challenge?.word) {
         showFloatingMessage('Sala online sem desafio valido.', 2400);
         return;
@@ -2729,7 +3103,7 @@ function startOnlineMatchFromRoom(roomData) {
     currentOnlineStartedAt = Date.now();
     currentOnlineLocalErrors = Number(getOnlineCurrentPlayer(roomData)?.errors || 0);
     currentOnlineResultShown = false;
-    currentGameMode = ONLINE_MODE;
+    currentGameMode = isPartyRoom(roomData) ? ONLINE_PARTY_MODE : ONLINE_MODE;
     currentCampaignLevel = null;
     resetDailySession();
     clearAllHighlights();
@@ -2743,7 +3117,7 @@ function startOnlineMatchFromRoom(roomData) {
         wordLength: roomData.letterCount || challenge.word.length || 3,
         resetHistory: true
     });
-    feedback.innerText = 'Duelo online iniciado!';
+    feedback.innerText = isPartyRoom(roomData) ? 'Party online iniciada!' : 'Duelo online iniciado!';
     updateOnlineBanner(roomData);
     queueOnlineProgressSync();
 }
@@ -2784,7 +3158,6 @@ async function finalizeOnlineMatch() {
     if (!db || !currentOnlineRoomCode || !currentOnlinePlayerSlot) return;
     const roomRef = getOnlineRoomRef();
     const mySlot = currentOnlinePlayerSlot;
-    const otherSlot = getOnlineOpponentSlot(mySlot);
     const finishTimeMs = getOnlineElapsedMs();
     currentOnlineLocalErrors = Math.max(currentOnlineLocalErrors, 0);
 
@@ -2793,6 +3166,48 @@ async function finalizeOnlineMatch() {
             const snap = await transaction.get(roomRef);
             if (!snap.exists()) return;
             const room = snap.data();
+            const partyRoom = isPartyRoom(room);
+
+            if (partyRoom) {
+                const players = Array.isArray(room.players) ? [...room.players] : [];
+                const index = Number(mySlot);
+                const me = Number.isInteger(index) ? players[index] || {} : {};
+                if (!players[index]) return;
+
+                players[index] = {
+                    ...players[index],
+                    finished: true,
+                    finishTimeMs,
+                    errors: currentOnlineLocalErrors,
+                    progress: 100,
+                    connected: true
+                };
+
+                const finishedPlayers = players.filter((player) => player?.uid && (player.finished || player.connected === false));
+                const updates = {
+                    players
+                };
+
+                if (finishedPlayers.length === players.filter((player) => player?.uid).length) {
+                    updates.status = 'finished';
+                    updates.completedAt = serverTimestamp();
+
+                    const rankedPlayers = players
+                        .filter((player) => player?.uid && player.finished)
+                        .sort((a, b) => Number(a.finishTimeMs || Number.MAX_SAFE_INTEGER) - Number(b.finishTimeMs || Number.MAX_SAFE_INTEGER));
+
+                    if (rankedPlayers[0]?.uid) {
+                        updates.winnerUid = rankedPlayers[0].uid;
+                    }
+                } else if (!room.winnerUid) {
+                    updates.winnerUid = me.uid || activeUser?.uid || null;
+                }
+
+                transaction.update(roomRef, updates);
+                return;
+            }
+
+            const otherSlot = getOnlineOpponentSlot(mySlot);
             const me = room.players?.[mySlot] || {};
             const opponent = room.players?.[otherSlot] || {};
 
@@ -2837,7 +3252,6 @@ async function leaveOnlineRoom(options = {}) {
 
     const roomRef = getOnlineRoomRef();
     const mySlot = currentOnlinePlayerSlot;
-    const otherSlot = getOnlineOpponentSlot(mySlot);
     const shouldAbandon = options.abandon !== false;
 
     try {
@@ -2845,6 +3259,50 @@ async function leaveOnlineRoom(options = {}) {
             const snap = await transaction.get(roomRef);
             if (!snap.exists()) return;
             const room = snap.data();
+            const partyRoom = isPartyRoom(room);
+
+            if (partyRoom) {
+                const players = Array.isArray(room.players) ? [...room.players] : [];
+                const myIndex = Number(mySlot);
+                if (!Number.isInteger(myIndex) || !players[myIndex]) return;
+
+                if (room.status === 'waiting') {
+                    players.splice(myIndex, 1);
+                    const nextHostUid = players[0]?.uid || null;
+                    const updates = {
+                        players,
+                        hostUid: nextHostUid,
+                        abandonMessage: players.length ? '' : 'A sala foi encerrada.'
+                    };
+
+                    if (!players.length) {
+                        updates.status = 'abandoned';
+                        updates.completedAt = serverTimestamp();
+                    }
+
+                    transaction.update(roomRef, updates);
+                    return;
+                }
+
+                players[myIndex] = {
+                    ...players[myIndex],
+                    connected: false
+                };
+
+                const allResolved = players.filter((player) => player?.uid).every((player) => player.finished || player.connected === false);
+                const updates = { players };
+                if (allResolved) {
+                    updates.status = 'finished';
+                    updates.completedAt = serverTimestamp();
+                } else if (room.hostUid === activeUser?.uid) {
+                    updates.hostUid = players.find((player) => player?.uid && player.connected !== false)?.uid || room.hostUid;
+                }
+
+                transaction.update(roomRef, updates);
+                return;
+            }
+
+            const otherSlot = getOnlineOpponentSlot(mySlot);
             const opponent = room.players?.[otherSlot] || {};
             const isQuickWaitingRoom = room?.matchType === 'quick' && room?.status === 'waiting';
             const updates = {
@@ -2893,7 +3351,13 @@ function handleOnlineRoomSnapshot(roomData) {
     if (roomData.status === 'finished' || roomData.status === 'abandoned') {
         if (isGameScreenVisible()) {
             updateOnlineBanner(roomData);
-            openOnlineResultModal(roomData);
+            if (isPartyRoom(roomData)) {
+                feedback.innerText = roomData.status === 'finished'
+                    ? 'Party concluida. Confira o progresso final da lista de jogadores.'
+                    : 'A party foi encerrada.';
+            } else {
+                openOnlineResultModal(roomData);
+            }
         }
         return;
     }
@@ -3329,7 +3793,7 @@ function resetDailySession() {
 }
 
 function getGameStateSnapshot() {
-    if (!targetChallenge || !Array.isArray(currentWord) || !activeUser || currentGameMode === ONLINE_MODE) return null;
+    if (!targetChallenge || !Array.isArray(currentWord) || !activeUser || isOnlineGameplayMode()) return null;
 
     return {
         screen: 'game',
@@ -3403,7 +3867,7 @@ async function showHubScreenFromGame() {
     stopHintCycle();
     resetDailySession();
     clearGameSessionState();
-    if (currentGameMode === ONLINE_MODE || currentOnlineRoomCode) {
+    if (isOnlineGameplayMode() || currentOnlineRoomCode) {
         await leaveOnlineRoom({ abandon: true });
     }
     currentCampaignLevel = null;
@@ -4053,8 +4517,9 @@ function bindAuthUiEvents() {
         openWelcomeTutorial(true);
     });
     onlineQuickMatchBtn?.addEventListener('click', startQuickOnlineMatch);
-    onlineCreateRoomBtn?.addEventListener('click', createOnlineRoom);
-    onlineJoinRoomBtn?.addEventListener('click', joinOnlineRoom);
+    onlineCreateRoomBtn?.addEventListener('click', createPartyRoom);
+    onlineJoinRoomBtn?.addEventListener('click', joinPartyRoom);
+    onlinePartyStartBtn?.addEventListener('click', startPartyRoom);
     onlineCopyCodeBtn?.addEventListener('click', copyOnlineRoomCode);
     onlineRoomLeaveBtn?.addEventListener('click', async () => {
         await leaveOnlineRoom({ abandon: true });
@@ -4068,7 +4533,7 @@ function bindAuthUiEvents() {
     onlineRoomCodeInput?.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter') return;
         e.preventDefault();
-        joinOnlineRoom();
+        joinPartyRoom();
     });
     closeCampaignCompleteModalBtn?.addEventListener('click', () => {
         goToCampaignBooks(pendingCampaignCompletion?.nextLevel || pendingCampaignCompletion?.currentLevel || null);

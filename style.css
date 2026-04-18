@@ -3475,6 +3475,73 @@ button#validate-btn:active { transform: scale(0.95); }
     margin-top: 14px;
 }
 
+.online-party-panel {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.online-party-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.online-party-summary {
+    display: block;
+    margin-top: 6px;
+    color: #fff0c4;
+    font-size: 1rem;
+}
+
+.online-party-players-list {
+    display: grid;
+    gap: 12px;
+}
+
+.online-party-player-row {
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.online-party-player-top,
+.online-party-player-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.online-party-player-top strong,
+.online-party-player-bottom span {
+    color: #fff;
+}
+
+.online-party-player-top span,
+.online-party-player-bottom span:first-child {
+    color: var(--text-dim);
+    font-size: 0.92rem;
+}
+
+.online-party-progress-track {
+    position: relative;
+    overflow: hidden;
+    height: 10px;
+    margin: 10px 0 8px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.online-party-progress-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #ffd273 0%, #ff9c5f 100%);
+}
+
 .online-match-banner {
     margin-top: 12px;
     background: rgba(255, 210, 115, 0.12);
@@ -3752,6 +3819,11 @@ button#validate-btn:active { transform: scale(0.95); }
     }
 
     .online-room-panel-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .online-party-panel-header {
         flex-direction: column;
         align-items: stretch;
     }

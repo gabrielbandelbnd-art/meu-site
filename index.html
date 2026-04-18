@@ -179,8 +179,8 @@
             <div class="campaign-header online-header">
                 <button id="online-back-btn" type="button" class="campaign-back-btn">← Voltar</button>
                 <div class="campaign-header-copy">
-                    <h2>Online 1x1</h2>
-                    <p>Encontre uma partida rápida automaticamente ou use o sistema de sala por código.</p>
+                    <h2>Online</h2>
+                    <p>Encontre uma partida rápida automaticamente ou use uma sala contra todos por código.</p>
                 </div>
             </div>
 
@@ -199,13 +199,13 @@
 
                 <section class="online-card">
                     <h3>Criar sala</h3>
-                    <p>Gere um código curto, compartilhe com um amigo e aguarde a conexão.</p>
+                    <p>Crie uma sala contra todos com até 4 jogadores e compartilhe o código.</p>
                     <button id="online-create-room-btn" type="button" class="profile-btn auth-main-btn">Criar sala</button>
                 </section>
 
                 <section class="online-card">
                     <h3>Entrar em sala</h3>
-                    <p>Digite o código de 4 caracteres para entrar em um duelo já criado.</p>
+                    <p>Digite o código de 4 caracteres para entrar em uma sala contra todos.</p>
                     <input id="online-room-code-input" class="online-room-code-input" type="text" maxlength="4" placeholder="AB12" autocomplete="off" autocapitalize="characters" spellcheck="false">
                     <button id="online-join-room-btn" type="button" class="profile-btn auth-main-btn">Entrar na sala</button>
                 </section>
@@ -222,11 +222,15 @@
                 <div id="online-room-state" class="online-room-state">Aguardando outro jogador...</div>
                 <div class="online-room-meta">
                     <div class="online-room-meta-line">
+                        <span>Modo</span>
+                        <strong id="online-room-type-label">Contra todos</strong>
+                    </div>
+                    <div class="online-room-meta-line">
                         <span>Você</span>
                         <strong id="online-player-self">Visitante</strong>
                     </div>
                     <div class="online-room-meta-line">
-                        <span>Oponente</span>
+                        <span id="online-room-opponent-label">Oponente</span>
                         <strong id="online-player-opponent">Aguardando...</strong>
                     </div>
                     <div class="online-room-meta-line">
@@ -234,6 +238,16 @@
                         <strong id="online-room-opponent-status">Esperando conexão</strong>
                     </div>
                 </div>
+                <section id="online-party-panel" class="online-party-panel hidden-control">
+                    <div class="online-party-panel-header">
+                        <div>
+                            <div class="online-room-panel-label">Jogadores da sala</div>
+                            <strong id="online-party-summary" class="online-party-summary">1 / 4 jogadores conectados</strong>
+                        </div>
+                        <button id="online-party-start-btn" type="button" class="profile-btn auth-main-btn">Iniciar sala</button>
+                    </div>
+                    <div id="online-party-players-list" class="online-party-players-list"></div>
+                </section>
                 <div class="online-room-actions">
                     <button id="online-room-leave-btn" type="button" class="profile-btn profile-ghost-btn">Sair da sala</button>
                 </div>
@@ -346,7 +360,7 @@
                     <span id="daily-attempts">Tentativas: 0</span>
                 </div>
                 <div id="online-match-banner" class="daily-status-bar online-match-banner hidden-control">
-                    <span class="daily-status-mode">Online 1x1</span>
+                    <span id="online-match-mode-label" class="daily-status-mode">Online 1x1</span>
                     <span id="online-room-banner-code">Sala ----</span>
                     <span id="online-opponent-banner-status">Oponente: aguardando...</span>
                     <button id="online-match-leave-btn" type="button" class="online-match-leave-btn">Sair da partida</button>
