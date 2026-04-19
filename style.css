@@ -5259,6 +5259,24 @@ button#validate-btn:active { transform: scale(0.95); }
     color: var(--theme-button-text) !important;
 }
 
+.theme-enhanced .mobile-victory-card,
+.theme-enhanced .mobile-error-card {
+    border: 1px solid var(--theme-border) !important;
+    background:
+        var(--theme-card-overlay),
+        var(--theme-surface) !important;
+    box-shadow: var(--theme-shadow) !important;
+}
+
+.theme-enhanced .mobile-victory-title,
+.theme-enhanced .mobile-error-title {
+    color: var(--text-main) !important;
+}
+
+.theme-enhanced .mobile-error-phrase {
+    color: var(--text-main) !important;
+}
+
 .theme-enhanced .profile-btn,
 .theme-enhanced .hub-btn,
 .theme-enhanced #start-game-btn,
