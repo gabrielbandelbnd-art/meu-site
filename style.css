@@ -5638,30 +5638,31 @@ button#validate-btn:active { transform: scale(0.95); }
             calc(env(safe-area-inset-top, 0px) + 10px)
             12px
             calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
-        align-items: flex-start !important;
+        align-items: center !important;
     }
 
     .initial-loading-content {
         width: min(100%, 420px) !important;
         max-width: 420px !important;
         min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 22px) !important;
-        height: auto !important;
-        justify-content: flex-start !important;
-        align-content: flex-start !important;
-        gap: 16px !important;
-        padding-top: 10px !important;
+        height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 22px) !important;
+        justify-content: center !important;
+        align-content: center !important;
+        gap: 18px !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
     }
 
     .initial-loading-image {
         width: min(100%, 360px) !important;
-        max-height: min(42vh, 320px) !important;
+        max-height: min(40vh, 320px) !important;
         margin: 0 auto !important;
     }
 
     .initial-loading-entry,
     .initial-loading-status {
         width: min(100%, 320px) !important;
-        margin: 4px auto 0 !important;
+        margin: 0 auto !important;
     }
 
     .initial-loading-play-btn {
