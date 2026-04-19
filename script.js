@@ -994,6 +994,7 @@ async function validate() {
             meaningBox.classList.remove('hidden');
             animateMage('win');
             incrementPlayerStat('vitorias', 1);
+            await onValidGameFinished();
             triggerConfetti();
             showMobileVictoryPopup();
 
@@ -1025,6 +1026,7 @@ async function validate() {
         document.body.classList.add('success-flash');
         incrementPlayerStat('vitorias', 1);
         const campaignResult = await handleCorrectAnswer();
+        await onValidGameFinished();
         if (isOnlineGameplayMode()) {
             await finalizeOnlineMatch();
         }
@@ -4489,6 +4491,7 @@ const userMenu = document.getElementById('user-menu');
 const userMenuDropdown = document.getElementById('user-menu-dropdown');
 const userAvatarTop = document.getElementById('user-avatar-top');
 const userNameTop = document.getElementById('user-name-top');
+const userStreakIndicator = document.getElementById('user-streak-indicator');
 const hubLogoutBtn = document.getElementById('hub-logout-btn');
 const authGate = document.getElementById('auth-gate');
 const gateStatus = document.getElementById('gate-status');
@@ -4524,6 +4527,7 @@ const arcaneStreakCloseBtn = document.getElementById('arcane-streak-close-btn');
 
 let gateAuthMode = 'login';
 const GAME_STATE_STORAGE_KEY = 'magiclexis_game_state_v1';
+let arcaneStreakIndicatorFeedbackTimeout = 0;
 
 function formatDailyElapsed(ms = 0) {
     const total = Math.max(0, Math.floor(ms / 1000));
@@ -5095,7 +5099,8 @@ async function ensureUserDoc(user) {
             campaignProgress: defaultCampaignProgress,
             lastPlayDate: '',
             streakCount: 0,
-            lastCelebratedMilestone: 0
+            lastCelebratedMilestone: 0,
+            lastMilestoneClaimed: 0
         }, { merge: true });
     } else {
         const currentData = snap.data() || {};
@@ -5112,6 +5117,11 @@ async function ensureUserDoc(user) {
         if (typeof currentData.lastCelebratedMilestone !== 'number') {
             missingFields.lastCelebratedMilestone = 0;
         }
+        if (typeof currentData.lastMilestoneClaimed !== 'number') {
+            missingFields.lastMilestoneClaimed = typeof currentData.lastCelebratedMilestone === 'number'
+                ? currentData.lastCelebratedMilestone
+                : 0;
+        }
         if (Object.keys(missingFields).length) {
             await setDoc(userRef, missingFields, { merge: true });
         }
@@ -5123,6 +5133,7 @@ async function ensureUserDoc(user) {
 function syncTopUserUi(user, userDoc) {
     const isLogged = !!user;
     const isAnon = getModeVisitor(user);
+    const streakData = normalizeArcaneStreakData(userDoc);
 
     const displayName = isLogged
         ? (isAnon ? 'Visitante' : (userDoc?.name || user.displayName || user.email || 'Jogador'))
@@ -5136,6 +5147,10 @@ function syncTopUserUi(user, userDoc) {
     if (userAvatarTop) userAvatarTop.src = displayPhoto;
     if (profileAvatar) profileAvatar.src = displayPhoto;
     if (profileNameTitle) profileNameTitle.innerText = displayName;
+    if (userStreakIndicator) {
+        userStreakIndicator.innerText = `🔥 ${streakData.streakCount}`;
+        showControl(userStreakIndicator, isLogged && !isAnon && streakData.streakCount > 0);
+    }
 
     const appVisible = !document.getElementById('app-container')?.classList.contains('hidden-app');
     showControl(userMenu, isLogged && appVisible);
@@ -5221,15 +5236,28 @@ function getSaoPauloDateKey(offsetDays = 0) {
 }
 
 function normalizeArcaneStreakData(rawData) {
+    const claimedMilestone = Math.max(
+        0,
+        Number(
+            rawData?.lastMilestoneClaimed ??
+            rawData?.lastCelebratedMilestone ??
+            0
+        )
+    );
     return {
         lastPlayDate: typeof rawData?.lastPlayDate === 'string' ? rawData.lastPlayDate : '',
         streakCount: Math.max(0, Number(rawData?.streakCount || 0)),
-        lastCelebratedMilestone: Math.max(0, Number(rawData?.lastCelebratedMilestone || 0))
+        lastCelebratedMilestone: claimedMilestone,
+        lastMilestoneClaimed: claimedMilestone
     };
 }
 
 function getNextArcaneMilestone(streakCount = 0) {
-    return ARCANE_STREAK_MILESTONES.find((milestone) => milestone > streakCount) || null;
+    const nextFixedMilestone = ARCANE_STREAK_MILESTONES.find((milestone) => milestone > streakCount);
+    if (nextFixedMilestone) return nextFixedMilestone;
+    const extraDays = Math.max(0, streakCount - 365);
+    const extraMonthStep = Math.floor(extraDays / 30) + 1;
+    return 365 + (extraMonthStep * 30);
 }
 
 function buildArcaneStreakShareText(streakCount = 0) {
@@ -5240,6 +5268,22 @@ function buildArcaneStreakShareText(streakCount = 0) {
 
 function closeArcaneStreakModal() {
     showControl(arcaneStreakModal, false);
+}
+
+function triggerArcaneStreakIndicatorFeedback() {
+    if (!userStreakIndicator) return;
+    userStreakIndicator.classList.remove('is-celebrating');
+    void userStreakIndicator.offsetWidth;
+    userStreakIndicator.classList.add('is-celebrating');
+    if (arcaneStreakIndicatorFeedbackTimeout) {
+        clearTimeout(arcaneStreakIndicatorFeedbackTimeout);
+    }
+    arcaneStreakIndicatorFeedbackTimeout = window.setTimeout(() => {
+        userStreakIndicator.classList.remove('is-celebrating');
+    }, 700);
+    if (typeof navigator?.vibrate === 'function') {
+        navigator.vibrate([20, 30, 20]);
+    }
 }
 
 function openArcaneStreakModal(streakData = {}) {
@@ -5258,10 +5302,16 @@ function openArcaneStreakModal(streakData = {}) {
     }
     if (arcaneStreakMilestone) {
         arcaneStreakMilestone.innerText = nextMilestone
-            ? `Marco alcançado: ${streak} dias • próximo selo em ${nextMilestone} dias`
+            ? `Marco atual: ${streak} dias • próximo selo em ${nextMilestone} dias`
             : `Marco lendário alcançado: ${streak} dias de Chama Arcana`;
     }
 
+    const streakCard = arcaneStreakModal?.querySelector('.arcane-streak-card');
+    if (streakCard) {
+        streakCard.classList.remove('is-open');
+        void streakCard.offsetWidth;
+        streakCard.classList.add('is-open');
+    }
     showControl(arcaneStreakModal, true);
 }
 
@@ -5276,9 +5326,10 @@ async function shareArcaneStreak() {
                 text: shareText,
                 url: 'https://magiclexis.com.br'
             });
+            showFloatingMessage('Compartilhado!', 1800);
         } else if (navigator.clipboard) {
             await navigator.clipboard.writeText(shareText);
-            showFloatingMessage('Card da Chama Arcana copiado.', 2200);
+            showFloatingMessage('Copiado!', 1800);
         } else {
             showFloatingMessage(shareText, 2800);
         }
@@ -5297,37 +5348,62 @@ async function syncArcaneStreakForUser(userDocData = activeUserDoc) {
     const todayKey = getSaoPauloDateKey(0);
     const yesterdayKey = getSaoPauloDateKey(-1);
     let nextStreakCount = normalized.streakCount;
+    let didIncrease = false;
 
     if (normalized.lastPlayDate === todayKey) {
-        return normalized;
+        return { ...normalized, changed: false, didIncrease: false, alreadyCountedToday: true };
     }
 
     if (!normalized.lastPlayDate) {
         nextStreakCount = 1;
+        didIncrease = true;
     } else if (normalized.lastPlayDate === yesterdayKey) {
         nextStreakCount = normalized.streakCount + 1;
+        didIncrease = true;
     } else {
-        nextStreakCount = 0;
+        nextStreakCount = 1;
+        didIncrease = true;
     }
 
     const nextData = {
         lastPlayDate: todayKey,
         streakCount: nextStreakCount,
-        lastCelebratedMilestone: normalized.lastCelebratedMilestone
+        lastCelebratedMilestone: normalized.lastMilestoneClaimed,
+        lastMilestoneClaimed: normalized.lastMilestoneClaimed
     };
 
     const userRef = doc(db, 'users', activeUser.uid);
     await setDoc(userRef, nextData, { merge: true });
     activeUserDoc = { ...(activeUserDoc || {}), ...nextData };
+    syncTopUserUi(activeUser, activeUserDoc);
 
     const reachedMilestone = ARCANE_STREAK_MILESTONES.includes(nextStreakCount);
-    if (reachedMilestone && nextStreakCount > normalized.lastCelebratedMilestone) {
-        await setDoc(userRef, { lastCelebratedMilestone: nextStreakCount }, { merge: true });
+    if (reachedMilestone && nextStreakCount > normalized.lastMilestoneClaimed) {
+        await setDoc(userRef, {
+            lastCelebratedMilestone: nextStreakCount,
+            lastMilestoneClaimed: nextStreakCount
+        }, { merge: true });
         activeUserDoc.lastCelebratedMilestone = nextStreakCount;
+        activeUserDoc.lastMilestoneClaimed = nextStreakCount;
         openArcaneStreakModal(activeUserDoc);
     }
 
-    return nextData;
+    return {
+        ...nextData,
+        changed: true,
+        didIncrease,
+        alreadyCountedToday: false
+    };
+}
+
+async function onValidGameFinished() {
+    if (!activeUser || activeUser.isAnonymous || !db) return null;
+    const streakResult = await syncArcaneStreakForUser(activeUserDoc);
+    if (streakResult?.didIncrease && !streakResult?.alreadyCountedToday) {
+        triggerArcaneStreakIndicatorFeedback();
+        showFloatingMessage(`Chama Arcana: 🔥 ${streakResult.streakCount}`, 2200);
+    }
+    return streakResult;
 }
 
 async function openRankingModal() {
