@@ -184,6 +184,7 @@ const CAMPAIGN_WORDS_TO_COMPLETE = 5;
 const CAMPAIGN_PROGRESS_STORAGE_KEY = 'magiclexis_campaign_progress_v1';
 const PLAYER_STATS_STORAGE_KEY = 'magiclexis_player_stats_v1';
 const AUDIO_SETTINGS_STORAGE_KEY = 'magiclexis_audio_settings_v1';
+const ARCANE_STREAK_MILESTONES = [1, 2, 3, 7, 15, 30, 45, 60, 90, 120, 180, 365];
 const GAMEPLAY_IDLE_TIMEOUT_MS = 60000;
 const CAMPAIGN_LEVELS = Array.from(
     { length: CAMPAIGN_LEVEL_END - CAMPAIGN_LEVEL_START + 1 },
@@ -1555,7 +1556,7 @@ function bindMenuMusicUnlock() {
 
 function hasBlockingGameplayOverlayOpen() {
     return !!document.querySelector(
-        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control)'
+        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control), #arcane-streak-modal:not(.hidden-control)'
     );
 }
 
@@ -4512,6 +4513,14 @@ const dailyResultAttemptsEl = document.getElementById('daily-result-attempts');
 const dailyResultMeaningEl = document.getElementById('daily-result-meaning');
 const dailyResultRecordEl = document.getElementById('daily-result-record');
 const dailyShareBtn = document.getElementById('daily-share-btn');
+const arcaneStreakModal = document.getElementById('arcane-streak-modal');
+const closeArcaneStreakModalBtn = document.getElementById('close-arcane-streak-modal');
+const arcaneStreakTitle = document.getElementById('arcane-streak-title');
+const arcaneStreakCount = document.getElementById('arcane-streak-count');
+const arcaneStreakCopy = document.getElementById('arcane-streak-copy');
+const arcaneStreakMilestone = document.getElementById('arcane-streak-milestone');
+const arcaneStreakShareBtn = document.getElementById('arcane-streak-share-btn');
+const arcaneStreakCloseBtn = document.getElementById('arcane-streak-close-btn');
 
 let gateAuthMode = 'login';
 const GAME_STATE_STORAGE_KEY = 'magiclexis_game_state_v1';
@@ -5083,14 +5092,28 @@ async function ensureUserDoc(user) {
             name: baseName,
             photo: user.photoURL || DEFAULT_AVATAR,
             points: 0,
-            campaignProgress: defaultCampaignProgress
+            campaignProgress: defaultCampaignProgress,
+            lastPlayDate: '',
+            streakCount: 0,
+            lastCelebratedMilestone: 0
         }, { merge: true });
     } else {
         const currentData = snap.data() || {};
+        const missingFields = {};
         if (!currentData.campaignProgress) {
-            await setDoc(userRef, {
-                campaignProgress: defaultCampaignProgress
-            }, { merge: true });
+            missingFields.campaignProgress = defaultCampaignProgress;
+        }
+        if (typeof currentData.lastPlayDate !== 'string') {
+            missingFields.lastPlayDate = '';
+        }
+        if (typeof currentData.streakCount !== 'number') {
+            missingFields.streakCount = 0;
+        }
+        if (typeof currentData.lastCelebratedMilestone !== 'number') {
+            missingFields.lastCelebratedMilestone = 0;
+        }
+        if (Object.keys(missingFields).length) {
+            await setDoc(userRef, missingFields, { merge: true });
         }
     }
 
@@ -5185,6 +5208,126 @@ function openAudioSettingsModal() {
 
 function closeAudioSettingsModal() {
     showControl(audioSettingsModal, false);
+}
+
+function getSaoPauloDateKey(offsetDays = 0) {
+    const now = new Date();
+    const saoPauloNow = new Date(now.toLocaleString('en-US', { timeZone: 'America/Sao_Paulo' }));
+    saoPauloNow.setDate(saoPauloNow.getDate() + offsetDays);
+    const year = saoPauloNow.getFullYear();
+    const month = `${saoPauloNow.getMonth() + 1}`.padStart(2, '0');
+    const day = `${saoPauloNow.getDate()}`.padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+function normalizeArcaneStreakData(rawData) {
+    return {
+        lastPlayDate: typeof rawData?.lastPlayDate === 'string' ? rawData.lastPlayDate : '',
+        streakCount: Math.max(0, Number(rawData?.streakCount || 0)),
+        lastCelebratedMilestone: Math.max(0, Number(rawData?.lastCelebratedMilestone || 0))
+    };
+}
+
+function getNextArcaneMilestone(streakCount = 0) {
+    return ARCANE_STREAK_MILESTONES.find((milestone) => milestone > streakCount) || null;
+}
+
+function buildArcaneStreakShareText(streakCount = 0) {
+    const total = Math.max(0, Number(streakCount || 0));
+    const dayLabel = total === 1 ? 'dia' : 'dias';
+    return `Minha Chama Arcana chegou a ${total} ${dayLabel} no MagicLexis! 🔥\nJogue agora: https://magiclexis.com.br`;
+}
+
+function closeArcaneStreakModal() {
+    showControl(arcaneStreakModal, false);
+}
+
+function openArcaneStreakModal(streakData = {}) {
+    const normalized = normalizeArcaneStreakData(streakData);
+    const streak = normalized.streakCount;
+    const nextMilestone = getNextArcaneMilestone(streak);
+
+    if (arcaneStreakTitle) {
+        arcaneStreakTitle.innerText = streak >= 365 ? 'Sua chama virou lenda' : 'Sua chama cresceu';
+    }
+    if (arcaneStreakCount) {
+        arcaneStreakCount.innerText = `${streak}`;
+    }
+    if (arcaneStreakCopy) {
+        arcaneStreakCopy.innerText = `Você manteve a magia acesa por ${streak} ${streak === 1 ? 'dia seguido' : 'dias seguidos'} no MagicLexis. Continue alimentando sua jornada arcana.`;
+    }
+    if (arcaneStreakMilestone) {
+        arcaneStreakMilestone.innerText = nextMilestone
+            ? `Marco alcançado: ${streak} dias • próximo selo em ${nextMilestone} dias`
+            : `Marco lendário alcançado: ${streak} dias de Chama Arcana`;
+    }
+
+    showControl(arcaneStreakModal, true);
+}
+
+async function shareArcaneStreak() {
+    const streak = normalizeArcaneStreakData(activeUserDoc).streakCount;
+    const shareText = buildArcaneStreakShareText(streak);
+
+    try {
+        if (navigator.share) {
+            await navigator.share({
+                title: 'MagicLexis • Chama Arcana',
+                text: shareText,
+                url: 'https://magiclexis.com.br'
+            });
+        } else if (navigator.clipboard) {
+            await navigator.clipboard.writeText(shareText);
+            showFloatingMessage('Card da Chama Arcana copiado.', 2200);
+        } else {
+            showFloatingMessage(shareText, 2800);
+        }
+    } catch (err) {
+        if (err?.name !== 'AbortError') {
+            console.log('Falha ao compartilhar Chama Arcana:', err);
+            showFloatingMessage('Nao foi possivel compartilhar agora.', 2200);
+        }
+    }
+}
+
+async function syncArcaneStreakForUser(userDocData = activeUserDoc) {
+    if (!db || !activeUser || activeUser.isAnonymous) return null;
+
+    const normalized = normalizeArcaneStreakData(userDocData);
+    const todayKey = getSaoPauloDateKey(0);
+    const yesterdayKey = getSaoPauloDateKey(-1);
+    let nextStreakCount = normalized.streakCount;
+
+    if (normalized.lastPlayDate === todayKey) {
+        return normalized;
+    }
+
+    if (!normalized.lastPlayDate) {
+        nextStreakCount = 1;
+    } else if (normalized.lastPlayDate === yesterdayKey) {
+        nextStreakCount = normalized.streakCount + 1;
+    } else {
+        nextStreakCount = 0;
+    }
+
+    const nextData = {
+        lastPlayDate: todayKey,
+        streakCount: nextStreakCount,
+        lastCelebratedMilestone: normalized.lastCelebratedMilestone
+    };
+
+    const userRef = doc(db, 'users', activeUser.uid);
+    await setDoc(userRef, nextData, { merge: true });
+    activeUserDoc = { ...(activeUserDoc || {}), ...nextData };
+
+    const reachedMilestone = ARCANE_STREAK_MILESTONES.includes(nextStreakCount);
+    if (reachedMilestone && nextStreakCount > normalized.lastCelebratedMilestone) {
+        await setDoc(userRef, { lastCelebratedMilestone: nextStreakCount }, { merge: true });
+        activeUserDoc.lastCelebratedMilestone = nextStreakCount;
+        openArcaneStreakModal(activeUserDoc);
+    }
+
+    return nextData;
 }
 
 async function openRankingModal() {
@@ -5441,6 +5584,9 @@ async function loadRanking() {
 function bindAuthUiEvents() {
     document.getElementById('close-profile-modal')?.addEventListener('click', closeProfileModal);
     closeAudioSettingsModalBtn?.addEventListener('click', closeAudioSettingsModal);
+    closeArcaneStreakModalBtn?.addEventListener('click', closeArcaneStreakModal);
+    arcaneStreakCloseBtn?.addEventListener('click', closeArcaneStreakModal);
+    arcaneStreakShareBtn?.addEventListener('click', shareArcaneStreak);
     document.getElementById('close-ranking-modal')?.addEventListener('click', closeRankingModal);
     document.getElementById('save-profile-btn')?.addEventListener('click', saveProfile);
     document.getElementById('profile-logout-btn')?.addEventListener('click', logoutUser);
@@ -5579,6 +5725,7 @@ function bindAuthUiEvents() {
         if (!userMenu?.contains(e.target)) showControl(userMenuDropdown, false);
         if (e.target === profileModal) closeProfileModal();
         if (e.target === audioSettingsModal) closeAudioSettingsModal();
+        if (e.target === arcaneStreakModal) closeArcaneStreakModal();
         if (e.target === rankingModal) closeRankingModal();
         if (e.target === dailyResultModal) showControl(dailyResultModal, false);
         if (e.target === campaignCompleteModal) {

@@ -1912,6 +1912,141 @@ button#validate-btn:active { transform: scale(0.95); }
 .audio-toggle input:checked + .audio-toggle-track .audio-toggle-knob {
     transform: translateX(26px);
 }
+
+.arcane-streak-card {
+    width: min(92vw, 540px);
+    padding: 28px 24px 22px;
+    border-radius: 24px;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at top, rgba(126, 83, 208, 0.26) 0%, rgba(26, 19, 44, 0.97) 54%, rgba(11, 9, 18, 0.99) 100%),
+        linear-gradient(160deg, rgba(30, 22, 47, 0.98), rgba(12, 10, 18, 0.98));
+    border: 1px solid rgba(198, 152, 255, 0.55);
+    box-shadow: 0 0 44px rgba(124, 82, 209, 0.28), inset 0 0 34px rgba(180, 129, 255, 0.08);
+    animation: finaleCardIn 480ms ease both;
+}
+
+.arcane-streak-card::before {
+    content: "";
+    position: absolute;
+    inset: -15% -5% auto;
+    height: 240px;
+    background: radial-gradient(circle at center, rgba(214, 120, 255, 0.22), transparent 68%);
+    pointer-events: none;
+    filter: blur(18px);
+}
+
+.arcane-streak-badge,
+.arcane-streak-title,
+.arcane-streak-orb,
+.arcane-streak-copy,
+.arcane-streak-milestone,
+.arcane-streak-actions {
+    position: relative;
+    z-index: 1;
+}
+
+.arcane-streak-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: rgba(143, 95, 241, 0.14);
+    border: 1px solid rgba(214, 185, 255, 0.2);
+    color: #f2dcff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.arcane-streak-title {
+    margin: 0 0 16px;
+    text-align: center;
+    font-size: clamp(2rem, 5vw, 2.6rem);
+    color: #f5e8ff;
+}
+
+.arcane-streak-orb {
+    display: grid;
+    place-items: center;
+    gap: 4px;
+    width: min(56vw, 220px);
+    aspect-ratio: 1;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.26), transparent 26%),
+        radial-gradient(circle at center, rgba(130, 102, 255, 0.5), rgba(74, 37, 125, 0.16) 58%, rgba(14, 10, 24, 0.1) 100%);
+    border: 1px solid rgba(234, 215, 255, 0.26);
+    box-shadow:
+        0 0 36px rgba(188, 112, 255, 0.35),
+        0 0 70px rgba(78, 137, 255, 0.18),
+        inset 0 0 26px rgba(255,255,255,0.12);
+    animation: arcanePulse 3.2s ease-in-out infinite;
+}
+
+.arcane-streak-orb strong {
+    font-size: clamp(3rem, 10vw, 4.6rem);
+    line-height: 1;
+    color: #ffffff;
+    text-shadow: 0 0 16px rgba(209, 118, 255, 0.45);
+}
+
+.arcane-streak-orb span {
+    font-size: 0.95rem;
+    color: #efd8ff;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.arcane-streak-copy {
+    margin: 0 0 14px;
+    text-align: center;
+    color: #e7d6fb;
+    line-height: 1.65;
+    font-size: 1rem;
+}
+
+.arcane-streak-milestone {
+    margin: 0 0 20px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(192, 157, 252, 0.22);
+    color: #fff0c6;
+    text-align: center;
+    font-weight: 700;
+}
+
+.arcane-streak-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.arcane-streak-actions .profile-btn {
+    min-width: 180px;
+}
+
+@keyframes arcanePulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow:
+            0 0 36px rgba(188, 112, 255, 0.35),
+            0 0 70px rgba(78, 137, 255, 0.18),
+            inset 0 0 26px rgba(255,255,255,0.12);
+    }
+    50% {
+        transform: scale(1.03);
+        box-shadow:
+            0 0 46px rgba(214, 110, 255, 0.42),
+            0 0 82px rgba(91, 150, 255, 0.24),
+            inset 0 0 30px rgba(255,255,255,0.18);
+    }
+}
 /* ================= MOBILE UX REWORK (ONLY MOBILE) ================= */
 @media (max-width: 800px) {
     .sidebar.mobile-sidebar-hidden {
@@ -4666,5 +4801,27 @@ button#validate-btn:active { transform: scale(0.95); }
 
     .audio-slider-row {
         gap: 8px;
+    }
+
+    .arcane-streak-card {
+        padding: 24px 16px 18px;
+        border-radius: 20px;
+    }
+
+    .arcane-streak-title {
+        font-size: 2rem;
+    }
+
+    .arcane-streak-copy {
+        font-size: 0.95rem;
+    }
+
+    .arcane-streak-actions {
+        flex-direction: column;
+    }
+
+    .arcane-streak-actions .profile-btn {
+        width: 100%;
+        min-width: 0;
     }
 }
