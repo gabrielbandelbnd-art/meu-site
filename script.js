@@ -4623,6 +4623,7 @@ const arcaneStreakCopy = document.getElementById('arcane-streak-copy');
 const arcaneStreakMilestone = document.getElementById('arcane-streak-milestone');
 const arcaneStreakShareBtn = document.getElementById('arcane-streak-share-btn');
 const arcaneStreakCloseBtn = document.getElementById('arcane-streak-close-btn');
+const arcaneStreakCountLabel = arcaneStreakModal?.querySelector('.arcane-streak-orb span');
 
 let gateAuthMode = 'login';
 const GAME_STATE_STORAGE_KEY = 'magiclexis_game_state_v1';
@@ -5248,6 +5249,9 @@ function syncTopUserUi(user, userDoc) {
     if (profileNameTitle) profileNameTitle.innerText = displayName;
     if (userStreakIndicator) {
         userStreakIndicator.innerText = `🔥 ${streakData.streakCount}`;
+        userStreakIndicator.setAttribute('role', 'button');
+        userStreakIndicator.setAttribute('tabindex', isLogged && !isAnon && streakData.streakCount > 0 ? '0' : '-1');
+        userStreakIndicator.setAttribute('title', 'Abrir Chama Arcana');
         showControl(userStreakIndicator, isLogged && !isAnon && streakData.streakCount > 0);
     }
 
@@ -5366,6 +5370,29 @@ function buildArcaneStreakShareText(streakCount = 0) {
     return `Minha Chama Arcana chegou a ${total} ${dayLabel} no MagicLexis! 🔥\nJogue agora: https://magiclexis.com.br`;
 }
 
+function getArcaneDayLabel(total = 0) {
+    return Number(total) === 1 ? 'dia' : 'dias';
+}
+
+function getArcaneStreakHeadline(streak = 0) {
+    if (streak >= 365) return '🔥 Sua chama virou lenda!';
+    if (streak >= 30) return '🔥 Sua chama está poderosa!';
+    if (streak >= 7) return '🔥 Sua chama está firme!';
+    if (streak > 1) return '🔥 Sua chama cresceu!';
+    return '🔥 Sua chama começou!';
+}
+
+function getArcaneStreakCopyText(streak = 0) {
+    const dayLabel = getArcaneDayLabel(streak);
+    if (streak <= 1) {
+        return `Você manteve a magia viva por ${streak} ${dayLabel}. Continue jogando para manter sua chama acesa.`;
+    }
+    if (streak >= 30) {
+        return `Sua jornada já soma ${streak} ${dayLabel} seguidos de magia. Continue alimentando essa chama arcana.`;
+    }
+    return `Você já acumula ${streak} ${dayLabel} seguidos no MagicLexis. Continue jogando para mantê-la viva.`;
+}
+
 function closeArcaneStreakModal() {
     showControl(arcaneStreakModal, false);
 }
@@ -5390,20 +5417,25 @@ function openArcaneStreakModal(streakData = {}) {
     const normalized = normalizeArcaneStreakData(streakData);
     const streak = normalized.streakCount;
     const nextMilestone = getNextArcaneMilestone(streak);
+    const dayLabel = getArcaneDayLabel(streak);
+    showControl(userMenuDropdown, false);
 
     if (arcaneStreakTitle) {
-        arcaneStreakTitle.innerText = streak >= 365 ? 'Sua chama virou lenda' : 'Sua chama cresceu';
+        arcaneStreakTitle.innerText = getArcaneStreakHeadline(streak);
     }
     if (arcaneStreakCount) {
         arcaneStreakCount.innerText = `${streak}`;
     }
+    if (arcaneStreakCountLabel) {
+        arcaneStreakCountLabel.innerText = `${dayLabel} seguido${streak === 1 ? '' : 's'}`;
+    }
     if (arcaneStreakCopy) {
-        arcaneStreakCopy.innerText = `Você manteve a magia acesa por ${streak} ${streak === 1 ? 'dia seguido' : 'dias seguidos'} no MagicLexis. Continue alimentando sua jornada arcana.`;
+        arcaneStreakCopy.innerText = getArcaneStreakCopyText(streak);
     }
     if (arcaneStreakMilestone) {
         arcaneStreakMilestone.innerText = nextMilestone
-            ? `Marco atual: ${streak} dias • próximo selo em ${nextMilestone} dias`
-            : `Marco lendário alcançado: ${streak} dias de Chama Arcana`;
+            ? `Próximo marco: ${nextMilestone} ${getArcaneDayLabel(nextMilestone)}`
+            : `Marco lendário: ${streak} ${dayLabel}`;
     }
 
     const streakCard = arcaneStreakModal?.querySelector('.arcane-streak-card');
@@ -5882,6 +5914,18 @@ function bindAuthUiEvents() {
 
     document.getElementById('user-menu-trigger')?.addEventListener('click', () => {
         showControl(userMenuDropdown, userMenuDropdown.classList.contains('hidden-control'));
+    });
+    userStreakIndicator?.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!activeUser || activeUser.isAnonymous) return;
+        openArcaneStreakModal(activeUserDoc);
+    });
+    userStreakIndicator?.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        if (!activeUser || activeUser.isAnonymous) return;
+        openArcaneStreakModal(activeUserDoc);
     });
     document.querySelectorAll('[data-theme-option]').forEach((button) => {
         button.addEventListener('click', () => {
