@@ -5349,11 +5349,11 @@ button#validate-btn:active { transform: scale(0.95); }
         display: flex !important;
         top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
         left: 10px !important;
-        width: 48px !important;
-        height: 48px !important;
-        border-radius: 14px !important;
-        font-size: 1.4rem !important;
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28) !important;
+        width: 44px !important;
+        height: 44px !important;
+        border-radius: 12px !important;
+        font-size: 1.28rem !important;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.24) !important;
     }
 
     body.mobile-gameplay-active .user-menu {
@@ -5364,8 +5364,8 @@ button#validate-btn:active { transform: scale(0.95); }
 
     body.mobile-gameplay-active .user-menu-trigger {
         gap: 6px !important;
-        min-height: 46px !important;
-        padding: 5px 9px 5px 5px !important;
+        min-height: 42px !important;
+        padding: 4px 8px 4px 4px !important;
         border-radius: 999px !important;
     }
 
@@ -5375,8 +5375,8 @@ button#validate-btn:active { transform: scale(0.95); }
     }
 
     body.mobile-gameplay-active .user-name-top {
-        max-width: 80px !important;
-        font-size: 0.84rem !important;
+        max-width: 74px !important;
+        font-size: 0.8rem !important;
     }
 
     body.mobile-gameplay-active .user-streak-indicator {
@@ -5387,68 +5387,97 @@ button#validate-btn:active { transform: scale(0.95); }
 
     body.mobile-gameplay-active .game-area {
         width: 100% !important;
-        gap: 8px !important;
+        gap: 5px !important;
         padding:
-            calc(env(safe-area-inset-top, 0px) + 64px)
+            calc(env(safe-area-inset-top, 0px) + 58px)
             12px
-            calc(env(safe-area-inset-bottom, 0px) + 14px) !important;
+            calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
         min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
         box-sizing: border-box !important;
     }
 
     body.mobile-gameplay-active .challenge-header {
-        gap: 6px !important;
+        gap: 4px !important;
         margin-bottom: 0 !important;
     }
 
     body.mobile-gameplay-active .challenge-instruction {
         margin: 0 !important;
-        font-size: clamp(0.9rem, 3.9vw, 1rem) !important;
-        line-height: 1.2 !important;
+        font-size: clamp(0.84rem, 3.55vw, 0.95rem) !important;
+        line-height: 1.14 !important;
         text-align: center !important;
     }
 
     body.mobile-gameplay-active .hint-box,
     body.mobile-gameplay-active #daily-status-bar,
     body.mobile-gameplay-active #online-match-banner {
-        padding: 10px 12px !important;
-        border-radius: 14px !important;
+        padding: 8px 10px !important;
+        border-radius: 12px !important;
     }
 
     body.mobile-gameplay-active .hint-box {
-        gap: 8px !important;
+        gap: 6px !important;
     }
 
     body.mobile-gameplay-active #skip-hint-btn {
-        padding: 7px 10px !important;
-        font-size: 0.86rem !important;
-        border-radius: 10px !important;
+        padding: 5px 8px !important;
+        font-size: 0.78rem !important;
+        border-radius: 9px !important;
     }
 
     body.mobile-gameplay-active #mobile-rules-slot {
         margin: 0 !important;
     }
 
+    body.mobile-gameplay-active #mobile-rules-slot .mobile-panel {
+        border-radius: 14px !important;
+    }
+
     body.mobile-gameplay-active #mobile-rules-slot .mobile-panel-title {
-        padding: 9px 12px !important;
-        font-size: 0.92rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 8px !important;
+        padding: 8px 10px !important;
+        font-size: 0.84rem !important;
+        line-height: 1 !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot .mobile-panel-toggle {
+        font-size: 0.94rem !important;
+        transition: transform 0.22s ease !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot .mobile-panel--collapsed .mobile-panel-toggle {
+        transform: rotate(-90deg) !important;
     }
 
     body.mobile-gameplay-active #mobile-rules-slot .mobile-panel-body {
         padding: 6px !important;
-        gap: 5px !important;
+        gap: 4px !important;
+        transition: padding 0.2s ease !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot .mobile-panel--collapsed .mobile-panel-body {
+        display: none !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot .collapsible-header {
+        display: none !important;
     }
 
     body.mobile-gameplay-active #mobile-rules-slot .rule-card {
-        padding: 7px 9px !important;
-        margin-bottom: 3px !important;
-        border-radius: 12px !important;
-        font-size: 0.75rem !important;
-        line-height: 1.18 !important;
+        padding: 6px 8px !important;
+        margin-bottom: 2px !important;
+        border-radius: 10px !important;
+        font-size: 0.68rem !important;
+        line-height: 1.1 !important;
     }
 
     body.mobile-gameplay-active #mobile-rules-slot .rule-card strong {
-        font-size: 0.78rem !important;
+        display: block !important;
+        margin-bottom: 2px !important;
+        font-size: 0.7rem !important;
     }
 
     body.mobile-gameplay-active .notepad-container {
@@ -5476,15 +5505,15 @@ button#validate-btn:active { transform: scale(0.95); }
     }
 
     body.mobile-gameplay-active .word-grid {
-        gap: 4px !important;
+        gap: 3px !important;
     }
 
     body.mobile-gameplay-active .letter-box {
-        width: clamp(26px, 8.2vw, 34px) !important;
-        height: clamp(36px, 10.4vw, 44px) !important;
-        border-radius: 10px !important;
+        width: clamp(24px, 7.5vw, 31px) !important;
+        height: clamp(34px, 9vw, 40px) !important;
+        border-radius: 9px !important;
         border-width: 2px !important;
-        font-size: clamp(1rem, 4.6vw, 1.35rem) !important;
+        font-size: clamp(0.92rem, 4.15vw, 1.18rem) !important;
     }
 
     body.mobile-gameplay-active .input-section {
@@ -5494,16 +5523,16 @@ button#validate-btn:active { transform: scale(0.95); }
     body.mobile-gameplay-active .notification-area {
         margin: 0 !important;
         min-height: 0 !important;
-        padding: 10px 12px !important;
-        border-radius: 14px !important;
-        font-size: 0.84rem !important;
-        line-height: 1.25 !important;
+        padding: 8px 10px !important;
+        border-radius: 12px !important;
+        font-size: 0.78rem !important;
+        line-height: 1.14 !important;
     }
 
     body.mobile-gameplay-active .input-controls {
         display: grid !important;
         grid-template-columns: minmax(0, 1.04fr) minmax(56px, 0.42fr) minmax(0, 1.18fr) !important;
-        gap: 10px !important;
+        gap: 8px !important;
         align-items: stretch !important;
         margin: 0 !important;
     }
@@ -5513,21 +5542,21 @@ button#validate-btn:active { transform: scale(0.95); }
     body.mobile-gameplay-active .input-controls #validate-btn {
         width: 100% !important;
         min-width: 0 !important;
-        height: 54px !important;
-        padding: 0 10px !important;
-        border-radius: 14px !important;
+        height: 48px !important;
+        padding: 0 8px !important;
+        border-radius: 12px !important;
     }
 
     body.mobile-gameplay-active .input-controls #clear-board-btn {
-        font-size: clamp(0.92rem, 4vw, 1.02rem) !important;
+        font-size: clamp(0.86rem, 3.8vw, 0.96rem) !important;
     }
 
     body.mobile-gameplay-active .input-controls #validate-btn {
-        font-size: clamp(1rem, 4.5vw, 1.12rem) !important;
+        font-size: clamp(0.92rem, 4vw, 1.02rem) !important;
     }
 
     body.mobile-gameplay-active .input-controls #char-input {
-        font-size: clamp(1.2rem, 6.4vw, 1.55rem) !important;
+        font-size: clamp(1.08rem, 5.4vw, 1.3rem) !important;
         text-align: center !important;
     }
 
@@ -5541,26 +5570,26 @@ button#validate-btn:active { transform: scale(0.95); }
 
     body.mobile-gameplay-active #alphabet-drawer .alphabet-header,
     body.mobile-gameplay-active .alphabet-wrapper .alphabet-header {
-        padding: 6px 10px !important;
-        font-size: 0.8rem !important;
+        padding: 5px 8px !important;
+        font-size: 0.74rem !important;
     }
 
     body.mobile-gameplay-active #mini-alphabet.alphabet-content {
         grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
-        gap: 5px !important;
-        padding: 8px 6px 6px !important;
+        gap: 4px !important;
+        padding: 6px 4px 4px !important;
     }
 
     body.mobile-gameplay-active #mini-alphabet .mini-char {
         min-height: 0 !important;
-        height: clamp(36px, 10vw, 42px) !important;
-        padding: 2px !important;
-        border-radius: 10px !important;
-        font-size: clamp(0.98rem, 4.8vw, 1.12rem) !important;
+        height: clamp(32px, 8.3vw, 36px) !important;
+        padding: 1px !important;
+        border-radius: 9px !important;
+        font-size: clamp(0.88rem, 4.1vw, 1rem) !important;
     }
 
     body.mobile-gameplay-active #mini-alphabet .mini-char .mirrored-letter {
-        font-size: clamp(0.58rem, 2.7vw, 0.7rem) !important;
+        font-size: clamp(0.5rem, 2.2vw, 0.6rem) !important;
     }
 
     body.mobile-gameplay-active #mini-alphabet .mini-char:nth-child(22) { grid-column: 2 !important; }

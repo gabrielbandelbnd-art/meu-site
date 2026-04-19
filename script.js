@@ -1813,12 +1813,43 @@ function showFloatingMessage(text, duration = 2000) {
     setTimeout(() => { msg.classList.add('hidden'); }, duration);
 }
 
-function buildMobilePanel(titleText) {
+function buildMobilePanel(titleText, options = {}) {
+    const { collapsible = false, collapsed = false } = options;
     const panel = document.createElement('div');
     panel.className = 'mobile-panel';
     const header = document.createElement('div');
     header.className = 'mobile-panel-title';
-    header.innerText = titleText;
+    if (collapsible) {
+        panel.classList.add('mobile-panel--collapsible');
+        if (collapsed) panel.classList.add('mobile-panel--collapsed');
+        header.setAttribute('role', 'button');
+        header.setAttribute('tabindex', '0');
+
+        const titleLabel = document.createElement('span');
+        titleLabel.className = 'mobile-panel-title-label';
+        titleLabel.innerText = titleText;
+
+        const indicator = document.createElement('span');
+        indicator.className = 'mobile-panel-toggle';
+        indicator.innerText = '▾';
+
+        header.appendChild(titleLabel);
+        header.appendChild(indicator);
+
+        const togglePanel = () => {
+            panel.classList.toggle('mobile-panel--collapsed');
+        };
+
+        header.addEventListener('click', togglePanel);
+        header.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                togglePanel();
+            }
+        });
+    } else {
+        header.innerText = titleText;
+    }
     const body = document.createElement('div');
     body.className = 'mobile-panel-body';
     panel.appendChild(header);
@@ -1843,7 +1874,10 @@ function setupMobileLayout() {
 
     if (mobileRulesSlot) {
         mobileRulesSlot.classList.remove('hidden-control');
-        const rulesPanel = buildMobilePanel('Regras M\u00E1gicas');
+        const rulesPanel = buildMobilePanel('Regras M\u00E1gicas', {
+            collapsible: true,
+            collapsed: true
+        });
         if (rulesSection) rulesPanel.body.appendChild(rulesSection);
         mobileRulesSlot.appendChild(rulesPanel.panel);
     }
