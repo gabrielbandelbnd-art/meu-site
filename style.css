@@ -865,6 +865,23 @@ button#validate-btn:active { transform: scale(0.95); }
     font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; animation: popIn 0.3s;
 }
 .inline-message.hidden { display: none; }
+.inline-message.floating-toast-active {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 150px);
+    width: auto;
+    max-width: 360px;
+    margin: 0 auto;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 0.95rem;
+    line-height: 1.15;
+    text-align: center;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.32);
+    z-index: 6500;
+    pointer-events: none;
+}
 .feedback { font-weight: bold; font-size: 1.3rem; margin-bottom: 5px; }
 .meaning-display { color: var(--text-dim); font-style: italic; font-size: 1rem; }
 .meaning-display.hidden { opacity: 0; }
@@ -1582,6 +1599,21 @@ button#validate-btn:active { transform: scale(0.95); }
     .profile-auth-panel,
     .profile-auth-email-actions {
         grid-template-columns: 1fr;
+    }
+
+    #profile-modal,
+    #audio-settings-modal {
+        align-items: flex-start;
+        overflow-y: auto;
+        padding: calc(env(safe-area-inset-top, 0px) + 12px) 12px calc(env(safe-area-inset-bottom, 0px) + 12px);
+    }
+
+    #profile-modal .profile-card,
+    #audio-settings-modal .profile-card {
+        max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 24px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        margin: 0 auto;
     }
 }
 .auth-gate {
