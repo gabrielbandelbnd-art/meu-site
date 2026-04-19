@@ -5630,3 +5630,116 @@ button#validate-btn:active { transform: scale(0.95); }
     body.mobile-gameplay-active #mini-alphabet .mini-char:nth-child(25) { grid-column: 5 !important; }
     body.mobile-gameplay-active #mini-alphabet .mini-char:nth-child(26) { grid-column: 6 !important; }
 }
+
+@media (max-width: 800px) {
+    /* Abertura/login mobile mais proporcional */
+    .initial-loading-screen {
+        padding:
+            calc(env(safe-area-inset-top, 0px) + 10px)
+            12px
+            calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
+        align-items: flex-start !important;
+    }
+
+    .initial-loading-content {
+        width: min(100%, 420px) !important;
+        max-width: 420px !important;
+        min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 22px) !important;
+        height: auto !important;
+        justify-content: flex-start !important;
+        align-content: flex-start !important;
+        gap: 16px !important;
+        padding-top: 10px !important;
+    }
+
+    .initial-loading-image {
+        width: min(100%, 360px) !important;
+        max-height: min(42vh, 320px) !important;
+        margin: 0 auto !important;
+    }
+
+    .initial-loading-entry,
+    .initial-loading-status {
+        width: min(100%, 320px) !important;
+        margin: 4px auto 0 !important;
+    }
+
+    .initial-loading-play-btn {
+        width: 100% !important;
+        min-width: 0 !important;
+        min-height: 52px !important;
+        padding: 14px 18px !important;
+        font-size: 1.05rem !important;
+        letter-spacing: 0.14em !important;
+    }
+
+    .initial-loading-status {
+        gap: 8px !important;
+    }
+
+    .initial-loading-bar-shell {
+        height: 14px !important;
+    }
+
+    .initial-loading-percent {
+        font-size: 0.98rem !important;
+    }
+
+    .auth-gate {
+        padding:
+            calc(env(safe-area-inset-top, 0px) + 10px)
+            12px
+            calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
+        align-items: flex-start !important;
+        overflow-y: auto !important;
+    }
+
+    .auth-gate-card {
+        width: min(100%, 420px) !important;
+        margin: 0 auto !important;
+        padding: 18px 14px 16px !important;
+        border-radius: 16px !important;
+    }
+
+    .auth-brand {
+        font-size: clamp(1.7rem, 7vw, 2.2rem) !important;
+        margin-bottom: 6px !important;
+    }
+
+    .auth-gate-card h2 {
+        font-size: clamp(1.35rem, 5.8vw, 1.8rem) !important;
+        margin-bottom: 6px !important;
+    }
+
+    .auth-gate-card p {
+        font-size: 0.92rem !important;
+        line-height: 1.35 !important;
+        margin-bottom: 12px !important;
+    }
+
+    .auth-gate-inputs {
+        gap: 8px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .auth-gate-inputs input {
+        padding: 12px !important;
+        font-size: 1rem !important;
+        border-radius: 10px !important;
+    }
+
+    .auth-gate-main-actions {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .auth-gate-social-row {
+        gap: 8px !important;
+    }
+
+    .auth-gate-social-row .profile-btn {
+        width: 100% !important;
+        min-height: 48px !important;
+    }
+}
