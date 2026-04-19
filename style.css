@@ -5342,3 +5342,230 @@ button#validate-btn:active { transform: scale(0.95); }
         height: 40px;
     }
 }
+
+@media (max-width: 800px) {
+    /* Override final da gameplay mobile para manter tudo visível sem cortar o teclado */
+    body.mobile-gameplay-active #mobile-menu-btn {
+        display: flex !important;
+        top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+        left: 10px !important;
+        width: 48px !important;
+        height: 48px !important;
+        border-radius: 14px !important;
+        font-size: 1.4rem !important;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.28) !important;
+    }
+
+    body.mobile-gameplay-active .user-menu {
+        top: calc(env(safe-area-inset-top, 0px) + 8px) !important;
+        right: 10px !important;
+        z-index: 6105 !important;
+    }
+
+    body.mobile-gameplay-active .user-menu-trigger {
+        gap: 6px !important;
+        min-height: 46px !important;
+        padding: 5px 9px 5px 5px !important;
+        border-radius: 999px !important;
+    }
+
+    body.mobile-gameplay-active .user-avatar-top {
+        width: 24px !important;
+        height: 24px !important;
+    }
+
+    body.mobile-gameplay-active .user-name-top {
+        max-width: 80px !important;
+        font-size: 0.84rem !important;
+    }
+
+    body.mobile-gameplay-active .user-streak-indicator {
+        min-width: 0 !important;
+        padding: 3px 6px !important;
+        font-size: 0.7rem !important;
+    }
+
+    body.mobile-gameplay-active .game-area {
+        width: 100% !important;
+        gap: 8px !important;
+        padding:
+            calc(env(safe-area-inset-top, 0px) + 64px)
+            12px
+            calc(env(safe-area-inset-bottom, 0px) + 14px) !important;
+        min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)) !important;
+        box-sizing: border-box !important;
+    }
+
+    body.mobile-gameplay-active .challenge-header {
+        gap: 6px !important;
+        margin-bottom: 0 !important;
+    }
+
+    body.mobile-gameplay-active .challenge-instruction {
+        margin: 0 !important;
+        font-size: clamp(0.9rem, 3.9vw, 1rem) !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+    }
+
+    body.mobile-gameplay-active .hint-box,
+    body.mobile-gameplay-active #daily-status-bar,
+    body.mobile-gameplay-active #online-match-banner {
+        padding: 10px 12px !important;
+        border-radius: 14px !important;
+    }
+
+    body.mobile-gameplay-active .hint-box {
+        gap: 8px !important;
+    }
+
+    body.mobile-gameplay-active #skip-hint-btn {
+        padding: 7px 10px !important;
+        font-size: 0.86rem !important;
+        border-radius: 10px !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot {
+        margin: 0 !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot .mobile-panel-title {
+        padding: 9px 12px !important;
+        font-size: 0.92rem !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot .mobile-panel-body {
+        padding: 6px !important;
+        gap: 5px !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot .rule-card {
+        padding: 7px 9px !important;
+        margin-bottom: 3px !important;
+        border-radius: 12px !important;
+        font-size: 0.75rem !important;
+        line-height: 1.18 !important;
+    }
+
+    body.mobile-gameplay-active #mobile-rules-slot .rule-card strong {
+        font-size: 0.78rem !important;
+    }
+
+    body.mobile-gameplay-active .notepad-container {
+        margin: 0 !important;
+    }
+
+    body.mobile-gameplay-active .notepad-header {
+        padding: 8px 10px !important;
+        font-size: 0.85rem !important;
+    }
+
+    body.mobile-gameplay-active .notepad-body {
+        height: 60px !important;
+    }
+
+    body.mobile-gameplay-active .notepad-body textarea {
+        min-height: 60px !important;
+        padding: 8px !important;
+        font-size: 0.8rem !important;
+    }
+
+    body.mobile-gameplay-active .board-wrapper {
+        margin: 0 !important;
+        min-height: 0 !important;
+    }
+
+    body.mobile-gameplay-active .word-grid {
+        gap: 4px !important;
+    }
+
+    body.mobile-gameplay-active .letter-box {
+        width: clamp(26px, 8.2vw, 34px) !important;
+        height: clamp(36px, 10.4vw, 44px) !important;
+        border-radius: 10px !important;
+        border-width: 2px !important;
+        font-size: clamp(1rem, 4.6vw, 1.35rem) !important;
+    }
+
+    body.mobile-gameplay-active .input-section {
+        margin: 0 !important;
+    }
+
+    body.mobile-gameplay-active .notification-area {
+        margin: 0 !important;
+        min-height: 0 !important;
+        padding: 10px 12px !important;
+        border-radius: 14px !important;
+        font-size: 0.84rem !important;
+        line-height: 1.25 !important;
+    }
+
+    body.mobile-gameplay-active .input-controls {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1.04fr) minmax(56px, 0.42fr) minmax(0, 1.18fr) !important;
+        gap: 10px !important;
+        align-items: stretch !important;
+        margin: 0 !important;
+    }
+
+    body.mobile-gameplay-active .input-controls #clear-board-btn,
+    body.mobile-gameplay-active .input-controls #char-input,
+    body.mobile-gameplay-active .input-controls #validate-btn {
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 54px !important;
+        padding: 0 10px !important;
+        border-radius: 14px !important;
+    }
+
+    body.mobile-gameplay-active .input-controls #clear-board-btn {
+        font-size: clamp(0.92rem, 4vw, 1.02rem) !important;
+    }
+
+    body.mobile-gameplay-active .input-controls #validate-btn {
+        font-size: clamp(1rem, 4.5vw, 1.12rem) !important;
+    }
+
+    body.mobile-gameplay-active .input-controls #char-input {
+        font-size: clamp(1.2rem, 6.4vw, 1.55rem) !important;
+        text-align: center !important;
+    }
+
+    body.mobile-gameplay-active #alphabet-drawer,
+    body.mobile-gameplay-active .alphabet-wrapper {
+        margin-top: 0 !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    body.mobile-gameplay-active #alphabet-drawer .alphabet-header,
+    body.mobile-gameplay-active .alphabet-wrapper .alphabet-header {
+        padding: 6px 10px !important;
+        font-size: 0.8rem !important;
+    }
+
+    body.mobile-gameplay-active #mini-alphabet.alphabet-content {
+        grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+        gap: 5px !important;
+        padding: 8px 6px 6px !important;
+    }
+
+    body.mobile-gameplay-active #mini-alphabet .mini-char {
+        min-height: 0 !important;
+        height: clamp(36px, 10vw, 42px) !important;
+        padding: 2px !important;
+        border-radius: 10px !important;
+        font-size: clamp(0.98rem, 4.8vw, 1.12rem) !important;
+    }
+
+    body.mobile-gameplay-active #mini-alphabet .mini-char .mirrored-letter {
+        font-size: clamp(0.58rem, 2.7vw, 0.7rem) !important;
+    }
+
+    body.mobile-gameplay-active #mini-alphabet .mini-char:nth-child(22) { grid-column: 2 !important; }
+    body.mobile-gameplay-active #mini-alphabet .mini-char:nth-child(23) { grid-column: 3 !important; }
+    body.mobile-gameplay-active #mini-alphabet .mini-char:nth-child(24) { grid-column: 4 !important; }
+    body.mobile-gameplay-active #mini-alphabet .mini-char:nth-child(25) { grid-column: 5 !important; }
+    body.mobile-gameplay-active #mini-alphabet .mini-char:nth-child(26) { grid-column: 6 !important; }
+}
