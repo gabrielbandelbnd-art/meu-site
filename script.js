@@ -184,6 +184,7 @@ const CAMPAIGN_WORDS_TO_COMPLETE = 5;
 const CAMPAIGN_PROGRESS_STORAGE_KEY = 'magiclexis_campaign_progress_v1';
 const PLAYER_STATS_STORAGE_KEY = 'magiclexis_player_stats_v1';
 const AUDIO_SETTINGS_STORAGE_KEY = 'magiclexis_audio_settings_v1';
+const THEME_STORAGE_KEY = 'magiclexis_theme_v1';
 const ARCANE_STREAK_MILESTONES = [1, 2, 3, 7, 15, 30, 45, 60, 90, 120, 180, 365];
 const GAMEPLAY_IDLE_TIMEOUT_MS = 60000;
 const CAMPAIGN_LEVELS = Array.from(
@@ -191,6 +192,58 @@ const CAMPAIGN_LEVELS = Array.from(
     (_, index) => CAMPAIGN_LEVEL_START + index
 );
 const challengesByLength = new Map();
+const AVAILABLE_THEMES = ['default', 'arcane-dark', 'mystic-nature', 'infernal', 'glacial-arcane'];
+let currentThemeId = 'default';
+
+function normalizeThemeId(themeId) {
+    return AVAILABLE_THEMES.includes(themeId) ? themeId : 'default';
+}
+
+function saveThemePreference(themeId) {
+    currentThemeId = normalizeThemeId(themeId);
+    try {
+        localStorage.setItem(THEME_STORAGE_KEY, currentThemeId);
+    } catch (err) {
+        console.log('Falha ao salvar tema:', err);
+    }
+    return currentThemeId;
+}
+
+function loadThemePreference() {
+    try {
+        const stored = localStorage.getItem(THEME_STORAGE_KEY);
+        currentThemeId = normalizeThemeId(stored || 'default');
+    } catch (err) {
+        console.log('Falha ao carregar tema:', err);
+        currentThemeId = 'default';
+    }
+    return currentThemeId;
+}
+
+function renderThemeSelectorUi() {
+    document.querySelectorAll('[data-theme-option]').forEach((button) => {
+        const isActive = button.getAttribute('data-theme-option') === currentThemeId;
+        button.classList.toggle('is-active', isActive);
+        button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+}
+
+function applyTheme(themeId, { persist = true } = {}) {
+    currentThemeId = normalizeThemeId(themeId);
+    document.documentElement.setAttribute('data-theme', currentThemeId);
+    document.body?.setAttribute('data-theme', currentThemeId);
+    document.body?.classList.toggle('theme-enhanced', currentThemeId !== 'default');
+    if (persist) saveThemePreference(currentThemeId);
+    renderThemeSelectorUi();
+    return currentThemeId;
+}
+
+const initialThemeId = loadThemePreference();
+document.documentElement.setAttribute('data-theme', initialThemeId);
+if (document.body) {
+    document.body.setAttribute('data-theme', initialThemeId);
+    document.body.classList.toggle('theme-enhanced', initialThemeId !== 'default');
+}
 
 allChallenges.forEach((challenge) => {
     const wordLength = challenge.word.length;
@@ -5185,6 +5238,7 @@ async function refreshProfileRank() {
 function openProfileModal() {
     showControl(profileModal, true);
     showControl(userMenuDropdown, false);
+    renderThemeSelectorUi();
 
     if (!activeUser) {
         setStatus('FaÃƒÆ’Ã‚Â§a login para acessar o perfil.', true);
@@ -5783,6 +5837,13 @@ function bindAuthUiEvents() {
     document.getElementById('user-menu-trigger')?.addEventListener('click', () => {
         showControl(userMenuDropdown, userMenuDropdown.classList.contains('hidden-control'));
     });
+    document.querySelectorAll('[data-theme-option]').forEach((button) => {
+        button.addEventListener('click', () => {
+            const nextTheme = button.getAttribute('data-theme-option') || 'default';
+            applyTheme(nextTheme);
+            setStatus(`Tema ${button.querySelector('strong')?.innerText || 'selecionado'} aplicado.`);
+        });
+    });
 
     audioMusicEnabledInput?.addEventListener('change', () => {
         updateAudioSetting('musicEnabled', !!audioMusicEnabledInput.checked);
@@ -5978,6 +6039,7 @@ function initInitialLoadingScreen() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    applyTheme(loadThemePreference(), { persist: false });
     initInitialLoadingScreen();
     loadPlayerStats();
     loadAudioSettings();
