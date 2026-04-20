@@ -186,17 +186,89 @@ const PLAYER_STATS_STORAGE_KEY = 'magiclexis_player_stats_v1';
 const AUDIO_SETTINGS_STORAGE_KEY = 'magiclexis_audio_settings_v1';
 const THEME_STORAGE_KEY = 'magiclexis_theme_v1';
 const ARCANE_STREAK_MILESTONES = [1, 2, 3, 7, 15, 30, 45, 60, 90, 120, 180, 365];
+const ADMIN_UID = 'DxTnrg4cG4TWHK6qkbSZudfzJgh2';
 const GAMEPLAY_IDLE_TIMEOUT_MS = 60000;
 const CAMPAIGN_LEVELS = Array.from(
     { length: CAMPAIGN_LEVEL_END - CAMPAIGN_LEVEL_START + 1 },
     (_, index) => CAMPAIGN_LEVEL_START + index
 );
 const challengesByLength = new Map();
-const AVAILABLE_THEMES = ['default', 'arcane-dark', 'mystic-nature', 'infernal', 'glacial-arcane'];
+const AVAILABLE_THEMES = ['default', 'arcane-dark', 'mystic-nature', 'glacial-arcane', 'infernal'];
+const THEME_UNLOCK_REQUIREMENTS = {
+    default: 0,
+    'arcane-dark': 2,
+    'mystic-nature': 15,
+    'glacial-arcane': 20,
+    infernal: 30
+};
+const THEME_LABELS = {
+    default: 'Padrão',
+    'arcane-dark': 'Arcano Sombrio',
+    'mystic-nature': 'Natureza Mística',
+    'glacial-arcane': 'Gelo Arcano',
+    infernal: 'Infernal'
+};
 let currentThemeId = 'default';
 
 function normalizeThemeId(themeId) {
     return AVAILABLE_THEMES.includes(themeId) ? themeId : 'default';
+}
+
+function isAdminUser(user = activeUser) {
+    return !!user?.uid && user.uid === ADMIN_UID;
+}
+
+function getStoredThemePreference() {
+    try {
+        return normalizeThemeId(localStorage.getItem(THEME_STORAGE_KEY) || 'default');
+    } catch (err) {
+        console.log('Falha ao ler tema salvo:', err);
+        return 'default';
+    }
+}
+
+function getThemeLabel(themeId) {
+    return THEME_LABELS[normalizeThemeId(themeId)] || 'Tema';
+}
+
+function getThemeUnlockRequirement(themeId) {
+    return THEME_UNLOCK_REQUIREMENTS[normalizeThemeId(themeId)] ?? 0;
+}
+
+function getCurrentArcaneStreakCount() {
+    return Math.max(0, Number(normalizeArcaneStreakData(activeUserDoc).streakCount || 0));
+}
+
+function isThemeUnlocked(themeId, streakCount = getCurrentArcaneStreakCount()) {
+    if (isAdminUser()) return true;
+    return Math.max(0, Number(streakCount || 0)) >= getThemeUnlockRequirement(themeId);
+}
+
+function getThemeUnlockMessage(themeId) {
+    const requiredDays = getThemeUnlockRequirement(themeId);
+    return `Desbloqueie com ${requiredDays} ${getArcaneDayLabel(requiredDays)} de Chama Arcana 🔥`;
+}
+
+function getNewlyUnlockedThemes(previousStreak = 0, nextStreak = 0) {
+    return AVAILABLE_THEMES.filter((themeId) => {
+        const requiredDays = getThemeUnlockRequirement(themeId);
+        return requiredDays > 0 && previousStreak < requiredDays && nextStreak >= requiredDays;
+    });
+}
+
+function syncThemeAvailability() {
+    const savedThemeId = getStoredThemePreference();
+    const savedThemeUnlocked = isThemeUnlocked(savedThemeId);
+    const currentThemeUnlocked = isThemeUnlocked(currentThemeId);
+    const nextThemeId = savedThemeUnlocked
+        ? savedThemeId
+        : (currentThemeUnlocked ? currentThemeId : 'default');
+
+    if (nextThemeId !== currentThemeId) {
+        applyTheme(nextThemeId, { persist: false });
+        return;
+    }
+    renderThemeSelectorUi();
 }
 
 function saveThemePreference(themeId) {
@@ -211,7 +283,7 @@ function saveThemePreference(themeId) {
 
 function loadThemePreference() {
     try {
-        const stored = localStorage.getItem(THEME_STORAGE_KEY);
+        const stored = getStoredThemePreference();
         currentThemeId = normalizeThemeId(stored || 'default');
     } catch (err) {
         console.log('Falha ao carregar tema:', err);
@@ -221,15 +293,43 @@ function loadThemePreference() {
 }
 
 function renderThemeSelectorUi() {
+    const streakCount = getCurrentArcaneStreakCount();
     document.querySelectorAll('[data-theme-option]').forEach((button) => {
-        const isActive = button.getAttribute('data-theme-option') === currentThemeId;
+        const themeId = button.getAttribute('data-theme-option') || 'default';
+        const isActive = themeId === currentThemeId;
+        const unlocked = isThemeUnlocked(themeId, streakCount);
+        const requirement = getThemeUnlockRequirement(themeId);
+        const title = unlocked
+            ? `${getThemeLabel(themeId)} disponível`
+            : getThemeUnlockMessage(themeId);
         button.classList.toggle('is-active', isActive);
+        button.classList.toggle('is-locked', !unlocked);
         button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        button.setAttribute('aria-disabled', unlocked ? 'false' : 'true');
+        button.setAttribute('title', title);
+        button.dataset.unlockRequirement = requirement > 0 ? String(requirement) : '';
+
+        const textContainer = button.querySelector('.theme-option-text');
+        if (textContainer) {
+            let unlockHint = textContainer.querySelector('.theme-option-unlock-hint');
+            if (!unlocked) {
+                if (!unlockHint) {
+                    unlockHint = document.createElement('small');
+                    unlockHint.className = 'theme-option-unlock-hint';
+                    textContainer.appendChild(unlockHint);
+                }
+                unlockHint.innerText = getThemeUnlockMessage(themeId);
+            } else if (unlockHint) {
+                unlockHint.remove();
+            }
+        }
     });
 }
 
 function applyTheme(themeId, { persist = true } = {}) {
-    currentThemeId = normalizeThemeId(themeId);
+    const normalizedThemeId = normalizeThemeId(themeId);
+    const fallbackThemeId = isThemeUnlocked(currentThemeId) ? currentThemeId : 'default';
+    currentThemeId = isThemeUnlocked(normalizedThemeId) ? normalizedThemeId : fallbackThemeId;
     document.documentElement.setAttribute('data-theme', currentThemeId);
     document.body?.setAttribute('data-theme', currentThemeId);
     document.body?.classList.toggle('theme-enhanced', currentThemeId !== 'default');
@@ -2359,6 +2459,10 @@ function normalizeCampaignProgress(rawProgress) {
         unlockedSet.add(level);
     });
 
+    if (isAdminUser()) {
+        CAMPAIGN_LEVELS.forEach((level) => unlockedSet.add(level));
+    }
+
     return {
         unlockedLevels: [...unlockedSet].sort((a, b) => a - b),
         completedLevels: [...completedSet].sort((a, b) => a - b),
@@ -2389,6 +2493,7 @@ function getCampaignBookTier(level) {
 
 function getCampaignBookState(level) {
     if (campaignProgress?.completedLevels?.includes(level)) return 'completed';
+    if (isAdminUser()) return 'available';
     if (campaignProgress?.unlockedLevels?.includes(level)) return 'available';
     return 'locked';
 }
@@ -5271,6 +5376,7 @@ function syncTopUserUi(user, userDoc) {
         const pts = isAnon ? 0 : (userDoc?.points || 0);
         profilePoints.innerText = `Pontos: ${pts}`;
     }
+    syncThemeAvailability();
 }
 
 
@@ -5295,7 +5401,7 @@ async function refreshProfileRank() {
 function openProfileModal() {
     showControl(profileModal, true);
     showControl(userMenuDropdown, false);
-    renderThemeSelectorUi();
+    syncThemeAvailability();
 
     if (!activeUser) {
         setStatus('FaÃƒÆ’Ã‚Â§a login para acessar o perfil.', true);
@@ -5516,6 +5622,8 @@ async function syncArcaneStreakForUser(userDocData = activeUserDoc) {
     activeUserDoc = { ...(activeUserDoc || {}), ...nextData };
     syncTopUserUi(activeUser, activeUserDoc);
 
+    const unlockedThemes = getNewlyUnlockedThemes(normalized.streakCount, nextStreakCount);
+
     const reachedMilestone = ARCANE_STREAK_MILESTONES.includes(nextStreakCount);
     if (reachedMilestone && nextStreakCount > normalized.lastMilestoneClaimed) {
         await setDoc(userRef, {
@@ -5525,6 +5633,13 @@ async function syncArcaneStreakForUser(userDocData = activeUserDoc) {
         activeUserDoc.lastCelebratedMilestone = nextStreakCount;
         activeUserDoc.lastMilestoneClaimed = nextStreakCount;
         openArcaneStreakModal(activeUserDoc);
+    }
+
+    if (unlockedThemes.length) {
+        const unlockCopy = unlockedThemes.length === 1
+            ? `🔥 Novo tema desbloqueado: ${getThemeLabel(unlockedThemes[0])}`
+            : `🔥 Novos temas desbloqueados: ${unlockedThemes.map((themeId) => getThemeLabel(themeId)).join(', ')}`;
+        showFloatingMessage(unlockCopy, 2600);
     }
 
     return {
@@ -5937,8 +6052,12 @@ function bindAuthUiEvents() {
     document.querySelectorAll('[data-theme-option]').forEach((button) => {
         button.addEventListener('click', () => {
             const nextTheme = button.getAttribute('data-theme-option') || 'default';
+            if (!isThemeUnlocked(nextTheme)) {
+                showFloatingMessage(getThemeUnlockMessage(nextTheme), 2200);
+                return;
+            }
             applyTheme(nextTheme);
-            setStatus(`Tema ${button.querySelector('strong')?.innerText || 'selecionado'} aplicado.`);
+            setStatus(`Tema ${getThemeLabel(nextTheme)} aplicado.`);
         });
     });
 
