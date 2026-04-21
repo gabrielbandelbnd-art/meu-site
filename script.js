@@ -1437,11 +1437,12 @@ const toggleBtn = document.getElementById('toggle-sidebar-btn');
 if(toggleBtn) {
     toggleBtn.onclick = () => {
         sidebar.classList.toggle('collapsed');
-        // Alterna seta
         if (sidebar.classList.contains('collapsed')) {
             toggleBtn.innerText = '\u25B6';
+            toggleBtn.setAttribute('aria-label', 'Expandir lateral');
         } else {
             toggleBtn.innerText = '\u25C0';
+            toggleBtn.setAttribute('aria-label', 'Recolher lateral');
         }
     };
 }
