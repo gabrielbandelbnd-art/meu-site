@@ -24,7 +24,7 @@
     <meta name="twitter:image" content="https://magiclexis.com.br/og-image.png">
     <link rel="icon" type="image/png" sizes="256x256" href="favicon.png?v=2">
     <link rel="apple-touch-icon" href="favicon.png?v=2">
-    <link rel="stylesheet" href="style.css?v=20260421-8">
+    <link rel="stylesheet" href="style.css?v=20260421-9">
 </head>
 <body>
     <div id="initial-loading-screen" class="initial-loading-screen" aria-live="polite" aria-label="Tela de carregamento inicial do MagicLexis">
@@ -87,6 +87,7 @@
             <button class="hub-btn" id="hub-play">⚔️ Jogar</button>
             <button class="hub-btn" id="hub-training">✨ Treinamento</button>
             <button class="hub-btn" id="hub-profile">👤 Perfil</button>
+            <button class="hub-btn" id="hub-friends">🤝 Amigos</button>
             <button class="hub-btn" id="hub-tournaments">🏆 Torneios</button>
             <button class="hub-btn" id="hub-ranking">📊 Ranking</button>
         </div>
@@ -327,6 +328,13 @@
             </div>
         </aside>
         <button id="fullscreen-toggle-btn" class="fullscreen-toggle-btn" type="button" aria-label="Entrar em tela cheia" aria-pressed="false" title="Tela cheia">⛶</button>
+        <button id="opponent-profile-chip" class="opponent-profile-chip hidden-control" type="button">
+            <img id="opponent-profile-chip-avatar" class="opponent-profile-chip-avatar" alt="Avatar do oponente">
+            <span>
+                <small>Oponente</small>
+                <strong id="opponent-profile-chip-name">Jogador</strong>
+            </span>
+        </button>
         <div id="user-menu" class="user-menu hidden-control">
             <button id="user-menu-trigger" class="user-menu-trigger">
                 <img id="user-avatar-top" class="user-avatar-top" alt="Avatar">
@@ -839,6 +847,40 @@
     </div>
 
 
+    <div id="public-player-modal" class="profile-modal hidden-control">
+        <div class="profile-card public-player-card">
+            <button id="close-public-player-modal" class="profile-close">X</button>
+            <h3>Perfil do oponente</h3>
+            <div class="public-player-head">
+                <img id="public-player-avatar" class="profile-avatar" alt="Avatar do jogador">
+                <div>
+                    <div id="public-player-name" class="profile-name-title">Jogador</div>
+                    <div id="public-player-status" class="profile-rank">Carregando...</div>
+                </div>
+            </div>
+            <div id="public-player-stats" class="public-player-stats"></div>
+            <button id="send-friend-invite-btn" class="profile-btn auth-main-btn">Enviar convite de amizade</button>
+            <div id="public-player-message" class="profile-status"></div>
+        </div>
+    </div>
+
+    <div id="friends-modal" class="profile-modal hidden-control">
+        <div class="profile-card friends-card">
+            <button id="close-friends-modal" class="profile-close">X</button>
+            <h3>Amigos</h3>
+            <p class="friends-copy">Veja seus amigos e responda convites recebidos.</p>
+            <section>
+                <h4>Convites recebidos</h4>
+                <div id="friend-requests-list" class="friends-list"></div>
+            </section>
+            <section>
+                <h4>Meus amigos</h4>
+                <div id="friends-list" class="friends-list"></div>
+            </section>
+            <div id="friends-status" class="profile-status"></div>
+        </div>
+    </div>
+
     <div id="ranking-modal" class="profile-modal hidden-control">
         <div class="profile-card ranking-card">
             <button id="close-ranking-modal" class="profile-close">X</button>
@@ -847,7 +889,7 @@
         </div>
     </div>
 
-    <script type="module" src="script.js?v=20260421-online-leave-1"></script>
+    <script type="module" src="script.js?v=20260421-friends-1"></script>
     </body>
 </html>
 

@@ -508,6 +508,22 @@ const trainingHand = document.getElementById('training-hand');
 const appContainerEl = document.getElementById('app-container');
 const fullscreenToggleBtn = document.getElementById('fullscreen-toggle-btn');
 const userLeaveOnlineMatchBtn = document.getElementById('user-leave-online-match');
+const opponentProfileChip = document.getElementById('opponent-profile-chip');
+const opponentProfileChipAvatar = document.getElementById('opponent-profile-chip-avatar');
+const opponentProfileChipName = document.getElementById('opponent-profile-chip-name');
+const publicPlayerModal = document.getElementById('public-player-modal');
+const closePublicPlayerModalBtn = document.getElementById('close-public-player-modal');
+const publicPlayerAvatar = document.getElementById('public-player-avatar');
+const publicPlayerName = document.getElementById('public-player-name');
+const publicPlayerStatus = document.getElementById('public-player-status');
+const publicPlayerStats = document.getElementById('public-player-stats');
+const sendFriendInviteBtn = document.getElementById('send-friend-invite-btn');
+const publicPlayerMessage = document.getElementById('public-player-message');
+const friendsModal = document.getElementById('friends-modal');
+const closeFriendsModalBtn = document.getElementById('close-friends-modal');
+const friendRequestsList = document.getElementById('friend-requests-list');
+const friendsList = document.getElementById('friends-list');
+const friendsStatus = document.getElementById('friends-status');
 
 let currentWord = [];
 let replaceIndex = 0;
@@ -537,6 +553,7 @@ let onlineProgressSyncTimeout = null;
 let preserveCurrentViewOnAuthSync = false;
 let trainingState = null;
 let trainingTransitionTimeout = null;
+let selectedPublicPlayer = null;
 
 function getTelaCheiaTarget() {
     if (appContainerEl && !appContainerEl.classList.contains('hidden-app')) {
@@ -1829,7 +1846,7 @@ function bindMenuMusicUnlock() {
 
 function hasBlockingGameplayOverlayOpen() {
     return !!document.querySelector(
-        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control), #arcane-streak-modal:not(.hidden-control)'
+        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control), #arcane-streak-modal:not(.hidden-control), #public-player-modal:not(.hidden-control), #friends-modal:not(.hidden-control)'
     );
 }
 
@@ -2371,6 +2388,10 @@ campaignBackBtn?.addEventListener('click', () => {
 // BotÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Âµes futuros
 document.getElementById("hub-profile").addEventListener("click", () => {
     openProfileModal();
+});
+
+document.getElementById("hub-friends")?.addEventListener("click", () => {
+    openFriendsModal();
 });
 
 document.getElementById("hub-tournaments").addEventListener("click", () => {
@@ -3182,6 +3203,27 @@ function getOnlinePlayerPhoto() {
     return activeUserDoc?.photo || activeUser?.photoURL || DEFAULT_AVATAR;
 }
 
+function normalizeSocialMap(value) {
+    return value && typeof value === 'object' && !Array.isArray(value) ? { ...value } : {};
+}
+
+function getPublicPlayerName(player = {}) {
+    return sanitizeGameText(player.name || player.displayName || player.email || 'Jogador');
+}
+
+function getPublicPlayerPhoto(player = {}) {
+    return player.photo || player.photoURL || DEFAULT_AVATAR;
+}
+
+function getFriendshipStatus(targetUid) {
+    if (!targetUid || !activeUser || activeUser.isAnonymous) return 'disabled';
+    if (targetUid === activeUser.uid) return 'self';
+    if (normalizeSocialMap(activeUserDoc?.friends)[targetUid]) return 'friends';
+    if (normalizeSocialMap(activeUserDoc?.friendRequests)[targetUid]) return 'incoming';
+    if (normalizeSocialMap(activeUserDoc?.sentFriendRequests)[targetUid]) return 'sent';
+    return 'available';
+}
+
 function isOnlineGameplayMode(mode = currentGameMode) {
     return mode === ONLINE_MODE || mode === ONLINE_PARTY_MODE;
 }
@@ -3353,6 +3395,7 @@ function resetOnlineRoomState() {
     showControl(onlineRoomPanel, false);
     showControl(onlineMatchBanner, false);
     showControl(userLeaveOnlineMatchBtn, false);
+    showControl(opponentProfileChip, false);
     showControl(onlineResultModal, false);
     showControl(onlinePartyPanel, false);
     if (onlineRoomCodeDisplay) onlineRoomCodeDisplay.innerText = '----';
@@ -3372,6 +3415,7 @@ function updateOnlineBanner(roomData = currentOnlineRoom) {
     const isOnlineMatch = isOnlineGameplayMode() && !!roomData && isGameScreenVisible();
     showControl(onlineMatchBanner, isOnlineMatch);
     showControl(userLeaveOnlineMatchBtn, isOnlineMatch && roomData?.status === 'playing');
+    updateOpponentProfileChip(roomData, isOnlineMatch);
     if (!isOnlineMatch) return;
 
     const partyRoom = isPartyRoom(roomData);
@@ -3401,6 +3445,17 @@ function updateOnlineBanner(roomData = currentOnlineRoom) {
             onlineOpponentBannerStatus.innerText = 'Oponente: jogando...';
         }
     }
+}
+
+function updateOpponentProfileChip(roomData = currentOnlineRoom, isOnlineMatch = isOnlineGameplayMode() && !!roomData && isGameScreenVisible()) {
+    const opponent = getOnlineOpponentPlayer(roomData);
+    const shouldShow = isOnlineMatch && !!opponent?.uid && opponent.uid !== activeUser?.uid;
+    showControl(opponentProfileChip, shouldShow);
+    if (!shouldShow) return;
+
+    if (opponentProfileChipAvatar) opponentProfileChipAvatar.src = getPublicPlayerPhoto(opponent);
+    if (opponentProfileChipName) opponentProfileChipName.innerText = getPublicPlayerName(opponent);
+    opponentProfileChip.dataset.playerUid = opponent.uid;
 }
 
 function renderOnlineRoomPanel(roomData = currentOnlineRoom) {
@@ -5935,6 +5990,275 @@ async function refreshProfileRank() {
         profileRank.innerText = 'Ranking global: --';
     }
 }
+
+async function refreshActiveUserDoc() {
+    if (!db || !activeUser || activeUser.isAnonymous) return null;
+    const snap = await getDoc(doc(db, 'users', activeUser.uid));
+    activeUserDoc = snap.exists() ? snap.data() : activeUserDoc;
+    syncTopUserUi(activeUser, activeUserDoc);
+    return activeUserDoc;
+}
+
+function setPublicPlayerMessage(message = '', isError = false) {
+    if (!publicPlayerMessage) return;
+    publicPlayerMessage.innerText = sanitizeGameText(message);
+    publicPlayerMessage.style.color = isError ? 'var(--error)' : 'var(--warning)';
+}
+
+function setFriendsStatus(message = '', isError = false) {
+    if (!friendsStatus) return;
+    friendsStatus.innerText = sanitizeGameText(message);
+    friendsStatus.style.color = isError ? 'var(--error)' : 'var(--warning)';
+}
+
+function renderPublicPlayerStats(playerDoc = {}) {
+    if (!publicPlayerStats) return;
+    publicPlayerStats.innerHTML = '';
+    const streak = normalizeArcaneStreakData(playerDoc).streakCount;
+    const campaign = normalizeCampaignProgress(playerDoc.campaignProgress);
+    const stats = [
+        ['Pontos', String(playerDoc.points || 0)],
+        ['Chama', `${streak} dia(s)`],
+        ['Campanha', `${campaign.completedLevels.length} fase(s)`],
+        ['Amigos', String(Object.keys(normalizeSocialMap(playerDoc.friends)).length)]
+    ];
+
+    stats.forEach(([label, value]) => {
+        const item = document.createElement('div');
+        item.className = 'public-player-stat';
+        const labelEl = document.createElement('span');
+        labelEl.innerText = label;
+        const valueEl = document.createElement('strong');
+        valueEl.innerText = value;
+        item.append(labelEl, valueEl);
+        publicPlayerStats.appendChild(item);
+    });
+}
+
+function syncFriendInviteButton() {
+    if (!sendFriendInviteBtn || !selectedPublicPlayer) return;
+    const status = getFriendshipStatus(selectedPublicPlayer.uid);
+    const labels = {
+        self: 'Este é você',
+        disabled: 'Faça login para adicionar',
+        friends: 'Vocês já são amigos',
+        incoming: 'Aceitar convite',
+        sent: 'Convite enviado',
+        available: 'Enviar convite de amizade'
+    };
+    sendFriendInviteBtn.innerText = labels[status] || labels.available;
+    sendFriendInviteBtn.disabled = status === 'self' || status === 'disabled' || status === 'friends' || status === 'sent';
+}
+
+async function openPublicPlayerProfile(player = null) {
+    const basePlayer = player || getOnlineOpponentPlayer(currentOnlineRoom);
+    if (!basePlayer?.uid) return;
+
+    selectedPublicPlayer = { ...basePlayer };
+    showControl(publicPlayerModal, true);
+    showControl(userMenuDropdown, false);
+    setPublicPlayerMessage('');
+
+    if (publicPlayerAvatar) publicPlayerAvatar.src = getPublicPlayerPhoto(basePlayer);
+    if (publicPlayerName) publicPlayerName.innerText = getPublicPlayerName(basePlayer);
+    if (publicPlayerStatus) publicPlayerStatus.innerText = 'Carregando dados...';
+    renderPublicPlayerStats({});
+    syncFriendInviteButton();
+
+    try {
+        const snap = db ? await getDoc(doc(db, 'users', basePlayer.uid)) : null;
+        const playerDoc = snap?.exists() ? snap.data() : {};
+        selectedPublicPlayer = {
+            uid: basePlayer.uid,
+            name: playerDoc.name || basePlayer.name || 'Jogador',
+            photo: playerDoc.photo || basePlayer.photo || DEFAULT_AVATAR,
+            doc: playerDoc
+        };
+        if (publicPlayerAvatar) publicPlayerAvatar.src = getPublicPlayerPhoto(selectedPublicPlayer);
+        if (publicPlayerName) publicPlayerName.innerText = getPublicPlayerName(selectedPublicPlayer);
+        if (publicPlayerStatus) publicPlayerStatus.innerText = `Ranking social • ${playerDoc.points || 0} pontos`;
+        renderPublicPlayerStats(playerDoc);
+        syncFriendInviteButton();
+    } catch (err) {
+        if (publicPlayerStatus) publicPlayerStatus.innerText = 'Não foi possível carregar tudo agora.';
+    }
+}
+
+function closePublicPlayerProfile() {
+    showControl(publicPlayerModal, false);
+    selectedPublicPlayer = null;
+}
+
+async function sendFriendInvite(target = selectedPublicPlayer) {
+    if (!db || !activeUser || activeUser.isAnonymous || !target?.uid || target.uid === activeUser.uid) {
+        setPublicPlayerMessage('Faça login para enviar convite.', true);
+        return;
+    }
+
+    try {
+        const myRef = doc(db, 'users', activeUser.uid);
+        const targetRef = doc(db, 'users', target.uid);
+        await runTransaction(db, async (transaction) => {
+            const mySnap = await transaction.get(myRef);
+            const targetSnap = await transaction.get(targetRef);
+            if (!targetSnap.exists()) throw new Error('Jogador não encontrado.');
+
+            const myDoc = mySnap.exists() ? mySnap.data() : {};
+            const targetDoc = targetSnap.data();
+            const targetFriends = normalizeSocialMap(targetDoc.friends);
+            if (targetFriends[activeUser.uid]) return;
+
+            const sentFriendRequests = normalizeSocialMap(myDoc.sentFriendRequests);
+            const friendRequests = normalizeSocialMap(targetDoc.friendRequests);
+            const createdAt = Date.now();
+            sentFriendRequests[target.uid] = {
+                uid: target.uid,
+                name: targetDoc.name || target.name || 'Jogador',
+                photo: targetDoc.photo || target.photo || DEFAULT_AVATAR,
+                createdAt
+            };
+            friendRequests[activeUser.uid] = {
+                uid: activeUser.uid,
+                name: getOnlinePlayerName(),
+                photo: getOnlinePlayerPhoto(),
+                createdAt
+            };
+
+            transaction.set(myRef, { sentFriendRequests }, { merge: true });
+            transaction.set(targetRef, { friendRequests }, { merge: true });
+        });
+        await refreshActiveUserDoc();
+        syncFriendInviteButton();
+        setPublicPlayerMessage('Convite enviado.');
+    } catch (err) {
+        setPublicPlayerMessage('Não foi possível enviar o convite agora.', true);
+    }
+}
+
+async function respondFriendInvite(fromUid, accept) {
+    if (!db || !activeUser || activeUser.isAnonymous || !fromUid) return;
+
+    try {
+        const myRef = doc(db, 'users', activeUser.uid);
+        const fromRef = doc(db, 'users', fromUid);
+        await runTransaction(db, async (transaction) => {
+            const mySnap = await transaction.get(myRef);
+            const fromSnap = await transaction.get(fromRef);
+            if (!mySnap.exists() || !fromSnap.exists()) return;
+
+            const myDoc = mySnap.data();
+            const fromDoc = fromSnap.data();
+            const myRequests = normalizeSocialMap(myDoc.friendRequests);
+            const fromSent = normalizeSocialMap(fromDoc.sentFriendRequests);
+            const myFriends = normalizeSocialMap(myDoc.friends);
+            const fromFriends = normalizeSocialMap(fromDoc.friends);
+
+            delete myRequests[fromUid];
+            delete fromSent[activeUser.uid];
+
+            if (accept) {
+                const acceptedAt = Date.now();
+                myFriends[fromUid] = {
+                    uid: fromUid,
+                    name: fromDoc.name || 'Jogador',
+                    photo: fromDoc.photo || DEFAULT_AVATAR,
+                    acceptedAt
+                };
+                fromFriends[activeUser.uid] = {
+                    uid: activeUser.uid,
+                    name: getOnlinePlayerName(),
+                    photo: getOnlinePlayerPhoto(),
+                    acceptedAt
+                };
+            }
+
+            transaction.set(myRef, { friendRequests: myRequests, friends: myFriends }, { merge: true });
+            transaction.set(fromRef, { sentFriendRequests: fromSent, friends: fromFriends }, { merge: true });
+        });
+        await refreshActiveUserDoc();
+        renderFriendsModal();
+        setFriendsStatus(accept ? 'Convite aceito.' : 'Convite recusado.');
+    } catch (err) {
+        setFriendsStatus('Não foi possível responder o convite agora.', true);
+    }
+}
+
+function renderFriendRow(player, actions = []) {
+    const row = document.createElement('div');
+    row.className = 'friend-row';
+
+    const avatar = document.createElement('img');
+    avatar.src = getPublicPlayerPhoto(player);
+    avatar.alt = '';
+
+    const name = document.createElement('strong');
+    name.innerText = getPublicPlayerName(player);
+
+    const info = document.createElement('div');
+    info.className = 'friend-row-info';
+    info.appendChild(name);
+
+    const actionWrap = document.createElement('div');
+    actionWrap.className = 'friend-row-actions';
+    actions.forEach((action) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = action.danger ? 'profile-btn profile-danger-btn' : 'profile-btn profile-ghost-btn';
+        button.innerText = action.label;
+        button.addEventListener('click', action.onClick);
+        actionWrap.appendChild(button);
+    });
+
+    row.append(avatar, info, actionWrap);
+    return row;
+}
+
+function renderFriendsModal() {
+    if (!friendRequestsList || !friendsList) return;
+    friendRequestsList.innerHTML = '';
+    friendsList.innerHTML = '';
+
+    const requests = Object.values(normalizeSocialMap(activeUserDoc?.friendRequests));
+    const friends = Object.values(normalizeSocialMap(activeUserDoc?.friends));
+
+    if (!requests.length) {
+        friendRequestsList.innerHTML = '<div class="friends-empty">Nenhum convite pendente.</div>';
+    } else {
+        requests.forEach((request) => {
+            friendRequestsList.appendChild(renderFriendRow(request, [
+                { label: 'Aceitar', onClick: () => respondFriendInvite(request.uid, true) },
+                { label: 'Recusar', danger: true, onClick: () => respondFriendInvite(request.uid, false) }
+            ]));
+        });
+    }
+
+    if (!friends.length) {
+        friendsList.innerHTML = '<div class="friends-empty">Você ainda não adicionou amigos.</div>';
+    } else {
+        friends.forEach((friend) => {
+            friendsList.appendChild(renderFriendRow(friend));
+        });
+    }
+}
+
+async function openFriendsModal() {
+    showControl(friendsModal, true);
+    showControl(userMenuDropdown, false);
+    setFriendsStatus('');
+    if (!activeUser || activeUser.isAnonymous) {
+        if (friendRequestsList) friendRequestsList.innerHTML = '<div class="friends-empty">Faça login para receber convites.</div>';
+        if (friendsList) friendsList.innerHTML = '<div class="friends-empty">Faça login para ver amigos.</div>';
+        setFriendsStatus('Faça login para usar amigos.', true);
+        return;
+    }
+    await refreshActiveUserDoc();
+    renderFriendsModal();
+}
+
+function closeFriendsModal() {
+    showControl(friendsModal, false);
+}
+
 function openProfileModal() {
     showControl(profileModal, true);
     showControl(userMenuDropdown, false);
@@ -6454,6 +6778,18 @@ function bindAuthUiEvents() {
     closeArcaneStreakModalBtn?.addEventListener('click', closeArcaneStreakModal);
     arcaneStreakCloseBtn?.addEventListener('click', closeArcaneStreakModal);
     arcaneStreakShareBtn?.addEventListener('click', shareArcaneStreak);
+    closePublicPlayerModalBtn?.addEventListener('click', closePublicPlayerProfile);
+    closeFriendsModalBtn?.addEventListener('click', closeFriendsModal);
+    sendFriendInviteBtn?.addEventListener('click', async () => {
+        const status = getFriendshipStatus(selectedPublicPlayer?.uid);
+        if (status === 'incoming') {
+            await respondFriendInvite(selectedPublicPlayer.uid, true);
+            syncFriendInviteButton();
+            setPublicPlayerMessage('Convite aceito.');
+            return;
+        }
+        await sendFriendInvite();
+    });
     document.getElementById('close-ranking-modal')?.addEventListener('click', closeRankingModal);
     document.getElementById('save-profile-btn')?.addEventListener('click', saveProfile);
     document.getElementById('profile-logout-btn')?.addEventListener('click', logoutUser);
@@ -6575,6 +6911,7 @@ function bindAuthUiEvents() {
     document.getElementById('user-logout-top')?.addEventListener('click', logoutUser);
     document.getElementById('user-open-profile')?.addEventListener('click', openProfileModal);
     document.getElementById('user-go-menu-top')?.addEventListener('click', showHubScreenFromGame);
+    opponentProfileChip?.addEventListener('click', () => openPublicPlayerProfile());
 
     document.getElementById('user-menu-trigger')?.addEventListener('click', () => {
         showControl(userMenuDropdown, userMenuDropdown.classList.contains('hidden-control'));
@@ -6621,6 +6958,8 @@ function bindAuthUiEvents() {
         if (e.target === profileModal) closeProfileModal();
         if (e.target === audioSettingsModal) closeAudioSettingsModal();
         if (e.target === arcaneStreakModal) closeArcaneStreakModal();
+        if (e.target === publicPlayerModal) closePublicPlayerProfile();
+        if (e.target === friendsModal) closeFriendsModal();
         if (e.target === rankingModal) closeRankingModal();
         if (e.target === dailyResultModal) showControl(dailyResultModal, false);
         if (e.target === campaignCompleteModal) {
