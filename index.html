@@ -24,7 +24,7 @@
     <meta name="twitter:image" content="https://magiclexis.com.br/og-image.png">
     <link rel="icon" type="image/png" sizes="256x256" href="favicon.png?v=2">
     <link rel="apple-touch-icon" href="favicon.png?v=2">
-    <link rel="stylesheet" href="style.css?v=20260421-10">
+    <link rel="stylesheet" href="style.css?v=20260421-11">
 </head>
 <body>
     <div id="initial-loading-screen" class="initial-loading-screen" aria-live="polite" aria-label="Tela de carregamento inicial do MagicLexis">
@@ -850,17 +850,45 @@
     <div id="public-player-modal" class="profile-modal hidden-control">
         <div class="profile-card public-player-card">
             <button id="close-public-player-modal" class="profile-close">X</button>
-            <h3>Perfil do oponente</h3>
-            <div class="public-player-head">
-                <img id="public-player-avatar" class="profile-avatar" alt="Avatar do jogador">
-                <div>
+            <div class="public-player-orb"></div>
+            <div class="public-player-shell">
+                <div class="public-player-copy">
+                    <span class="public-player-kicker">Perfil do oponente</span>
+                    <img id="public-player-avatar" class="profile-avatar public-player-avatar" alt="Avatar do jogador">
                     <div id="public-player-name" class="profile-name-title">Jogador</div>
                     <div id="public-player-status" class="profile-rank">Carregando...</div>
+                    <div id="public-player-stats" class="public-player-stats"></div>
+                    <button id="send-friend-invite-btn" class="profile-btn auth-main-btn">Enviar convite de amizade</button>
+                    <div id="public-player-message" class="profile-status"></div>
+                </div>
+                <div class="public-player-mage-stage" aria-hidden="true">
+                    <div class="pixel-mage public-player-mage win">
+                        <div class="hat-tip"></div>
+                        <div class="hat-base"></div>
+                        <div class="head">
+                            <div class="eyes">
+                                <div class="eye left"></div>
+                                <div class="eye right"></div>
+                            </div>
+                            <div class="beard"></div>
+                        </div>
+                        <div class="body">
+                            <div class="arm left"></div>
+                            <div class="arm right"></div>
+                            <div class="feet">
+                                <div class="foot left"></div>
+                                <div class="foot right"></div>
+                            </div>
+                        </div>
+                        <div class="staff">
+                            <div class="staff-head">
+                                <div class="gem"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mage-effect active">*</div>
                 </div>
             </div>
-            <div id="public-player-stats" class="public-player-stats"></div>
-            <button id="send-friend-invite-btn" class="profile-btn auth-main-btn">Enviar convite de amizade</button>
-            <div id="public-player-message" class="profile-status"></div>
         </div>
     </div>
 
@@ -889,7 +917,7 @@
         </div>
     </div>
 
-    <script type="module" src="script.js?v=20260421-friends-1"></script>
+    <script type="module" src="script.js?v=20260421-opponent-theme-1"></script>
     </body>
 </html>
 

@@ -278,6 +278,12 @@ function saveThemePreference(themeId) {
     } catch (err) {
         console.log('Falha ao salvar tema:', err);
     }
+    if (typeof db !== 'undefined' && db && activeUser && !activeUser.isAnonymous) {
+        activeUserDoc = { ...(activeUserDoc || {}), themeId: currentThemeId };
+        setDoc(doc(db, 'users', activeUser.uid), { themeId: currentThemeId }, { merge: true }).catch((err) => {
+            console.log('Falha ao salvar tema no perfil:', err);
+        });
+    }
     return currentThemeId;
 }
 
@@ -3224,6 +3230,16 @@ function getFriendshipStatus(targetUid) {
     return 'available';
 }
 
+function getPlayerThemeId(player = {}) {
+    return normalizeThemeId(player.themeId || player.doc?.themeId || 'default');
+}
+
+function applyPublicPlayerTheme(player = {}) {
+    const card = publicPlayerModal?.querySelector('.public-player-card');
+    if (!card) return;
+    card.setAttribute('data-player-theme', getPlayerThemeId(player));
+}
+
 function isOnlineGameplayMode(mode = currentGameMode) {
     return mode === ONLINE_MODE || mode === ONLINE_PARTY_MODE;
 }
@@ -3623,6 +3639,7 @@ function buildOnlineRoomPayload({ roomCode, onlineUser, payload, matchType = 'co
                 uid: onlineUser.uid,
                 name: getOnlinePlayerName(),
                 photo: getOnlinePlayerPhoto(),
+                themeId: currentThemeId,
                 connected: true,
                 ready: true,
                 finished: false,
@@ -3667,6 +3684,7 @@ function buildPartyRoomPayload({ roomCode, onlineUser, payload }) {
                 uid: onlineUser.uid,
                 name: getOnlinePlayerName(),
                 photo: getOnlinePlayerPhoto(),
+                themeId: currentThemeId,
                 connected: true,
                 ready: true,
                 finished: false,
@@ -3951,6 +3969,7 @@ async function joinPartyRoom() {
                 uid: onlineUser.uid,
                 name: getOnlinePlayerName(),
                 photo: getOnlinePlayerPhoto(),
+                themeId: currentThemeId,
                 connected: true,
                 ready: true,
                 finished: false,
@@ -4085,6 +4104,7 @@ async function findOrCreateQuickMatchRoom(onlineUser) {
                                 'players.player2.uid': onlineUser.uid,
                                 'players.player2.name': getOnlinePlayerName(),
                                 'players.player2.photo': getOnlinePlayerPhoto(),
+                                'players.player2.themeId': currentThemeId,
                                 'players.player2.connected': true,
                                 'players.player2.ready': true,
                                 'players.player2.finished': false,
@@ -4362,6 +4382,7 @@ async function joinOnlineRoom() {
                 'players.player2.uid': onlineUser.uid,
                 'players.player2.name': getOnlinePlayerName(),
                 'players.player2.photo': getOnlinePlayerPhoto(),
+                'players.player2.themeId': currentThemeId,
                 'players.player2.connected': true,
                 'players.player2.ready': true,
                 'players.player2.finished': false,
@@ -5904,7 +5925,8 @@ async function ensureUserDoc(user) {
             lastPlayDate: '',
             streakCount: 0,
             lastCelebratedMilestone: 0,
-            lastMilestoneClaimed: 0
+            lastMilestoneClaimed: 0,
+            themeId: currentThemeId
         }, { merge: true });
     } else {
         const currentData = snap.data() || {};
@@ -5925,6 +5947,9 @@ async function ensureUserDoc(user) {
             missingFields.lastMilestoneClaimed = typeof currentData.lastCelebratedMilestone === 'number'
                 ? currentData.lastCelebratedMilestone
                 : 0;
+        }
+        if (!AVAILABLE_THEMES.includes(currentData.themeId)) {
+            missingFields.themeId = currentThemeId;
         }
         if (Object.keys(missingFields).length) {
             await setDoc(userRef, missingFields, { merge: true });
@@ -6058,6 +6083,7 @@ async function openPublicPlayerProfile(player = null) {
     showControl(publicPlayerModal, true);
     showControl(userMenuDropdown, false);
     setPublicPlayerMessage('');
+    applyPublicPlayerTheme(basePlayer);
 
     if (publicPlayerAvatar) publicPlayerAvatar.src = getPublicPlayerPhoto(basePlayer);
     if (publicPlayerName) publicPlayerName.innerText = getPublicPlayerName(basePlayer);
@@ -6072,8 +6098,10 @@ async function openPublicPlayerProfile(player = null) {
             uid: basePlayer.uid,
             name: playerDoc.name || basePlayer.name || 'Jogador',
             photo: playerDoc.photo || basePlayer.photo || DEFAULT_AVATAR,
+            themeId: playerDoc.themeId || basePlayer.themeId || 'default',
             doc: playerDoc
         };
+        applyPublicPlayerTheme(selectedPublicPlayer);
         if (publicPlayerAvatar) publicPlayerAvatar.src = getPublicPlayerPhoto(selectedPublicPlayer);
         if (publicPlayerName) publicPlayerName.innerText = getPublicPlayerName(selectedPublicPlayer);
         if (publicPlayerStatus) publicPlayerStatus.innerText = `Ranking social • ${playerDoc.points || 0} pontos`;
