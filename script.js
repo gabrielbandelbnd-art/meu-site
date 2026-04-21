@@ -522,6 +522,8 @@ const closePublicPlayerModalBtn = document.getElementById('close-public-player-m
 const publicPlayerAvatar = document.getElementById('public-player-avatar');
 const publicPlayerName = document.getElementById('public-player-name');
 const publicPlayerStatus = document.getElementById('public-player-status');
+const publicPlayerLevelBadge = document.getElementById('public-player-level-badge');
+const publicPlayerThemeName = document.getElementById('public-player-theme-name');
 const publicPlayerStats = document.getElementById('public-player-stats');
 const sendFriendInviteBtn = document.getElementById('send-friend-invite-btn');
 const publicPlayerMessage = document.getElementById('public-player-message');
@@ -3234,10 +3236,20 @@ function getPlayerThemeId(player = {}) {
     return normalizeThemeId(player.themeId || player.doc?.themeId || 'default');
 }
 
+function getOnlineMatchesPlayed(playerDoc = {}) {
+    return Math.max(0, Number(playerDoc.onlineMatchesPlayed || playerDoc.onlineMatches || 0));
+}
+
+function getOnlinePlayerLevel(playerDoc = {}) {
+    return Math.max(1, Math.floor(getOnlineMatchesPlayed(playerDoc) / 5) + 1);
+}
+
 function applyPublicPlayerTheme(player = {}) {
     const card = publicPlayerModal?.querySelector('.public-player-card');
     if (!card) return;
-    card.setAttribute('data-player-theme', getPlayerThemeId(player));
+    const themeId = getPlayerThemeId(player);
+    card.setAttribute('data-player-theme', themeId);
+    if (publicPlayerThemeName) publicPlayerThemeName.innerText = getThemeLabel(themeId);
 }
 
 function isOnlineGameplayMode(mode = currentGameMode) {
@@ -4519,8 +4531,12 @@ async function finalizeOnlineMatch() {
                     finishTimeMs,
                     errors: currentOnlineLocalErrors,
                     progress: 100,
-                    connected: true
+                    connected: true,
+                    matchCounted: true
                 };
+                if (!me.matchCounted && me.uid) {
+                    transaction.set(doc(db, 'users', me.uid), { onlineMatchesPlayed: increment(1) }, { merge: true });
+                }
 
                 const finishedPlayers = players.filter((player) => player?.uid && (player.finished || player.connected === false));
                 const updates = {
@@ -4557,8 +4573,12 @@ async function finalizeOnlineMatch() {
                 [`players.${mySlot}.finishTimeMs`]: finishTimeMs,
                 [`players.${mySlot}.errors`]: currentOnlineLocalErrors,
                 [`players.${mySlot}.progress`]: 100,
-                [`players.${mySlot}.connected`]: true
+                [`players.${mySlot}.connected`]: true,
+                [`players.${mySlot}.matchCounted`]: true
             };
+            if (!me.matchCounted && (me.uid || activeUser?.uid)) {
+                transaction.set(doc(db, 'users', me.uid || activeUser.uid), { onlineMatchesPlayed: increment(1) }, { merge: true });
+            }
 
             if (!room.winnerUid) {
                 let winnerUid = me.uid || activeUser?.uid || null;
@@ -4624,10 +4644,15 @@ async function leaveOnlineRoom(options = {}) {
                     return;
                 }
 
+                const wasMatchCounted = !!players[myIndex].matchCounted;
                 players[myIndex] = {
                     ...players[myIndex],
-                    connected: false
+                    connected: false,
+                    matchCounted: true
                 };
+                if (room.status === 'playing' && !wasMatchCounted && players[myIndex].uid) {
+                    transaction.set(doc(db, 'users', players[myIndex].uid), { onlineMatchesPlayed: increment(1) }, { merge: true });
+                }
 
                 const allResolved = players.filter((player) => player?.uid).every((player) => player.finished || player.connected === false);
                 const updates = { players };
@@ -4653,12 +4678,20 @@ async function leaveOnlineRoom(options = {}) {
                 updates.status = 'abandoned';
                 updates.completedAt = serverTimestamp();
                 updates.abandonMessage = `O oponente ${myName} abandonou o jogo.`;
+                updates[`players.${mySlot}.matchCounted`] = true;
                 if (opponent.uid) {
                     updates.winnerUid = opponent.uid;
                 }
             }
 
             transaction.update(roomRef, updates);
+            const me = room.players?.[mySlot] || {};
+            if (room.status === 'playing' && !me.matchCounted && (me.uid || activeUser?.uid)) {
+                transaction.set(doc(db, 'users', me.uid || activeUser.uid), { onlineMatchesPlayed: increment(1) }, { merge: true });
+            }
+            if (shouldAbandon && room.status === 'playing' && opponent.uid && !opponent.matchCounted) {
+                transaction.set(doc(db, 'users', opponent.uid), { onlineMatchesPlayed: increment(1) }, { merge: true });
+            }
 
             if (isQuickWaitingRoom) {
                 const queueRef = getOnlineMatchmakingRef();
@@ -4678,6 +4711,41 @@ async function leaveOnlineRoom(options = {}) {
     } finally {
         resetOnlineRoomState();
     }
+}
+
+function forceAbandonOnlineRoomOnUnload() {
+    if (!db || !currentOnlineRoomCode || !currentOnlinePlayerSlot || !currentOnlineRoom) return;
+    const roomRef = getOnlineRoomRef();
+    if (!roomRef) return;
+
+    const mySlot = currentOnlinePlayerSlot;
+    const myName = getOnlinePlayerEntryBySlot(currentOnlineRoom, mySlot)?.name || getOnlinePlayerName();
+
+    if (isPartyRoom(currentOnlineRoom)) {
+        const players = Array.isArray(currentOnlineRoom.players) ? [...currentOnlineRoom.players] : [];
+        const index = Number(mySlot);
+        if (!Number.isInteger(index) || !players[index]) return;
+        players[index] = { ...players[index], connected: false, matchCounted: true };
+        updateDoc(roomRef, { players }).catch(() => {});
+        return;
+    }
+
+    const otherSlot = getOnlineOpponentSlot(mySlot);
+    const opponent = currentOnlineRoom.players?.[otherSlot] || {};
+    const updates = {
+        [`players.${mySlot}.connected`]: false,
+        [`players.${mySlot}.matchCounted`]: true
+    };
+
+    if (currentOnlineRoom.status !== 'finished') {
+        updates.status = 'abandoned';
+        updates.completedAt = serverTimestamp();
+        updates.abandonMessage = `O oponente ${myName} abandonou o jogo.`;
+        if (opponent.uid) updates.winnerUid = opponent.uid;
+    }
+
+    updateDoc(roomRef, updates).catch(() => {});
+    currentOnlineLeaving = true;
 }
 
 function handleOnlineRoomSnapshot(roomData) {
@@ -5573,7 +5641,7 @@ function isGameScreenVisible() {
 }
 
 function shouldBlockGameplayRefresh() {
-    return isGameScreenVisible();
+    return isGameScreenVisible() && !(isOnlineGameplayMode() && currentOnlineRoomCode);
 }
 
 function syncRefreshLockState() {
@@ -5921,6 +5989,7 @@ async function ensureUserDoc(user) {
             name: baseName,
             photo: user.photoURL || DEFAULT_AVATAR,
             points: 0,
+            onlineMatchesPlayed: 0,
             campaignProgress: defaultCampaignProgress,
             lastPlayDate: '',
             streakCount: 0,
@@ -5950,6 +6019,9 @@ async function ensureUserDoc(user) {
         }
         if (!AVAILABLE_THEMES.includes(currentData.themeId)) {
             missingFields.themeId = currentThemeId;
+        }
+        if (typeof currentData.onlineMatchesPlayed !== 'number') {
+            missingFields.onlineMatchesPlayed = Math.max(0, Number(currentData.onlineMatchesPlayed || 0));
         }
         if (Object.keys(missingFields).length) {
             await setDoc(userRef, missingFields, { merge: true });
@@ -6041,21 +6113,28 @@ function renderPublicPlayerStats(playerDoc = {}) {
     publicPlayerStats.innerHTML = '';
     const streak = normalizeArcaneStreakData(playerDoc).streakCount;
     const campaign = normalizeCampaignProgress(playerDoc.campaignProgress);
+    const matchesPlayed = getOnlineMatchesPlayed(playerDoc);
     const stats = [
-        ['Pontos', String(playerDoc.points || 0)],
-        ['Chama', `${streak} dia(s)`],
-        ['Campanha', `${campaign.completedLevels.length} fase(s)`],
-        ['Amigos', String(Object.keys(normalizeSocialMap(playerDoc.friends)).length)]
+        ['✦', 'Pontos', String(playerDoc.points || 0)],
+        ['🔥', 'Chama', `${streak} dia(s)`],
+        ['♜', 'Campanha', `${campaign.completedLevels.length} fase(s)`],
+        ['⚔', 'Online', `${matchesPlayed} partida(s)`],
+        ['♛', 'Amigos', String(Object.keys(normalizeSocialMap(playerDoc.friends)).length)]
     ];
 
-    stats.forEach(([label, value]) => {
+    stats.forEach(([icon, label, value]) => {
         const item = document.createElement('div');
         item.className = 'public-player-stat';
+        const iconEl = document.createElement('strong');
+        iconEl.className = 'public-player-stat-icon';
+        iconEl.innerText = icon;
+        const copy = document.createElement('div');
         const labelEl = document.createElement('span');
         labelEl.innerText = label;
         const valueEl = document.createElement('strong');
         valueEl.innerText = value;
-        item.append(labelEl, valueEl);
+        copy.append(labelEl, valueEl);
+        item.append(iconEl, copy);
         publicPlayerStats.appendChild(item);
     });
 }
@@ -6088,6 +6167,7 @@ async function openPublicPlayerProfile(player = null) {
     if (publicPlayerAvatar) publicPlayerAvatar.src = getPublicPlayerPhoto(basePlayer);
     if (publicPlayerName) publicPlayerName.innerText = getPublicPlayerName(basePlayer);
     if (publicPlayerStatus) publicPlayerStatus.innerText = 'Carregando dados...';
+    if (publicPlayerLevelBadge) publicPlayerLevelBadge.innerText = '1';
     renderPublicPlayerStats({});
     syncFriendInviteButton();
 
@@ -6104,7 +6184,8 @@ async function openPublicPlayerProfile(player = null) {
         applyPublicPlayerTheme(selectedPublicPlayer);
         if (publicPlayerAvatar) publicPlayerAvatar.src = getPublicPlayerPhoto(selectedPublicPlayer);
         if (publicPlayerName) publicPlayerName.innerText = getPublicPlayerName(selectedPublicPlayer);
-        if (publicPlayerStatus) publicPlayerStatus.innerText = `Ranking social • ${playerDoc.points || 0} pontos`;
+        if (publicPlayerStatus) publicPlayerStatus.innerHTML = `Ranking social • <strong>${Number(playerDoc.points || 0)} pontos</strong>`;
+        if (publicPlayerLevelBadge) publicPlayerLevelBadge.innerText = String(getOnlinePlayerLevel(playerDoc));
         renderPublicPlayerStats(playerDoc);
         syncFriendInviteButton();
     } catch (err) {
@@ -7003,6 +7084,10 @@ function bindAuthUiEvents() {
     });
 
     window.addEventListener('beforeunload', (e) => {
+        if (isOnlineGameplayMode() && currentOnlineRoomCode && !currentOnlineLeaving) {
+            forceAbandonOnlineRoomOnUnload();
+            return;
+        }
         if (!shouldBlockGameplayRefresh()) return;
         e.preventDefault();
         e.returnValue = '';
@@ -7059,7 +7144,7 @@ function bindAuthUiEvents() {
 
     window.addEventListener('pagehide', () => {
         if (!currentOnlineRoomCode || currentOnlineLeaving) return;
-        leaveOnlineRoom({ abandon: true });
+        forceAbandonOnlineRoomOnUnload();
     });
 
     populateOnlineLetterCountOptions();

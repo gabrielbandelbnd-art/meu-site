@@ -2046,16 +2046,206 @@ body.training-mode-active .training-hand {
 }
 
 .public-player-stat {
-    padding: 10px;
+    padding: 13px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 70px;
+}
+
+.public-player-stat-icon {
+    color: var(--accent);
+    font-size: 1.6rem;
+    line-height: 1;
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 55%, transparent));
+}
+
+.public-player-stat div {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
 }
 
 .public-player-stat span,
 .friends-copy,
 .friends-empty {
     color: var(--text-dim);
+}
+
+.public-player-stat span {
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.public-player-stat div > strong {
+    color: #ffffff;
+    font-size: 1.22rem;
+}
+
+.public-player-card {
+    border-radius: 24px;
+    padding: clamp(20px, 3vw, 32px);
+}
+
+.public-player-card .profile-close {
+    color: var(--accent);
+    font-size: 2.2rem;
+    right: 24px;
+    top: 18px;
+    z-index: 3;
+    text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.public-player-orb {
+    position: absolute;
+    inset: -25% -10% auto auto;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, transparent), transparent 66%);
+    pointer-events: none;
+}
+
+.public-player-shell {
+    grid-template-columns: minmax(300px, 0.92fr) minmax(290px, 1fr);
+    gap: clamp(18px, 3vw, 34px);
+}
+
+.public-player-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 0;
+}
+
+.public-player-kicker {
+    align-self: flex-start;
+    margin-bottom: 22px;
+    font-size: 1rem;
+    color: var(--accent);
+}
+
+.public-player-avatar-wrap {
+    position: relative;
+    display: inline-flex;
+    margin-bottom: 20px;
+}
+
+.public-player-avatar {
+    width: clamp(148px, 23vw, 230px);
+    height: clamp(148px, 23vw, 230px);
+    border-width: 5px;
+    border-color: var(--accent);
+    box-shadow:
+        0 0 0 1px var(--player-theme-border),
+        0 0 30px color-mix(in srgb, var(--accent) 34%, transparent),
+        0 18px 44px rgba(0,0,0,0.45);
+}
+
+.public-player-level-badge {
+    position: absolute;
+    left: 50%;
+    bottom: -22px;
+    transform: translateX(-50%);
+    min-width: 56px;
+    height: 62px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1.35rem;
+    font-weight: 950;
+    background: linear-gradient(180deg, var(--accent), color-mix(in srgb, var(--accent) 58%, #111 42%));
+    clip-path: polygon(50% 0, 100% 18%, 100% 72%, 50% 100%, 0 72%, 0 18%);
+    box-shadow: 0 0 22px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.public-player-card .profile-name-title {
+    width: 100%;
+    margin-top: 10px;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 950;
+    letter-spacing: 0.02em;
+    text-align: center;
+}
+
+.public-player-card .profile-rank {
+    width: 100%;
+    margin: 8px 0 6px;
+    color: #f2eaff;
+    text-align: center;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+}
+
+.public-player-card .profile-rank strong,
+.public-player-card .profile-rank b {
+    color: var(--accent);
+}
+
+.public-player-stats {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 22px 0 18px;
+}
+
+.public-player-card .profile-btn {
+    width: 100%;
+    min-height: 54px;
+    border-radius: 10px;
+    font-size: 0.98rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.public-player-mage-stage {
+    min-height: 560px;
+    border-radius: 18px;
+    padding: 28px;
+    align-items: center;
+    background:
+        radial-gradient(circle at 52% 36%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 35%),
+        linear-gradient(135deg, rgba(10, 8, 18, 0.58), var(--player-theme-surface-alt));
+}
+
+.public-player-mage-stage::before {
+    inset: auto 28% 28%;
+}
+
+.public-player-mage {
+    transform: scale(2.08);
+}
+
+.public-player-theme-plate {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    bottom: 26px;
+    padding: 18px 22px;
+    border: 1px solid color-mix(in srgb, var(--player-theme-border) 75%, transparent);
+    border-radius: 12px;
+    background: rgba(10, 8, 18, 0.5);
+    backdrop-filter: blur(6px);
+}
+
+.public-player-theme-plate span {
+    display: block;
+    color: var(--accent);
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.public-player-theme-plate strong {
+    color: #ffffff;
+    display: block;
+    margin-top: 4px;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    line-height: 1;
+    text-transform: uppercase;
 }
 
 .friends-card section {
@@ -2130,35 +2320,51 @@ body.training-mode-active .training-hand {
     }
 
     .public-player-stats {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin: 10px 0;
     }
 
     .public-player-card {
-        width: min(94vw, 420px);
-        padding: 16px;
+        width: min(94vw, 390px);
+        padding: 14px;
+        border-radius: 18px;
     }
 
     .public-player-shell {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 10px;
     }
 
     .public-player-copy {
         display: grid;
-        grid-template-columns: 84px 1fr;
-        gap: 8px 12px;
+        grid-template-columns: 96px 1fr;
+        gap: 6px 12px;
         align-items: center;
     }
 
     .public-player-kicker {
         grid-column: 1 / -1;
         margin-bottom: 0;
+        font-size: 0.8rem;
+    }
+
+    .public-player-avatar-wrap {
+        grid-row: span 2;
+        margin: 0;
     }
 
     .public-player-avatar {
-        grid-row: span 2;
-        width: 84px;
-        height: 84px;
+        width: 92px;
+        height: 92px;
+        border-width: 3px;
+    }
+
+    .public-player-level-badge {
+        min-width: 36px;
+        height: 40px;
+        bottom: -13px;
+        font-size: 0.95rem;
     }
 
     .public-player-card .profile-name-title,
@@ -2167,11 +2373,13 @@ body.training-mode-active .training-hand {
     }
 
     .public-player-card .profile-name-title {
-        font-size: 1.38rem;
+        font-size: 1.48rem;
+        margin-top: 0;
     }
 
     .public-player-card .profile-rank {
         margin: 0;
+        font-size: 0.9rem;
     }
 
     .public-player-stats,
@@ -2180,18 +2388,56 @@ body.training-mode-active .training-hand {
         grid-column: 1 / -1;
     }
 
+    .public-player-stat {
+        min-height: 56px;
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .public-player-stat-icon {
+        font-size: 1.2rem;
+    }
+
+    .public-player-stat span {
+        font-size: 0.62rem;
+    }
+
+    .public-player-stat div > strong {
+        font-size: 0.9rem;
+    }
+
+    .public-player-card .profile-btn {
+        min-height: 42px;
+        font-size: 0.78rem;
+    }
+
     .public-player-mage-stage {
-        min-height: 142px;
-        padding-bottom: 18px;
+        min-height: 180px;
+        padding: 14px 14px 60px;
         border-radius: 16px;
     }
 
     .public-player-mage {
-        transform: scale(0.82);
+        transform: scale(0.9);
     }
 
     .public-player-mage-stage .mage-effect {
         top: 14px;
+    }
+
+    .public-player-theme-plate {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        padding: 9px 12px;
+    }
+
+    .public-player-theme-plate span {
+        font-size: 0.68rem;
+    }
+
+    .public-player-theme-plate strong {
+        font-size: 1.15rem;
     }
 
     .friend-row {
