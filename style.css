@@ -1797,6 +1797,15 @@ body.training-mode-active .training-hand {
     background: rgba(187, 134, 252, 0.12);
 }
 
+.user-menu-dropdown .user-leave-online-match {
+    color: #ffb8c1;
+}
+
+.user-menu-dropdown .user-leave-online-match:hover {
+    border-color: rgba(255, 150, 150, 0.48);
+    background: rgba(255, 90, 120, 0.12);
+}
+
 .profile-modal {
     position: fixed;
     inset: 0;

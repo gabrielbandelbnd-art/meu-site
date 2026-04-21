@@ -507,6 +507,7 @@ const trainingPanelCopy = document.getElementById('training-panel-copy');
 const trainingHand = document.getElementById('training-hand');
 const appContainerEl = document.getElementById('app-container');
 const fullscreenToggleBtn = document.getElementById('fullscreen-toggle-btn');
+const userLeaveOnlineMatchBtn = document.getElementById('user-leave-online-match');
 
 let currentWord = [];
 let replaceIndex = 0;
@@ -3351,6 +3352,7 @@ function resetOnlineRoomState() {
     setOnlineLobbyBusy(false);
     showControl(onlineRoomPanel, false);
     showControl(onlineMatchBanner, false);
+    showControl(userLeaveOnlineMatchBtn, false);
     showControl(onlineResultModal, false);
     showControl(onlinePartyPanel, false);
     if (onlineRoomCodeDisplay) onlineRoomCodeDisplay.innerText = '----';
@@ -3369,6 +3371,7 @@ function resetOnlineRoomState() {
 function updateOnlineBanner(roomData = currentOnlineRoom) {
     const isOnlineMatch = isOnlineGameplayMode() && !!roomData && isGameScreenVisible();
     showControl(onlineMatchBanner, isOnlineMatch);
+    showControl(userLeaveOnlineMatchBtn, isOnlineMatch && roomData?.status === 'playing');
     if (!isOnlineMatch) return;
 
     const partyRoom = isPartyRoom(roomData);
@@ -3386,6 +3389,8 @@ function updateOnlineBanner(roomData = currentOnlineRoom) {
             onlineOpponentBannerStatus.innerText = `Jogadores: ${players.length}/${roomData?.maxPlayers || ONLINE_PARTY_MAX_PLAYERS} • Finalizaram: ${finishedPlayers}`;
         } else if (!opponent?.uid) {
             onlineOpponentBannerStatus.innerText = 'Oponente: aguardando...';
+        } else if (roomData?.status === 'abandoned') {
+            onlineOpponentBannerStatus.innerText = roomData.abandonMessage || `O oponente ${opponent.name || 'oponente'} abandonou o jogo.`;
         } else if (roomData?.status === 'finished') {
             onlineOpponentBannerStatus.innerText = opponent.finished ? `Oponente: terminou em ${formatOnlineTime(opponent.finishTimeMs || 0)}` : 'Oponente: não concluiu';
         } else if (opponent.connected === false) {
@@ -4397,7 +4402,7 @@ function openOnlineResultModal(roomData) {
     }
     if (onlineResultCopy) {
         if (roomData?.status === 'abandoned' && opponent?.connected === false) {
-            onlineResultCopy.innerText = 'Seu oponente deixou a sala antes do final do duelo.';
+            onlineResultCopy.innerText = roomData.abandonMessage || `O oponente ${opponentName} abandonou o jogo.`;
         } else if (isWinner) {
             onlineResultCopy.innerText = `Sua conjuracao foi mais rapida que a de ${opponentName}.`;
         } else {
@@ -4511,6 +4516,7 @@ async function leaveOnlineRoom(options = {}) {
     const roomRef = getOnlineRoomRef();
     const mySlot = currentOnlinePlayerSlot;
     const shouldAbandon = options.abandon !== false;
+    const myName = getOnlinePlayerEntryBySlot(currentOnlineRoom, mySlot)?.name || getOnlinePlayerName();
 
     try {
         await runTransaction(db, async (transaction) => {
@@ -4570,7 +4576,7 @@ async function leaveOnlineRoom(options = {}) {
             if (shouldAbandon && room.status !== 'finished') {
                 updates.status = 'abandoned';
                 updates.completedAt = serverTimestamp();
-                updates.abandonMessage = 'Seu oponente saiu da partida.';
+                updates.abandonMessage = `O oponente ${myName} abandonou o jogo.`;
                 if (opponent.uid) {
                     updates.winnerUid = opponent.uid;
                 }
@@ -6467,6 +6473,11 @@ function bindAuthUiEvents() {
         showOnlineScreen();
     });
     onlineMatchLeaveBtn?.addEventListener('click', async () => {
+        await leaveOnlineRoom({ abandon: true });
+        showOnlineScreen();
+    });
+    userLeaveOnlineMatchBtn?.addEventListener('click', async () => {
+        showControl(userMenuDropdown, false);
         await leaveOnlineRoom({ abandon: true });
         showOnlineScreen();
     });
