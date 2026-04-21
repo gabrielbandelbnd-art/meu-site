@@ -505,6 +505,8 @@ const trainingPanelStage = document.getElementById('training-panel-stage');
 const trainingTargetWord = document.getElementById('training-target-word');
 const trainingPanelCopy = document.getElementById('training-panel-copy');
 const trainingHand = document.getElementById('training-hand');
+const appContainerEl = document.getElementById('app-container');
+const fullscreenToggleBtn = document.getElementById('fullscreen-toggle-btn');
 
 let currentWord = [];
 let replaceIndex = 0;
@@ -534,6 +536,64 @@ let onlineProgressSyncTimeout = null;
 let preserveCurrentViewOnAuthSync = false;
 let trainingState = null;
 let trainingTransitionTimeout = null;
+
+function getTelaCheiaTarget() {
+    if (appContainerEl && !appContainerEl.classList.contains('hidden-app')) {
+        return appContainerEl;
+    }
+
+    return document.documentElement;
+}
+
+function getElementoTelaCheia() {
+    return document.fullscreenElement || document.webkitFullscreenElement;
+}
+
+async function entrarTelaCheia() {
+    const target = getTelaCheiaTarget();
+    const requestFullscreen = target?.requestFullscreen || target?.webkitRequestFullscreen;
+
+    try {
+        if (!getElementoTelaCheia() && requestFullscreen) {
+            await requestFullscreen.call(target, { navigationUI: 'hide' });
+        }
+    } catch (error) {
+        console.warn('Nao foi possivel entrar em tela cheia:', error);
+    }
+}
+
+async function sairTelaCheia() {
+    const exitFullscreen = document.exitFullscreen || document.webkitExitFullscreen;
+
+    try {
+        if (getElementoTelaCheia() && exitFullscreen) {
+            await exitFullscreen.call(document);
+        }
+    } catch (error) {
+        console.warn('Nao foi possivel sair da tela cheia:', error);
+    }
+}
+
+async function alternarTelaCheia() {
+    if (getElementoTelaCheia()) {
+        await sairTelaCheia();
+        return;
+    }
+
+    await entrarTelaCheia();
+}
+
+function atualizarEstadoFullscreen() {
+    const emTelaCheia = !!getElementoTelaCheia();
+    document.body.classList.toggle('is-fullscreen', emTelaCheia);
+
+    if (fullscreenToggleBtn) {
+        fullscreenToggleBtn.textContent = emTelaCheia ? '↙' : '⛶';
+        fullscreenToggleBtn.setAttribute('aria-label', emTelaCheia ? 'Sair da tela cheia' : 'Entrar em tela cheia');
+        fullscreenToggleBtn.setAttribute('aria-pressed', emTelaCheia ? 'true' : 'false');
+        fullscreenToggleBtn.title = emTelaCheia ? 'Sair da tela cheia' : 'Tela cheia';
+    }
+}
 
 // --- VARIÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂVEIS DA GALINHA E MENSAGENS ---
 let consecutiveErrors = 0;
@@ -2267,7 +2327,8 @@ const hubPlay = document.getElementById("hub-play");
 const hubTraining = document.getElementById("hub-training");
 const welcomeScreen = document.getElementById("welcome-screen");
 
-hubPlay.addEventListener("click", () => {
+hubPlay.addEventListener("click", async () => {
+    await entrarTelaCheia();
     clearGameSessionState();
     stopHintCycle();
     resetDailySession();
@@ -2280,6 +2341,10 @@ hubPlay.addEventListener("click", () => {
 hubTraining?.addEventListener("click", () => {
     startTrainingMode();
 });
+
+fullscreenToggleBtn?.addEventListener('click', alternarTelaCheia);
+document.addEventListener('fullscreenchange', atualizarEstadoFullscreen);
+document.addEventListener('webkitfullscreenchange', atualizarEstadoFullscreen);
 
 campaignBackBtn?.addEventListener('click', () => {
     openWelcomeTutorial(true);
@@ -6721,12 +6786,16 @@ function initInitialLoadingScreen() {
         window.requestAnimationFrame(tick);
     };
 
-    loadingPlayBtn.addEventListener('click', startInitialLoading);
+    loadingPlayBtn.addEventListener('click', async () => {
+        await entrarTelaCheia();
+        startInitialLoading();
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     applyTheme(loadThemePreference(), { persist: false });
     initInitialLoadingScreen();
+    atualizarEstadoFullscreen();
     loadPlayerStats();
     loadAudioSettings();
     applySfxSettingsToAudioGraph();
