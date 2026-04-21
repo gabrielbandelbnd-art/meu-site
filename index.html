@@ -24,7 +24,7 @@
     <meta name="twitter:image" content="https://magiclexis.com.br/og-image.png">
     <link rel="icon" type="image/png" sizes="256x256" href="favicon.png?v=2">
     <link rel="apple-touch-icon" href="favicon.png?v=2">
-    <link rel="stylesheet" href="style.css?v=20260414-3">
+    <link rel="stylesheet" href="style.css?v=20260421-3">
 </head>
 <body>
     <div id="initial-loading-screen" class="initial-loading-screen" aria-live="polite" aria-label="Tela de carregamento inicial do MagicLexis">
@@ -85,6 +85,7 @@
 
         <div class="hub-buttons">
             <button class="hub-btn" id="hub-play">⚔️ Jogar</button>
+            <button class="hub-btn" id="hub-training">✨ Treinamento</button>
             <button class="hub-btn" id="hub-profile">👤 Perfil</button>
             <button class="hub-btn" id="hub-tournaments">🏆 Torneios</button>
             <button class="hub-btn" id="hub-ranking">📊 Ranking</button>
@@ -442,6 +443,20 @@
                 </div>
             </div>
 
+            <section id="training-panel" class="training-panel hidden-control" aria-live="polite">
+                <div class="training-panel-top">
+                    <div class="training-panel-kicker" id="training-panel-kicker">Treinamento Arcano</div>
+                    <div class="training-panel-stage" id="training-panel-stage">Passo 1</div>
+                </div>
+                <div class="training-panel-target">
+                    Palavra alvo:
+                    <strong id="training-target-word">---</strong>
+                </div>
+                <div id="training-panel-copy" class="training-panel-copy">
+                    Aprenda na prática como as regras mágicas transformam cada letra.
+                </div>
+            </section>
+
             <div class="board-wrapper">
                 <div id="word-grid" class="word-grid"></div>
             </div>
@@ -500,6 +515,8 @@
             <div id="mobile-error-phrase" class="mobile-error-phrase"></div>
         </div>
     </div>
+
+    <div id="training-hand" class="training-hand hidden-control" aria-hidden="true">👆</div>
 
     <div id="mobile-victory-modal" class="mobile-victory-modal hidden-control">
         <div class="mobile-victory-card">
@@ -828,7 +845,7 @@
         </div>
     </div>
 
-    <script type="module" src="script.js?v=20260418-finale-1"></script>
+    <script type="module" src="script.js?v=20260420-1"></script>
     </body>
 </html>
 

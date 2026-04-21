@@ -499,6 +499,12 @@ const onlineResultSelfErrors = document.getElementById('online-result-self-error
 const onlineResultOpponentErrors = document.getElementById('online-result-opponent-errors');
 const onlineResultRematchBtn = document.getElementById('online-result-rematch-btn');
 const onlineResultMenuBtn = document.getElementById('online-result-menu-btn');
+const trainingPanel = document.getElementById('training-panel');
+const trainingPanelKicker = document.getElementById('training-panel-kicker');
+const trainingPanelStage = document.getElementById('training-panel-stage');
+const trainingTargetWord = document.getElementById('training-target-word');
+const trainingPanelCopy = document.getElementById('training-panel-copy');
+const trainingHand = document.getElementById('training-hand');
 
 let currentWord = [];
 let replaceIndex = 0;
@@ -526,6 +532,8 @@ let currentOnlineLeaving = false;
 let currentOnlineEntryMode = 'code';
 let onlineProgressSyncTimeout = null;
 let preserveCurrentViewOnAuthSync = false;
+let trainingState = null;
+let trainingTransitionTimeout = null;
 
 // --- VARIÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚ÂVEIS DA GALINHA E MENSAGENS ---
 let consecutiveErrors = 0;
@@ -922,7 +930,7 @@ alphabet.forEach((letter, index) => {
     div.setAttribute('data-letter', letter);
     div.setAttribute('role', 'button');
     div.addEventListener('click', () => {
-        if (!isMobileViewport()) return;
+        if (!isMobileViewport() && !isTrainingModeActive()) return;
         addChar(letter);
         if (charInput) charInput.blur();
     });
@@ -984,6 +992,9 @@ function render(showTutorial = false) {
     });
 
     updateMiniAlphabet();
+    if (isTrainingModeActive()) {
+        requestAnimationFrame(updateTrainingUi);
+    }
 }
 
 // --- LOGICA DO BOTAO LIMPAR TABULEIRO --- //
@@ -992,6 +1003,10 @@ let clearConfirmState = false;
 
 function handleClearBoardAction() {
     if (!clearBoardBtn) return;
+    if (isTrainingModeActive() && trainingState?.phase === 'guided') {
+        showFloatingMessage('Vamos fechar essa parte guiada primeiro.', 1200);
+        return;
+    }
     if (!clearConfirmState) {
         clearBoardBtn.innerText = "CERTEZA?";
         clearBoardBtn.style.background = "var(--error)";
@@ -1034,6 +1049,14 @@ function resetClearButton() {
 function addChar(char) {
     if (isGameplayTransitionLocked) return;
     if (!/^[a-zA-Z]$/.test(char)) return;
+    if (isTrainingModeActive() && trainingState?.phase === 'guided') {
+        const expectedStep = getTrainingStepData();
+        if (!expectedStep) return;
+        if (char.toUpperCase() !== expectedStep.click.toUpperCase()) {
+            handleTrainingWrongSelection();
+            return;
+        }
+    }
     incrementPlayerStat('letrasConjuradas', 1);
     noteGameplayActivity();
 
@@ -1078,6 +1101,9 @@ function addChar(char) {
     }
     saveGameSessionState();
     queueOnlineProgressSync();
+    if (isTrainingModeActive() && trainingState?.phase === 'guided') {
+        handleTrainingGuidedProgress();
+    }
 }
 
 function processNewChar(char, indexToInsert) {
@@ -1110,6 +1136,19 @@ async function validate() {
     isValidationInProgress = true;
 
     feedback.innerText = "Verificando...";
+
+    if (currentGameMode === TRAINING_MODE) {
+        try {
+            if (trainingState?.phase === 'guided') {
+                showFloatingMessage('Siga a indicação primeiro e depois valide.', 1200);
+                return;
+            }
+            await handleTrainingValidation(word);
+            return;
+        } finally {
+            isValidationInProgress = false;
+        }
+    }
 
     if (currentGameMode === DAILY_MODE && dailySession) {
         try {
@@ -2225,6 +2264,7 @@ document.getElementById('start-game-btn').onclick = () => {
 
 const hub = document.getElementById("main-hub");
 const hubPlay = document.getElementById("hub-play");
+const hubTraining = document.getElementById("hub-training");
 const welcomeScreen = document.getElementById("welcome-screen");
 
 hubPlay.addEventListener("click", () => {
@@ -2235,6 +2275,10 @@ hubPlay.addEventListener("click", () => {
     if (appContainer) appContainer.classList.add('hidden-app');
     const goToLastPage = hasSeenTutorial();
     openWelcomeTutorial(goToLastPage);
+});
+
+hubTraining?.addEventListener("click", () => {
+    startTrainingMode();
 });
 
 campaignBackBtn?.addEventListener('click', () => {
@@ -2331,6 +2375,7 @@ const DAILY_MODE = 'daily';
 const RANDOM_MODE = 'random';
 const CAMPAIGN_MODE = 'campaign';
 const ONLINE_MODE = 'online_1v1';
+const TRAINING_MODE = 'training';
 const ONLINE_PARTY_MODE = 'online_party';
 const ONLINE_ROOM_COLLECTION = 'rooms';
 const ONLINE_MATCHMAKING_COLLECTION = 'matchmaking';
@@ -2385,10 +2430,406 @@ Tempo: {mm:ss}
 Agora quero ver voce tentar.
 https://magiclexis.vercel.app`
 ];
+const TRAINING_LESSONS = [
+    {
+        title: 'Treinamento 1',
+        word: 'SOL',
+        clicks: ['H', 'L', 'L'],
+        guidedSteps: [
+            { click: 'H', text: 'Vamos conjurar SOL juntos. Comece pelo H.' },
+            { click: 'L', text: 'Boa. O H vira S porque é espelhado. Agora vamos para o L.' },
+            { click: 'L', text: 'Perfeito. Mais um L e fechamos a palavra SOL.' }
+        ],
+        guidedCompleteText: 'Boa! SOL apareceu certinho.',
+        practiceIntroText: 'Agora é sua vez. Tente fazer SOL sozinho.'
+    },
+    {
+        title: 'Treinamento 2',
+        word: 'LUA',
+        clicks: ['L', 'U', 'Z'],
+        guidedSteps: [
+            { click: 'L', text: 'Agora vamos formar LUA. Comece pelo L.' },
+            { click: 'U', text: 'Boa. Agora toque no U. Como ele é vogal, ele altera a próxima letra.' },
+            { click: 'Z', text: 'Perfeito. Clique no Z, porque com o efeito da vogal ele vira A.' }
+        ],
+        guidedCompleteText: 'Perfeito! A magia da vogal funcionou.',
+        practiceIntroText: 'Agora tenta sozinho. Você consegue fazer LUA.'
+    }
+];
+const TRAINING_FINAL_SEQUENCE = [
+    { word: 'SOL', clicks: ['H', 'L', 'L'] },
+    { word: 'LUA', clicks: ['L', 'U', 'Z'] },
+    { word: 'BOI', clicks: ['B', 'O', 'H'] },
+    { word: 'MAR', clicks: ['N', 'Z', 'R'] }
+];
+const TRAINING_FINAL_REWARD_LABELS = {
+    2: 'Boa ⚡',
+    3: 'Top 🔥',
+    4: 'Perfeito 👑'
+};
 let activeUser = null;
 let activeUserDoc = null;
 for (let i = 0; i < DAILY_SHARE_TEMPLATES.length; i++) {
     DAILY_SHARE_TEMPLATES[i] = sanitizeGameText(DAILY_SHARE_TEMPLATES[i]);
+}
+
+function isTrainingModeActive() {
+    return currentGameMode === TRAINING_MODE && !!trainingState;
+}
+
+function getCurrentTrainingLesson() {
+    if (!trainingState) return null;
+    return TRAINING_LESSONS[trainingState.lessonIndex] || null;
+}
+
+function getCurrentTrainingFinalChallenge() {
+    if (!trainingState) return null;
+    return TRAINING_FINAL_SEQUENCE[trainingState.finalIndex] || null;
+}
+
+function clearTrainingTransitionTimeout() {
+    if (!trainingTransitionTimeout) return;
+    clearTimeout(trainingTransitionTimeout);
+    trainingTransitionTimeout = null;
+}
+
+function hideTrainingHand() {
+    if (!trainingHand) return;
+    trainingHand.classList.add('hidden-control');
+    trainingHand.classList.remove('is-active');
+}
+
+function hideTrainingPanel() {
+    showControl(trainingPanel, false);
+    hideTrainingHand();
+    document.querySelectorAll('.mini-char.training-target').forEach((button) => {
+        button.classList.remove('training-target');
+    });
+    document.body.classList.remove('training-mode-active', 'training-guided-active');
+}
+
+function showTrainingPanel() {
+    if (!trainingPanel) return;
+    showControl(trainingPanel, true);
+    document.body.classList.add('training-mode-active');
+}
+
+function getTrainingCurrentChallenge() {
+    if (!trainingState) return null;
+    if (trainingState.phase === 'final') {
+        return getCurrentTrainingFinalChallenge();
+    }
+
+    const lesson = getCurrentTrainingLesson();
+    if (!lesson) return null;
+    return {
+        word: lesson.word,
+        clicks: lesson.clicks
+    };
+}
+
+function getTrainingPhaseWord() {
+    return getTrainingCurrentChallenge()?.word || '---';
+}
+
+function getTrainingStepData() {
+    const lesson = getCurrentTrainingLesson();
+    if (!lesson || !trainingState) return null;
+
+    if (trainingState.phase === 'guided') {
+        return lesson.guidedSteps[trainingState.stepIndex] || null;
+    }
+    return null;
+}
+
+function updateTrainingHandPosition() {
+    if (!trainingHand || !isTrainingModeActive()) {
+        hideTrainingHand();
+        return;
+    }
+
+    const step = getTrainingStepData();
+    if (!step) {
+        hideTrainingHand();
+        return;
+    }
+
+    const targetButton = document.getElementById(`mini-${step.click}`);
+    if (!targetButton) {
+        hideTrainingHand();
+        return;
+    }
+
+    document.querySelectorAll('.mini-char.training-target').forEach((button) => {
+        button.classList.remove('training-target');
+    });
+    targetButton.classList.add('training-target');
+
+    const rect = targetButton.getBoundingClientRect();
+    trainingHand.style.left = `${rect.left + (rect.width / 2)}px`;
+    trainingHand.style.top = `${rect.top + 4}px`;
+    trainingHand.classList.remove('hidden-control');
+    trainingHand.classList.add('is-active');
+}
+
+function updateTrainingUi() {
+    if (!isTrainingModeActive()) {
+        hideTrainingPanel();
+        return;
+    }
+
+    const lesson = getCurrentTrainingLesson();
+    if (!lesson) {
+        hideTrainingPanel();
+        return;
+    }
+
+    showTrainingPanel();
+    const isGuided = trainingState.phase === 'guided';
+    document.body.classList.toggle('training-guided-active', isGuided);
+
+    if (trainingPanelKicker) {
+        if (trainingState.phase === 'final') {
+            trainingPanelKicker.innerText = 'Fase Final';
+        } else {
+            trainingPanelKicker.innerText = lesson.title;
+        }
+    }
+    if (trainingPanelStage) {
+        if (trainingState.phase === 'guided') {
+            trainingPanelStage.innerText = `Passo ${trainingState.stepIndex + 1}`;
+        } else if (trainingState.phase === 'practice') {
+            trainingPanelStage.innerText = 'Teste Imediato';
+        } else {
+            trainingPanelStage.innerText = `Sequência ${Math.min((trainingState.finalIndex || 0) + 1, TRAINING_FINAL_SEQUENCE.length)}/${TRAINING_FINAL_SEQUENCE.length}`;
+        }
+    }
+    if (trainingTargetWord) {
+        trainingTargetWord.innerText = getTrainingPhaseWord();
+    }
+    if (trainingPanelCopy) {
+        if (trainingState.phase === 'guided') {
+            trainingPanelCopy.innerText = getTrainingStepData()?.text || '';
+        } else if (trainingState.phase === 'practice') {
+            trainingPanelCopy.innerText = lesson.practiceIntroText;
+        } else {
+            const currentChallenge = getCurrentTrainingFinalChallenge();
+            const baseCopy = currentChallenge
+                ? `Agora sem ajuda. Conjure ${currentChallenge.word} sozinho e mantenha sua sequência viva.`
+                : 'Agora é com você. Continue acertando para manter sua sequência.';
+            const streakCopy = trainingState.finalStreak >= 2 && TRAINING_FINAL_REWARD_LABELS[trainingState.finalStreak]
+                ? ` ${TRAINING_FINAL_REWARD_LABELS[trainingState.finalStreak]}`
+                : '';
+            trainingPanelCopy.innerText = `${baseCopy}${streakCopy}`;
+        }
+    }
+
+    if (validateBtn) {
+        validateBtn.disabled = trainingState.phase === 'guided';
+    }
+    if (clearBoardBtn) {
+        clearBoardBtn.disabled = trainingState.phase === 'guided';
+    }
+
+    requestAnimationFrame(updateTrainingHandPosition);
+}
+
+function finishTrainingMode() {
+    trainingState = null;
+    clearTrainingTransitionTimeout();
+    hideTrainingPanel();
+    if (validateBtn) validateBtn.disabled = false;
+    if (clearBoardBtn) clearBoardBtn.disabled = false;
+    document.querySelectorAll('.mini-char.training-target').forEach((button) => {
+        button.classList.remove('training-target');
+    });
+    showFloatingMessage('Treinamento concluído! Sua magia está fluindo. ✨', 2400);
+    void showHubScreenFromGame();
+}
+
+function startTrainingPhase(phase) {
+    if (!trainingState) return;
+    const lesson = getCurrentTrainingLesson();
+    const currentChallenge = phase === 'final' ? getCurrentTrainingFinalChallenge() : lesson;
+    if (!currentChallenge || !lesson) return;
+
+    trainingState.phase = phase;
+    trainingState.stepIndex = 0;
+    currentGameMode = TRAINING_MODE;
+    currentCampaignLevel = null;
+    resetDailySession();
+    clearAllHighlights();
+    animateMage('reset');
+    showGameScreen();
+
+    const challengeWord = phase === 'final' ? currentChallenge.word : lesson.word;
+    startChallengeEngine({
+        word: challengeWord,
+        hints: [challengeWord],
+        meaning: 'Treinamento arcano'
+    }, {
+        wordLength: challengeWord.length,
+        resetHistory: true
+    });
+
+    feedback.innerText = '';
+    feedback.style.color = '';
+    meaningBox.classList.add('hidden');
+    meaningBox.innerText = '';
+    updateTrainingUi();
+}
+
+function startTrainingMode() {
+    clearGameSessionState();
+    stopHintCycle();
+    resetDailySession();
+    clearTrainingTransitionTimeout();
+    trainingState = {
+        lessonIndex: 0,
+        phase: 'guided',
+        stepIndex: 0,
+        finalIndex: 0,
+        finalStreak: 0
+    };
+    startTrainingPhase('guided');
+}
+
+function moveToNextTrainingLesson() {
+    if (!trainingState) return;
+    trainingState.lessonIndex += 1;
+    if (trainingState.lessonIndex >= TRAINING_LESSONS.length) {
+        finishTrainingMode();
+        return;
+    }
+    startTrainingPhase('guided');
+}
+
+function handleTrainingWrongSelection() {
+    if (typeof navigator?.vibrate === 'function') {
+        navigator.vibrate(25);
+    }
+    animateMage('sad');
+    playSoundEffect('error');
+    showFloatingMessage('Siga o ponteiro mágico e tente de novo.', 1200);
+}
+
+function handleTrainingGuidedProgress() {
+    if (!isTrainingModeActive()) return;
+    const lesson = getCurrentTrainingLesson();
+    if (!lesson || !trainingState) return;
+
+    const stepList = lesson.guidedSteps;
+    trainingState.stepIndex += 1;
+
+    if (trainingState.stepIndex < stepList.length) {
+        updateTrainingUi();
+        return;
+    }
+
+    const finalCopy = lesson.guidedCompleteText;
+    if (trainingPanelCopy) trainingPanelCopy.innerText = finalCopy;
+    hideTrainingHand();
+    feedback.innerText = finalCopy;
+    feedback.style.color = 'var(--success)';
+    animateMage('win');
+    clearTrainingTransitionTimeout();
+    trainingTransitionTimeout = window.setTimeout(() => {
+        if (!trainingState) return;
+        startTrainingPhase('practice');
+    }, 1300);
+}
+
+async function handleTrainingValidation(word) {
+    if (!trainingState) return;
+    const lesson = getCurrentTrainingLesson();
+    const challenge = getTrainingCurrentChallenge();
+    if (!lesson || !challenge) return;
+
+    const expectedWord = challenge.word.toUpperCase();
+    const clickedSequence = historyList?.innerText?.trim().split(/\s+/).filter(Boolean) || [];
+    const expectedClicks = challenge.clicks || [];
+    const clickedMatches = clickedSequence.join('') === expectedClicks.join('');
+    const isCorrect = word === expectedWord;
+
+    if (isCorrect) {
+        feedback.style.color = 'var(--success)';
+        animateMage('win');
+        triggerConfetti();
+
+        if (trainingState.phase === 'practice') {
+            feedback.innerText = `Boa! ${expectedWord} saiu certinho.`;
+            meaningBox.innerText = `Você mandou bem em ${expectedWord}.`;
+            meaningBox.classList.remove('hidden');
+            clearTrainingTransitionTimeout();
+            trainingTransitionTimeout = window.setTimeout(() => {
+                if (!trainingState) return;
+                if (trainingState.lessonIndex < TRAINING_LESSONS.length - 1) {
+                    moveToNextTrainingLesson();
+                    return;
+                }
+                trainingState.finalIndex = 0;
+                trainingState.finalStreak = 0;
+                startTrainingPhase('final');
+            }, 1300);
+            return;
+        }
+
+        if (trainingState.phase === 'final') {
+            trainingState.finalStreak = (trainingState.finalStreak || 0) + 1;
+            const rewardLabel = TRAINING_FINAL_REWARD_LABELS[trainingState.finalStreak] || '';
+            const rewardMessage = rewardLabel
+                ? `${rewardLabel}`
+                : 'Boa! Continue acertando.';
+
+            feedback.innerText = rewardMessage;
+            meaningBox.innerText = `Sequência atual: ${trainingState.finalStreak}/${TRAINING_FINAL_SEQUENCE.length}`;
+            meaningBox.classList.remove('hidden');
+            if (rewardLabel) {
+                showFloatingMessage(rewardLabel, 1200);
+            }
+
+            clearTrainingTransitionTimeout();
+            trainingTransitionTimeout = window.setTimeout(() => {
+                if (!trainingState) return;
+                trainingState.finalIndex += 1;
+                if (trainingState.finalIndex >= TRAINING_FINAL_SEQUENCE.length) {
+                    finishTrainingMode();
+                    return;
+                }
+                startTrainingPhase('final');
+            }, 1300);
+        }
+        return;
+    }
+
+    incrementPlayerStat('erros', 1);
+    feedback.style.color = 'var(--error)';
+    animateMage('sad');
+    playSoundEffect('error');
+
+    if (trainingState.phase === 'practice') {
+        feedback.innerText = `Quase. Vamos fazer ${expectedWord} juntos mais uma vez.`;
+        showErrorMageFeedback(`Tudo bem. Vamos retomar ${expectedWord} com calma.`);
+        meaningBox.innerText = `Vamos repetir ${expectedWord}. Você pega essa lógica rapidinho.`;
+        meaningBox.classList.remove('hidden');
+        clearTrainingTransitionTimeout();
+        trainingTransitionTimeout = window.setTimeout(() => {
+            startTrainingPhase('guided');
+        }, 1200);
+        return;
+    }
+
+    trainingState.finalStreak = 0;
+    feedback.innerText = `${expectedWord} escapou dessa vez. Vamos tentar de novo.`;
+    showErrorMageFeedback('A sequência voltou ao início, mas você já está perto. Bora mais uma.');
+    meaningBox.innerText = clickedMatches
+        ? `A sequência reiniciou. Refaça ${expectedWord} para seguir em frente.`
+        : `Tente de novo. O que vale é formar ${expectedWord} certinho no tabuleiro.`;
+    meaningBox.classList.remove('hidden');
+    clearTrainingTransitionTimeout();
+    trainingTransitionTimeout = window.setTimeout(() => {
+        startTrainingPhase('final');
+    }, 1200);
 }
 
 const TUTORIAL_SEEN_STORAGE_KEY = 'magiclexis_tutorial_seen_v1';
@@ -4993,9 +5434,11 @@ function showGameScreen() {
     noteGameplayActivity();
     syncGameplayTimeTracking();
     syncDynamicMusicState({ forceRestart: false });
+    updateTrainingUi();
 }
 
 async function showHubScreenFromGame() {
+    const wasTrainingMode = isTrainingModeActive();
     hideJourneyFinaleScreen({ stopMusic: true });
     journeyFinaleShown = false;
     stopHintCycle();
@@ -5010,6 +5453,11 @@ async function showHubScreenFromGame() {
     hideCampaignScreen();
     hideOnlineScreen();
     setMobileGameplayMenuVisibility(false);
+    if (wasTrainingMode) {
+        trainingState = null;
+        clearTrainingTransitionTimeout();
+        hideTrainingPanel();
+    }
     showHubScreen(true);
     syncTopUserUi(activeUser, activeUserDoc);
     syncRefreshLockState();
@@ -6124,7 +6572,29 @@ function bindAuthUiEvents() {
 
     window.addEventListener('resize', () => {
         applyMobileMenuButtonState(shouldBlockGameplayRefresh());
+        if (isTrainingModeActive()) {
+            updateTrainingHandPosition();
+        }
     });
+
+    window.addEventListener('scroll', () => {
+        if (isTrainingModeActive()) {
+            updateTrainingHandPosition();
+        }
+    }, { passive: true });
+
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', () => {
+            if (isTrainingModeActive()) {
+                updateTrainingHandPosition();
+            }
+        });
+        window.visualViewport.addEventListener('scroll', () => {
+            if (isTrainingModeActive()) {
+                updateTrainingHandPosition();
+            }
+        });
+    }
 
     window.addEventListener('pagehide', () => {
         if (!currentOnlineRoomCode || currentOnlineLeaving) return;
