@@ -1,4 +1,4 @@
-:root {
+﻿:root {
     --bg-dark: #121212;
     --sidebar-bg: #1e1e1e;
     --card-bg: #2d2d2d;
@@ -1954,16 +1954,16 @@ body.training-mode-active .training-hand {
 }
 
 .public-player-shell {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(180px, 0.62fr);
-    gap: 18px;
-    align-items: stretch;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    align-items: center;
 }
 
 .public-player-copy {
-    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .public-player-kicker {
@@ -2004,9 +2004,9 @@ body.training-mode-active .training-hand {
         linear-gradient(180deg, var(--player-theme-surface-alt), rgba(0,0,0,0.12));
     overflow: hidden;
     display: flex;
-    align-items: flex-end;
+    align-items: center;      /* 🔥 mudou aqui */
     justify-content: center;
-    padding-bottom: 48px;
+    padding-bottom: 0;        /* 🔥 mudou aqui */
 }
 
 .public-player-mage-stage::before {
@@ -2202,13 +2202,18 @@ body.training-mode-active .training-hand {
 }
 
 .public-player-mage-stage {
-    min-height: 560px;
-    border-radius: 18px;
-    padding: 28px;
-    align-items: center;
+    position: relative;
+    min-height: 330px;
+    border: 1px solid var(--player-theme-border);
+    border-radius: 20px;
     background:
-        radial-gradient(circle at 52% 36%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 35%),
-        linear-gradient(135deg, rgba(10, 8, 18, 0.58), var(--player-theme-surface-alt));
+        radial-gradient(circle at 50% 18%, var(--player-theme-soft), transparent 36%),
+        linear-gradient(180deg, var(--player-theme-surface-alt), rgba(0,0,0,0.12));
+    overflow: hidden;
+    display: flex;
+    align-items: center;   /* 👈 IMPORTANTE */
+    justify-content: center;
+    padding-bottom: 0;     /* 👈 IMPORTANTE */
 }
 
 .public-player-mage-stage::before {
