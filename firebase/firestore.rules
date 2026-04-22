@@ -30,6 +30,27 @@ service cloud.firestore {
         && request.resource.data.status == 'new';
     }
 
+    function canReadSupportThread(adminUid, threadId) {
+      return isSupportInboxOwner(adminUid)
+        && (isAdmin() || (isSignedIn() && request.auth.uid == threadId));
+    }
+
+    function canWriteSupportThread(adminUid, threadId) {
+      return isSupportInboxOwner(adminUid)
+        && isSignedIn()
+        && (
+          isAdmin() ||
+          (
+            request.auth.uid == threadId
+            && request.resource.data.adminUid == adminUid
+            && request.resource.data.threadUid == threadId
+            && request.resource.data.senderUid == request.auth.uid
+            && request.resource.data.senderName is string
+            && request.resource.data.senderName.size() >= 2
+          )
+        );
+    }
+
     function roomHasPlayer(data, uid) {
       return uid != null && (
         data.players.player1.uid == uid ||
@@ -188,6 +209,13 @@ service cloud.firestore {
     match /supportMessages/{adminUid}/inbox/{messageId} {
       allow create: if isValidSupportMessage(adminUid);
       allow get, list, update, delete: if isAdmin() && isSupportInboxOwner(adminUid);
+    }
+
+    match /supportConversations/{adminUid}/threads/{threadId} {
+      allow get: if canReadSupportThread(adminUid, threadId);
+      allow list: if isAdmin() && isSupportInboxOwner(adminUid);
+      allow create, update: if canWriteSupportThread(adminUid, threadId);
+      allow delete: if false;
     }
 
     match /{document=**} {

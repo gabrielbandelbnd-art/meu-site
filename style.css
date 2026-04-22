@@ -2484,6 +2484,7 @@ body.training-mode-active .training-hand {
 
 #profile-modal .profile-card,
 #audio-settings-modal .profile-card,
+#visitor-name-modal .profile-card,
 #support-modal .profile-card,
 #support-inbox-modal .profile-card,
 #public-player-modal .profile-card,
@@ -2615,6 +2616,7 @@ body.training-mode-active .training-hand {
 
     #profile-modal,
     #audio-settings-modal,
+    #visitor-name-modal,
     #support-modal,
     #support-inbox-modal {
         align-items: flex-start;
@@ -2624,6 +2626,7 @@ body.training-mode-active .training-hand {
 
     #profile-modal .profile-card,
     #audio-settings-modal .profile-card,
+    #visitor-name-modal .profile-card,
     #support-modal .profile-card,
     #support-inbox-modal .profile-card {
         max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 24px);
@@ -7606,6 +7609,19 @@ body.training-mode-active .meaning-display {
     width: min(92vw, 460px);
 }
 
+.visitor-name-card {
+    width: min(92vw, 420px);
+}
+
+#visitor-name-modal {
+    z-index: 9000;
+}
+
+.visitor-name-card .profile-name-edit,
+.visitor-name-card .profile-btn {
+    width: 100%;
+}
+
 .support-copy {
     margin: -4px 0 16px;
     color: var(--text-dim);
@@ -7644,6 +7660,51 @@ body.training-mode-active .meaning-display {
 
 .support-card .profile-btn {
     width: 100%;
+}
+
+.support-thread {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 210px;
+    overflow-y: auto;
+    margin: 0 0 14px;
+    padding: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    background: rgba(0,0,0,0.16);
+}
+
+.support-thread-message {
+    max-width: 88%;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+}
+
+.support-thread-message.is-admin {
+    align-self: flex-start;
+    border: 1px solid rgba(187, 134, 252, 0.28);
+}
+
+.support-thread-message.is-player {
+    align-self: flex-end;
+    background: rgba(187, 134, 252, 0.16);
+}
+
+.support-thread-message small {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--text-dim);
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.support-thread-message p {
+    margin: 0;
+    color: #ffffff;
+    line-height: 1.32;
+    white-space: pre-wrap;
 }
 
 .support-inbox-card {
@@ -7695,6 +7756,23 @@ body.training-mode-active .meaning-display {
     color: #f4edff;
     line-height: 1.38;
     white-space: pre-wrap;
+}
+
+.support-thread-admin {
+    max-height: 260px;
+    margin-top: 10px;
+}
+
+.support-admin-reply {
+    width: 100%;
+    margin: 10px 0 8px;
+    border: 1px solid rgba(187, 134, 252, 0.36);
+    border-radius: 10px;
+    background: rgba(8, 8, 12, 0.78);
+    color: #ffffff;
+    padding: 10px;
+    font: inherit;
+    resize: vertical;
 }
 
 @media (max-width: 800px) {

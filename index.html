@@ -78,6 +78,16 @@
         </div>
     </div>
 
+    <div id="visitor-name-modal" class="profile-modal hidden-control">
+        <div class="profile-card visitor-name-card">
+            <h3>Como devemos te chamar?</h3>
+            <p class="support-copy">Escolha um nome para jogar como visitante e receber respostas do suporte.</p>
+            <input id="visitor-name-input" class="profile-name-edit" type="text" maxlength="24" placeholder="Seu nome de visitante">
+            <button id="visitor-name-save-btn" class="profile-btn auth-main-btn">Continuar como visitante</button>
+            <div id="visitor-name-status" class="profile-status"></div>
+        </div>
+    </div>
+
         <!-- ================= HUB PRINCIPAL ================= -->
 <div id="main-hub" class="hub-container hidden-control">
     <div class="hub-content">
@@ -862,6 +872,7 @@
             <button id="close-support-modal" class="profile-close">X</button>
             <h3>Mensagem para suporte</h3>
             <p class="support-copy">Sua mensagem vai direto para o suporte do MagicLexis.</p>
+            <div id="support-thread" class="support-thread hidden-control"></div>
             <label class="support-field">
                 <span>Como foi sua experiência?</span>
                 <select id="support-topic">
@@ -884,6 +895,7 @@
         <div class="profile-card support-inbox-card">
             <button id="close-support-inbox-modal" class="profile-close">X</button>
             <h3>Mensagens de suporte</h3>
+            <p class="support-copy">Responda por aqui. O jogador vê sua resposta no botão de suporte dele.</p>
             <div id="support-inbox-list" class="support-inbox-list"></div>
             <div id="support-inbox-status" class="profile-status"></div>
         </div>
@@ -975,8 +987,6 @@
     <script type="module" src="script.js?v=20260421-opponent-theme-2"></script>
     </body>
 </html>
-
-
 
 
 

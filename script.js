@@ -23,6 +23,7 @@ import {
     orderBy,
     limit,
     increment,
+    arrayUnion,
     onSnapshot,
     serverTimestamp,
     runTransaction
@@ -1854,7 +1855,7 @@ function bindMenuMusicUnlock() {
 
 function hasBlockingGameplayOverlayOpen() {
     return !!document.querySelector(
-        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control), #support-modal:not(.hidden-control), #support-inbox-modal:not(.hidden-control), #arcane-streak-modal:not(.hidden-control), #public-player-modal:not(.hidden-control), #friends-modal:not(.hidden-control)'
+        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control), #visitor-name-modal:not(.hidden-control), #support-modal:not(.hidden-control), #support-inbox-modal:not(.hidden-control), #arcane-streak-modal:not(.hidden-control), #public-player-modal:not(.hidden-control), #friends-modal:not(.hidden-control)'
     );
 }
 
@@ -2581,6 +2582,8 @@ const TRAINING_FINAL_REWARD_LABELS = {
 };
 let activeUser = null;
 let activeUserDoc = null;
+let pendingVisitorName = '';
+let visitorNameResolver = null;
 for (let i = 0; i < DAILY_SHARE_TEMPLATES.length; i++) {
     DAILY_SHARE_TEMPLATES[i] = sanitizeGameText(DAILY_SHARE_TEMPLATES[i]);
 }
@@ -5376,6 +5379,7 @@ const hubSupportInboxBtn = document.getElementById('hub-support-inbox');
 const gameplaySupportBtn = document.getElementById('gameplay-support-btn');
 const supportModal = document.getElementById('support-modal');
 const closeSupportModalBtn = document.getElementById('close-support-modal');
+const supportThread = document.getElementById('support-thread');
 const supportTopicInput = document.getElementById('support-topic');
 const supportMessageInput = document.getElementById('support-message');
 const sendSupportMessageBtn = document.getElementById('send-support-message-btn');
@@ -5397,6 +5401,10 @@ const gatePasswordInput = document.getElementById('gate-password-input');
 const gateConfirmPasswordInput = document.getElementById('gate-confirm-password-input');
 const gateLoginBtn = document.getElementById('gate-login-email-btn');
 const gateRegisterBtn = document.getElementById('gate-register-email-btn');
+const visitorNameModal = document.getElementById('visitor-name-modal');
+const visitorNameInput = document.getElementById('visitor-name-input');
+const visitorNameSaveBtn = document.getElementById('visitor-name-save-btn');
+const visitorNameStatus = document.getElementById('visitor-name-status');
 const dailyHubCard = document.getElementById('daily-hub-card');
 const dailyHubMobile = document.getElementById('daily-hub-mobile');
 const dailyHubStatusDesktop = document.getElementById('daily-hub-status-desktop');
@@ -5875,6 +5883,41 @@ function setGateStatus(msg = '', isError = false) {
     gateStatus.style.color = isError ? 'var(--error)' : 'var(--warning)';
 }
 
+function setVisitorNameStatus(message = '', isError = false) {
+    if (!visitorNameStatus) return;
+    visitorNameStatus.innerText = sanitizeGameText(message);
+    visitorNameStatus.style.color = isError ? 'var(--error)' : 'var(--warning)';
+}
+
+function normalizeVisitorName(name = '') {
+    return sanitizeGameText(String(name || '').trim()).slice(0, 24);
+}
+
+function requestVisitorName() {
+    return new Promise((resolve) => {
+        visitorNameResolver = resolve;
+        if (visitorNameInput) visitorNameInput.value = pendingVisitorName || '';
+        setVisitorNameStatus('');
+        showControl(visitorNameModal, true);
+        window.setTimeout(() => visitorNameInput?.focus(), 50);
+    });
+}
+
+function submitVisitorNameChoice() {
+    const name = normalizeVisitorName(visitorNameInput?.value || '');
+    if (name.length < 2) {
+        setVisitorNameStatus('Escolha um nome com pelo menos 2 letras.', true);
+        visitorNameInput?.focus();
+        return;
+    }
+    pendingVisitorName = name;
+    showControl(visitorNameModal, false);
+    setVisitorNameStatus('');
+    const resolver = visitorNameResolver;
+    visitorNameResolver = null;
+    resolver?.(name);
+}
+
 function setSupportStatus(message = '', isError = false) {
     if (!supportStatus) return;
     supportStatus.innerText = sanitizeGameText(message);
@@ -5888,10 +5931,15 @@ function setSupportInboxStatus(message = '', isError = false) {
 }
 
 function openSupportModal(source = 'hub') {
+    if (isAdminUser()) {
+        openSupportInboxModal();
+        return;
+    }
     showControl(supportModal, true);
     showControl(userMenuDropdown, false);
     if (supportModal) supportModal.dataset.source = source;
     setSupportStatus('');
+    void loadMySupportConversation();
     if (supportMessageInput) supportMessageInput.focus();
 }
 
@@ -5910,13 +5958,20 @@ function getSupportSenderName() {
 }
 
 async function ensureSupportSenderSession() {
-    if (activeUser) return activeUser;
+    if (activeUser) {
+        if (activeUser.isAnonymous && !activeUserDoc?.name) {
+            activeUserDoc = await ensureVisitorDoc(activeUser);
+            syncTopUserUi(activeUser, activeUserDoc);
+        }
+        return activeUser;
+    }
+    pendingVisitorName = await requestVisitorName();
     if (!auth) return null;
     try {
         preserveCurrentViewOnAuthSync = true;
         const credential = await signInAnonymously(auth);
         activeUser = credential.user;
-        activeUserDoc = null;
+        activeUserDoc = await ensureVisitorDoc(activeUser);
         isUsingLocalDevSession = false;
         syncTopUserUi(activeUser, activeUserDoc);
         return activeUser;
@@ -5959,6 +6014,27 @@ function renderSupportInboxMessage(messageDoc) {
     return item;
 }
 
+function renderSupportThread(messages = [], container = supportThread) {
+    if (!container) return;
+    container.innerHTML = '';
+    messages.forEach((message) => {
+        const bubble = document.createElement('div');
+        bubble.className = `support-thread-message ${message.from === 'admin' ? 'is-admin' : 'is-player'}`;
+        const meta = document.createElement('small');
+        meta.innerText = message.from === 'admin' ? 'Suporte' : (message.senderName || 'Jogador');
+        const copy = document.createElement('p');
+        copy.innerText = message.text || '';
+        bubble.append(meta, copy);
+        container.appendChild(bubble);
+    });
+    showControl(container, messages.length > 0);
+}
+
+function getSupportThreadRef(uid = activeUser?.uid) {
+    if (!uid) return null;
+    return doc(db, 'supportConversations', ADMIN_UID, 'threads', uid);
+}
+
 async function openSupportInboxModal() {
     if (!isAdminUser()) return;
     showControl(supportInboxModal, true);
@@ -5972,20 +6048,96 @@ async function openSupportInboxModal() {
 
     try {
         const inboxQuery = query(
-            collection(db, 'supportMessages', ADMIN_UID, 'inbox'),
-            orderBy('createdAt', 'desc'),
+            collection(db, 'supportConversations', ADMIN_UID, 'threads'),
+            orderBy('updatedAt', 'desc'),
             limit(30)
         );
         const snap = await getDocs(inboxQuery);
         if (supportInboxList) {
             supportInboxList.innerHTML = '';
-            snap.forEach((messageDoc) => supportInboxList.appendChild(renderSupportInboxMessage(messageDoc)));
+            snap.forEach((threadDoc) => supportInboxList.appendChild(renderSupportConversation(threadDoc)));
         }
         setSupportInboxStatus(snap.empty ? 'Nenhuma mensagem ainda.' : '');
     } catch (err) {
         console.error('Erro ao carregar mensagens de suporte:', err);
         setSupportInboxStatus('Não foi possível carregar as mensagens.', true);
     }
+}
+
+function renderSupportConversation(threadDoc) {
+    const data = threadDoc.data() || {};
+    const item = document.createElement('article');
+    item.className = 'support-inbox-item support-conversation-item';
+
+    const meta = document.createElement('div');
+    meta.className = 'support-inbox-meta';
+    const sender = document.createElement('strong');
+    sender.innerText = data.senderName || 'Jogador';
+    const time = document.createElement('span');
+    time.innerText = formatSupportMessageDate(data.updatedAt || data.createdAt);
+    meta.append(sender, time);
+
+    const messagesWrap = document.createElement('div');
+    messagesWrap.className = 'support-thread support-thread-admin';
+    renderSupportThread(Array.isArray(data.messages) ? data.messages : [], messagesWrap);
+
+    const reply = document.createElement('textarea');
+    reply.className = 'support-admin-reply';
+    reply.rows = 2;
+    reply.maxLength = 900;
+    reply.placeholder = 'Responder usuário...';
+
+    const button = document.createElement('button');
+    button.className = 'profile-btn auth-main-btn';
+    button.type = 'button';
+    button.innerText = 'Responder';
+    button.addEventListener('click', async () => {
+        const text = String(reply.value || '').trim();
+        if (text.length < 2) return;
+        button.disabled = true;
+        try {
+            await sendSupportReply(threadDoc.id, text);
+            reply.value = '';
+            await openSupportInboxModal();
+        } finally {
+            button.disabled = false;
+        }
+    });
+
+    item.append(meta, messagesWrap, reply, button);
+    return item;
+}
+
+async function loadMySupportConversation() {
+    if (!db || !activeUser || isAdminUser()) {
+        renderSupportThread([]);
+        return null;
+    }
+    const threadRef = getSupportThreadRef(activeUser.uid);
+    const snap = threadRef ? await getDoc(threadRef) : null;
+    const messages = snap?.exists() ? (snap.data().messages || []) : [];
+    renderSupportThread(messages);
+    return snap?.exists() ? snap.data() : null;
+}
+
+async function sendSupportReply(threadUid, text) {
+    if (!db || !isAdminUser() || !threadUid) return;
+    const replyText = sanitizeGameText(String(text || '').trim()).slice(0, 900);
+    if (replyText.length < 2) return;
+    await setDoc(doc(db, 'supportConversations', ADMIN_UID, 'threads', threadUid), {
+        adminUid: ADMIN_UID,
+        status: 'answered',
+        lastMessage: replyText,
+        lastReplyAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        messages: arrayUnion({
+            from: 'admin',
+            senderUid: ADMIN_UID,
+            senderName: 'Suporte MagicLexis',
+            text: replyText,
+            createdAtMs: Date.now()
+        })
+    }, { merge: true });
 }
 
 async function sendSupportMessage() {
@@ -6008,26 +6160,37 @@ async function sendSupportMessage() {
     try {
         const sender = await ensureSupportSenderSession();
         if (!sender) throw new Error('support-auth-unavailable');
-        const messageRef = doc(collection(db, 'supportMessages', ADMIN_UID, 'inbox'));
-        await setDoc(messageRef, {
+        const senderName = getSupportSenderName();
+        const threadRef = getSupportThreadRef(sender.uid);
+        await setDoc(threadRef, {
             adminUid: ADMIN_UID,
+            threadUid: sender.uid,
             senderUid: sender.uid,
-            senderName: getSupportSenderName(),
+            senderName,
             senderEmail: sender.email || '',
             senderPhoto: activeUserDoc?.photo || sender.photoURL || '',
             senderIsAnonymous: !!sender.isAnonymous,
             topic,
-            message,
+            lastMessage: message,
             source: supportModal?.dataset.source || 'unknown',
             gameMode: currentGameMode || '',
             pagePath: window.location.pathname || '/',
             userAgent: String(navigator.userAgent || '').slice(0, 180),
             status: 'new',
-            createdAt: serverTimestamp()
-        });
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+            messages: arrayUnion({
+                from: 'user',
+                senderUid: sender.uid,
+                senderName,
+                topic,
+                text: message,
+                createdAtMs: Date.now()
+            })
+        }, { merge: true });
         if (supportMessageInput) supportMessageInput.value = '';
-        setSupportStatus('Mensagem enviada. Obrigado por ajudar o MagicLexis!');
-        window.setTimeout(closeSupportModal, 1200);
+        await loadMySupportConversation();
+        setSupportStatus('Mensagem enviada. Você pode continuar a conversa por aqui.');
     } catch (err) {
         console.error('Erro ao enviar mensagem de suporte:', err);
         setSupportStatus('Não foi possível enviar agora. Tente novamente.', true);
@@ -6057,7 +6220,7 @@ function activateLocalDevSession(mode = 'guest', email = '') {
     const normalizedEmail = String(email || '').trim();
     const displayName = mode === 'email'
         ? (normalizedEmail.split('@')[0] || 'Jogador')
-        : 'Visitante';
+        : (pendingVisitorName || 'Visitante');
 
     isUsingLocalDevSession = true;
     activeUser = {
@@ -6150,8 +6313,29 @@ function getModeVisitor(user) {
     return !!(user && user.isAnonymous);
 }
 
+async function ensureVisitorDoc(user) {
+    if (!db || !user || !user.isAnonymous) return null;
+    const userRef = doc(db, 'users', user.uid);
+    const snap = await getDoc(userRef);
+    const existing = snap.exists() ? snap.data() : {};
+    let visitorName = normalizeVisitorName(existing.name || pendingVisitorName || '');
+    if (!visitorName) visitorName = await requestVisitorName();
+    const visitorDoc = {
+        uid: user.uid,
+        name: visitorName,
+        photo: existing.photo || user.photoURL || DEFAULT_AVATAR,
+        isVisitor: true,
+        updatedAt: serverTimestamp()
+    };
+    if (!snap.exists()) visitorDoc.createdAt = serverTimestamp();
+    await setDoc(userRef, visitorDoc, { merge: true });
+    pendingVisitorName = visitorName;
+    return { ...existing, ...visitorDoc };
+}
+
 async function ensureUserDoc(user) {
-    if (!db || !user || user.isAnonymous) return null;
+    if (!db || !user) return null;
+    if (user.isAnonymous) return ensureVisitorDoc(user);
     const userRef = doc(db, 'users', user.uid);
     const snap = await getDoc(userRef);
     const defaultCampaignProgress = getDefaultCampaignProgress();
@@ -6211,7 +6395,7 @@ function syncTopUserUi(user, userDoc) {
     const streakData = normalizeArcaneStreakData(userDoc);
 
     const displayName = isLogged
-        ? (isAnon ? 'Visitante' : (userDoc?.name || user.displayName || user.email || 'Jogador'))
+        ? (isAnon ? (userDoc?.name || pendingVisitorName || 'Visitante') : (userDoc?.name || user.displayName || user.email || 'Jogador'))
         : 'Visitante';
 
     const displayPhoto = isLogged
@@ -6235,6 +6419,7 @@ function syncTopUserUi(user, userDoc) {
 
     const hubVisible = !hub.classList.contains('hidden-control') && hub.style.display !== 'none';
     showControl(hubLogoutBtn, isLogged && hubVisible);
+    showControl(hubSupportCard, !isAdminUser(user) && hubVisible);
     showControl(hubSupportInboxBtn, isAdminUser(user) && hubVisible);
     if (profilePoints) {
         const pts = isAnon ? 0 : (userDoc?.points || 0);
@@ -6879,8 +7064,11 @@ async function authWithGoogle() {
 
 
 async function authAnonymously() {
+    setGateStatus('Escolha seu nome de visitante.');
+    const visitorName = await requestVisitorName();
     if (!auth) {
         if (IS_LOCAL_DEV) {
+            pendingVisitorName = visitorName;
             activateLocalDevSession('guest');
             return;
         }
@@ -6888,6 +7076,8 @@ async function authAnonymously() {
         return;
     }
     try {
+        pendingVisitorName = visitorName;
+        setGateStatus('Entrando como visitante...');
         await signInAnonymously(auth);
         setStatus('Entrou como visitante.');
         setGateStatus('Entrou como visitante.');
@@ -7070,6 +7260,12 @@ function bindAuthUiEvents() {
         e.preventDefault();
         sendSupportMessage();
     });
+    visitorNameSaveBtn?.addEventListener('click', submitVisitorNameChoice);
+    visitorNameInput?.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        submitVisitorNameChoice();
+    });
     closeArcaneStreakModalBtn?.addEventListener('click', closeArcaneStreakModal);
     arcaneStreakCloseBtn?.addEventListener('click', closeArcaneStreakModal);
     arcaneStreakShareBtn?.addEventListener('click', shareArcaneStreak);
@@ -7160,53 +7356,10 @@ function bindAuthUiEvents() {
         syncRefreshLockState();
     });
 
-    document.getElementById('gate-google-btn')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        authWithGoogle();
-    });
-    document.getElementById('gate-anon-btn')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        authAnonymously();
-    });
-    document.getElementById('gate-login-email-btn')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (gateAuthMode === 'register') {
-            setGateAuthMode('login');
-            return;
-        }
-        authWithEmail(false, 'gate-email-input', 'gate-password-input');
-    });
     hubDailyBtnDesktop?.addEventListener('click', startDailyModeFromHub);
     hubDailyBtnMobile?.addEventListener('click', startDailyModeFromHub);
     closeDailyResultModalBtn?.addEventListener('click', () => showControl(dailyResultModal, false));
     dailyShareBtn?.addEventListener('click', shareDailyResult);
-    document.getElementById('gate-register-email-btn')?.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (gateAuthMode !== 'register') {
-            setGateAuthMode('register');
-            return;
-        }
-        authWithEmail(true, 'gate-email-input', 'gate-password-input');
-    });
-
-    gateEmailInput?.addEventListener('keydown', (e) => {
-        if (e.key !== 'Enter') return;
-        e.preventDefault();
-        authWithEmail(gateAuthMode === 'register', 'gate-email-input', 'gate-password-input');
-    });
-
-    gatePasswordInput?.addEventListener('keydown', (e) => {
-        if (e.key !== 'Enter') return;
-        e.preventDefault();
-        authWithEmail(gateAuthMode === 'register', 'gate-email-input', 'gate-password-input');
-    });
-
-    gateConfirmPasswordInput?.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && gateAuthMode === 'register') {
-            e.preventDefault();
-            authWithEmail(true, 'gate-email-input', 'gate-password-input');
-        }
-    });
 
     document.getElementById('hub-logout-btn')?.addEventListener('click', logoutUser);
     document.getElementById('user-logout-top')?.addEventListener('click', logoutUser);
@@ -7467,6 +7620,52 @@ function initInitialLoadingScreen() {
     });
 }
 
+function bindAuthGateEvents() {
+    document.getElementById('gate-google-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        authWithGoogle();
+    });
+    document.getElementById('gate-anon-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        authAnonymously();
+    });
+    document.getElementById('gate-login-email-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (gateAuthMode === 'register') {
+            setGateAuthMode('login');
+            return;
+        }
+        authWithEmail(false, 'gate-email-input', 'gate-password-input');
+    });
+    document.getElementById('gate-register-email-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (gateAuthMode !== 'register') {
+            setGateAuthMode('register');
+            return;
+        }
+        authWithEmail(true, 'gate-email-input', 'gate-password-input');
+    });
+
+    gateEmailInput?.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        authWithEmail(gateAuthMode === 'register', 'gate-email-input', 'gate-password-input');
+    });
+
+    gatePasswordInput?.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        authWithEmail(gateAuthMode === 'register', 'gate-email-input', 'gate-password-input');
+    });
+
+    gateConfirmPasswordInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && gateAuthMode === 'register') {
+            e.preventDefault();
+            authWithEmail(true, 'gate-email-input', 'gate-password-input');
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     applyTheme(loadThemePreference(), { persist: false });
     initInitialLoadingScreen();
@@ -7475,7 +7674,12 @@ document.addEventListener('DOMContentLoaded', () => {
     loadAudioSettings();
     applySfxSettingsToAudioGraph();
     applyAudioSettings();
-    bindAuthUiEvents();
+    bindAuthGateEvents();
+    try {
+        bindAuthUiEvents();
+    } catch (err) {
+        console.error('Falha ao ligar eventos da interface:', err);
+    }
     setGateAuthMode('login');
     syncRefreshLockState();
     initFirebase();
