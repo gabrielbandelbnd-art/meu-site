@@ -6115,16 +6115,16 @@ function renderPublicPlayerStats(playerDoc = {}) {
     const campaign = normalizeCampaignProgress(playerDoc.campaignProgress);
     const matchesPlayed = getOnlineMatchesPlayed(playerDoc);
     const stats = [
-        ['✦', 'Pontos', String(playerDoc.points || 0)],
-        ['🔥', 'Chama', `${streak} dia(s)`],
-        ['♜', 'Campanha', `${campaign.completedLevels.length} fase(s)`],
-        ['⚔', 'Online', `${matchesPlayed} partida(s)`],
-        ['♛', 'Amigos', String(Object.keys(normalizeSocialMap(playerDoc.friends)).length)]
+        ['points', '✦', 'Pontos', String(playerDoc.points || 0)],
+        ['friends', '♛', 'Amigos', String(Object.keys(normalizeSocialMap(playerDoc.friends)).length)],
+        ['campaign', '♜', 'Campanha', `${campaign.completedLevels.length} fase(s)`],
+        ['online', '⚔', 'Online', `${matchesPlayed} partida(s)`],
+        ['streak', '🔥', 'Chama', `${streak} dia(s)`]
     ];
 
-    stats.forEach(([icon, label, value]) => {
+    stats.forEach(([type, icon, label, value]) => {
         const item = document.createElement('div');
-        item.className = 'public-player-stat';
+        item.className = `public-player-stat public-player-stat-${type}`;
         const iconEl = document.createElement('strong');
         iconEl.className = 'public-player-stat-icon';
         iconEl.innerText = icon;
@@ -6151,7 +6151,7 @@ function syncFriendInviteButton() {
         available: 'Enviar convite de amizade'
     };
     sendFriendInviteBtn.innerText = labels[status] || labels.available;
-    sendFriendInviteBtn.disabled = status === 'self' || status === 'disabled' || status === 'friends' || status === 'sent';
+    sendFriendInviteBtn.disabled = status === 'self' || status === 'friends' || status === 'sent';
 }
 
 async function openPublicPlayerProfile(player = null) {
@@ -6891,6 +6891,12 @@ function bindAuthUiEvents() {
     closeFriendsModalBtn?.addEventListener('click', closeFriendsModal);
     sendFriendInviteBtn?.addEventListener('click', async () => {
         const status = getFriendshipStatus(selectedPublicPlayer?.uid);
+        if (status === 'disabled') {
+            closePublicPlayerProfile();
+            showAuthGate(true);
+            setGateStatus('Faça login para adicionar amigos.');
+            return;
+        }
         if (status === 'incoming') {
             await respondFriendInvite(selectedPublicPlayer.uid, true);
             syncFriendInviteButton();
