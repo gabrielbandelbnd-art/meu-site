@@ -1854,7 +1854,7 @@ function bindMenuMusicUnlock() {
 
 function hasBlockingGameplayOverlayOpen() {
     return !!document.querySelector(
-        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control), #arcane-streak-modal:not(.hidden-control), #public-player-modal:not(.hidden-control), #friends-modal:not(.hidden-control)'
+        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control), #support-modal:not(.hidden-control), #support-inbox-modal:not(.hidden-control), #arcane-streak-modal:not(.hidden-control), #public-player-modal:not(.hidden-control), #friends-modal:not(.hidden-control)'
     );
 }
 
@@ -5371,6 +5371,19 @@ const audioMusicVolumeValue = document.getElementById('audio-music-volume-value'
 const audioSfxEnabledInput = document.getElementById('audio-sfx-enabled');
 const audioSfxVolumeInput = document.getElementById('audio-sfx-volume');
 const audioSfxVolumeValue = document.getElementById('audio-sfx-volume-value');
+const hubSupportCard = document.getElementById('hub-support-card');
+const hubSupportInboxBtn = document.getElementById('hub-support-inbox');
+const gameplaySupportBtn = document.getElementById('gameplay-support-btn');
+const supportModal = document.getElementById('support-modal');
+const closeSupportModalBtn = document.getElementById('close-support-modal');
+const supportTopicInput = document.getElementById('support-topic');
+const supportMessageInput = document.getElementById('support-message');
+const sendSupportMessageBtn = document.getElementById('send-support-message-btn');
+const supportStatus = document.getElementById('support-status');
+const supportInboxModal = document.getElementById('support-inbox-modal');
+const closeSupportInboxModalBtn = document.getElementById('close-support-inbox-modal');
+const supportInboxList = document.getElementById('support-inbox-list');
+const supportInboxStatus = document.getElementById('support-inbox-status');
 const userMenu = document.getElementById('user-menu');
 const userMenuDropdown = document.getElementById('user-menu-dropdown');
 const userAvatarTop = document.getElementById('user-avatar-top');
@@ -5862,6 +5875,167 @@ function setGateStatus(msg = '', isError = false) {
     gateStatus.style.color = isError ? 'var(--error)' : 'var(--warning)';
 }
 
+function setSupportStatus(message = '', isError = false) {
+    if (!supportStatus) return;
+    supportStatus.innerText = sanitizeGameText(message);
+    supportStatus.style.color = isError ? 'var(--error)' : 'var(--warning)';
+}
+
+function setSupportInboxStatus(message = '', isError = false) {
+    if (!supportInboxStatus) return;
+    supportInboxStatus.innerText = sanitizeGameText(message);
+    supportInboxStatus.style.color = isError ? 'var(--error)' : 'var(--warning)';
+}
+
+function openSupportModal(source = 'hub') {
+    showControl(supportModal, true);
+    showControl(userMenuDropdown, false);
+    if (supportModal) supportModal.dataset.source = source;
+    setSupportStatus('');
+    if (supportMessageInput) supportMessageInput.focus();
+}
+
+function closeSupportModal() {
+    showControl(supportModal, false);
+    setSupportStatus('');
+}
+
+function closeSupportInboxModal() {
+    showControl(supportInboxModal, false);
+    setSupportInboxStatus('');
+}
+
+function getSupportSenderName() {
+    return activeUserDoc?.name || activeUser?.displayName || activeUser?.email?.split('@')[0] || 'Visitante';
+}
+
+async function ensureSupportSenderSession() {
+    if (activeUser) return activeUser;
+    if (!auth) return null;
+    try {
+        preserveCurrentViewOnAuthSync = true;
+        const credential = await signInAnonymously(auth);
+        activeUser = credential.user;
+        activeUserDoc = null;
+        isUsingLocalDevSession = false;
+        syncTopUserUi(activeUser, activeUserDoc);
+        return activeUser;
+    } finally {
+        preserveCurrentViewOnAuthSync = false;
+    }
+}
+
+function formatSupportMessageDate(value) {
+    const date = value?.toDate?.() || null;
+    if (!date) return 'Agora';
+    return date.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+function renderSupportInboxMessage(messageDoc) {
+    const data = messageDoc.data() || {};
+    const item = document.createElement('article');
+    item.className = 'support-inbox-item';
+
+    const meta = document.createElement('div');
+    meta.className = 'support-inbox-meta';
+    const sender = document.createElement('strong');
+    sender.innerText = data.senderName || 'Jogador';
+    const time = document.createElement('span');
+    time.innerText = formatSupportMessageDate(data.createdAt);
+    meta.append(sender, time);
+
+    const topic = document.createElement('small');
+    topic.innerText = data.topic || 'feedback';
+
+    const copy = document.createElement('p');
+    copy.innerText = data.message || '';
+
+    item.append(meta, topic, copy);
+    return item;
+}
+
+async function openSupportInboxModal() {
+    if (!isAdminUser()) return;
+    showControl(supportInboxModal, true);
+    showControl(userMenuDropdown, false);
+    if (supportInboxList) supportInboxList.innerHTML = '';
+    if (!db) {
+        setSupportInboxStatus('Firestore indisponível agora.', true);
+        return;
+    }
+    setSupportInboxStatus('Carregando mensagens...');
+
+    try {
+        const inboxQuery = query(
+            collection(db, 'supportMessages', ADMIN_UID, 'inbox'),
+            orderBy('createdAt', 'desc'),
+            limit(30)
+        );
+        const snap = await getDocs(inboxQuery);
+        if (supportInboxList) {
+            supportInboxList.innerHTML = '';
+            snap.forEach((messageDoc) => supportInboxList.appendChild(renderSupportInboxMessage(messageDoc)));
+        }
+        setSupportInboxStatus(snap.empty ? 'Nenhuma mensagem ainda.' : '');
+    } catch (err) {
+        console.error('Erro ao carregar mensagens de suporte:', err);
+        setSupportInboxStatus('Não foi possível carregar as mensagens.', true);
+    }
+}
+
+async function sendSupportMessage() {
+    if (!db) {
+        setSupportStatus('Suporte indisponível agora. Tente novamente em instantes.', true);
+        return;
+    }
+
+    const message = String(supportMessageInput?.value || '').trim();
+    const topic = String(supportTopicInput?.value || 'feedback');
+    if (message.length < 3) {
+        setSupportStatus('Escreva uma mensagem um pouco maior.', true);
+        supportMessageInput?.focus();
+        return;
+    }
+
+    if (sendSupportMessageBtn) sendSupportMessageBtn.disabled = true;
+    setSupportStatus('Enviando mensagem...');
+
+    try {
+        const sender = await ensureSupportSenderSession();
+        if (!sender) throw new Error('support-auth-unavailable');
+        const messageRef = doc(collection(db, 'supportMessages', ADMIN_UID, 'inbox'));
+        await setDoc(messageRef, {
+            adminUid: ADMIN_UID,
+            senderUid: sender.uid,
+            senderName: getSupportSenderName(),
+            senderEmail: sender.email || '',
+            senderPhoto: activeUserDoc?.photo || sender.photoURL || '',
+            senderIsAnonymous: !!sender.isAnonymous,
+            topic,
+            message,
+            source: supportModal?.dataset.source || 'unknown',
+            gameMode: currentGameMode || '',
+            pagePath: window.location.pathname || '/',
+            userAgent: String(navigator.userAgent || '').slice(0, 180),
+            status: 'new',
+            createdAt: serverTimestamp()
+        });
+        if (supportMessageInput) supportMessageInput.value = '';
+        setSupportStatus('Mensagem enviada. Obrigado por ajudar o MagicLexis!');
+        window.setTimeout(closeSupportModal, 1200);
+    } catch (err) {
+        console.error('Erro ao enviar mensagem de suporte:', err);
+        setSupportStatus('Não foi possível enviar agora. Tente novamente.', true);
+    } finally {
+        if (sendSupportMessageBtn) sendSupportMessageBtn.disabled = false;
+    }
+}
+
 function updateAuthProviderLabels() {
     const lang = (document.documentElement.lang || 'pt').toLowerCase();
     const locale = lang.startsWith('en') ? 'en' : (lang.startsWith('es') ? 'es' : 'pt');
@@ -6061,6 +6235,7 @@ function syncTopUserUi(user, userDoc) {
 
     const hubVisible = !hub.classList.contains('hidden-control') && hub.style.display !== 'none';
     showControl(hubLogoutBtn, isLogged && hubVisible);
+    showControl(hubSupportInboxBtn, isAdminUser(user) && hubVisible);
     if (profilePoints) {
         const pts = isAnon ? 0 : (userDoc?.points || 0);
         profilePoints.innerText = `Pontos: ${pts}`;
@@ -6884,6 +7059,17 @@ async function loadRanking() {
 function bindAuthUiEvents() {
     document.getElementById('close-profile-modal')?.addEventListener('click', closeProfileModal);
     closeAudioSettingsModalBtn?.addEventListener('click', closeAudioSettingsModal);
+    closeSupportModalBtn?.addEventListener('click', closeSupportModal);
+    closeSupportInboxModalBtn?.addEventListener('click', closeSupportInboxModal);
+    hubSupportCard?.addEventListener('click', () => openSupportModal('hub'));
+    hubSupportInboxBtn?.addEventListener('click', openSupportInboxModal);
+    gameplaySupportBtn?.addEventListener('click', () => openSupportModal('gameplay'));
+    sendSupportMessageBtn?.addEventListener('click', sendSupportMessage);
+    supportMessageInput?.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' || !e.ctrlKey) return;
+        e.preventDefault();
+        sendSupportMessage();
+    });
     closeArcaneStreakModalBtn?.addEventListener('click', closeArcaneStreakModal);
     arcaneStreakCloseBtn?.addEventListener('click', closeArcaneStreakModal);
     arcaneStreakShareBtn?.addEventListener('click', shareArcaneStreak);
@@ -7072,6 +7258,8 @@ function bindAuthUiEvents() {
         if (!userMenu?.contains(e.target)) showControl(userMenuDropdown, false);
         if (e.target === profileModal) closeProfileModal();
         if (e.target === audioSettingsModal) closeAudioSettingsModal();
+        if (e.target === supportModal) closeSupportModal();
+        if (e.target === supportInboxModal) closeSupportInboxModal();
         if (e.target === arcaneStreakModal) closeArcaneStreakModal();
         if (e.target === publicPlayerModal) closePublicPlayerProfile();
         if (e.target === friendsModal) closeFriendsModal();

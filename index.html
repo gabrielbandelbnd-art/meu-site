@@ -91,7 +91,16 @@
             <button class="hub-btn" id="hub-friends">🤝 Amigos</button>
             <button class="hub-btn" id="hub-tournaments">🏆 Torneios</button>
             <button class="hub-btn" id="hub-ranking">📊 Ranking</button>
+            <button class="hub-btn hidden-control" id="hub-support-inbox">💬 Suporte</button>
         </div>
+
+        <button id="hub-support-card" class="support-hub-card" type="button">
+            <span class="support-hub-icon">💬</span>
+            <span>
+                <strong>Gostou do jogo?</strong>
+                <small>Conte se está curtindo ou se teve dificuldade para jogar.</small>
+            </span>
+        </button>
 
 
         <div id="daily-hub-mobile" class="daily-hub-mobile">
@@ -329,6 +338,7 @@
             </div>
         </aside>
         <button id="fullscreen-toggle-btn" class="fullscreen-toggle-btn" type="button" aria-label="Entrar em tela cheia" aria-pressed="false" title="Tela cheia">⛶</button>
+        <button id="gameplay-support-btn" class="gameplay-support-btn" type="button" aria-label="Enviar mensagem ao suporte" title="Suporte">💬</button>
         <button id="opponent-profile-chip" class="opponent-profile-chip hidden-control" type="button">
             <img id="opponent-profile-chip-avatar" class="opponent-profile-chip-avatar" alt="Avatar do oponente">
             <span>
@@ -847,6 +857,38 @@
         </div>
     </div>
 
+    <div id="support-modal" class="profile-modal hidden-control">
+        <div class="profile-card support-card">
+            <button id="close-support-modal" class="profile-close">X</button>
+            <h3>Mensagem para suporte</h3>
+            <p class="support-copy">Sua mensagem vai direto para o suporte do MagicLexis.</p>
+            <label class="support-field">
+                <span>Como foi sua experiência?</span>
+                <select id="support-topic">
+                    <option value="feedback">Gostei do jogo</option>
+                    <option value="difficulty">Estou com dificuldade para jogar</option>
+                    <option value="bug">Encontrei um problema</option>
+                    <option value="idea">Tenho uma ideia</option>
+                </select>
+            </label>
+            <label class="support-field">
+                <span>Mensagem</span>
+                <textarea id="support-message" maxlength="900" rows="5" placeholder="Escreva aqui o que aconteceu ou o que você achou do jogo."></textarea>
+            </label>
+            <button id="send-support-message-btn" class="profile-btn auth-main-btn">Enviar mensagem</button>
+            <div id="support-status" class="profile-status"></div>
+        </div>
+    </div>
+
+    <div id="support-inbox-modal" class="profile-modal hidden-control">
+        <div class="profile-card support-inbox-card">
+            <button id="close-support-inbox-modal" class="profile-close">X</button>
+            <h3>Mensagens de suporte</h3>
+            <div id="support-inbox-list" class="support-inbox-list"></div>
+            <div id="support-inbox-status" class="profile-status"></div>
+        </div>
+    </div>
+
 
     <div id="public-player-modal" class="profile-modal hidden-control">
         <div class="profile-card public-player-card">
@@ -933,8 +975,6 @@
     <script type="module" src="script.js?v=20260421-opponent-theme-2"></script>
     </body>
 </html>
-
-
 
 
 

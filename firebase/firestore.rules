@@ -10,6 +10,26 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == uid;
     }
 
+    function isAdmin() {
+      return isSignedIn() && request.auth.uid == 'DxTnrg4cG4TWHK6qkbSZudfzJgh2';
+    }
+
+    function isSupportInboxOwner(adminUid) {
+      return adminUid == 'DxTnrg4cG4TWHK6qkbSZudfzJgh2';
+    }
+
+    function isValidSupportMessage(adminUid) {
+      return isSignedIn()
+        && isSupportInboxOwner(adminUid)
+        && request.resource.data.adminUid == adminUid
+        && request.resource.data.senderUid == request.auth.uid
+        && request.resource.data.message is string
+        && request.resource.data.message.size() >= 3
+        && request.resource.data.message.size() <= 900
+        && request.resource.data.topic in ['feedback', 'difficulty', 'bug', 'idea']
+        && request.resource.data.status == 'new';
+    }
+
     function roomHasPlayer(data, uid) {
       return uid != null && (
         data.players.player1.uid == uid ||
@@ -163,6 +183,11 @@ service cloud.firestore {
       allow list: if false;
       allow create, update: if isSignedIn();
       allow delete: if false;
+    }
+
+    match /supportMessages/{adminUid}/inbox/{messageId} {
+      allow create: if isValidSupportMessage(adminUid);
+      allow get, list, update, delete: if isAdmin() && isSupportInboxOwner(adminUid);
     }
 
     match /{document=**} {
