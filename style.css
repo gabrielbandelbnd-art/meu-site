@@ -2485,6 +2485,7 @@ body.training-mode-active .training-hand {
 #profile-modal .profile-card,
 #audio-settings-modal .profile-card,
 #visitor-name-modal .profile-card,
+#daily-onboarding-modal .profile-card,
 #support-modal .profile-card,
 #support-inbox-modal .profile-card,
 #public-player-modal .profile-card,
@@ -2617,6 +2618,7 @@ body.training-mode-active .training-hand {
     #profile-modal,
     #audio-settings-modal,
     #visitor-name-modal,
+    #daily-onboarding-modal,
     #support-modal,
     #support-inbox-modal {
         align-items: flex-start;
@@ -2627,6 +2629,7 @@ body.training-mode-active .training-hand {
     #profile-modal .profile-card,
     #audio-settings-modal .profile-card,
     #visitor-name-modal .profile-card,
+    #daily-onboarding-modal .profile-card,
     #support-modal .profile-card,
     #support-inbox-modal .profile-card {
         max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 24px);
@@ -4020,6 +4023,32 @@ body.training-mode-active .training-hand {
     margin: 10px 0;
     color: var(--success);
     font-weight: 700;
+}
+
+.daily-onboarding-card {
+    width: min(92vw, 480px);
+}
+
+.daily-onboarding-card p {
+    margin: 0 0 18px;
+    color: var(--text-dim);
+    line-height: 1.45;
+}
+
+.daily-onboarding-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.daily-onboarding-actions .profile-btn {
+    min-height: 46px;
+}
+
+@media (max-width: 520px) {
+    .daily-onboarding-actions {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 800px) {

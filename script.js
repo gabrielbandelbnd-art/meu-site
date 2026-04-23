@@ -479,6 +479,10 @@ const campaignCompleteNextLevel = document.getElementById('campaign-complete-nex
 const campaignCompleteFinalCopy = document.getElementById('campaign-complete-final-copy');
 const campaignCompleteNextBtn = document.getElementById('campaign-complete-next-btn');
 const campaignCompleteBooksBtn = document.getElementById('campaign-complete-books-btn');
+const dailyOnboardingModal = document.getElementById('daily-onboarding-modal');
+const closeDailyOnboardingModalBtn = document.getElementById('close-daily-onboarding-modal');
+const dailyOnboardingCampaignBtn = document.getElementById('daily-onboarding-campaign-btn');
+const dailyOnboardingDailyBtn = document.getElementById('daily-onboarding-daily-btn');
 const onlineResultModal = document.getElementById('online-result-modal');
 const closeOnlineResultModalBtn = document.getElementById('close-online-result-modal');
 const journeyFinaleModal = document.getElementById('journey-finale-modal');
@@ -546,6 +550,8 @@ let currentCampaignLevel = null;
 let campaignProgress = null;
 let highlightedCampaignLevel = null;
 let pendingCampaignCompletion = null;
+let pendingOnboardingAction = null;
+let pendingTrainingCompletionAction = null;
 let isValidationInProgress = false;
 let isGameplayTransitionLocked = false;
 let onlineRoomUnsubscribe = null;
@@ -857,7 +863,11 @@ function pickRandomCampaignChallenge(wordLength) {
     return filteredPool[randIdx] || pool[0];
 }
 
-function startRandomChallenge() {
+function startRandomChallenge(options = {}) {
+    if (!options.skipOnboarding && !runAfterFirstTutorial(() => startRandomChallenge({ skipOnboarding: true }), RANDOM_MODE)) {
+        return;
+    }
+
     currentGameMode = RANDOM_MODE;
     currentCampaignLevel = null;
     resetDailySession();
@@ -874,7 +884,11 @@ function startRandomChallenge() {
     });
 }
 
-function startCampaignLevel(level) {
+function startCampaignLevel(level, options = {}) {
+    if (!options.skipOnboarding && !runAfterFirstTutorial(() => startCampaignLevel(level, { skipOnboarding: true }), CAMPAIGN_MODE)) {
+        return;
+    }
+
     const challenge = pickRandomCampaignChallenge(level);
     if (!challenge) {
         showFloatingMessage('Esse livro ainda nao possui palavras cadastradas.', 2600);
@@ -1855,7 +1869,7 @@ function bindMenuMusicUnlock() {
 
 function hasBlockingGameplayOverlayOpen() {
     return !!document.querySelector(
-        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control), #visitor-name-modal:not(.hidden-control), #support-modal:not(.hidden-control), #support-inbox-modal:not(.hidden-control), #arcane-streak-modal:not(.hidden-control), #public-player-modal:not(.hidden-control), #friends-modal:not(.hidden-control)'
+        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #daily-onboarding-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control), #visitor-name-modal:not(.hidden-control), #support-modal:not(.hidden-control), #support-inbox-modal:not(.hidden-control), #arcane-streak-modal:not(.hidden-control), #public-player-modal:not(.hidden-control), #friends-modal:not(.hidden-control)'
     );
 }
 
@@ -2311,7 +2325,13 @@ function initBookTutorial() {
     });
 
 
-    skipBtn.addEventListener('click', () => goToPage(tutorialPageCount - 1));
+    skipBtn.addEventListener('click', () => {
+        if (pendingOnboardingAction) {
+            finishTutorialAndContinue();
+            return;
+        }
+        goToPage(tutorialPageCount - 1);
+    });
     backBtn.addEventListener('click', () => {
         if (welcomeScreen) welcomeScreen.style.display = 'none';
         document.getElementById('app-container')?.classList.add('hidden-app');
@@ -2357,9 +2377,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // LOGICA DO BOTAO DE BOAS-VINDAS
 document.getElementById('start-game-btn').onclick = () => {
-    if (!modeSelector?.value) return;
-    markTutorialSeen();
-    beginSelectedGameFlow();
+    if (!pendingOnboardingAction && !modeSelector?.value) return;
+    finishTutorialAndContinue();
 
     if (audioCtx.state === 'suspended') audioCtx.resume();
     syncTopUserUi(activeUser, activeUserDoc);
@@ -2750,6 +2769,8 @@ function updateTrainingUi() {
 }
 
 function finishTrainingMode() {
+    const completionAction = pendingTrainingCompletionAction;
+    pendingTrainingCompletionAction = null;
     trainingState = null;
     clearTrainingTransitionTimeout();
     hideTrainingPanel();
@@ -2759,6 +2780,10 @@ function finishTrainingMode() {
         button.classList.remove('training-target');
     });
     showFloatingMessage('Treinamento concluído! Sua magia está fluindo. ✨', 2400);
+    if (typeof completionAction === 'function') {
+        completionAction();
+        return;
+    }
     void showHubScreenFromGame();
 }
 
@@ -2948,6 +2973,8 @@ async function handleTrainingValidation(word) {
 }
 
 const TUTORIAL_SEEN_STORAGE_KEY = 'magiclexis_tutorial_seen_v1';
+const DAILY_ONBOARDING_SEEN_STORAGE_KEY = 'magiclexis_daily_onboarding_seen_v1';
+const TRAINING_ONBOARDING_SEEN_STORAGE_KEY = 'magiclexis_training_onboarding_seen_v1';
 
 function getTutorialSeenKey() {
     const uid = activeUser?.uid || 'guest';
@@ -2968,6 +2995,117 @@ function markTutorialSeen() {
     } catch (err) {
         console.log('Falha ao salvar estado de tutorial:', err);
     }
+}
+
+function getDailyOnboardingSeenKey() {
+    const uid = activeUser?.uid || 'guest';
+    return `${DAILY_ONBOARDING_SEEN_STORAGE_KEY}:${uid}`;
+}
+
+function hasSeenDailyOnboarding() {
+    try {
+        return localStorage.getItem(getDailyOnboardingSeenKey()) === '1';
+    } catch (err) {
+        return false;
+    }
+}
+
+function markDailyOnboardingSeen() {
+    try {
+        localStorage.setItem(getDailyOnboardingSeenKey(), '1');
+    } catch (err) {
+        console.log('Falha ao salvar estado da Palavra do Dia:', err);
+    }
+}
+
+function getTrainingOnboardingSeenKey() {
+    const uid = activeUser?.uid || 'guest';
+    return `${TRAINING_ONBOARDING_SEEN_STORAGE_KEY}:${uid}`;
+}
+
+function hasSeenTrainingOnboarding() {
+    try {
+        return localStorage.getItem(getTrainingOnboardingSeenKey()) === '1';
+    } catch (err) {
+        return false;
+    }
+}
+
+function markTrainingOnboardingSeen() {
+    try {
+        localStorage.setItem(getTrainingOnboardingSeenKey(), '1');
+    } catch (err) {
+        console.log('Falha ao salvar estado de treinamento:', err);
+    }
+}
+
+function runTrainingOnboardingBefore(action) {
+    if (hasSeenTrainingOnboarding()) {
+        action();
+        return;
+    }
+
+    pendingTrainingCompletionAction = () => {
+        markTrainingOnboardingSeen();
+        action();
+    };
+    startTrainingMode();
+}
+
+function runAfterFirstTutorial(action, preferredMode = CAMPAIGN_MODE) {
+    if (hasSeenTutorial()) {
+        runTrainingOnboardingBefore(action);
+        return true;
+    }
+
+    pendingOnboardingAction = action;
+    if (modeSelector && preferredMode !== DAILY_MODE) {
+        modeSelector.value = preferredMode;
+        syncModeSelectionUi();
+    }
+    openWelcomeTutorial(false);
+    if (startGameBtn) {
+        startGameBtn.disabled = false;
+        startGameBtn.setAttribute('aria-disabled', 'false');
+    }
+    return false;
+}
+
+function finishTutorialAndContinue() {
+    markTutorialSeen();
+    const action = pendingOnboardingAction;
+    pendingOnboardingAction = null;
+    if (typeof action === 'function') {
+        runTrainingOnboardingBefore(action);
+        return;
+    }
+    runTrainingOnboardingBefore(beginSelectedGameFlow);
+}
+
+function closeDailyOnboardingModal() {
+    showControl(dailyOnboardingModal, false);
+}
+
+function openDailyOnboardingModal() {
+    showControl(dailyOnboardingModal, true);
+}
+
+function chooseDailyOnboardingCampaign() {
+    markDailyOnboardingSeen();
+    closeDailyOnboardingModal();
+    runAfterFirstTutorial(
+        () => startCampaignLevel(CAMPAIGN_LEVEL_START, { skipOnboarding: true }),
+        CAMPAIGN_MODE
+    );
+}
+
+function chooseDailyOnboardingDaily() {
+    markDailyOnboardingSeen();
+    closeDailyOnboardingModal();
+    runAfterFirstTutorial(
+        () => startDailyModeDirectFromHub(),
+        DAILY_MODE
+    );
 }
 
 function getCampaignProgressStorageKey() {
@@ -5840,6 +5978,20 @@ async function startDailyModeFromHub() {
         return;
     }
 
+    if (!hasSeenDailyOnboarding()) {
+        openDailyOnboardingModal();
+        return;
+    }
+
+    runAfterFirstTutorial(() => startDailyModeDirectFromHub(), DAILY_MODE);
+}
+
+async function startDailyModeDirectFromHub() {
+    if (!activeUser) {
+        setDailyHubStatus('Fa\u00e7a login para jogar.', true);
+        return;
+    }
+
     try {
         const canUsePreview = !!dailyHubPreviewRun;
         const data = canUsePreview ? dailyHubPreviewRun : await callDailyFunction('startDailyRun', {});
@@ -7327,6 +7479,9 @@ function bindAuthUiEvents() {
         goToCampaignBooks(pendingCampaignCompletion?.nextLevel || pendingCampaignCompletion?.currentLevel || null);
     });
     campaignCompleteNextBtn?.addEventListener('click', continueToNextCampaignBook);
+    closeDailyOnboardingModalBtn?.addEventListener('click', closeDailyOnboardingModal);
+    dailyOnboardingCampaignBtn?.addEventListener('click', chooseDailyOnboardingCampaign);
+    dailyOnboardingDailyBtn?.addEventListener('click', chooseDailyOnboardingDaily);
     journeyFinaleReplayBtn?.addEventListener('click', restartCampaignJourney);
     journeyFinaleMenuBtn?.addEventListener('click', async () => {
         hideJourneyFinaleScreen({ stopMusic: true });
@@ -7418,6 +7573,7 @@ function bindAuthUiEvents() {
         if (e.target === friendsModal) closeFriendsModal();
         if (e.target === rankingModal) closeRankingModal();
         if (e.target === dailyResultModal) showControl(dailyResultModal, false);
+        if (e.target === dailyOnboardingModal) closeDailyOnboardingModal();
         if (e.target === campaignCompleteModal) {
             goToCampaignBooks(pendingCampaignCompletion?.nextLevel || pendingCampaignCompletion?.currentLevel || null);
         }
