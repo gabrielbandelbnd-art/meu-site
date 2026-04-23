@@ -6476,6 +6476,8 @@ async function ensureVisitorDoc(user) {
         uid: user.uid,
         name: visitorName,
         photo: existing.photo || user.photoURL || DEFAULT_AVATAR,
+        points: Math.max(0, Number(existing.points || 0)),
+        onlineMatchesPlayed: Math.max(0, Number(existing.onlineMatchesPlayed || 0)),
         isVisitor: true,
         updatedAt: serverTimestamp()
     };
@@ -6545,6 +6547,7 @@ function syncTopUserUi(user, userDoc) {
     const isLogged = !!user;
     const isAnon = getModeVisitor(user);
     const streakData = normalizeArcaneStreakData(userDoc);
+    const currentPoints = Math.max(0, Number(userDoc?.points || 0));
 
     const displayName = isLogged
         ? (isAnon ? (userDoc?.name || pendingVisitorName || 'Visitante') : (userDoc?.name || user.displayName || user.email || 'Jogador'))
@@ -6558,6 +6561,7 @@ function syncTopUserUi(user, userDoc) {
     if (userAvatarTop) userAvatarTop.src = displayPhoto;
     if (profileAvatar) profileAvatar.src = displayPhoto;
     if (profileNameTitle) profileNameTitle.innerText = displayName;
+    if (profilePoints) profilePoints.innerText = `Pontos: ${currentPoints}`;
     if (userStreakIndicator) {
         userStreakIndicator.innerText = `🔥 ${streakData.streakCount}`;
         userStreakIndicator.setAttribute('role', 'button');
@@ -6584,8 +6588,8 @@ function syncTopUserUi(user, userDoc) {
 async function refreshProfileRank() {
     if (!profileRank) return;
 
-    if (!activeUser || activeUser.isAnonymous || !db) {
-        profileRank.innerText = 'Ranking global: visitante';
+    if (!activeUser || !db) {
+        profileRank.innerText = 'Ranking global: --';
         return;
     }
 
@@ -6601,7 +6605,7 @@ async function refreshProfileRank() {
 }
 
 async function refreshActiveUserDoc() {
-    if (!db || !activeUser || activeUser.isAnonymous) return null;
+    if (!db || !activeUser) return null;
     const snap = await getDoc(doc(db, 'users', activeUser.uid));
     activeUserDoc = snap.exists() ? snap.data() : activeUserDoc;
     syncTopUserUi(activeUser, activeUserDoc);
@@ -6892,7 +6896,7 @@ function openProfileModal() {
 
     const isAnon = activeUser.isAnonymous;
     const displayName = isAnon
-        ? 'Visitante'
+        ? (activeUserDoc?.name || pendingVisitorName || 'Visitante')
         : (activeUserDoc?.name || activeUser.displayName || activeUser.email?.split('@')[0] || 'Jogador');
 
     profileNameInput.value = displayName;
@@ -6901,7 +6905,7 @@ function openProfileModal() {
     if (profilePhotoBtn) profilePhotoBtn.disabled = isAnon;
 
     if (isAnon) {
-        setStatus('Conta visitante: joga normal, mas nÃƒÆ’Ã‚Â£o salva pontos nem ranking.');
+        setStatus('Conta visitante: joga normal e agora também sobe no ranking.');
     } else {
         setStatus('');
     }
@@ -7338,14 +7342,15 @@ async function handleCorrectAnswer() {
         }
     }
 
-    if (!activeUser || !db || activeUser.isAnonymous) return campaignResult;
+    if (!activeUser || !db) return campaignResult;
 
     try {
         const userRef = doc(db, 'users', activeUser.uid);
         await setDoc(userRef, {
             uid: activeUser.uid,
-            name: activeUserDoc?.name || activeUser.displayName || 'Jogador',
+            name: activeUserDoc?.name || pendingVisitorName || activeUser.displayName || 'Jogador',
             photo: activeUserDoc?.photo || activeUser.photoURL || DEFAULT_AVATAR,
+            isVisitor: !!activeUser.isAnonymous,
             points: increment(1)
         }, { merge: true });
 
