@@ -164,18 +164,18 @@
 
                         <section class="book-page">
                             <h3>Página 2 - Regra da Vogal (+1)</h3>
-                            <p>Quando a letra anterior no tabuleiro for uma vogal, a nova letra digitada avança uma casa no alfabeto.</p>
-                            <p>Isso significa que a letra que você digitou pode não ser exatamente a letra que ficará registrada no tabuleiro.</p>
-                            <p class="book-example">Exemplos claros: A vira B, E vira F, O vira P.</p>
-                            <p>Essa regra afeta diretamente a construção da palavra, então sempre observe a letra anterior antes de jogar a próxima.</p>
+                            <p>Quando você digita uma vogal (A, E, I, O, U), a próxima letra que você colocar no tabuleiro avança 1 posição no alfabeto.</p>
+                            <p class="book-example">Exemplos: se você colocar F aparece G, se colocar A aparece B, se colocar D aparece E.</p>
+                            <p>Importante: a vogal não muda nada na hora, ela só afeta a próxima letra.</p>
+                            <p>Resumo: vogal empurra a próxima letra pra frente.</p>
                         </section>
 
                         <section class="book-page">
                             <h3>Página 3 - Regra da Consoante (Espelho)</h3>
-                            <p>Quando a nova letra for consoante, a letra anterior pode ser espelhada no alfabeto.</p>
-                            <p>Em outras palavras, letras que já estavam no tabuleiro podem ser alteradas por uma jogada atual.</p>
-                            <p class="book-example">Exemplos de espelho: A vira Z, B vira Y, C vira X.</p>
-                            <p>Por isso, não basta pensar só na próxima posição: você também precisa prever como a regra pode transformar o que já foi escrito.</p>
+                            <p>Quando você digita uma consoante, a letra anterior que já está no tabuleiro se transforma na sua oposta no alfabeto, como se fosse um espelho.</p>
+                            <p class="book-example">Exemplos: se a letra anterior for B vira Y, se for C vira X, se for D vira W.</p>
+                            <p>Importante: a transformação acontece na hora e afeta a letra anterior, não a que você acabou de digitar.</p>
+                            <p>Resumo: a consoante transforma a letra anterior no seu oposto no alfabeto.</p>
                         </section>
 
                         <section class="book-page">
@@ -396,10 +396,22 @@
                     <div id="rules-content" class="collapsible-content">
                         <div style="padding-top: 10px;">
                             <div id="rule-vowel" class="rule-card">
-                                <strong>Vogal (+1):</strong><br>Se anterior é vogal, a nova letra avança 1 no alfabeto (Ex: A vira B).
+                                <div class="rule-card-head">
+                                    <strong>Vogal (+1):</strong>
+                                    <button type="button" class="rule-info-btn" data-rule-modal="vowel" aria-label="Saber mais sobre Vogal (+1)">saber mais</button>
+                                </div>
+                                <div class="rule-card-copy">
+                                    Se anterior é vogal, a nova letra avança 1 no alfabeto (Ex: A vira B).
+                                </div>
                             </div>
                             <div id="rule-consonant" class="rule-card">
-                                <strong>Consoante (Espelho):</strong><br>Consoante faz a anterior virar oposto.<br><em>Ex: A&lt;-&gt;Z, B&lt;-&gt;Y, C&lt;-&gt;X</em>
+                                <div class="rule-card-head">
+                                    <strong>Consoante (Espelho):</strong>
+                                    <button type="button" class="rule-info-btn" data-rule-modal="consonant" aria-label="Saber mais sobre Consoante (Espelho)">saber mais</button>
+                                </div>
+                                <div class="rule-card-copy">
+                                    Consoante faz a anterior virar oposto.<br><em>Ex: A&lt;-&gt;Z, B&lt;-&gt;Y, C&lt;-&gt;X</em>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -610,8 +622,29 @@
             </p>
             <div class="daily-onboarding-actions">
                 <button id="daily-onboarding-campaign-btn" class="profile-btn auth-main-btn">Jogar Campanha</button>
+                <button id="daily-onboarding-tutorial-btn" class="profile-btn profile-ghost-btn">Fazer Tutorial</button>
                 <button id="daily-onboarding-daily-btn" class="profile-btn profile-ghost-btn">Jogar Palavra do Dia</button>
             </div>
+        </div>
+    </div>
+    <div id="tutorial-choice-modal" class="profile-modal hidden-control">
+        <div class="profile-card daily-onboarding-card">
+            <button id="close-tutorial-choice-modal" class="profile-close">X</button>
+            <h3>Quer fazer o tutorial?</h3>
+            <p>
+                Você pode aprender as regras no tutorial agora ou pular e entrar direto no modo escolhido.
+            </p>
+            <div class="daily-onboarding-actions">
+                <button id="tutorial-choice-start-btn" class="profile-btn auth-main-btn">Fazer tutorial</button>
+                <button id="tutorial-choice-skip-btn" class="profile-btn profile-ghost-btn">Pular e jogar</button>
+            </div>
+        </div>
+    </div>
+    <div id="rule-info-modal" class="profile-modal hidden-control">
+        <div class="profile-card daily-onboarding-card rule-info-card">
+            <button id="close-rule-info-modal" class="profile-close">X</button>
+            <h3 id="rule-info-title">Regra</h3>
+            <div id="rule-info-body" class="rule-info-body"></div>
         </div>
     </div>
 
@@ -1012,8 +1045,5 @@
     <script type="module" src="script.js?v=20260421-opponent-theme-2"></script>
     </body>
 </html>
-
-
-
 
 

@@ -829,6 +829,68 @@ body.is-fullscreen #app-container:not(.hidden-app) .game-area {
     background: var(--card-bg); padding: 10px; border-radius: 6px; margin-bottom: 8px;
     border-left: 3px solid #444; opacity: 0.7; transition: all 0.2s; font-size: 0.85rem;
 }
+.rule-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.rule-card-copy {
+    line-height: 1.35;
+}
+
+.rule-info-btn {
+    min-height: 24px;
+    padding: 0 9px;
+    border-radius: 999px;
+    border: 1px solid rgba(187, 134, 252, 0.65);
+    background: rgba(187, 134, 252, 0.14);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.68rem;
+    line-height: 1;
+    text-transform: lowercase;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 rgba(187, 134, 252, 0.2);
+    animation: ruleHelpPulse 1.5s ease-in-out infinite;
+}
+
+.rule-info-btn:hover,
+.rule-info-btn:focus-visible {
+    transform: scale(1.06);
+    background: rgba(187, 134, 252, 0.22);
+}
+
+.rule-info-btn.rule-info-seen {
+    animation: none;
+    box-shadow: none;
+    opacity: 0.88;
+}
+
+.rule-info-card {
+    max-width: 560px;
+}
+
+.rule-info-body {
+    color: var(--text-main);
+    line-height: 1.55;
+    white-space: pre-line;
+}
+
+@keyframes ruleHelpPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(187, 134, 252, 0.24);
+        opacity: 0.9;
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(187, 134, 252, 0);
+        opacity: 1;
+    }
+}
+
 .rule-active {
     opacity: 1; border-left-color: var(--accent); background: #383838;
     transform: translateX(3px); box-shadow: 0 0 10px rgba(187, 134, 252, 0.3);
@@ -4037,7 +4099,7 @@ body.training-mode-active .training-hand {
 
 .daily-onboarding-actions {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 10px;
 }
 

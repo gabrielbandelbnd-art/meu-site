@@ -482,7 +482,16 @@ const campaignCompleteBooksBtn = document.getElementById('campaign-complete-book
 const dailyOnboardingModal = document.getElementById('daily-onboarding-modal');
 const closeDailyOnboardingModalBtn = document.getElementById('close-daily-onboarding-modal');
 const dailyOnboardingCampaignBtn = document.getElementById('daily-onboarding-campaign-btn');
+const dailyOnboardingTutorialBtn = document.getElementById('daily-onboarding-tutorial-btn');
 const dailyOnboardingDailyBtn = document.getElementById('daily-onboarding-daily-btn');
+const tutorialChoiceModal = document.getElementById('tutorial-choice-modal');
+const closeTutorialChoiceModalBtn = document.getElementById('close-tutorial-choice-modal');
+const tutorialChoiceStartBtn = document.getElementById('tutorial-choice-start-btn');
+const tutorialChoiceSkipBtn = document.getElementById('tutorial-choice-skip-btn');
+const ruleInfoModal = document.getElementById('rule-info-modal');
+const closeRuleInfoModalBtn = document.getElementById('close-rule-info-modal');
+const ruleInfoTitle = document.getElementById('rule-info-title');
+const ruleInfoBody = document.getElementById('rule-info-body');
 const onlineResultModal = document.getElementById('online-result-modal');
 const closeOnlineResultModalBtn = document.getElementById('close-online-result-modal');
 const journeyFinaleModal = document.getElementById('journey-finale-modal');
@@ -1094,7 +1103,7 @@ function render(showTutorial = false) {
     if (isFirstRound && currentWord.length === 0 && showTutorial) {
         const msgDiv = document.createElement('div');
         msgDiv.className = 'tutorial-message';
-        msgDiv.innerHTML = sanitizeGameText('Digite uma letra no campo abaixo onde tem uma interrogaÃƒÆ’Ã‚Â§ÃƒÆ’Ã‚Â£o para comeÃƒÆ’Ã‚Â§ar');
+        msgDiv.innerHTML = sanitizeGameText('Digite uma letra no teclado ou toque no alfabeto para comecar');
         wordGrid.appendChild(msgDiv);
         return;
     }
@@ -1869,7 +1878,7 @@ function bindMenuMusicUnlock() {
 
 function hasBlockingGameplayOverlayOpen() {
     return !!document.querySelector(
-        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #daily-onboarding-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control), #visitor-name-modal:not(.hidden-control), #support-modal:not(.hidden-control), #support-inbox-modal:not(.hidden-control), #arcane-streak-modal:not(.hidden-control), #public-player-modal:not(.hidden-control), #friends-modal:not(.hidden-control)'
+        '#profile-modal:not(.hidden-control), #ranking-modal:not(.hidden-control), #daily-result-modal:not(.hidden-control), #daily-onboarding-modal:not(.hidden-control), #tutorial-choice-modal:not(.hidden-control), #rule-info-modal:not(.hidden-control), #campaign-level-complete-modal:not(.hidden-control), #online-result-modal:not(.hidden-control), #journey-finale-modal:not(.hidden-control), #audio-settings-modal:not(.hidden-control), #visitor-name-modal:not(.hidden-control), #support-modal:not(.hidden-control), #support-inbox-modal:not(.hidden-control), #arcane-streak-modal:not(.hidden-control), #public-player-modal:not(.hidden-control), #friends-modal:not(.hidden-control)'
     );
 }
 
@@ -1883,11 +1892,6 @@ function isTypingContextTarget(target) {
 
 document.body.onclick = (e) => { 
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    if (isMobileViewport()) return; // Evita abrir teclado a cada toque fora do input no celular
-    // Ajuste para nÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¾Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¾ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â£o roubar foco se clicar no sidebar mobile
-    if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA' && !e.target.classList.contains('letter-box') && !sidebar.contains(e.target) && !alphabetDrawer.contains(e.target)) {
-        charInput.focus(); 
-    }
 };
 
 window.addEventListener('pageshow', () => {
@@ -1913,7 +1917,7 @@ document.addEventListener('keydown', (event) => {
         addChar(key);
         if (charInput) {
             charInput.value = '';
-            charInput.focus();
+            charInput.blur();
         }
         return;
     }
@@ -2378,6 +2382,12 @@ document.addEventListener("DOMContentLoaded", () => {
 // LOGICA DO BOTAO DE BOAS-VINDAS
 document.getElementById('start-game-btn').onclick = () => {
     if (!pendingOnboardingAction && !modeSelector?.value) return;
+    if (!pendingOnboardingAction && getSelectedStartMode() === ONLINE_MODE) {
+        beginSelectedGameFlow();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        syncTopUserUi(activeUser, activeUserDoc);
+        return;
+    }
     finishTutorialAndContinue();
 
     if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -2397,8 +2407,7 @@ hubPlay.addEventListener("click", async () => {
     resetDailySession();
     const appContainer = document.getElementById('app-container');
     if (appContainer) appContainer.classList.add('hidden-app');
-    const goToLastPage = hasSeenTutorial();
-    openWelcomeTutorial(goToLastPage);
+    openWelcomeTutorial(true);
 });
 
 hubTraining?.addEventListener("click", () => {
@@ -2975,6 +2984,7 @@ async function handleTrainingValidation(word) {
 const TUTORIAL_SEEN_STORAGE_KEY = 'magiclexis_tutorial_seen_v1';
 const DAILY_ONBOARDING_SEEN_STORAGE_KEY = 'magiclexis_daily_onboarding_seen_v1';
 const TRAINING_ONBOARDING_SEEN_STORAGE_KEY = 'magiclexis_training_onboarding_seen_v1';
+const RULE_INFO_SEEN_STORAGE_KEY = 'magiclexis_rule_info_seen_v1';
 
 function getTutorialSeenKey() {
     const uid = activeUser?.uid || 'guest';
@@ -3039,22 +3049,102 @@ function markTrainingOnboardingSeen() {
     }
 }
 
-function runTrainingOnboardingBefore(action) {
-    if (hasSeenTrainingOnboarding()) {
+function getRuleInfoSeenStorageKey() {
+    const uid = activeUser?.uid || 'guest';
+    return `${RULE_INFO_SEEN_STORAGE_KEY}:${uid}`;
+}
+
+function getSeenRuleInfoMap() {
+    try {
+        const raw = localStorage.getItem(getRuleInfoSeenStorageKey());
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (err) {
+        return {};
+    }
+}
+
+function markRuleInfoSeen(ruleKey) {
+    const current = getSeenRuleInfoMap();
+    current[ruleKey] = true;
+    try {
+        localStorage.setItem(getRuleInfoSeenStorageKey(), JSON.stringify(current));
+    } catch (err) {
+        console.log('Falha ao salvar estado da dica:', err);
+    }
+}
+
+function syncRuleInfoButtonsState() {
+    const seenMap = getSeenRuleInfoMap();
+    document.querySelectorAll('[data-rule-modal]').forEach((button) => {
+        const ruleKey = button.getAttribute('data-rule-modal') || '';
+        button.classList.toggle('rule-info-seen', !!seenMap[ruleKey]);
+    });
+}
+
+function hasExistingPlayerProgress() {
+    const stats = ensurePlayerStatsLoaded();
+    const safeStats = normalizePlayerStats(stats);
+    const localCampaign = normalizeCampaignProgress(campaignProgress || activeUserDoc?.campaignProgress);
+    const remotePoints = Math.max(0, Number(activeUserDoc?.points || 0));
+
+    return (
+        remotePoints > 0 ||
+        safeStats.vitorias > 0 ||
+        safeStats.validacoesFeitas > 0 ||
+        safeStats.diasJogados > 0 ||
+        safeStats.letrasConjuradas > 0 ||
+        localCampaign.completedLevels.length > 0 ||
+        Object.values(localCampaign.levelProgress || {}).some((value) => Number(value || 0) > 0)
+    );
+}
+
+function shouldOfferTutorialOnboarding() {
+    if (hasSeenTutorial()) return false;
+    if (hasExistingPlayerProgress()) {
+        markTutorialSeen();
+        markTrainingOnboardingSeen();
+        return false;
+    }
+    return true;
+}
+
+function closeTutorialChoiceModal(preservePendingAction = false) {
+    showControl(tutorialChoiceModal, false);
+    if (!preservePendingAction) {
+        pendingOnboardingAction = null;
+    }
+}
+
+function openTutorialChoiceModal() {
+    showControl(tutorialChoiceModal, true);
+}
+
+function chooseTutorialChoiceStart() {
+    closeTutorialChoiceModal(true);
+    openWelcomeTutorial(false);
+    if (startGameBtn) {
+        startGameBtn.disabled = false;
+        startGameBtn.setAttribute('aria-disabled', 'false');
+    }
+}
+
+function chooseTutorialChoiceSkip() {
+    closeTutorialChoiceModal(true);
+    markTutorialSeen();
+    markTrainingOnboardingSeen();
+    const action = pendingOnboardingAction;
+    pendingOnboardingAction = null;
+    if (typeof action === 'function') {
         action();
         return;
     }
-
-    pendingTrainingCompletionAction = () => {
-        markTrainingOnboardingSeen();
-        action();
-    };
-    startTrainingMode();
+    beginSelectedGameFlow();
 }
 
 function runAfterFirstTutorial(action, preferredMode = CAMPAIGN_MODE) {
-    if (hasSeenTutorial()) {
-        runTrainingOnboardingBefore(action);
+    if (!shouldOfferTutorialOnboarding()) {
+        action();
         return true;
     }
 
@@ -3063,11 +3153,7 @@ function runAfterFirstTutorial(action, preferredMode = CAMPAIGN_MODE) {
         modeSelector.value = preferredMode;
         syncModeSelectionUi();
     }
-    openWelcomeTutorial(false);
-    if (startGameBtn) {
-        startGameBtn.disabled = false;
-        startGameBtn.setAttribute('aria-disabled', 'false');
-    }
+    openTutorialChoiceModal();
     return false;
 }
 
@@ -3076,10 +3162,10 @@ function finishTutorialAndContinue() {
     const action = pendingOnboardingAction;
     pendingOnboardingAction = null;
     if (typeof action === 'function') {
-        runTrainingOnboardingBefore(action);
+        action();
         return;
     }
-    runTrainingOnboardingBefore(beginSelectedGameFlow);
+    beginSelectedGameFlow();
 }
 
 function closeDailyOnboardingModal() {
@@ -3090,22 +3176,68 @@ function openDailyOnboardingModal() {
     showControl(dailyOnboardingModal, true);
 }
 
+const RULE_INFO_CONTENT = {
+    vowel: {
+        title: 'Vogal (+1)',
+        body: `Quando você digita uma vogal (A, E, I, O, U), a próxima letra que você colocar no tabuleiro avança 1 posição no alfabeto.
+
+Exemplos:
+Se você colocar F → aparece G
+Se colocar A → aparece B
+Se colocar D → aparece E
+
+Importante: a vogal não muda nada na hora, ela só afeta a próxima letra.
+
+Resumo: vogal “empurra” a próxima letra pra frente.`
+    },
+    consonant: {
+        title: 'Consoante (Espelho)',
+        body: `Quando você digita uma consoante, a letra anterior que já está no tabuleiro se transforma na sua oposta no alfabeto (como se fosse um espelho).
+
+Exemplos:
+Se a letra anterior for B → vira Y
+Se for C → vira X
+Se for D → vira W
+
+Importante: a transformação acontece na hora e afeta a letra anterior, não a que você acabou de digitar.
+
+Resumo: a consoante transforma a letra anterior no seu “oposto” no alfabeto.`
+    }
+};
+
+function closeRuleInfoModal() {
+    showControl(ruleInfoModal, false);
+}
+
+function openRuleInfoModal(ruleKey) {
+    const content = RULE_INFO_CONTENT[ruleKey];
+    if (!content) return;
+    markRuleInfoSeen(ruleKey);
+    if (ruleInfoTitle) ruleInfoTitle.innerText = content.title;
+    if (ruleInfoBody) ruleInfoBody.innerText = content.body;
+    syncRuleInfoButtonsState();
+    showControl(ruleInfoModal, true);
+}
+
 function chooseDailyOnboardingCampaign() {
     markDailyOnboardingSeen();
+    markTutorialSeen();
+    markTrainingOnboardingSeen();
     closeDailyOnboardingModal();
-    runAfterFirstTutorial(
-        () => startCampaignLevel(CAMPAIGN_LEVEL_START, { skipOnboarding: true }),
-        CAMPAIGN_MODE
-    );
+    startCampaignLevel(CAMPAIGN_LEVEL_START, { skipOnboarding: true });
+}
+
+function chooseDailyOnboardingTutorial() {
+    markDailyOnboardingSeen();
+    closeDailyOnboardingModal();
+    pendingOnboardingAction = () => startDailyModeDirectFromHub();
+    chooseTutorialChoiceStart();
 }
 
 function chooseDailyOnboardingDaily() {
     markDailyOnboardingSeen();
     closeDailyOnboardingModal();
-    runAfterFirstTutorial(
-        () => startDailyModeDirectFromHub(),
-        DAILY_MODE
-    );
+    chooseTutorialChoiceSkip();
 }
 
 function getCampaignProgressStorageKey() {
@@ -7417,6 +7549,16 @@ function bindAuthUiEvents() {
         e.preventDefault();
         sendSupportMessage();
     });
+    closeTutorialChoiceModalBtn?.addEventListener('click', closeTutorialChoiceModal);
+    tutorialChoiceStartBtn?.addEventListener('click', chooseTutorialChoiceStart);
+    tutorialChoiceSkipBtn?.addEventListener('click', chooseTutorialChoiceSkip);
+    closeRuleInfoModalBtn?.addEventListener('click', closeRuleInfoModal);
+    document.querySelectorAll('[data-rule-modal]').forEach((button) => {
+        button.addEventListener('click', () => {
+            openRuleInfoModal(button.getAttribute('data-rule-modal') || '');
+        });
+    });
+    syncRuleInfoButtonsState();
     visitorNameSaveBtn?.addEventListener('click', submitVisitorNameChoice);
     visitorNameInput?.addEventListener('keydown', (e) => {
         if (e.key !== 'Enter') return;
@@ -7486,6 +7628,7 @@ function bindAuthUiEvents() {
     campaignCompleteNextBtn?.addEventListener('click', continueToNextCampaignBook);
     closeDailyOnboardingModalBtn?.addEventListener('click', closeDailyOnboardingModal);
     dailyOnboardingCampaignBtn?.addEventListener('click', chooseDailyOnboardingCampaign);
+    dailyOnboardingTutorialBtn?.addEventListener('click', chooseDailyOnboardingTutorial);
     dailyOnboardingDailyBtn?.addEventListener('click', chooseDailyOnboardingDaily);
     journeyFinaleReplayBtn?.addEventListener('click', restartCampaignJourney);
     journeyFinaleMenuBtn?.addEventListener('click', async () => {
@@ -7579,6 +7722,8 @@ function bindAuthUiEvents() {
         if (e.target === rankingModal) closeRankingModal();
         if (e.target === dailyResultModal) showControl(dailyResultModal, false);
         if (e.target === dailyOnboardingModal) closeDailyOnboardingModal();
+        if (e.target === tutorialChoiceModal) closeTutorialChoiceModal();
+        if (e.target === ruleInfoModal) closeRuleInfoModal();
         if (e.target === campaignCompleteModal) {
             goToCampaignBooks(pendingCampaignCompletion?.nextLevel || pendingCampaignCompletion?.currentLevel || null);
         }
