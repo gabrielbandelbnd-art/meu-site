@@ -573,6 +573,8 @@ let currentOnlineLocalErrors = 0;
 let currentOnlineResultShown = false;
 let currentOnlineLeaving = false;
 let currentOnlineEntryMode = 'code';
+let onlineSearchingIndicatorInterval = null;
+let onlineSearchingIndicatorFrame = 0;
 let onlineProgressSyncTimeout = null;
 let preserveCurrentViewOnAuthSync = false;
 let trainingState = null;
@@ -3590,6 +3592,33 @@ function getOnlinePlayableLengths() {
     return CAMPAIGN_LEVELS.filter((level) => hasCampaignContent(level));
 }
 
+function stopOnlineSearchingIndicator() {
+    if (onlineSearchingIndicatorInterval) {
+        clearInterval(onlineSearchingIndicatorInterval);
+        onlineSearchingIndicatorInterval = null;
+    }
+    onlineSearchingIndicatorFrame = 0;
+}
+
+function setQuickMatchSearchingCopy() {
+    const dots = '.'.repeat((onlineSearchingIndicatorFrame % 3) + 1);
+    if (onlineStatusBanner) {
+        onlineStatusBanner.innerText = `Match rápido ativo. Procurando outro jogador${dots}`;
+    }
+    if (onlineRoomState) {
+        onlineRoomState.innerText = `Procurando outro jogador para o match rápido${dots}`;
+    }
+    onlineSearchingIndicatorFrame += 1;
+}
+
+function startOnlineSearchingIndicator() {
+    setQuickMatchSearchingCopy();
+    if (onlineSearchingIndicatorInterval) return;
+    onlineSearchingIndicatorInterval = setInterval(() => {
+        setQuickMatchSearchingCopy();
+    }, 700);
+}
+
 function populateOnlineLetterCountOptions() {
     if (!onlineLetterCountSelect) return;
     const availableLengths = getOnlinePlayableLengths();
@@ -3608,7 +3637,9 @@ function populateOnlineLetterCountOptions() {
     });
 
     if (!onlineLetterCountSelect.value) {
-        onlineLetterCountSelect.value = '';
+        onlineLetterCountSelect.value = availableLengths.includes(CAMPAIGN_LEVEL_START)
+            ? String(CAMPAIGN_LEVEL_START)
+            : '';
     }
 }
 
@@ -3679,6 +3710,7 @@ function cleanupOnlineRoomListener() {
 
 function resetOnlineRoomState() {
     cleanupOnlineRoomListener();
+    stopOnlineSearchingIndicator();
     currentOnlineRoomCode = null;
     currentOnlinePlayerSlot = null;
     currentOnlineRoom = null;
@@ -3763,6 +3795,7 @@ function renderOnlineRoomPanel(roomData = currentOnlineRoom) {
     const hasRoom = !!roomData && !!currentOnlineRoomCode;
     showControl(onlineRoomPanel, hasRoom);
     if (!hasRoom) {
+        stopOnlineSearchingIndicator();
         if (onlineStatusBanner) {
             onlineStatusBanner.innerText = 'Escolha entre match rápido ou sala por código para iniciar um duelo mágico.';
         }
@@ -3780,12 +3813,21 @@ function renderOnlineRoomPanel(roomData = currentOnlineRoom) {
     const playing = roomData.status === 'playing';
     const finished = roomData.status === 'finished';
     const abandoned = roomData.status === 'abandoned';
+    const searchingQuickMatch = waiting && !partyRoom && quickMatch;
+
+    if (searchingQuickMatch) {
+        startOnlineSearchingIndicator();
+    } else {
+        stopOnlineSearchingIndicator();
+    }
 
     if (onlineStatusBanner) {
-        if (waiting) onlineStatusBanner.innerText = partyRoom
+        if (searchingQuickMatch) {
+            // handled by animated searching copy above
+        } else if (waiting) onlineStatusBanner.innerText = partyRoom
             ? 'Sala contra todos criada. Aguarde os jogadores e inicie quando todos estiverem prontos.'
             : quickMatch
-            ? 'Match rápido ativo. Procurando outro jogador em tempo real.'
+            ? 'Match rápido ativo. Aguardando outro jogador.'
             : 'Sala criada. Compartilhe o código e aguarde seu adversário.';
         else if (playing) onlineStatusBanner.innerText = partyRoom
             ? 'Partida contra todos em andamento. Todos receberam a mesma palavra.'
@@ -3805,7 +3847,9 @@ function renderOnlineRoomPanel(roomData = currentOnlineRoom) {
         ? (players.find((player) => player?.uid === roomData?.hostUid)?.name || 'Aguardando...')
         : (opponent?.name || 'Aguardando...');
     if (onlineRoomState) {
-        if (waiting) onlineRoomState.innerText = partyRoom
+        if (searchingQuickMatch) {
+            // handled by animated searching copy above
+        } else if (waiting) onlineRoomState.innerText = partyRoom
             ? `Aguardando jogadores. ${players.length}/${roomData?.maxPlayers || ONLINE_PARTY_MAX_PLAYERS} conectados.`
             : quickMatch
             ? 'Aguardando outro jogador entrar no match rápido.'
