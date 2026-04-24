@@ -6289,17 +6289,26 @@ const VISITOR_NAME_LEET_MAP = {
     '!': 'i'
 };
 
+const OFFENSIVE_NAME_REJECTION_MESSAGE = 'Esse nome não passou pelo Grimório Arcano. Escolha outro nome.';
+
 const VISITOR_NAME_BLOCKED_EXACT = new Set([
     'cu',
-    'fdp'
+    'fdp',
+    'vsf'
 ]);
 
 const VISITOR_NAME_BLOCKED_PARTIALS = [
+    'babaca',
+    'babacas',
+    'babola',
+    'babolas',
+    'bosta',
     'penis',
     'pinto',
     'puta',
     'putaquepariu',
     'buceta',
+    'boceta',
     'xoxota',
     'piroca',
     'caralho',
@@ -6307,9 +6316,18 @@ const VISITOR_NAME_BLOCKED_PARTIALS = [
     'foda',
     'fodase',
     'merda',
+    'desgraca',
+    'desgracado',
+    'desgracada',
     'arrombado',
+    'arrombada',
+    'idiota',
     'otario',
-    'otaria'
+    'otaria',
+    'trouxa',
+    'imbecil',
+    'retardado',
+    'retardada'
 ];
 
 function normalizeVisitorNameForModeration(value = '') {
@@ -6348,6 +6366,31 @@ function containsBlockedVisitorName(rawName = '') {
     return VISITOR_NAME_BLOCKED_PARTIALS.some((term) => compact.includes(term));
 }
 
+function validatePlayerName(rawName = '') {
+    const normalized = sanitizeGameText(String(rawName || '').trim()).slice(0, 24);
+    if (normalized.length < 2) {
+        return {
+            ok: false,
+            normalized,
+            message: 'Escolha um nome com pelo menos 2 letras.'
+        };
+    }
+
+    if (containsBlockedVisitorName(rawName)) {
+        return {
+            ok: false,
+            normalized,
+            message: OFFENSIVE_NAME_REJECTION_MESSAGE
+        };
+    }
+
+    return {
+        ok: true,
+        normalized,
+        message: ''
+    };
+}
+
 function normalizeVisitorName(name = '') {
     return sanitizeGameText(String(name || '').trim()).slice(0, 24);
 }
@@ -6364,18 +6407,16 @@ function requestVisitorName() {
 
 function submitVisitorNameChoice() {
     const rawName = visitorNameInput?.value || '';
-    const name = normalizeVisitorName(rawName);
-    if (name.length < 2) {
-        setVisitorNameStatus('Escolha um nome com pelo menos 2 letras.', true);
+    const validation = validatePlayerName(rawName);
+    if (!validation.ok) {
+        setVisitorNameStatus(validation.message, true);
         visitorNameInput?.focus();
+        if (validation.normalized.length >= 2) {
+            visitorNameInput?.select();
+        }
         return;
     }
-    if (containsBlockedVisitorName(rawName)) {
-        setVisitorNameStatus('Esse nome nao pode ser usado. Escolha outro nome.', true);
-        visitorNameInput?.focus();
-        visitorNameInput?.select();
-        return;
-    }
+    const name = validation.normalized;
     pendingVisitorName = name;
     showControl(visitorNameModal, false);
     setVisitorNameStatus('');
@@ -7606,7 +7647,17 @@ async function saveProfile() {
         return;
     }
 
-    const newName = (profileNameInput.value || '').trim().slice(0, 24) || 'Jogador';
+    const validation = validatePlayerName(profileNameInput.value || '');
+    if (!validation.ok) {
+        setStatus(validation.message, true);
+        profileNameInput?.focus();
+        if (validation.normalized.length >= 2) {
+            profileNameInput?.select();
+        }
+        return;
+    }
+
+    const newName = validation.normalized || 'Jogador';
     const file = profilePhotoInput.files?.[0] || null;
 
     setProfileSaveButtonState(true);
