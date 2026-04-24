@@ -187,6 +187,7 @@ const PLAYER_STATS_STORAGE_KEY = 'magiclexis_player_stats_v1';
 const AUDIO_SETTINGS_STORAGE_KEY = 'magiclexis_audio_settings_v1';
 const THEME_STORAGE_KEY = 'magiclexis_theme_v1';
 const PROFILE_CACHE_STORAGE_KEY = 'magiclexis_profile_cache_v1';
+const ALLOWED_PROFILE_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
 const ARCANE_STREAK_MILESTONES = [1, 2, 3, 7, 15, 30, 45, 60, 90, 120, 180, 365];
 const ADMIN_UID = 'DxTnrg4cG4TWHK6qkbSZudfzJgh2';
 const GAMEPLAY_IDLE_TIMEOUT_MS = 60000;
@@ -5708,6 +5709,23 @@ function persistCachedProfile(profileData = {}, uid = activeUser?.uid) {
     return safeProfile;
 }
 
+function resolveProfilePhoto(existingPhoto = '', cachedPhoto = '', fallbackPhoto = DEFAULT_AVATAR) {
+    const safeExisting = String(existingPhoto || '').trim();
+    const safeCached = String(cachedPhoto || '').trim();
+    const safeFallback = String(fallbackPhoto || '').trim() || DEFAULT_AVATAR;
+
+    if (safeCached && safeCached !== DEFAULT_AVATAR && (safeExisting === DEFAULT_AVATAR || !safeExisting)) {
+        return safeCached;
+    }
+
+    return safeExisting || safeCached || safeFallback;
+}
+
+function isAllowedProfileImageFile(file) {
+    const type = String(file?.type || '').toLowerCase();
+    return ALLOWED_PROFILE_IMAGE_TYPES.includes(type);
+}
+
 const profileModal = document.getElementById('profile-modal');
 const rankingModal = document.getElementById('ranking-modal');
 const profileStatus = document.getElementById('profile-status');
@@ -6693,7 +6711,7 @@ async function ensureVisitorDoc(user) {
     const visitorDoc = {
         uid: user.uid,
         name: visitorName,
-        photo: existing.photo || cached?.photo || user.photoURL || DEFAULT_AVATAR,
+        photo: resolveProfilePhoto(existing.photo, cached?.photo, user.photoURL || DEFAULT_AVATAR),
         points: Math.max(0, Number(existing.points || 0)),
         onlineMatchesPlayed: Math.max(0, Number(existing.onlineMatchesPlayed || 0)),
         isVisitor: true,
@@ -6719,7 +6737,7 @@ async function ensureUserDoc(user) {
         await setDoc(userRef, {
             uid: user.uid,
             name: baseName,
-            photo: cached?.photo || user.photoURL || DEFAULT_AVATAR,
+            photo: resolveProfilePhoto('', cached?.photo, user.photoURL || DEFAULT_AVATAR),
             points: 0,
             onlineMatchesPlayed: 0,
             campaignProgress: defaultCampaignProgress,
@@ -6772,13 +6790,14 @@ function syncTopUserUi(user, userDoc) {
     const isAnon = getModeVisitor(user);
     const streakData = normalizeArcaneStreakData(userDoc);
     const currentPoints = Math.max(0, Number(userDoc?.points || 0));
+    const cachedProfile = isLogged ? loadCachedProfile(user?.uid) : null;
 
     const displayName = isLogged
         ? (isAnon ? (userDoc?.name || pendingVisitorName || 'Visitante') : (userDoc?.name || user.displayName || user.email || 'Jogador'))
         : 'Visitante';
 
     const displayPhoto = isLogged
-        ? (userDoc?.photo || user.photoURL || DEFAULT_AVATAR)
+        ? resolveProfilePhoto(userDoc?.photo, cachedProfile?.photo, user.photoURL || DEFAULT_AVATAR)
         : DEFAULT_AVATAR;
 
     if (userNameTop) userNameTop.innerText = displayName;
@@ -7481,8 +7500,8 @@ function closeRankingModal() {
 
 async function uploadProfilePhoto(file, uid) {
     if (!file || !uid) return null;
-    if (!String(file.type || '').startsWith('image/')) {
-        throw new Error('Escolha um arquivo de imagem válido.');
+    if (!isAllowedProfileImageFile(file)) {
+        throw new Error('Use PNG, JPG, WEBP ou GIF.');
     }
     if (Number(file.size || 0) > 5 * 1024 * 1024) {
         throw new Error('A imagem deve ter no máximo 5 MB.');
@@ -7847,8 +7866,8 @@ function bindAuthUiEvents() {
     profilePhotoInput?.addEventListener('change', async () => {
         const file = profilePhotoInput.files?.[0] || null;
         if (!file) return;
-        if (!String(file.type || '').startsWith('image/')) {
-            setStatus('Escolha um arquivo de imagem válido.', true);
+        if (!isAllowedProfileImageFile(file)) {
+            setStatus('Use PNG, JPG, WEBP ou GIF.', true);
             profilePhotoInput.value = '';
             return;
         }
