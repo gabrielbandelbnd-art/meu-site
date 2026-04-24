@@ -2604,6 +2604,17 @@ body.training-mode-active .training-hand {
     cursor: pointer;
 }
 
+.profile-save-btn {
+    opacity: 0.9;
+    filter: saturate(0.86);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.profile-save-btn:hover {
+    opacity: 1;
+    filter: saturate(1);
+}
+
 
 .profile-divider {
     height: 1px;
@@ -6364,6 +6375,16 @@ body.training-mode-active .training-hand {
 .theme-enhanced .auth-main-btn {
     background: var(--theme-button) !important;
     color: var(--theme-button-text) !important;
+}
+
+.theme-enhanced .profile-save-btn {
+    opacity: 0.88;
+    filter: saturate(0.84);
+}
+
+.theme-enhanced .profile-save-btn:hover {
+    opacity: 1;
+    filter: saturate(1);
 }
 
 .theme-enhanced .profile-btn:hover,

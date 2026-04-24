@@ -186,6 +186,7 @@ const CAMPAIGN_PROGRESS_STORAGE_KEY = 'magiclexis_campaign_progress_v1';
 const PLAYER_STATS_STORAGE_KEY = 'magiclexis_player_stats_v1';
 const AUDIO_SETTINGS_STORAGE_KEY = 'magiclexis_audio_settings_v1';
 const THEME_STORAGE_KEY = 'magiclexis_theme_v1';
+const PROFILE_CACHE_STORAGE_KEY = 'magiclexis_profile_cache_v1';
 const ARCANE_STREAK_MILESTONES = [1, 2, 3, 7, 15, 30, 45, 60, 90, 120, 180, 365];
 const ADMIN_UID = 'DxTnrg4cG4TWHK6qkbSZudfzJgh2';
 const GAMEPLAY_IDLE_TIMEOUT_MS = 60000;
@@ -1315,6 +1316,7 @@ async function validate() {
             meaningBox.classList.remove('hidden');
             animateMage('win');
             incrementPlayerStat('vitorias', 1);
+            await handleCorrectAnswer();
             await onValidGameFinished();
             triggerConfetti();
             showMobileVictoryPopup();
@@ -2513,6 +2515,8 @@ let dailyCallables = {};
 const FUNCTIONS_REGION = 'southamerica-east1';
 const IS_LOCAL_DEV = ['127.0.0.1', 'localhost'].includes(window.location.hostname);
 let isUsingLocalDevSession = false;
+let pendingProfilePhotoDataUrl = '';
+let pendingProfilePhotoObjectUrl = '';
 
 const DAILY_MODE = 'daily';
 const RANDOM_MODE = 'random';
@@ -2614,6 +2618,8 @@ let activeUser = null;
 let activeUserDoc = null;
 let pendingVisitorName = '';
 let visitorNameResolver = null;
+let rankingUnsubscribe = null;
+let liveRankingEntries = [];
 for (let i = 0; i < DAILY_SHARE_TEMPLATES.length; i++) {
     DAILY_SHARE_TEMPLATES[i] = sanitizeGameText(DAILY_SHARE_TEMPLATES[i]);
 }
@@ -5669,6 +5675,39 @@ function openWelcomeTutorial(goToLastPage = false) {
 
 const DEFAULT_AVATAR = 'https://ui-avatars.com/api/?name=ML&background=1f1f1f&color=bb86fc&size=128';
 
+function getProfileCacheStorageKey(uid = activeUser?.uid) {
+    return uid ? `${PROFILE_CACHE_STORAGE_KEY}:${uid}` : '';
+}
+
+function loadCachedProfile(uid = activeUser?.uid) {
+    const key = getProfileCacheStorageKey(uid);
+    if (!key) return null;
+    try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return parsed && typeof parsed === 'object' ? parsed : null;
+    } catch (err) {
+        console.log('Falha ao ler cache do perfil:', err);
+        return null;
+    }
+}
+
+function persistCachedProfile(profileData = {}, uid = activeUser?.uid) {
+    const key = getProfileCacheStorageKey(uid);
+    if (!key) return profileData;
+    const safeProfile = {
+        name: String(profileData?.name || '').trim().slice(0, 24) || 'Jogador',
+        photo: String(profileData?.photo || '').trim() || DEFAULT_AVATAR
+    };
+    try {
+        localStorage.setItem(key, JSON.stringify(safeProfile));
+    } catch (err) {
+        console.log('Falha ao salvar cache do perfil:', err);
+    }
+    return safeProfile;
+}
+
 const profileModal = document.getElementById('profile-modal');
 const rankingModal = document.getElementById('ranking-modal');
 const profileStatus = document.getElementById('profile-status');
@@ -6546,23 +6585,25 @@ function updateAuthProviderLabels() {
 
 function activateLocalDevSession(mode = 'guest', email = '') {
     const normalizedEmail = String(email || '').trim();
+    const uid = mode === 'email' ? 'local-dev-email' : 'local-dev-guest';
+    const cachedProfile = loadCachedProfile(uid);
     const displayName = mode === 'email'
-        ? (normalizedEmail.split('@')[0] || 'Jogador')
-        : (pendingVisitorName || 'Visitante');
+        ? (cachedProfile?.name || normalizedEmail.split('@')[0] || 'Jogador')
+        : (cachedProfile?.name || pendingVisitorName || 'Visitante');
 
     isUsingLocalDevSession = true;
     activeUser = {
-        uid: mode === 'email' ? 'local-dev-email' : 'local-dev-guest',
+        uid,
         isAnonymous: mode !== 'email',
         email: normalizedEmail || null,
         displayName,
-        photoURL: DEFAULT_AVATAR,
+        photoURL: cachedProfile?.photo || DEFAULT_AVATAR,
         getIdToken: async () => 'local-dev-token'
     };
-    activeUserDoc = activeUser.isAnonymous ? null : {
+    activeUserDoc = {
         uid: activeUser.uid,
         name: displayName,
-        photo: DEFAULT_AVATAR,
+        photo: cachedProfile?.photo || DEFAULT_AVATAR,
         points: 0,
         campaignProgress: getDefaultCampaignProgress()
     };
@@ -6646,12 +6687,13 @@ async function ensureVisitorDoc(user) {
     const userRef = doc(db, 'users', user.uid);
     const snap = await getDoc(userRef);
     const existing = snap.exists() ? snap.data() : {};
-    let visitorName = normalizeVisitorName(existing.name || pendingVisitorName || '');
+    const cached = loadCachedProfile(user.uid);
+    let visitorName = normalizeVisitorName(existing.name || cached?.name || pendingVisitorName || '');
     if (!visitorName) visitorName = await requestVisitorName();
     const visitorDoc = {
         uid: user.uid,
         name: visitorName,
-        photo: existing.photo || user.photoURL || DEFAULT_AVATAR,
+        photo: existing.photo || cached?.photo || user.photoURL || DEFAULT_AVATAR,
         points: Math.max(0, Number(existing.points || 0)),
         onlineMatchesPlayed: Math.max(0, Number(existing.onlineMatchesPlayed || 0)),
         isVisitor: true,
@@ -6659,6 +6701,7 @@ async function ensureVisitorDoc(user) {
     };
     if (!snap.exists()) visitorDoc.createdAt = serverTimestamp();
     await setDoc(userRef, visitorDoc, { merge: true });
+    persistCachedProfile({ name: visitorDoc.name, photo: visitorDoc.photo }, user.uid);
     pendingVisitorName = visitorName;
     return { ...existing, ...visitorDoc };
 }
@@ -6668,14 +6711,15 @@ async function ensureUserDoc(user) {
     if (user.isAnonymous) return ensureVisitorDoc(user);
     const userRef = doc(db, 'users', user.uid);
     const snap = await getDoc(userRef);
+    const cached = loadCachedProfile(user.uid);
     const defaultCampaignProgress = getDefaultCampaignProgress();
 
     if (!snap.exists()) {
-        const baseName = user.displayName || (user.email ? user.email.split('@')[0] : 'Jogador');
+        const baseName = cached?.name || user.displayName || (user.email ? user.email.split('@')[0] : 'Jogador');
         await setDoc(userRef, {
             uid: user.uid,
             name: baseName,
-            photo: user.photoURL || DEFAULT_AVATAR,
+            photo: cached?.photo || user.photoURL || DEFAULT_AVATAR,
             points: 0,
             onlineMatchesPlayed: 0,
             campaignProgress: defaultCampaignProgress,
@@ -6717,7 +6761,11 @@ async function ensureUserDoc(user) {
     }
 
     const fresh = await getDoc(userRef);
-    return fresh.exists() ? fresh.data() : null;
+    const data = fresh.exists() ? fresh.data() : null;
+    if (data) {
+        persistCachedProfile({ name: data.name, photo: data.photo }, user.uid);
+    }
+    return data;
 }
 function syncTopUserUi(user, userDoc) {
     const isLogged = !!user;
@@ -6769,6 +6817,13 @@ async function refreshProfileRank() {
         return;
     }
 
+    ensureRankingSubscription();
+    const liveRank = liveRankingEntries.findIndex((item) => item.uid === activeUser.uid || item.id === activeUser.uid);
+    if (liveRank >= 0) {
+        profileRank.innerText = `Ranking global: #${liveRank + 1}`;
+        return;
+    }
+
     try {
         const points = activeUserDoc?.points || 0;
         const higherQuery = query(collection(db, 'users'), where('points', '>', points));
@@ -6778,6 +6833,90 @@ async function refreshProfileRank() {
     } catch (err) {
         profileRank.innerText = 'Ranking global: --';
     }
+}
+
+function renderRankingEntries(entries = liveRankingEntries) {
+    const rankingList = document.getElementById('ranking-list');
+    if (!rankingList) return;
+
+    if (!entries.length) {
+        rankingList.innerHTML = '<div class="ranking-item">Sem dados no ranking ainda.</div>';
+        return;
+    }
+
+    rankingList.innerHTML = '';
+    entries.forEach((u, idx) => {
+        const item = document.createElement('div');
+        item.className = 'ranking-item';
+        item.innerHTML = `
+            <strong>#${idx + 1}</strong>
+            <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+                <img class="ranking-avatar" src="${u.photo || DEFAULT_AVATAR}" alt="avatar">
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${u.name || 'Jogador'}</span>
+            </div>
+            <strong>${u.points || 0}</strong>
+        `;
+        rankingList.appendChild(item);
+    });
+}
+
+function ensureRankingSubscription() {
+    if (!db || rankingUnsubscribe) return;
+
+    const rankingQuery = query(collection(db, 'users'), orderBy('points', 'desc'), limit(50));
+    rankingUnsubscribe = onSnapshot(rankingQuery, (snap) => {
+        liveRankingEntries = snap.docs.map((entryDoc) => ({
+            id: entryDoc.id,
+            uid: entryDoc.id,
+            ...entryDoc.data()
+        }));
+
+        if (rankingModal && !rankingModal.classList.contains('hidden-control')) {
+            renderRankingEntries(liveRankingEntries);
+        }
+        refreshProfileRank();
+    }, (err) => {
+        console.error('Erro ao acompanhar ranking em tempo real:', err);
+        liveRankingEntries = [];
+    });
+}
+
+function applyOptimisticRankingUpdate(uid, partial = {}) {
+    if (!uid) return;
+
+    const currentPoints = Number(partial.points ?? activeUserDoc?.points ?? 0);
+    const currentName = partial.name ?? activeUserDoc?.name ?? activeUser?.displayName ?? 'Jogador';
+    const currentPhoto = partial.photo ?? activeUserDoc?.photo ?? activeUser?.photoURL ?? DEFAULT_AVATAR;
+    const index = liveRankingEntries.findIndex((item) => item.uid === uid || item.id === uid);
+
+    if (index >= 0) {
+        liveRankingEntries[index] = {
+            ...liveRankingEntries[index],
+            ...partial,
+            uid,
+            id: liveRankingEntries[index].id || uid,
+            name: currentName,
+            photo: currentPhoto,
+            points: currentPoints
+        };
+    } else if (liveRankingEntries.length < 50 || currentPoints > Number(liveRankingEntries[liveRankingEntries.length - 1]?.points || 0)) {
+        liveRankingEntries.push({
+            uid,
+            id: uid,
+            name: currentName,
+            photo: currentPhoto,
+            points: currentPoints
+        });
+    }
+
+    liveRankingEntries = liveRankingEntries
+        .sort((a, b) => Number(b.points || 0) - Number(a.points || 0))
+        .slice(0, 50);
+
+    if (rankingModal && !rankingModal.classList.contains('hidden-control')) {
+        renderRankingEntries(liveRankingEntries);
+    }
+    refreshProfileRank();
 }
 
 async function refreshActiveUserDoc() {
@@ -7064,6 +7203,7 @@ function openProfileModal() {
     showControl(profileModal, true);
     showControl(userMenuDropdown, false);
     syncThemeAvailability();
+    setProfileSaveButtonState(false);
 
     if (!activeUser) {
         setStatus('FaÃƒÆ’Ã‚Â§a login para acessar o perfil.', true);
@@ -7076,12 +7216,12 @@ function openProfileModal() {
         : (activeUserDoc?.name || activeUser.displayName || activeUser.email?.split('@')[0] || 'Jogador');
 
     profileNameInput.value = displayName;
-    profileNameInput.disabled = isAnon;
-    profilePhotoInput.disabled = isAnon;
-    if (profilePhotoBtn) profilePhotoBtn.disabled = isAnon;
+    profileNameInput.disabled = false;
+    profilePhotoInput.disabled = false;
+    if (profilePhotoBtn) profilePhotoBtn.disabled = false;
 
     if (isAnon) {
-        setStatus('Conta visitante: joga normal e agora também sobe no ranking.');
+        setStatus('Conta visitante: você também pode ajustar nome e foto do perfil.');
     } else {
         setStatus('');
     }
@@ -7093,6 +7233,13 @@ function closeProfileModal() {
     showControl(profileModal, false);
     closeAudioSettingsModal();
     setStatus('');
+}
+
+function setProfileSaveButtonState(isSaving = false) {
+    const saveBtn = document.getElementById('save-profile-btn');
+    if (!saveBtn) return;
+    saveBtn.disabled = isSaving;
+    saveBtn.innerText = isSaving ? 'Salvando perfil...' : 'Salvar perfil';
 }
 
 function openAudioSettingsModal() {
@@ -7333,42 +7480,108 @@ function closeRankingModal() {
 }
 
 async function uploadProfilePhoto(file, uid) {
-    if (!storage || !file || !uid) return null;
+    if (!file || !uid) return null;
+    if (!String(file.type || '').startsWith('image/')) {
+        throw new Error('Escolha um arquivo de imagem válido.');
+    }
+    if (Number(file.size || 0) > 5 * 1024 * 1024) {
+        throw new Error('A imagem deve ter no máximo 5 MB.');
+    }
+    if (!storage || isUsingLocalDevSession) {
+        return await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(String(reader.result || ''));
+            reader.onerror = () => reject(new Error('Não foi possível ler a imagem selecionada.'));
+            reader.readAsDataURL(file);
+        });
+    }
     const path = `profile_photos/${uid}/${Date.now()}_${file.name}`;
     const storageRef = ref(storage, path);
     await uploadBytes(storageRef, file);
     return await getDownloadURL(storageRef);
 }
 async function saveProfile() {
-    if (!activeUser || !db || activeUser.isAnonymous) {
-        setStatus('Visitante nÃƒÆ’Ã‚Â£o salva perfil.', true);
+    if (!activeUser) {
+        setStatus('Faça login para salvar o perfil.', true);
         return;
     }
 
     const newName = (profileNameInput.value || '').trim().slice(0, 24) || 'Jogador';
     const file = profilePhotoInput.files?.[0] || null;
 
+    setProfileSaveButtonState(true);
     setStatus('Salvando perfil...');
-    try {
-        let photoURL = activeUserDoc?.photo || activeUser.photoURL || DEFAULT_AVATAR;
-        if (file) {
-            photoURL = await uploadProfilePhoto(file, activeUser.uid);
+    const immediatePhotoURL =
+        (file ? (pendingProfilePhotoDataUrl || pendingProfilePhotoObjectUrl) : '') ||
+        activeUserDoc?.photo ||
+        activeUser.photoURL ||
+        DEFAULT_AVATAR;
+
+    activeUser.displayName = newName;
+    activeUser.photoURL = immediatePhotoURL;
+    activeUserDoc = { ...(activeUserDoc || {}), name: newName, photo: immediatePhotoURL };
+    persistCachedProfile({ name: newName, photo: immediatePhotoURL }, activeUser.uid);
+    syncTopUserUi(activeUser, activeUserDoc);
+    applyOptimisticRankingUpdate(activeUser.uid, {
+        name: newName,
+        photo: immediatePhotoURL,
+        points: activeUserDoc?.points || 0
+    });
+
+    if (profilePhotoInput) profilePhotoInput.value = '';
+    setProfileSaveButtonState(false);
+    closeProfileModal();
+
+    (async () => {
+        try {
+            let finalPhotoURL = immediatePhotoURL;
+            if (file) {
+                if (pendingProfilePhotoDataUrl && isUsingLocalDevSession) {
+                    finalPhotoURL = pendingProfilePhotoDataUrl;
+                } else if (!isUsingLocalDevSession) {
+                    finalPhotoURL = await uploadProfilePhoto(file, activeUser.uid);
+                }
+            }
+
+            if (!isUsingLocalDevSession) {
+                await updateProfile(activeUser, { displayName: newName, photoURL: finalPhotoURL });
+            } else {
+                activeUser.displayName = newName;
+                activeUser.photoURL = finalPhotoURL;
+            }
+
+            if (db && !isUsingLocalDevSession) {
+                await setDoc(doc(db, 'users', activeUser.uid),{
+                    uid: activeUser.uid,
+                    name: newName,
+                    photo: finalPhotoURL,
+                    points: activeUserDoc?.points || 0
+                }, { merge: true });
+            }
+
+            activeUserDoc = { ...(activeUserDoc || {}), name: newName, photo: finalPhotoURL };
+            persistCachedProfile({ name: newName, photo: finalPhotoURL }, activeUser.uid);
+            syncTopUserUi(activeUser, activeUserDoc);
+            applyOptimisticRankingUpdate(activeUser.uid, {
+                name: newName,
+                photo: finalPhotoURL,
+                points: activeUserDoc?.points || 0
+            });
+            pendingProfilePhotoDataUrl = '';
+            if (pendingProfilePhotoObjectUrl) {
+                try {
+                    URL.revokeObjectURL(pendingProfilePhotoObjectUrl);
+                } catch (err) {
+                    console.log('Falha ao limpar preview temporário:', err);
+                }
+                pendingProfilePhotoObjectUrl = '';
+            }
+            showFloatingMessage('Perfil salvo.');
+        } catch (err) {
+            console.error('Erro ao sincronizar perfil:', err);
+            showFloatingMessage('Perfil salvo localmente. A sincronização pode demorar um pouco.', 2600);
         }
-
-        await updateProfile(activeUser, { displayName: newName, photoURL });
-        await setDoc(doc(db, 'users', activeUser.uid),{
-            uid: activeUser.uid,
-            name: newName,
-            photo: photoURL,
-            points: activeUserDoc?.points || 0
-        }, { merge: true });
-
-        activeUserDoc = { ...(activeUserDoc || {}), name: newName, photo: photoURL };
-        syncTopUserUi(activeUser, activeUserDoc);
-        setStatus('Perfil salvo com sucesso.');
-    } catch (err) {
-        setStatus('Erro ao salvar perfil: ' + (err.message || err), true);
-    }
+    })();
 }
 
 async function authWithGoogle() {
@@ -7533,6 +7746,12 @@ async function handleCorrectAnswer() {
         const fresh = await getDoc(userRef);
         activeUserDoc = fresh.exists() ? fresh.data() : activeUserDoc;
         if (profilePoints) profilePoints.innerText = `Pontos: ${activeUserDoc?.points || 0}`;
+        applyOptimisticRankingUpdate(activeUser.uid, {
+            name: activeUserDoc?.name || 'Jogador',
+            photo: activeUserDoc?.photo || DEFAULT_AVATAR,
+            points: activeUserDoc?.points || 0
+        });
+        refreshProfileRank();
     } catch (err) {
         console.log('Erro ao somar pontos:', err);
     }
@@ -7548,35 +7767,25 @@ async function loadRanking() {
         return;
     }
 
-    rankingList.innerHTML = '<div class="ranking-item">Carregando ranking...</div>';
+    ensureRankingSubscription();
 
-    try {
-        const rankingQuery = query(collection(db, 'users'), orderBy('points', 'desc'), limit(50));
-        const snap = await getDocs(rankingQuery);
-
-        if (snap.empty) {
-            rankingList.innerHTML = '<div class="ranking-item">Sem dados no ranking ainda.</div>';
+    if (!liveRankingEntries.length) {
+        rankingList.innerHTML = '<div class="ranking-item">Carregando ranking...</div>';
+        try {
+            const rankingQuery = query(collection(db, 'users'), orderBy('points', 'desc'), limit(50));
+            const snap = await getDocs(rankingQuery);
+            liveRankingEntries = snap.docs.map((entryDoc) => ({
+                id: entryDoc.id,
+                uid: entryDoc.id,
+                ...entryDoc.data()
+            }));
+        } catch (err) {
+            rankingList.innerHTML = `<div class="ranking-item">Erro ao carregar ranking: ${err.message || err}</div>`;
             return;
         }
-
-        rankingList.innerHTML = '';
-        snap.docs.forEach((doc, idx) => {
-            const u = doc.data();
-            const item = document.createElement('div');
-            item.className = 'ranking-item';
-            item.innerHTML = `
-                <strong>#${idx + 1}</strong>
-                <div style="display:flex;align-items:center;gap:8px;min-width:0;">
-                    <img class="ranking-avatar" src="${u.photo || DEFAULT_AVATAR}" alt="avatar">
-                    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${u.name || 'Jogador'}</span>
-                </div>
-                <strong>${u.points || 0}</strong>
-            `;
-            rankingList.appendChild(item);
-        });
-    } catch (err) {
-        rankingList.innerHTML = `<div class="ranking-item">Erro ao carregar ranking: ${err.message || err}</div>`;
     }
+
+    renderRankingEntries(liveRankingEntries);
 }
 
 function bindAuthUiEvents() {
@@ -7635,6 +7844,37 @@ function bindAuthUiEvents() {
     document.getElementById('profile-logout-btn')?.addEventListener('click', logoutUser);
     openAudioSettingsBtn?.addEventListener('click', openAudioSettingsModal);
     profilePhotoBtn?.addEventListener('click', () => profilePhotoInput?.click());
+    profilePhotoInput?.addEventListener('change', async () => {
+        const file = profilePhotoInput.files?.[0] || null;
+        if (!file) return;
+        if (!String(file.type || '').startsWith('image/')) {
+            setStatus('Escolha um arquivo de imagem válido.', true);
+            profilePhotoInput.value = '';
+            return;
+        }
+        try {
+            pendingProfilePhotoDataUrl = '';
+            if (pendingProfilePhotoObjectUrl) {
+                URL.revokeObjectURL(pendingProfilePhotoObjectUrl);
+                pendingProfilePhotoObjectUrl = '';
+            }
+            pendingProfilePhotoObjectUrl = URL.createObjectURL(file);
+            if (profileAvatar) {
+                profileAvatar.src = pendingProfilePhotoObjectUrl;
+            }
+            pendingProfilePhotoDataUrl = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(String(reader.result || ''));
+                reader.onerror = () => reject(new Error('Não foi possível preparar a imagem para salvar.'));
+                reader.readAsDataURL(file);
+            });
+        } catch (err) {
+            console.log('Falha ao gerar preview da foto:', err);
+            setStatus('Não foi possível preparar essa imagem. Tente outra.', true);
+            return;
+        }
+        setStatus(`Foto/GIF selecionado: ${file.name}. Agora toque em "Salvar perfil".`);
+    });
     onlineBackBtn?.addEventListener('click', async () => {
         await leaveOnlineRoom({ abandon: !!currentOnlineRoomCode });
         openWelcomeTutorial(true);
