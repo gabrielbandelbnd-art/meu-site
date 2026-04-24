@@ -92,6 +92,8 @@
             <h3>Como devemos te chamar?</h3>
             <p class="support-copy">Escolha um nome para jogar como visitante e receber respostas do suporte.</p>
             <input id="visitor-name-input" class="profile-name-edit" type="text" maxlength="24" placeholder="Seu nome de visitante">
+            <input id="visitor-social-link-input" class="profile-name-edit" type="url" inputmode="url" placeholder="https://instagram.com/seuperfil (opcional)">
+            <div class="profile-social-link-hint">Escolha um link social para deixar seu nome clicável no ranking.</div>
             <button id="visitor-name-save-btn" class="profile-btn auth-main-btn">Continuar como visitante</button>
             <div id="visitor-name-status" class="profile-status"></div>
         </div>
@@ -824,6 +826,8 @@
                 <input id="profile-photo-input" type="file" accept="image/png,image/jpeg,image/webp,image/gif" class="hidden-control">
                 <button id="profile-photo-btn" class="profile-btn profile-ghost-btn">Trocar foto ou GIF</button>
                 <input id="profile-name-input" type="text" maxlength="24" class="profile-name-edit" placeholder="Alterar nome">
+                <input id="profile-social-link-input" type="url" inputmode="url" class="profile-name-edit" placeholder="https://instagram.com/seuperfil">
+                <div class="profile-social-link-hint">Escolha um link social para deixar seu nome clicável no ranking.</div>
 
                 <button id="save-profile-btn" class="profile-btn auth-main-btn profile-save-btn">Salvar perfil</button>
                 <button id="open-audio-settings-btn" class="profile-btn profile-ghost-btn">Configurações de áudio</button>
@@ -1007,6 +1011,7 @@
                     </div>
                     <div class="public-player-info">
                         <div id="public-player-name" class="profile-name-title">Jogador</div>
+                        <a id="public-player-social-link" class="public-player-social-link hidden-control" href="#" target="_blank" rel="noopener noreferrer">Abrir link social</a>
                         <div id="public-player-status" class="profile-rank">Carregando...</div>
                         <div id="public-player-stats" class="public-player-stats"></div>
                         <button id="send-friend-invite-btn" class="profile-btn auth-main-btn">Enviar convite de amizade</button>

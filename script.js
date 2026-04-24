@@ -537,6 +537,7 @@ const publicPlayerModal = document.getElementById('public-player-modal');
 const closePublicPlayerModalBtn = document.getElementById('close-public-player-modal');
 const publicPlayerAvatar = document.getElementById('public-player-avatar');
 const publicPlayerName = document.getElementById('public-player-name');
+const publicPlayerSocialLink = document.getElementById('public-player-social-link');
 const publicPlayerStatus = document.getElementById('public-player-status');
 const publicPlayerLevelBadge = document.getElementById('public-player-level-badge');
 const publicPlayerThemeName = document.getElementById('public-player-theme-name');
@@ -2618,6 +2619,7 @@ const TRAINING_FINAL_REWARD_LABELS = {
 let activeUser = null;
 let activeUserDoc = null;
 let pendingVisitorName = '';
+let pendingVisitorSocialLink = '';
 let visitorNameResolver = null;
 let rankingUnsubscribe = null;
 let liveRankingEntries = [];
@@ -3497,8 +3499,168 @@ function normalizeSocialMap(value) {
     return value && typeof value === 'object' && !Array.isArray(value) ? { ...value } : {};
 }
 
+const SAFE_PUBLIC_PLAYER_NAME = '[Nome Ofensivo] Mago Misterioso';
+const SAFE_SOCIAL_HOSTS = [
+    'instagram.com',
+    'facebook.com',
+    'youtube.com',
+    'youtu.be',
+    'twitch.tv'
+];
+const BLOCKED_SOCIAL_HOST_HINTS = [
+    'adult',
+    'porn',
+    'xxx',
+    'hentai',
+    'onlyfans',
+    'fatalmodel',
+    'casino',
+    'aposta',
+    'tigrinho',
+    'golpe'
+];
+const BLOCKED_SOCIAL_HOSTS = [
+    'privacy.com.br',
+    'privacy.com',
+    'onlyfans.com',
+    'fatalmodel.com',
+    'blaze.com',
+    'betano.com',
+    'bet365.com',
+    '1xbet.com',
+    'stake.com',
+    'bit.ly',
+    'tinyurl.com',
+    'cutt.ly',
+    'rb.gy',
+    'rebrand.ly',
+    'goo.gl',
+    'is.gd',
+    'ow.ly',
+    't.co'
+];
+
+function getRawPlayerName(player = {}) {
+    return player.name || player.displayName || player.email || 'Jogador';
+}
+
+function getSafePublicName(name = '') {
+    const cleanName = sanitizeGameText(String(name || '').trim()).slice(0, 24) || 'Jogador';
+    return containsBlockedVisitorName(name) ? SAFE_PUBLIC_PLAYER_NAME : cleanName;
+}
+
+function isPreferredSocialHost(hostname = '') {
+    const host = String(hostname || '').toLowerCase();
+    return SAFE_SOCIAL_HOSTS.some((domain) => host === domain || host.endsWith(`.${domain}`));
+}
+
+function isBlockedSocialHost(hostname = '') {
+    const host = String(hostname || '').toLowerCase();
+    if (BLOCKED_SOCIAL_HOST_HINTS.some((term) => host.includes(term))) {
+        return true;
+    }
+    return BLOCKED_SOCIAL_HOSTS.some((domain) => host === domain || host.endsWith(`.${domain}`));
+}
+
+function validateSocialLink(rawLink = '') {
+    const trimmed = String(rawLink || '').trim();
+    if (!trimmed) {
+        return { ok: true, normalized: '', message: '' };
+    }
+
+    if (!/^https:\/\//i.test(trimmed)) {
+        return {
+            ok: false,
+            normalized: '',
+            message: 'Esse link não passou pelo Grimório Arcano. Use um link social seguro.'
+        };
+    }
+
+    try {
+        const url = new URL(trimmed);
+        const protocol = String(url.protocol || '').toLowerCase();
+        const hostname = String(url.hostname || '').toLowerCase();
+
+        if (protocol !== 'https:' || !hostname || !hostname.includes('.')) {
+            throw new Error('invalid-url');
+        }
+
+        if (['javascript:', 'data:', 'file:', 'blob:', 'http:'].includes(protocol)) {
+            throw new Error('blocked-protocol');
+        }
+
+        if (isBlockedSocialHost(hostname)) {
+            throw new Error('blocked-host');
+        }
+
+        return {
+            ok: true,
+            normalized: url.toString(),
+            message: '',
+            preferred: isPreferredSocialHost(hostname)
+        };
+    } catch (err) {
+        return {
+            ok: false,
+            normalized: '',
+            message: 'Esse link não passou pelo Grimório Arcano. Use um link social seguro.'
+        };
+    }
+}
+
+function getPublicPlayerSocialLink(player = {}) {
+    const candidates = [
+        player.socialLink,
+        player.socialUrl,
+        player.doc?.socialLink
+    ];
+
+    for (const candidate of candidates) {
+        const validation = validateSocialLink(candidate || '');
+        if (validation.ok && validation.normalized) {
+            return validation.normalized;
+        }
+    }
+
+    return '';
+}
+
+function createPublicNameNode(player = {}, options = {}) {
+    const {
+        allowExternalLink = false,
+        className = '',
+        tagName = 'span'
+    } = options;
+    const rawName = getRawPlayerName(player);
+    const safeName = getSafePublicName(rawName);
+    const safeLink = allowExternalLink && !containsBlockedVisitorName(rawName) ? getPublicPlayerSocialLink(player) : '';
+    const node = document.createElement(safeLink ? 'a' : tagName);
+
+    if (className) {
+        node.className = safeLink ? `${className} is-link` : className;
+    }
+
+    node.textContent = safeName;
+
+    if (safeLink) {
+        node.href = safeLink;
+        node.target = '_blank';
+        node.rel = 'noopener noreferrer';
+    }
+
+    return node;
+}
+
+function renderPublicName(container, player = {}, options = {}) {
+    if (!container) return null;
+    container.textContent = '';
+    const node = createPublicNameNode(player, options);
+    container.appendChild(node);
+    return node;
+}
+
 function getPublicPlayerName(player = {}) {
-    return sanitizeGameText(player.name || player.displayName || player.email || 'Jogador');
+    return getSafePublicName(getRawPlayerName(player));
 }
 
 function getPublicPlayerPhoto(player = {}) {
@@ -3774,7 +3936,7 @@ function updateOnlineBanner(roomData = currentOnlineRoom) {
         } else if (!opponent?.uid) {
             onlineOpponentBannerStatus.innerText = 'Oponente: aguardando...';
         } else if (roomData?.status === 'abandoned') {
-            onlineOpponentBannerStatus.innerText = roomData.abandonMessage || `O oponente ${opponent.name || 'oponente'} abandonou o jogo.`;
+            onlineOpponentBannerStatus.innerText = roomData.abandonMessage || `O oponente ${getPublicPlayerName(opponent) || 'oponente'} abandonou o jogo.`;
         } else if (roomData?.status === 'finished') {
             onlineOpponentBannerStatus.innerText = opponent.finished ? `Oponente: terminou em ${formatOnlineTime(opponent.finishTimeMs || 0)}` : 'Oponente: não concluiu';
         } else if (opponent.connected === false) {
@@ -4063,19 +4225,35 @@ function renderPartyPlayersList(roomData = currentOnlineRoom) {
         const host = player.uid === roomData?.hostUid;
         const progress = Math.max(0, Math.min(100, Math.round(Number(player.progress || 0))));
 
-        row.innerHTML = `
-            <div class="online-party-player-top">
-                <strong>${sanitizeGameText(player.name || 'Jogador')}</strong>
-                <span>${me ? 'Você' : host ? 'Host' : getPartyPlayerStatusLabel(player)}</span>
-            </div>
-            <div class="online-party-progress-track">
-                <div class="online-party-progress-fill" style="width:${progress}%"></div>
-            </div>
-            <div class="online-party-player-bottom">
-                <span>${getPartyPlayerStatusLabel(player)}</span>
-                <span>${progress}%</span>
-            </div>
-        `;
+        const top = document.createElement('div');
+        top.className = 'online-party-player-top';
+
+        const nameBtn = document.createElement('button');
+        nameBtn.type = 'button';
+        nameBtn.className = 'profile-btn profile-ghost-btn online-safe-name';
+        nameBtn.textContent = getPublicPlayerName(player);
+        nameBtn.addEventListener('click', () => openPublicPlayerProfile(player));
+
+        const role = document.createElement('span');
+        role.textContent = me ? 'Você' : host ? 'Host' : getPartyPlayerStatusLabel(player);
+        top.append(nameBtn, role);
+
+        const track = document.createElement('div');
+        track.className = 'online-party-progress-track';
+        const fill = document.createElement('div');
+        fill.className = 'online-party-progress-fill';
+        fill.style.width = `${progress}%`;
+        track.appendChild(fill);
+
+        const bottom = document.createElement('div');
+        bottom.className = 'online-party-player-bottom';
+        const status = document.createElement('span');
+        status.textContent = getPartyPlayerStatusLabel(player);
+        const pct = document.createElement('span');
+        pct.textContent = `${progress}%`;
+        bottom.append(status, pct);
+
+        row.append(top, track, bottom);
 
         onlinePartyPlayersList.appendChild(row);
     });
@@ -4803,7 +4981,7 @@ function openOnlineResultModal(roomData) {
     const me = getOnlineCurrentPlayer(roomData);
     const opponent = getOnlineOpponentPlayer(roomData);
     const isWinner = !!roomData?.winnerUid && roomData.winnerUid === activeUser?.uid;
-    const opponentName = opponent?.name || 'oponente';
+    const opponentName = getPublicPlayerName(opponent || {}) || 'oponente';
 
     if (onlineResultTitle) {
         if (roomData?.status === 'abandoned' && opponent?.connected === false) {
@@ -5697,9 +5875,11 @@ function loadCachedProfile(uid = activeUser?.uid) {
 function persistCachedProfile(profileData = {}, uid = activeUser?.uid) {
     const key = getProfileCacheStorageKey(uid);
     if (!key) return profileData;
+    const safeSocialLink = validateSocialLink(profileData?.socialLink || '').normalized || '';
     const safeProfile = {
         name: String(profileData?.name || '').trim().slice(0, 24) || 'Jogador',
-        photo: String(profileData?.photo || '').trim() || DEFAULT_AVATAR
+        photo: String(profileData?.photo || '').trim() || DEFAULT_AVATAR,
+        socialLink: safeSocialLink
     };
     try {
         localStorage.setItem(key, JSON.stringify(safeProfile));
@@ -5730,6 +5910,7 @@ const profileModal = document.getElementById('profile-modal');
 const rankingModal = document.getElementById('ranking-modal');
 const profileStatus = document.getElementById('profile-status');
 const profileNameInput = document.getElementById('profile-name-input');
+const profileSocialLinkInput = document.getElementById('profile-social-link-input');
 const profilePhotoInput = document.getElementById('profile-photo-input');
 const profilePhotoBtn = document.getElementById('profile-photo-btn');
 const profileNameTitle = document.getElementById('profile-name-title');
@@ -5774,6 +5955,7 @@ const gateLoginBtn = document.getElementById('gate-login-email-btn');
 const gateRegisterBtn = document.getElementById('gate-register-email-btn');
 const visitorNameModal = document.getElementById('visitor-name-modal');
 const visitorNameInput = document.getElementById('visitor-name-input');
+const visitorSocialLinkInput = document.getElementById('visitor-social-link-input');
 const visitorNameSaveBtn = document.getElementById('visitor-name-save-btn');
 const visitorNameStatus = document.getElementById('visitor-name-status');
 const dailyHubCard = document.getElementById('daily-hub-card');
@@ -6303,6 +6485,7 @@ const VISITOR_NAME_BLOCKED_PARTIALS = [
     'babola',
     'babolas',
     'bosta',
+    'cusujo',
     'penis',
     'pinto',
     'puta',
@@ -6399,6 +6582,7 @@ function requestVisitorName() {
     return new Promise((resolve) => {
         visitorNameResolver = resolve;
         if (visitorNameInput) visitorNameInput.value = pendingVisitorName || '';
+        if (visitorSocialLinkInput) visitorSocialLinkInput.value = pendingVisitorSocialLink || '';
         setVisitorNameStatus('');
         showControl(visitorNameModal, true);
         window.setTimeout(() => visitorNameInput?.focus(), 50);
@@ -6417,7 +6601,15 @@ function submitVisitorNameChoice() {
         return;
     }
     const name = validation.normalized;
+    const socialLinkValidation = validateSocialLink(visitorSocialLinkInput?.value || '');
+    if (!socialLinkValidation.ok) {
+        setVisitorNameStatus(socialLinkValidation.message, true);
+        visitorSocialLinkInput?.focus();
+        visitorSocialLinkInput?.select();
+        return;
+    }
     pendingVisitorName = name;
+    pendingVisitorSocialLink = socialLinkValidation.normalized || '';
     showControl(visitorNameModal, false);
     setVisitorNameStatus('');
     const resolver = visitorNameResolver;
@@ -6730,6 +6922,9 @@ function activateLocalDevSession(mode = 'guest', email = '') {
     const displayName = mode === 'email'
         ? (cachedProfile?.name || normalizedEmail.split('@')[0] || 'Jogador')
         : (cachedProfile?.name || pendingVisitorName || 'Visitante');
+    const displaySocialLink = mode === 'email'
+        ? (cachedProfile?.socialLink || '')
+        : (cachedProfile?.socialLink || pendingVisitorSocialLink || '');
 
     isUsingLocalDevSession = true;
     activeUser = {
@@ -6744,6 +6939,7 @@ function activateLocalDevSession(mode = 'guest', email = '') {
         uid: activeUser.uid,
         name: displayName,
         photo: cachedProfile?.photo || DEFAULT_AVATAR,
+        socialLink: displaySocialLink,
         points: 0,
         campaignProgress: getDefaultCampaignProgress()
     };
@@ -6830,10 +7026,12 @@ async function ensureVisitorDoc(user) {
     const cached = loadCachedProfile(user.uid);
     let visitorName = normalizeVisitorName(existing.name || cached?.name || pendingVisitorName || '');
     if (!visitorName) visitorName = await requestVisitorName();
+    const visitorSocialLink = validateSocialLink(existing.socialLink || cached?.socialLink || pendingVisitorSocialLink || '').normalized || '';
     const visitorDoc = {
         uid: user.uid,
         name: visitorName,
         photo: resolveProfilePhoto(existing.photo, cached?.photo, user.photoURL || DEFAULT_AVATAR),
+        socialLink: visitorSocialLink,
         points: Math.max(0, Number(existing.points || 0)),
         onlineMatchesPlayed: Math.max(0, Number(existing.onlineMatchesPlayed || 0)),
         isVisitor: true,
@@ -6841,8 +7039,9 @@ async function ensureVisitorDoc(user) {
     };
     if (!snap.exists()) visitorDoc.createdAt = serverTimestamp();
     await setDoc(userRef, visitorDoc, { merge: true });
-    persistCachedProfile({ name: visitorDoc.name, photo: visitorDoc.photo }, user.uid);
+    persistCachedProfile({ name: visitorDoc.name, photo: visitorDoc.photo, socialLink: visitorDoc.socialLink }, user.uid);
     pendingVisitorName = visitorName;
+    pendingVisitorSocialLink = visitorSocialLink;
     return { ...existing, ...visitorDoc };
 }
 
@@ -6860,6 +7059,7 @@ async function ensureUserDoc(user) {
             uid: user.uid,
             name: baseName,
             photo: resolveProfilePhoto('', cached?.photo, user.photoURL || DEFAULT_AVATAR),
+            socialLink: validateSocialLink(cached?.socialLink || '').normalized || '',
             points: 0,
             onlineMatchesPlayed: 0,
             campaignProgress: defaultCampaignProgress,
@@ -6903,7 +7103,7 @@ async function ensureUserDoc(user) {
     const fresh = await getDoc(userRef);
     const data = fresh.exists() ? fresh.data() : null;
     if (data) {
-        persistCachedProfile({ name: data.name, photo: data.photo }, user.uid);
+        persistCachedProfile({ name: data.name, photo: data.photo, socialLink: data.socialLink }, user.uid);
     }
     return data;
 }
@@ -6989,14 +7189,30 @@ function renderRankingEntries(entries = liveRankingEntries) {
     entries.forEach((u, idx) => {
         const item = document.createElement('div');
         item.className = 'ranking-item';
-        item.innerHTML = `
-            <strong>#${idx + 1}</strong>
-            <div style="display:flex;align-items:center;gap:8px;min-width:0;">
-                <img class="ranking-avatar" src="${u.photo || DEFAULT_AVATAR}" alt="avatar">
-                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${u.name || 'Jogador'}</span>
-            </div>
-            <strong>${u.points || 0}</strong>
-        `;
+
+        const position = document.createElement('strong');
+        position.textContent = `#${idx + 1}`;
+
+        const meta = document.createElement('div');
+        meta.className = 'ranking-player-meta';
+
+        const avatar = document.createElement('img');
+        avatar.className = 'ranking-avatar';
+        avatar.src = getPublicPlayerPhoto(u);
+        avatar.alt = 'avatar';
+
+        const nameWrap = document.createElement('div');
+        nameWrap.style.minWidth = '0';
+        nameWrap.appendChild(createPublicNameNode(u, {
+            allowExternalLink: true,
+            className: 'ranking-player-name'
+        }));
+
+        const points = document.createElement('strong');
+        points.textContent = String(u.points || 0);
+
+        meta.append(avatar, nameWrap);
+        item.append(position, meta, points);
         rankingList.appendChild(item);
     });
 }
@@ -7028,6 +7244,7 @@ function applyOptimisticRankingUpdate(uid, partial = {}) {
     const currentPoints = Number(partial.points ?? activeUserDoc?.points ?? 0);
     const currentName = partial.name ?? activeUserDoc?.name ?? activeUser?.displayName ?? 'Jogador';
     const currentPhoto = partial.photo ?? activeUserDoc?.photo ?? activeUser?.photoURL ?? DEFAULT_AVATAR;
+    const currentSocialLink = partial.socialLink ?? activeUserDoc?.socialLink ?? '';
     const index = liveRankingEntries.findIndex((item) => item.uid === uid || item.id === uid);
 
     if (index >= 0) {
@@ -7038,6 +7255,7 @@ function applyOptimisticRankingUpdate(uid, partial = {}) {
             id: liveRankingEntries[index].id || uid,
             name: currentName,
             photo: currentPhoto,
+            socialLink: currentSocialLink,
             points: currentPoints
         };
     } else if (liveRankingEntries.length < 50 || currentPoints > Number(liveRankingEntries[liveRankingEntries.length - 1]?.points || 0)) {
@@ -7046,6 +7264,7 @@ function applyOptimisticRankingUpdate(uid, partial = {}) {
             id: uid,
             name: currentName,
             photo: currentPhoto,
+            socialLink: currentSocialLink,
             points: currentPoints
         });
     }
@@ -7111,6 +7330,23 @@ function renderPublicPlayerStats(playerDoc = {}) {
     });
 }
 
+function syncPublicPlayerSocialLink(player = {}) {
+    if (!publicPlayerSocialLink) return;
+    const safeLink = containsBlockedVisitorName(getRawPlayerName(player)) ? '' : getPublicPlayerSocialLink(player);
+    if (!safeLink) {
+        publicPlayerSocialLink.removeAttribute('href');
+        publicPlayerSocialLink.textContent = 'Abrir link social';
+        showControl(publicPlayerSocialLink, false);
+        return;
+    }
+
+    publicPlayerSocialLink.href = safeLink;
+    publicPlayerSocialLink.target = '_blank';
+    publicPlayerSocialLink.rel = 'noopener noreferrer';
+    publicPlayerSocialLink.textContent = 'Abrir link social';
+    showControl(publicPlayerSocialLink, true);
+}
+
 function syncFriendInviteButton() {
     if (!sendFriendInviteBtn || !selectedPublicPlayer) return;
     const status = getFriendshipStatus(selectedPublicPlayer.uid);
@@ -7137,7 +7373,8 @@ async function openPublicPlayerProfile(player = null) {
     applyPublicPlayerTheme(basePlayer);
 
     if (publicPlayerAvatar) publicPlayerAvatar.src = getPublicPlayerPhoto(basePlayer);
-    if (publicPlayerName) publicPlayerName.innerText = getPublicPlayerName(basePlayer);
+    renderPublicName(publicPlayerName, basePlayer, { allowExternalLink: true, className: 'public-safe-name' });
+    syncPublicPlayerSocialLink(basePlayer);
     if (publicPlayerStatus) publicPlayerStatus.innerText = 'Carregando dados...';
     if (publicPlayerLevelBadge) publicPlayerLevelBadge.innerText = '1';
     renderPublicPlayerStats({});
@@ -7150,12 +7387,14 @@ async function openPublicPlayerProfile(player = null) {
             uid: basePlayer.uid,
             name: playerDoc.name || basePlayer.name || 'Jogador',
             photo: playerDoc.photo || basePlayer.photo || DEFAULT_AVATAR,
+            socialLink: playerDoc.socialLink || basePlayer.socialLink || '',
             themeId: playerDoc.themeId || basePlayer.themeId || 'default',
             doc: playerDoc
         };
         applyPublicPlayerTheme(selectedPublicPlayer);
         if (publicPlayerAvatar) publicPlayerAvatar.src = getPublicPlayerPhoto(selectedPublicPlayer);
-        if (publicPlayerName) publicPlayerName.innerText = getPublicPlayerName(selectedPublicPlayer);
+        renderPublicName(publicPlayerName, selectedPublicPlayer, { allowExternalLink: true, className: 'public-safe-name' });
+        syncPublicPlayerSocialLink(selectedPublicPlayer);
         if (publicPlayerStatus) publicPlayerStatus.innerHTML = `Ranking social • <strong>${Number(playerDoc.points || 0)} pontos</strong>`;
         if (publicPlayerLevelBadge) publicPlayerLevelBadge.innerText = String(getOnlinePlayerLevel(playerDoc));
         renderPublicPlayerStats(playerDoc);
@@ -7273,7 +7512,7 @@ function renderFriendRow(player, actions = []) {
     avatar.alt = '';
 
     const name = document.createElement('strong');
-    name.innerText = getPublicPlayerName(player);
+    name.textContent = getPublicPlayerName(player);
 
     const info = document.createElement('div');
     info.className = 'friend-row-info';
@@ -7355,8 +7594,10 @@ function openProfileModal() {
     const displayName = isAnon
         ? (activeUserDoc?.name || pendingVisitorName || 'Visitante')
         : (activeUserDoc?.name || activeUser.displayName || activeUser.email?.split('@')[0] || 'Jogador');
+    const safeSocialLink = validateSocialLink(activeUserDoc?.socialLink || loadCachedProfile(activeUser?.uid)?.socialLink || '').normalized || '';
 
     profileNameInput.value = displayName;
+    if (profileSocialLinkInput) profileSocialLinkInput.value = safeSocialLink;
     profileNameInput.disabled = false;
     profilePhotoInput.disabled = false;
     if (profilePhotoBtn) profilePhotoBtn.disabled = false;
@@ -7658,6 +7899,15 @@ async function saveProfile() {
     }
 
     const newName = validation.normalized || 'Jogador';
+    const socialLinkValidation = validateSocialLink(profileSocialLinkInput?.value || '');
+    if (!socialLinkValidation.ok) {
+        setStatus(socialLinkValidation.message, true);
+        profileSocialLinkInput?.focus();
+        profileSocialLinkInput?.select();
+        return;
+    }
+
+    const newSocialLink = socialLinkValidation.normalized || '';
     const file = profilePhotoInput.files?.[0] || null;
 
     setProfileSaveButtonState(true);
@@ -7670,12 +7920,13 @@ async function saveProfile() {
 
     activeUser.displayName = newName;
     activeUser.photoURL = immediatePhotoURL;
-    activeUserDoc = { ...(activeUserDoc || {}), name: newName, photo: immediatePhotoURL };
-    persistCachedProfile({ name: newName, photo: immediatePhotoURL }, activeUser.uid);
+    activeUserDoc = { ...(activeUserDoc || {}), name: newName, photo: immediatePhotoURL, socialLink: newSocialLink };
+    persistCachedProfile({ name: newName, photo: immediatePhotoURL, socialLink: newSocialLink }, activeUser.uid);
     syncTopUserUi(activeUser, activeUserDoc);
     applyOptimisticRankingUpdate(activeUser.uid, {
         name: newName,
         photo: immediatePhotoURL,
+        socialLink: newSocialLink,
         points: activeUserDoc?.points || 0
     });
 
@@ -7706,16 +7957,18 @@ async function saveProfile() {
                     uid: activeUser.uid,
                     name: newName,
                     photo: finalPhotoURL,
+                    socialLink: newSocialLink,
                     points: activeUserDoc?.points || 0
                 }, { merge: true });
             }
 
-            activeUserDoc = { ...(activeUserDoc || {}), name: newName, photo: finalPhotoURL };
-            persistCachedProfile({ name: newName, photo: finalPhotoURL }, activeUser.uid);
+            activeUserDoc = { ...(activeUserDoc || {}), name: newName, photo: finalPhotoURL, socialLink: newSocialLink };
+            persistCachedProfile({ name: newName, photo: finalPhotoURL, socialLink: newSocialLink }, activeUser.uid);
             syncTopUserUi(activeUser, activeUserDoc);
             applyOptimisticRankingUpdate(activeUser.uid, {
                 name: newName,
                 photo: finalPhotoURL,
+                socialLink: newSocialLink,
                 points: activeUserDoc?.points || 0
             });
             pendingProfilePhotoDataUrl = '';

@@ -2663,6 +2663,53 @@ body.training-mode-active .training-hand {
     border-radius: 8px;
     padding: 8px 10px;
 }
+
+.ranking-player-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.ranking-player-name,
+.public-safe-name,
+.online-safe-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ranking-player-name.is-link,
+.public-safe-name.is-link,
+.public-player-social-link {
+    color: #cdb1ff;
+    text-decoration: none;
+}
+
+.ranking-player-name.is-link:hover,
+.public-safe-name.is-link:hover,
+.public-player-social-link:hover {
+    text-decoration: underline;
+}
+
+.online-safe-name.profile-btn {
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    font: inherit;
+    font-weight: 700;
+    color: var(--text-main);
+    justify-content: flex-start;
+}
+
+.online-safe-name.profile-btn:hover,
+.online-safe-name.profile-btn:focus-visible {
+    color: #cdb1ff;
+    text-decoration: underline;
+}
+
 .ranking-avatar {
     width: 30px;
     height: 30px;
@@ -7529,6 +7576,17 @@ body.training-mode-active .meaning-display {
     margin-top: 0 !important;
 }
 
+.public-player-social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    margin: 0 auto;
+    font-size: 0.95rem;
+    font-weight: 700;
+    opacity: 0.92;
+}
+
 .public-player-card .public-player-stats {
     width: 100%;
     align-items: stretch;
@@ -7567,6 +7625,14 @@ body.training-mode-active .meaning-display {
 
 .public-player-card .public-player-stat-streak div > strong {
     font-size: 1.42rem;
+}
+
+.profile-social-link-hint {
+    margin-top: -8px;
+    margin-bottom: 4px;
+    color: rgba(235, 220, 255, 0.74);
+    font-size: 0.9rem;
+    line-height: 1.4;
 }
 
 @media (max-width: 520px) {
