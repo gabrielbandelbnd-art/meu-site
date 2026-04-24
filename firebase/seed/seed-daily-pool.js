@@ -27,22 +27,31 @@ function loadDailyPool() {
   const raw = fs.readFileSync(BANK_PATH, 'utf8');
   const entries = JSON.parse(raw);
 
-  if (!Array.isArray(entries) || entries.length < 200) {
-    throw new Error(`Banco inválido. Esperado 365 itens, recebido: ${Array.isArray(entries) ? entries.length : 'não-array'}`);
+  if (!Array.isArray(entries) || entries.length === 0) {
+    throw new Error(`Banco inválido. Esperado ao menos 1 item, recebido: ${Array.isArray(entries) ? entries.length : 'não-array'}`);
   }
 
-  const unique = new Set(entries.map((e) => e.word));
-  if (unique.size < 200) {
+  const normalized = entries.map((item) => ({
+    ...item,
+    word: String(item?.word || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toUpperCase()
+      .replace(/[^A-Z]/g, ''),
+  }));
+
+  const unique = new Set(normalized.map((e) => e.word));
+  if (unique.size !== normalized.length) {
     throw new Error(`Banco inválido. Existem palavras repetidas (únicas: ${unique.size}).`);
   }
 
-  for (const item of entries) {
+  for (const item of normalized) {
     if (!item || typeof item !== 'object') throw new Error('Item inválido no JSON.');
     if (!/^[A-Z]+$/.test(item.word || '')) throw new Error(`Word inválida: ${item.word}`);
-    if (!Array.isArray(item.hints) || item.hints.length !== 5) throw new Error(`Hints inválidas para: ${item.word}`);
+    if (!Array.isArray(item.hints) || item.hints.length < 3) throw new Error(`Hints inválidas para: ${item.word}`);
   }
 
-  return entries;
+  return normalized;
 }
 
 async function seed() {
@@ -50,12 +59,9 @@ async function seed() {
   console.log(`Iniciando seed de ${entries.length} palavras...`);
 
   const poolRef = db.collection('daily_word_pool');
-
-  // Opcional: descomente se quiser reset completo antes de semear.
-  // const old = await poolRef.get();
-  // const delBatch = db.batch();
-  // old.docs.forEach((d) => delBatch.delete(d.ref));
-  // await delBatch.commit();
+  const incomingIds = new Set(entries.map((entry) => entry.word));
+  const existingSnap = await poolRef.get();
+  const staleDocs = existingSnap.docs.filter((doc) => !incomingIds.has(doc.id));
 
   let batch = db.batch();
   let opCount = 0;
@@ -76,11 +82,25 @@ async function seed() {
     }
   }
 
+  for (const doc of staleDocs) {
+    batch.set(doc.ref, {
+      active: false,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    opCount++;
+    if (opCount === 400) {
+      await batch.commit();
+      batch = db.batch();
+      opCount = 0;
+    }
+  }
+
   if (opCount > 0) {
     await batch.commit();
   }
 
-  console.log('Seed finalizado com sucesso.');
+  console.log(`Seed finalizado com sucesso. Ativas: ${entries.length}. Desativadas: ${staleDocs.length}.`);
   process.exit(0);
 }
 

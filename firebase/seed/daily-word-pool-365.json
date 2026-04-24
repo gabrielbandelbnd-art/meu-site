@@ -1,3409 +1,1849 @@
 [
   {
-    "word": "ABRACO",
-    "meaning": "Enlaçamento com os braços como gesto de carinho, afeto ou cumprimento.",
+    "word": "SOL",
+    "meaning": "Estrela que ilumina a Terra durante o dia e fornece calor essencial para a vida.",
     "hints": [
-      "Pode demonstrar afeto sem precisar de palavras.",
-      "É comum em reencontros ou despedidas.",
-      "Envolve proximidade física entre duas pessoas.",
-      "Muitas vezes transmite acolhimento.",
-      "É um gesto simples, mas cheio de significado."
+      "Aparece durante o dia.",
+      "Deixa o céu claro.",
+      "Pode causar calor forte.",
+      "Nasce e se põe todo dia.",
+      "Essencial para a vida."
     ],
     "active": true
   },
   {
-    "word": "VULCAO",
-    "meaning": "Abertura na crosta terrestre por onde magma, gases e cinzas podem ser expelidos.",
+    "word": "LUA",
+    "meaning": "Satélite natural da Terra que aparece no céu principalmente à noite e reflete a luz do sol.",
     "hints": [
-      "Está ligado à atividade geológica intensa.",
-      "Pode transformar paisagens inteiras quando entra em atividade.",
-      "Está associado ao interior quente do planeta.",
-      "Em alguns lugares forma montanhas imponentes.",
-      "Pode lançar lava e cinzas durante erupções."
+      "Brilha à noite.",
+      "Muda de forma ao longo do mês.",
+      "Não tem luz própria.",
+      "Aparece com estrelas.",
+      "Fica no céu escuro."
     ],
     "active": true
   },
   {
-    "word": "VIAGEM",
-    "meaning": "Deslocamento de uma pessoa de um lugar para outro, geralmente por um período determinado.",
+    "word": "MAR",
+    "meaning": "Grande massa de água salgada que cobre parte do planeta e abriga muitos seres vivos.",
     "hints": [
-      "Normalmente envolve sair da rotina.",
-      "Pode acontecer por lazer, trabalho ou descoberta.",
-      "Frequentemente inclui conhecer lugares novos.",
-      "Muitas vezes gera lembranças marcantes.",
-      "Costuma exigir planejamento antes de acontecer."
+      "Água salgada.",
+      "Tem ondas.",
+      "Fica na praia.",
+      "Abriga peixes.",
+      "Pode ser profundo."
     ],
     "active": true
   },
   {
-    "word": "CORAGEM",
-    "meaning": "Força interior para enfrentar medo, perigo ou dificuldade.",
+    "word": "CEU",
+    "meaning": "Espaço visível acima da Terra onde aparecem o sol, a lua e as nuvens.",
     "hints": [
-      "Aparece quando alguém decide agir apesar do medo.",
-      "É admirada em situações difíceis.",
-      "Pode ser demonstrada em pequenas ou grandes decisões.",
-      "Frequentemente está ligada à superação.",
-      "Muitos heróis de histórias são lembrados por isso."
+      "Fica acima de tudo.",
+      "Pode ser azul.",
+      "Tem nuvens.",
+      "Vemos o sol nele.",
+      "Muda de cor."
     ],
     "active": true
   },
   {
-    "word": "ALEGRIA",
-    "meaning": "Estado emocional de felicidade, satisfação ou contentamento.",
+    "word": "RIO",
+    "meaning": "Curso de água doce que corre em direção a outros corpos d'água.",
     "hints": [
-      "Costuma surgir em momentos positivos da vida.",
-      "É frequentemente compartilhada com outras pessoas.",
-      "Pode aparecer em celebrações e conquistas.",
-      "É um sentimento leve e contagiante.",
-      "Muitas músicas falam sobre isso."
+      "Água que corre.",
+      "Vai até o mar.",
+      "Tem correnteza.",
+      "Pode ter peixes.",
+      "Corta a terra."
     ],
     "active": true
   },
   {
-    "word": "ABELHAS",
-    "meaning": "Insetos conhecidos por produzir mel e polinizar flores.",
+    "word": "LUZ",
+    "meaning": "Energia que ilumina o ambiente e permite que possamos enxergar.",
     "hints": [
-      "Vivem em grupos organizados.",
-      "São fundamentais para muitos ecossistemas.",
-      "Produzem um alimento doce muito apreciado.",
-      "Frequentemente visitam flores.",
-      "Seu trabalho ajuda plantas a se reproduzirem."
+      "Clareia tudo.",
+      "Afasta o escuro.",
+      "Vem do sol ou lâmpada.",
+      "Ajuda a ver.",
+      "Pode ser forte."
     ],
     "active": true
   },
   {
-    "word": "MISTERIO",
-    "meaning": "Algo difícil de explicar ou compreender completamente.",
+    "word": "SOM",
+    "meaning": "Vibração que pode ser ouvida, como voz, música ou ruídos.",
     "hints": [
-      "Costuma despertar curiosidade.",
-      "Aparece muito em histórias e investigações.",
-      "Pode envolver algo oculto ou desconhecido.",
-      "Muitas vezes exige pistas para ser resolvido.",
-      "É comum em enredos de suspense."
+      "Você escuta.",
+      "Pode ser alto.",
+      "Pode ser baixo.",
+      "Vem de algo.",
+      "Pode virar música."
     ],
     "active": true
   },
   {
-    "word": "FLORESTA",
-    "meaning": "Grande área coberta por árvores e vegetação densa.",
+    "word": "AR",
+    "meaning": "Mistura de gases invisíveis que respiramos para viver.",
     "hints": [
-      "Abriga enorme diversidade de vida.",
-      "Pode ter clima úmido e sombra abundante.",
-      "É um ambiente natural muito complexo.",
-      "Animais e plantas dependem dela para sobreviver.",
-      "Algumas são tão extensas que parecem infinitas."
+      "Não vemos.",
+      "Respiramos.",
+      "Está em todo lugar.",
+      "Move o vento.",
+      "É invisível."
     ],
     "active": true
   },
   {
-    "word": "ESTRELA",
-    "meaning": "Corpo celeste que emite luz própria, visível no céu noturno.",
+    "word": "MAO",
+    "meaning": "Parte do corpo usada para segurar, tocar e manipular objetos.",
     "hints": [
-      "Pode ser vista à noite em céus limpos.",
-      "Durante séculos ajudou navegadores a se orientar.",
-      "Está presente em muitas histórias e mitologias.",
-      "Algumas formam desenhos no céu chamados constelações.",
-      "Nos parece pequena, mas pode ser gigantesca."
+      "Tem dedos.",
+      "Fica no braço.",
+      "Serve para pegar.",
+      "Usa para escrever.",
+      "Move objetos."
     ],
     "active": true
   },
   {
-    "word": "SEGREDO",
-    "meaning": "Informação mantida oculta ou compartilhada com poucas pessoas.",
+    "word": "PE",
+    "meaning": "Parte do corpo que sustenta o peso e permite andar.",
     "hints": [
-      "Nem sempre deve ser contado a todos.",
-      "Pode criar curiosidade em quem não sabe.",
-      "Muitas histórias giram em torno disso.",
-      "Às vezes é guardado por muito tempo.",
-      "Revelá-lo pode mudar uma situação."
+      "Fica no chão.",
+      "Usa sapato.",
+      "Serve para andar.",
+      "Tem dedos.",
+      "Sustenta o corpo."
     ],
     "active": true
   },
   {
-    "word": "JORNADA",
-    "meaning": "Caminho percorrido ao longo de uma experiência ou trajetória.",
+    "word": "DIA",
+    "meaning": "Período de tempo com luz solar, oposto da noite.",
     "hints": [
-      "Pode ser física ou simbólica.",
-      "Frequentemente envolve aprendizado.",
-      "Muitas histórias acompanham esse processo.",
-      "Tem começo, desenvolvimento e transformação.",
-      "Pode mudar quem a percorre."
+      "Tem sol.",
+      "É claro.",
+      "Vem antes da noite.",
+      "Dura 24h.",
+      "Hora de acordar."
     ],
     "active": true
   },
   {
-    "word": "MONTANHA",
-    "meaning": "Grande elevação natural do terreno.",
+    "word": "NOITE",
+    "meaning": "Período em que não há luz do sol e o céu fica escuro.",
     "hints": [
-      "Pode ser vista de muito longe.",
-      "Algumas têm neve no topo.",
-      "Escalá-la pode exigir preparo.",
-      "Muitas são formadas por movimentos da Terra.",
-      "Oferecem vistas impressionantes."
+      "É escuro.",
+      "Tem lua.",
+      "Hora de dormir.",
+      "Vem depois do dia.",
+      "Tem estrelas."
     ],
     "active": true
   },
   {
-    "word": "OCEANO",
-    "meaning": "Imensa extensão de água salgada que cobre grande parte do planeta.",
+    "word": "FOGO",
+    "meaning": "Reação que gera calor e luz, visível em forma de chamas.",
     "hints": [
-      "É muito maior do que qualquer lago ou rio.",
-      "Abriga inúmeras formas de vida.",
-      "Suas profundezas ainda guardam muitos mistérios.",
-      "Pode influenciar o clima do planeta.",
-      "Ondas e marés fazem parte dele."
+      "Queima.",
+      "Dá calor.",
+      "Tem chama.",
+      "Usado na cozinha.",
+      "Perigoso."
     ],
     "active": true
   },
   {
-    "word": "DESERTO",
-    "meaning": "Região com pouquíssima chuva e vegetação escassa.",
+    "word": "GELO",
+    "meaning": "Água em estado sólido formada em baixas temperaturas.",
     "hints": [
-      "Pode ter grandes áreas de areia.",
-      "Temperaturas podem variar bastante.",
-      "Alguns animais são especializados em viver ali.",
-      "A água é extremamente valiosa nesse ambiente.",
-      "Pode parecer vazio, mas possui vida adaptada."
+      "É frio.",
+      "Fica duro.",
+      "Derrete depois.",
+      "Vai no freezer.",
+      "Vira água."
     ],
     "active": true
   },
   {
-    "word": "CIDADE",
-    "meaning": "Grande área urbana com alta concentração de pessoas e atividades.",
+    "word": "BOLA",
+    "meaning": "Objeto redondo usado em jogos e esportes.",
     "hints": [
-      "Reúne moradias, comércio e serviços.",
-      "Pode ter trânsito intenso.",
-      "Muitas pessoas vivem e trabalham nela.",
-      "Frequentemente possui prédios e ruas movimentadas.",
-      "É um centro de atividades humanas."
+      "É redonda.",
+      "Rola.",
+      "Quica.",
+      "Usada no futebol.",
+      "Pode chutar."
     ],
     "active": true
   },
   {
-    "word": "CAMINHO",
-    "meaning": "Trajeto ou direção que leva de um ponto a outro.",
+    "word": "CASA",
+    "meaning": "Lugar onde as pessoas moram e vivem.",
     "hints": [
-      "Pode ser físico ou simbólico.",
-      "Escolhê-lo define para onde alguém vai.",
-      "Às vezes possui bifurcações.",
-      "Pode representar decisões importantes.",
-      "Segui-lo leva a um destino."
+      "Você mora nela.",
+      "Tem teto.",
+      "Protege da chuva.",
+      "Tem portas.",
+      "Descanso."
     ],
     "active": true
   },
   {
-    "word": "SILENCIO",
-    "meaning": "Ausência de sons ou ruídos perceptíveis.",
+    "word": "RUA",
+    "meaning": "Espaço público por onde passam pessoas e veículos.",
     "hints": [
-      "Pode trazer sensação de calma.",
-      "Às vezes é buscado para concentração.",
-      "Em certos momentos fala mais que palavras.",
-      "Pode acontecer naturalmente ou ser procurado.",
-      "É percebido quando o barulho desaparece."
+      "Tem carros.",
+      "Tem calçada.",
+      "Liga lugares.",
+      "Fica na cidade.",
+      "Você anda nela."
     ],
     "active": true
   },
   {
-    "word": "TEMPESTA",
-    "meaning": "Fenômeno climático intenso com vento, chuva ou relâmpagos.",
+    "word": "PAO",
+    "meaning": "Alimento feito de farinha, muito comum nas refeições.",
     "hints": [
-      "Pode escurecer o céu rapidamente.",
-      "É acompanhada de mudanças bruscas no clima.",
-      "Relâmpagos e trovões podem aparecer.",
-      "Costuma trazer ventos fortes.",
-      "Às vezes chega de forma repentina."
+      "Vai ao forno.",
+      "Comum no café.",
+      "Feito de farinha.",
+      "Pode ser quente.",
+      "Combina com manteiga."
     ],
     "active": true
   },
   {
-    "word": "TESOURO",
-    "meaning": "Objeto ou conjunto de bens muito valiosos.",
+    "word": "OVO",
+    "meaning": "Alimento com casca que vem de aves e é usado na culinária.",
     "hints": [
-      "Muitas histórias de aventura falam sobre isso.",
-      "Pode estar escondido ou protegido.",
-      "Seu valor pode ser material ou simbólico.",
-      "Exploradores costumam procurá-lo.",
-      "Encontrá-lo pode mudar a vida de alguém."
+      "Tem casca.",
+      "Tem gema.",
+      "Vem da galinha.",
+      "Pode fritar.",
+      "Usado em comida."
     ],
     "active": true
   },
   {
-    "word": "RECOMECO",
-    "meaning": "Ato de começar novamente após uma interrupção ou mudança.",
+    "word": "SAL",
+    "meaning": "Tempero usado para dar sabor aos alimentos.",
     "hints": [
-      "Acontece depois de um fim ou pausa.",
-      "Pode trazer novas oportunidades.",
-      "Muitas pessoas passam por isso na vida.",
-      "Exige disposição para tentar outra vez.",
-      "Marca o início de uma nova etapa."
+      "É branco.",
+      "Dá gosto.",
+      "Usado na comida.",
+      "Vem do mar.",
+      "Pode ser fino."
     ],
     "active": true
   },
   {
-    "word": "DESTINO",
-    "meaning": "Lugar para onde alguém vai ou resultado esperado de uma trajetória.",
+    "word": "AZUL",
+    "meaning": "Cor associada ao céu e ao mar, geralmente ligada à calma e tranquilidade.",
     "hints": [
-      "Pode indicar um ponto final de uma viagem.",
-      "Também pode ser visto como algo traçado pela vida.",
-      "Muitas histórias falam sobre encontrá-lo.",
-      "Pode mudar conforme escolhas são feitas.",
-      "Representa para onde algo ou alguém se dirige."
+      "Cor do céu em dia claro.",
+      "Também está no mar.",
+      "Não é quente como vermelho.",
+      "Passa sensação de calma.",
+      "Muito comum em roupas."
     ],
     "active": true
   },
   {
-    "word": "LABIRINTO",
-    "meaning": "Estrutura complexa de caminhos que confundem quem tenta atravessá-la.",
+    "word": "ROSA",
+    "meaning": "Cor suave derivada do vermelho, também nome de uma flor muito conhecida.",
     "hints": [
-      "É fácil entrar, mas difícil sair.",
-      "Possui muitos caminhos possíveis.",
-      "Pode ser físico ou metafórico.",
-      "Frequentemente aparece em mitos e histórias.",
-      "Exige atenção para encontrar a saída."
+      "Pode ser cor ou flor.",
+      "É mais clara que vermelho.",
+      "Muito usada em roupas.",
+      "Ligada a delicadeza.",
+      "Tem em jardins."
     ],
     "active": true
   },
   {
-    "word": "MEMORIA",
-    "meaning": "Capacidade de guardar e lembrar informações ou experiências.",
+    "word": "ROXO",
+    "meaning": "Cor formada pela mistura de vermelho e azul, geralmente mais escura e intensa.",
     "hints": [
-      "Permite recordar o passado.",
-      "Pode ser fortalecida com prática.",
-      "Está ligada às experiências vividas.",
-      "Algumas lembranças permanecem por muito tempo.",
-      "Sem ela seria difícil aprender."
+      "Mistura de duas cores.",
+      "Mais escuro que rosa.",
+      "Pode aparecer em machucados.",
+      "Cor forte.",
+      "Não é primária."
     ],
     "active": true
   },
   {
-    "word": "IMAGINAR",
-    "meaning": "Formar ideias ou imagens mentais de algo que não está presente.",
+    "word": "OURO",
+    "meaning": "Metal precioso de cor amarelada muito valorizado e associado à riqueza.",
     "hints": [
-      "É essencial para criatividade.",
-      "Permite criar mundos ou possibilidades.",
-      "Crianças usam muito essa capacidade.",
-      "Ajuda a planejar ou inventar coisas.",
-      "Acontece dentro da mente."
+      "Metal valioso.",
+      "Cor brilhante.",
+      "Ligado à riqueza.",
+      "Usado em joias.",
+      "Muito raro."
     ],
     "active": true
   },
   {
-    "word": "AURORA",
-    "meaning": "Claridade que surge no céu pouco antes do nascer do sol.",
+    "word": "ALTO",
+    "meaning": "Algo que possui grande altura ou está acima do nível comum.",
     "hints": [
-      "Marca o início de um novo dia.",
-      "Aparece antes do sol surgir completamente.",
-      "Pode colorir o céu de tons suaves.",
-      "Muitos associam esse momento a renovação.",
-      "É o oposto do entardecer."
+      "Difícil de alcançar.",
+      "Oposto de baixo.",
+      "Pode ser uma pessoa.",
+      "Fica acima.",
+      "Pode dar medo de cair."
     ],
     "active": true
   },
   {
-    "word": "FANTASIA",
-    "meaning": "Imaginação criativa que constrói histórias, cenários ou personagens além da realidade.",
+    "word": "BOM",
+    "meaning": "Algo que tem qualidade positiva ou agrada.",
     "hints": [
-      "Permite criar mundos que não existem no cotidiano.",
-      "Aparece muito em livros, filmes e jogos.",
-      "Depende da imaginação de quem cria ou observa.",
-      "Pode transformar ideias simples em aventuras incríveis.",
-      "Frequentemente mistura magia, criaturas e lugares impossíveis."
+      "É positivo.",
+      "Agrada pessoas.",
+      "Não é ruim.",
+      "Pode ser comida ou pessoa.",
+      "Qualidade boa."
     ],
     "active": true
   },
   {
-    "word": "AVENTURA",
-    "meaning": "Experiência cheia de desafios, descobertas e acontecimentos inesperados.",
+    "word": "RUIM",
+    "meaning": "Algo de baixa qualidade ou que não agrada.",
     "hints": [
-      "Geralmente envolve sair da zona de conforto.",
-      "Pode acontecer em viagens ou histórias.",
-      "Frequentemente inclui risco ou descoberta.",
-      "Muitos heróis vivem isso em narrativas.",
-      "Costuma gerar lembranças marcantes."
+      "Não é bom.",
+      "Causa problema.",
+      "Não agrada.",
+      "Pode ser situação.",
+      "Evita-se isso."
     ],
     "active": true
   },
   {
-    "word": "DESAFIO",
-    "meaning": "Situação que exige esforço, habilidade ou coragem para ser superada.",
+    "word": "BELO",
+    "meaning": "Algo que possui beleza ou aparência agradável.",
     "hints": [
-      "Pode testar limites pessoais.",
-      "Muitas vezes aparece em competições.",
-      "Superá-lo traz sensação de conquista.",
-      "Pode exigir estratégia ou persistência.",
-      "Enfrentá-lo ajuda no crescimento pessoal."
+      "Relacionado a beleza.",
+      "Agradável aos olhos.",
+      "Pode ser paisagem.",
+      "Não é feio.",
+      "Encanta."
     ],
     "active": true
   },
   {
-    "word": "PROJETO",
-    "meaning": "Plano organizado para realizar uma ideia ou objetivo.",
+    "word": "FEIO",
+    "meaning": "Algo com aparência desagradável ou fora do padrão de beleza.",
     "hints": [
-      "Começa como uma ideia estruturada.",
-      "Pode envolver várias etapas até ser concluído.",
-      "Muitas vezes exige planejamento.",
-      "Pode ser feito individualmente ou em equipe.",
-      "Serve para transformar pensamento em realidade."
+      "Oposto de belo.",
+      "Não agrada visualmente.",
+      "Pode ser pessoa ou objeto.",
+      "Desagradável.",
+      "Evita elogio."
     ],
     "active": true
   },
   {
-    "word": "CRIACAO",
-    "meaning": "Ato de produzir algo novo a partir de ideias, imaginação ou trabalho.",
+    "word": "NOVO",
+    "meaning": "Algo recente, que ainda não foi usado ou acabou de ser feito.",
     "hints": [
-      "Está presente em arte, ciência e invenções.",
-      "Pode nascer da imaginação.",
-      "Transforma algo inexistente em realidade.",
-      "É parte essencial da criatividade humana.",
-      "Pode gerar obras, ideias ou soluções."
+      "Recente.",
+      "Sem uso.",
+      "Chegou agora.",
+      "Oposto de velho.",
+      "Pode brilhar mais."
     ],
     "active": true
   },
   {
-    "word": "INVENCAO",
-    "meaning": "Algo novo criado por alguém para resolver um problema ou trazer inovação.",
+    "word": "FRIO",
+    "meaning": "Temperatura baixa, que pode causar sensação de gelado.",
     "hints": [
-      "Muitas vezes surge para facilitar a vida.",
-      "Pode mudar a forma como as pessoas vivem.",
-      "Começa como uma ideia criativa.",
-      "Algumas se tornam revolucionárias.",
-      "Está ligada à inovação."
+      "Oposto de quente.",
+      "Faz tremer.",
+      "Usa casaco.",
+      "Tem gelo.",
+      "Inverno."
     ],
     "active": true
   },
   {
-    "word": "CURIOSO",
-    "meaning": "Pessoa que demonstra interesse intenso em descobrir ou aprender coisas novas.",
+    "word": "SECO",
+    "meaning": "Algo que não possui água ou umidade.",
     "hints": [
-      "Faz muitas perguntas.",
-      "Busca entender como as coisas funcionam.",
-      "É comum em quem gosta de aprender.",
-      "Pode levar a grandes descobertas.",
-      "Está ligado ao desejo de saber mais."
+      "Sem líquido.",
+      "Não molhado.",
+      "Pode rachar.",
+      "Árido.",
+      "Oposto de molhado."
     ],
     "active": true
   },
   {
-    "word": "PESQUISA",
-    "meaning": "Processo de investigação para descobrir informações ou conhecimentos.",
+    "word": "LEVE",
+    "meaning": "Algo com pouco peso ou fácil de carregar.",
     "hints": [
-      "É fundamental para ciência e estudo.",
-      "Pode envolver experimentos ou análise.",
-      "Ajuda a responder perguntas complexas.",
-      "Requer observação e investigação.",
-      "Pode levar a novas descobertas."
+      "Pouco peso.",
+      "Fácil levantar.",
+      "Oposto de pesado.",
+      "Pode voar fácil.",
+      "Não cansa."
     ],
     "active": true
   },
   {
-    "word": "HORIZONTE",
-    "meaning": "Linha aparente onde o céu parece encontrar a terra ou o mar.",
+    "word": "DURO",
+    "meaning": "Algo rígido, resistente e difícil de quebrar ou dobrar.",
     "hints": [
-      "Pode ser visto olhando ao longe.",
-      "Muda conforme a posição de quem observa.",
-      "É comum em paisagens abertas.",
-      "Pode parecer inalcançável.",
-      "Frequentemente aparece em fotografias de paisagem."
+      "Não dobra fácil.",
+      "Resistente.",
+      "Oposto de mole.",
+      "Pode machucar.",
+      "Forte."
     ],
     "active": true
   },
   {
-    "word": "GALAXIA",
-    "meaning": "Imenso conjunto de estrelas, planetas e poeira cósmica unidos pela gravidade.",
+    "word": "MOLE",
+    "meaning": "Algo macio, fácil de deformar ou pressionar.",
     "hints": [
-      "É uma estrutura gigantesca do universo.",
-      "Contém bilhões de estrelas.",
-      "Nosso sistema solar faz parte de uma.",
-      "Pode ter formatos espirais ou elípticos.",
-      "É estudada pela astronomia."
+      "Macio.",
+      "Fácil apertar.",
+      "Oposto de duro.",
+      "Pode afundar.",
+      "Não rígido."
     ],
     "active": true
   },
   {
-    "word": "PLANETA",
-    "meaning": "Corpo celeste que orbita uma estrela e não possui luz própria.",
+    "word": "RARO",
+    "meaning": "Algo difícil de encontrar ou que acontece poucas vezes.",
     "hints": [
-      "Alguns podem ter atmosfera.",
-      "Orbitam ao redor de estrelas.",
-      "Podem possuir luas.",
-      "Alguns podem ter condições para vida.",
-      "Fazem parte de sistemas estelares."
+      "Difícil achar.",
+      "Pouco comum.",
+      "Valioso às vezes.",
+      "Não aparece sempre.",
+      "Especial."
     ],
     "active": true
   },
   {
-    "word": "COMETA",
-    "meaning": "Corpo celeste composto de gelo e poeira que forma uma cauda ao se aproximar do sol.",
+    "word": "AMAR",
+    "meaning": "Sentir forte carinho ou afeto por alguém ou algo.",
     "hints": [
-      "Pode ser visto atravessando o céu.",
-      "Sua passagem pode ser rara.",
-      "Possui aparência luminosa.",
-      "Aproxima-se do sol em sua trajetória.",
-      "É observado por astrônomos há séculos."
+      "Relacionado a sentimento.",
+      "Mais forte que gostar.",
+      "Liga pessoas.",
+      "Pode doer também.",
+      "Oposto de odiar."
     ],
     "active": true
   },
   {
-    "word": "RELAMPAGO",
-    "meaning": "Descarga elétrica intensa que ocorre entre nuvens ou entre nuvem e solo.",
+    "word": "CAIR",
+    "meaning": "Descer rapidamente por perda de equilíbrio ou ação da gravidade.",
     "hints": [
-      "Aparece durante tempestades.",
-      "Surge como um clarão no céu.",
-      "É seguido pelo som do trovão.",
-      "Dura apenas um instante.",
-      "Pode iluminar o céu rapidamente."
+      "Vai para baixo.",
+      "Acontece sem controle.",
+      "Pode machucar.",
+      "Gravidade ajuda.",
+      "Oposto de subir."
     ],
     "active": true
   },
   {
-    "word": "CHUVEIRO",
-    "meaning": "Equipamento que libera água para banho.",
+    "word": "AGIR",
+    "meaning": "Tomar uma atitude ou realizar uma ação diante de uma situação.",
     "hints": [
-      "Está presente na maioria das casas.",
-      "Usado para higiene pessoal.",
-      "Libera água de cima para baixo.",
-      "Pode ter água quente ou fria.",
-      "É comum no banheiro."
+      "Não ficar parado.",
+      "Tomar decisão.",
+      "Fazer algo.",
+      "Responder a algo.",
+      "Mover-se com intenção."
     ],
     "active": true
   },
   {
-    "word": "JANELA",
-    "meaning": "Abertura em uma parede que permite entrada de luz e ventilação.",
+    "word": "RIR",
+    "meaning": "Expressar alegria ou humor através de sons ou movimentos do rosto.",
     "hints": [
-      "Permite observar o exterior.",
-      "Ajuda na circulação de ar.",
-      "Pode ser aberta ou fechada.",
-      "Está presente em casas e prédios.",
-      "Costuma ser feita de vidro."
+      "Mostra alegria.",
+      "Sai um som.",
+      "Reação a algo engraçado.",
+      "Envolve boca.",
+      "Oposto de chorar."
     ],
     "active": true
   },
   {
-    "word": "VARANDA",
-    "meaning": "Espaço aberto ligado a uma construção, geralmente voltado para o exterior.",
+    "word": "VER",
+    "meaning": "Perceber algo através da visão.",
     "hints": [
-      "É comum em casas e apartamentos.",
-      "Pode ser usado para descanso.",
-      "Permite observar a paisagem.",
-      "Frequentemente possui grades ou proteção.",
-      "É um espaço intermediário entre interior e exterior."
+      "Usa os olhos.",
+      "Enxergar.",
+      "Perceber algo.",
+      "Precisa de luz.",
+      "Não é ouvir."
     ],
     "active": true
   },
   {
-    "word": "PASSEIO",
-    "meaning": "Atividade de sair para caminhar ou visitar lugares por lazer.",
+    "word": "LER",
+    "meaning": "Interpretar palavras escritas para compreender informações.",
     "hints": [
-      "Pode ser feito sozinho ou acompanhado.",
-      "Normalmente ocorre em momentos de descanso.",
-      "Permite conhecer lugares ou relaxar.",
-      "Pode acontecer em parques ou ruas.",
-      "Está ligado ao lazer."
+      "Usa os olhos.",
+      "Tem texto.",
+      "Aprender algo.",
+      "Livro ajuda.",
+      "Não é ouvir."
     ],
     "active": true
   },
   {
-    "word": "PARQUE",
-    "meaning": "Área pública destinada a lazer, natureza ou recreação.",
+    "word": "USAR",
+    "meaning": "Aplicar algo para um determinado propósito.",
     "hints": [
-      "Pode ter árvores e espaços abertos.",
-      "É usado para atividades ao ar livre.",
-      "Famílias costumam frequentá-lo.",
-      "Pode ter trilhas ou áreas verdes.",
-      "Serve para descanso e lazer."
+      "Aproveitar algo.",
+      "Utilizar.",
+      "Fazer uso.",
+      "Não deixar parado.",
+      "Aplicar."
     ],
     "active": true
   },
   {
-    "word": "CACHORRO",
-    "meaning": "Animal doméstico conhecido por sua lealdade aos humanos.",
+    "word": "IR",
+    "meaning": "Deslocar-se de um lugar para outro.",
     "hints": [
-      "É considerado o melhor amigo do homem.",
-      "Muitos vivem como animais de estimação.",
-      "Pode aprender comandos.",
-      "Existem muitas raças diferentes.",
-      "É conhecido por sua fidelidade."
+      "Sair daqui.",
+      "Mover-se.",
+      "Tem destino.",
+      "Pode andar.",
+      "Oposto de vir."
     ],
     "active": true
   },
   {
-    "word": "BORBOLETA",
-    "meaning": "Inseto alado conhecido por suas asas coloridas e transformação durante a vida.",
+    "word": "VIR",
+    "meaning": "Deslocar-se em direção ao ponto onde alguém está.",
     "hints": [
-      "Passa por metamorfose ao longo da vida.",
-      "Costuma voar entre flores.",
-      "Possui asas delicadas e coloridas.",
-      "Começa a vida como lagarta.",
-      "É símbolo de transformação."
+      "Chegar aqui.",
+      "Mover-se.",
+      "Aproximar.",
+      "Oposto de ir.",
+      "Vir para perto."
     ],
     "active": true
   },
   {
-    "word": "PASSARO",
-    "meaning": "Animal vertebrado com penas e asas que geralmente possui capacidade de voo.",
+    "word": "DAR",
+    "meaning": "Entregar algo a outra pessoa voluntariamente.",
     "hints": [
-      "Constrói ninhos para seus ovos.",
-      "Muitos cantam melodias naturais.",
-      "Alguns migram longas distâncias.",
-      "Possuem penas e asas.",
-      "São comuns em florestas e cidades."
+      "Passar algo.",
+      "Oferecer.",
+      "Não guardar.",
+      "Outra pessoa recebe.",
+      "Pode ser presente."
     ],
     "active": true
   },
   {
-    "word": "CACHOEIRA",
-    "meaning": "Queda natural de água de um rio sobre um desnível no terreno.",
+    "word": "TER",
+    "meaning": "Possuir algo ou manter algo consigo.",
     "hints": [
-      "Forma uma queda d'água impressionante.",
-      "Pode gerar névoa ao atingir o solo.",
-      "Muitas são pontos turísticos.",
-      "Costuma existir em áreas naturais.",
-      "O som da água é constante ao redor."
+      "Possuir.",
+      "Guardar.",
+      "Ser dono.",
+      "Manter algo.",
+      "Relaciona com ter algo."
     ],
     "active": true
   },
   {
-    "word": "NASCENTE",
-    "meaning": "Local onde um rio ou curso de água tem origem.",
+    "word": "SER",
+    "meaning": "Existir ou ter uma determinada característica.",
     "hints": [
-      "Marca o início de um curso de água.",
-      "Frequentemente está em áreas naturais.",
-      "Pode surgir no solo ou em rochas.",
-      "Dá origem a rios ou riachos.",
-      "Representa o começo de um fluxo."
+      "Definir algo.",
+      "Existência.",
+      "Identidade.",
+      "Base de tudo.",
+      "Não é ação."
     ],
     "active": true
   },
   {
-    "word": "SEMENTE",
-    "meaning": "Estrutura de uma planta capaz de gerar um novo organismo.",
+    "word": "SUL",
+    "meaning": "Direção geográfica oposta ao norte.",
     "hints": [
-      "Pode dar origem a uma planta.",
-      "Contém potencial de crescimento.",
-      "Precisa de condições adequadas para germinar.",
-      "Pode ser transportada pelo vento ou animais.",
-      "Marca o início de um ciclo de vida vegetal."
+      "Direção.",
+      "Mapa.",
+      "Abaixo.",
+      "Oposto de norte.",
+      "Região."
     ],
     "active": true
   },
   {
-    "word": "COLHEITA",
-    "meaning": "Momento em que produtos agrícolas são recolhidos após o cultivo.",
+    "word": "CIMA",
+    "meaning": "Posição elevada em relação a algo.",
     "hints": [
-      "Acontece após o período de crescimento.",
-      "É essencial para produção de alimentos.",
-      "Pode envolver trabalho no campo.",
-      "Marca o resultado de um cultivo.",
-      "Está ligada à agricultura."
+      "Para cima.",
+      "Acima.",
+      "Alto.",
+      "Topo.",
+      "Oposto de baixo."
     ],
     "active": true
   },
   {
-    "word": "AMANHECER",
-    "meaning": "Momento do dia em que a luz do sol começa a aparecer no horizonte.",
+    "word": "LADO",
+    "meaning": "Posição lateral em relação a algo.",
     "hints": [
-      "Marca o início de um novo dia.",
-      "O céu costuma ganhar tons suaves nesse momento.",
-      "Acontece antes da manhã estar completamente clara.",
-      "Muitas pessoas associam esse instante a recomeços.",
-      "É quando a escuridão da noite começa a desaparecer."
+      "Direita ou esquerda.",
+      "Ao lado.",
+      "Não é centro.",
+      "Posição.",
+      "Lateral."
     ],
     "active": true
   },
   {
-    "word": "ENTARDECER",
-    "meaning": "Período do dia em que a luz do sol diminui e a noite começa a chegar.",
+    "word": "MEIO",
+    "meaning": "Parte central entre dois extremos.",
     "hints": [
-      "O céu pode ganhar cores alaranjadas ou avermelhadas.",
-      "Marca a transição entre dia e noite.",
-      "É um momento comum em fotografias de paisagem.",
-      "Acontece após o período de maior luz do dia.",
-      "Indica que a noite está se aproximando."
+      "Centro.",
+      "Entre dois lados.",
+      "Equilíbrio.",
+      "Nem começo nem fim.",
+      "Posição central."
     ],
     "active": true
   },
   {
-    "word": "CAMINHAR",
-    "meaning": "Mover-se usando os próprios pés em direção a algum lugar.",
+    "word": "FORA",
+    "meaning": "Lugar externo, oposto de dentro.",
     "hints": [
-      "É uma das formas mais simples de deslocamento.",
-      "Pode ser feito por lazer ou necessidade.",
-      "Algumas pessoas fazem isso para relaxar.",
-      "Pode acontecer em ruas, trilhas ou parques.",
-      "É uma atividade comum do cotidiano."
+      "Não está dentro.",
+      "Exterior.",
+      "Saiu do lugar.",
+      "Ambiente aberto.",
+      "Oposto de dentro."
     ],
     "active": true
   },
   {
-    "word": "COMPANHEIRO",
-    "meaning": "Pessoa que acompanha outra em atividades, convivência ou amizade.",
+    "word": "AQUI",
+    "meaning": "Indica o lugar onde a pessoa está no momento.",
     "hints": [
-      "Compartilha momentos ou experiências.",
-      "Pode estar presente em jornadas importantes.",
-      "Está ligado à convivência e parceria.",
-      "Frequentemente aparece em histórias de amizade.",
-      "É alguém que caminha ao lado."
+      "Local atual.",
+      "Onde estou.",
+      "Perto.",
+      "Presente.",
+      "Posição."
     ],
     "active": true
   },
   {
-    "word": "PARCERIA",
-    "meaning": "Relação de cooperação entre pessoas para alcançar um objetivo comum.",
+    "word": "ALI",
+    "meaning": "Indica um lugar próximo, mas não exatamente onde a pessoa está.",
     "hints": [
-      "Envolve colaboração entre duas ou mais partes.",
-      "Pode existir em trabalho, amizade ou projetos.",
-      "Funciona melhor quando há confiança.",
-      "Permite alcançar resultados juntos.",
-      "Baseia-se em cooperação."
+      "Não é aqui.",
+      "Está perto.",
+      "Apontar algo.",
+      "Curta distância.",
+      "Local próximo."
     ],
     "active": true
   },
   {
-    "word": "CONFIANCA",
-    "meaning": "Certeza ou segurança em relação à honestidade ou capacidade de alguém.",
+    "word": "HOJE",
+    "meaning": "O dia atual em relação ao tempo presente.",
     "hints": [
-      "Leva tempo para ser construída.",
-      "É essencial em relacionamentos.",
-      "Quando quebrada pode ser difícil de recuperar.",
-      "Permite acreditar nas ações de alguém.",
-      "Está ligada à segurança emocional."
+      "Dia atual.",
+      "Agora.",
+      "Presente.",
+      "Não é ontem.",
+      "Nem amanhã."
     ],
     "active": true
   },
   {
-    "word": "RESPEITO",
-    "meaning": "Consideração e reconhecimento pelo valor ou direitos de alguém.",
+    "word": "CEDO",
+    "meaning": "Antes do horário esperado ou no início do período.",
     "hints": [
-      "É fundamental para convivência saudável.",
-      "Envolve tratar os outros com consideração.",
-      "Está presente em relações equilibradas.",
-      "Pode ser demonstrado em atitudes e palavras.",
-      "Ajuda a manter harmonia social."
+      "Antes do tempo.",
+      "Manhã.",
+      "Início do dia.",
+      "Não é tarde.",
+      "Chega antes."
     ],
     "active": true
   },
   {
-    "word": "EMPATIA",
-    "meaning": "Capacidade de compreender e sentir o que outra pessoa está vivendo.",
+    "word": "DOIS",
+    "meaning": "Número que representa duas unidades.",
     "hints": [
-      "Permite perceber emoções de outras pessoas.",
-      "Está ligada à compreensão humana.",
-      "Ajuda a criar relações mais profundas.",
-      "É importante para convivência saudável.",
-      "Envolve se colocar no lugar do outro."
+      "Depois de um.",
+      "Par.",
+      "Quantidade.",
+      "Número.",
+      "Dupla."
     ],
     "active": true
   },
   {
-    "word": "CARINHO",
-    "meaning": "Demonstração de afeto através de gestos ou atitudes.",
+    "word": "TRES",
+    "meaning": "Número que representa três unidades.",
     "hints": [
-      "Pode ser demonstrado em pequenos gestos.",
-      "Está ligado a sentimentos positivos.",
-      "Frequentemente aparece em relações próximas.",
-      "Pode ser demonstrado sem palavras.",
-      "Expressa cuidado e afeto."
+      "Depois de dois.",
+      "Trio.",
+      "Número.",
+      "Quantidade.",
+      "Conta."
     ],
     "active": true
   },
   {
-    "word": "TERNURA",
-    "meaning": "Sentimento suave de afeto, delicadeza ou carinho.",
+    "word": "CEM",
+    "meaning": "Número que representa dez dezenas.",
     "hints": [
-      "Está ligado a gestos delicados.",
-      "Pode ser percebido em atitudes gentis.",
-      "Frequentemente aparece em relações afetivas.",
-      "É associado à sensibilidade emocional.",
-      "Expressa afeto de forma suave."
+      "Número alto.",
+      "10x10.",
+      "Centena.",
+      "Conta.",
+      "Valor grande."
     ],
     "active": true
   },
   {
-    "word": "SERENIDADE",
-    "meaning": "Estado de calma profunda e tranquilidade.",
+    "word": "MIL",
+    "meaning": "Número que representa mil unidades.",
     "hints": [
-      "É percebida em momentos de paz.",
-      "Pode surgir em ambientes tranquilos.",
-      "Está ligada à ausência de agitação.",
-      "Ajuda na clareza de pensamentos.",
-      "Reflete equilíbrio interior."
+      "Número grande.",
+      "Muitos.",
+      "Conta.",
+      "Valor alto.",
+      "Quantidade."
     ],
     "active": true
   },
   {
-    "word": "PACIENCIA",
-    "meaning": "Capacidade de esperar ou lidar com dificuldades sem irritação.",
+    "word": "ODIO",
+    "meaning": "Sentimento intenso de rejeição, aversão ou raiva em relação a alguém ou algo.",
     "hints": [
-      "É importante em momentos de espera.",
-      "Ajuda a lidar com situações difíceis.",
-      "Pode evitar decisões impulsivas.",
-      "É considerada uma virtude.",
-      "Permite enfrentar desafios com calma."
+      "Sentimento negativo forte.",
+      "Oposto de amar.",
+      "Pode causar conflitos.",
+      "Ligado à raiva.",
+      "Afasta pessoas."
     ],
     "active": true
   },
   {
-    "word": "PRATICA",
-    "meaning": "Ação repetida de algo para melhorar habilidade ou conhecimento.",
+    "word": "MEDO",
+    "meaning": "Sensação de insegurança diante de perigo ou algo desconhecido.",
     "hints": [
-      "Ajuda a desenvolver habilidades.",
-      "É importante no aprendizado.",
-      "Com repetição, traz melhoria.",
-      "Pode transformar teoria em habilidade.",
-      "Está ligada à experiência."
+      "Reação ao perigo.",
+      "Faz querer fugir.",
+      "Acelera o coração.",
+      "Pode paralisar.",
+      "Nem sempre é real."
     ],
     "active": true
   },
   {
-    "word": "ROTINA",
-    "meaning": "Conjunto de hábitos ou atividades que se repetem diariamente.",
+    "word": "PAZ",
+    "meaning": "Estado de tranquilidade, sem conflitos ou perturbações.",
     "hints": [
-      "Estrutura o dia a dia de muitas pessoas.",
-      "Pode trazer organização à vida.",
-      "Envolve atividades repetidas.",
-      "Pode ser confortável ou cansativa.",
-      "Está presente na vida cotidiana."
+      "Sem brigas.",
+      "Calma.",
+      "Silêncio.",
+      "Equilíbrio.",
+      "Oposto de guerra."
     ],
     "active": true
   },
   {
-    "word": "ESFORCO",
-    "meaning": "Aplicação de energia física ou mental para alcançar um objetivo.",
+    "word": "CAOS",
+    "meaning": "Situação de desordem total, sem controle ou organização.",
     "hints": [
-      "É necessário para alcançar resultados.",
-      "Pode exigir dedicação constante.",
-      "Muitas conquistas dependem disso.",
-      "Está ligado à persistência.",
-      "Representa empenho em uma tarefa."
+      "Tudo bagunçado.",
+      "Sem ordem.",
+      "Confusão geral.",
+      "Nada funciona direito.",
+      "Oposto de organização."
     ],
     "active": true
   },
   {
-    "word": "METODO",
-    "meaning": "Forma organizada de realizar uma atividade ou resolver um problema.",
+    "word": "SORTE",
+    "meaning": "Ocorrência favorável que acontece sem controle direto da pessoa.",
     "hints": [
-      "Ajuda a seguir uma sequência lógica.",
-      "Pode tornar tarefas mais eficientes.",
-      "É usado em estudo e trabalho.",
-      "Organiza etapas de uma atividade.",
-      "Facilita alcançar objetivos."
+      "Algo dá certo.",
+      "Não depende só de você.",
+      "Pode ajudar.",
+      "Ligado ao acaso.",
+      "Oposto de azar."
     ],
     "active": true
   },
   {
-    "word": "CADERNO",
-    "meaning": "Objeto composto por folhas usadas para escrever ou desenhar.",
+    "word": "AZAR",
+    "meaning": "Ocorrência desfavorável que acontece sem controle da pessoa.",
     "hints": [
-      "É comum em escolas e estudos.",
-      "Serve para registrar ideias.",
-      "Pode conter anotações importantes.",
-      "Possui várias páginas unidas.",
-      "É usado para escrever à mão."
+      "Algo dá errado.",
+      "Não depende só de você.",
+      "Falta de sorte.",
+      "Situação ruim.",
+      "Oposto de sorte."
     ],
     "active": true
   },
   {
-    "word": "REVISTA",
-    "meaning": "Publicação periódica que reúne textos, imagens e informações.",
+    "word": "FOME",
+    "meaning": "Sensação física que indica necessidade de se alimentar.",
     "hints": [
-      "Pode tratar de temas variados.",
-      "Costuma ter imagens e reportagens.",
-      "É encontrada em bancas ou lojas.",
-      "Pode ser lida por lazer ou informação.",
-      "Possui várias páginas organizadas."
+      "Barriga vazia.",
+      "Precisa comer.",
+      "Aumenta com o tempo.",
+      "Desconforto.",
+      "Comida resolve."
     ],
     "active": true
   },
   {
-    "word": "CAPITULO",
-    "meaning": "Divisão de um livro ou narrativa em partes organizadas.",
+    "word": "SEDE",
+    "meaning": "Sensação que indica necessidade de beber líquidos.",
     "hints": [
-      "Ajuda a organizar histórias longas.",
-      "Marca uma etapa da narrativa.",
-      "É comum em livros e romances.",
-      "Permite dividir uma obra em partes.",
-      "Cada um avança a história."
+      "Boca seca.",
+      "Precisa beber.",
+      "Água resolve.",
+      "Desconforto.",
+      "Corpo pede."
     ],
     "active": true
   },
   {
-    "word": "ENREDO",
-    "meaning": "Sequência de acontecimentos que compõem a história de uma narrativa.",
+    "word": "SONO",
+    "meaning": "Estado de cansaço que leva ao desejo de dormir.",
     "hints": [
-      "Define como os acontecimentos se conectam.",
-      "É essencial em histórias e filmes.",
-      "Pode ter reviravoltas inesperadas.",
-      "Conduz o desenvolvimento da narrativa.",
-      "Organiza os eventos de uma trama."
+      "Olhos pesados.",
+      "Vontade de dormir.",
+      "Noite aumenta.",
+      "Descanso resolve.",
+      "Cansaço."
     ],
     "active": true
   },
   {
-    "word": "CENARIO",
-    "meaning": "Ambiente ou lugar onde uma história ou acontecimento ocorre.",
+    "word": "RISO",
+    "meaning": "Expressão de alegria ou humor, geralmente acompanhada de som.",
     "hints": [
-      "Define o espaço de uma narrativa.",
-      "Pode influenciar a atmosfera de uma história.",
-      "Aparece em teatro, cinema e literatura.",
-      "Ajuda a situar personagens e eventos.",
-      "Representa o ambiente da ação."
+      "Mostra alegria.",
+      "Sai da boca.",
+      "Reação engraçada.",
+      "Envolve sorriso.",
+      "Pode ser alto."
     ],
     "active": true
   },
   {
-    "word": "DESFECHO",
-    "meaning": "Parte final de uma história onde os acontecimentos se resolvem.",
+    "word": "TUDO",
+    "meaning": "Totalidade das coisas, sem excluir nada.",
     "hints": [
-      "Marca o encerramento de uma narrativa.",
-      "Revela o resultado dos conflitos.",
-      "Pode surpreender o leitor.",
-      "Costuma aparecer no final de histórias.",
-      "Conclui os acontecimentos apresentados."
+      "Nada fica de fora.",
+      "Completo.",
+      "Tudo junto.",
+      "Sem exceção.",
+      "Total."
     ],
     "active": true
   },
   {
-    "word": "FESTIVO",
-    "meaning": "Relacionado a celebrações, festas ou momentos alegres.",
+    "word": "NADA",
+    "meaning": "Ausência completa de qualquer coisa.",
     "hints": [
-      "Está ligado a comemorações.",
-      "Pode envolver música e alegria.",
-      "Aparece em momentos especiais.",
-      "Cria clima de celebração.",
-      "Está associado a eventos felizes."
+      "Não tem nada.",
+      "Vazio total.",
+      "Zero.",
+      "Sem conteúdo.",
+      "Ausente."
     ],
     "active": true
   },
   {
-    "word": "PRESENTE",
-    "meaning": "Objeto ou gesto oferecido a alguém como demonstração de carinho ou celebração.",
+    "word": "ALGO",
+    "meaning": "Coisa indefinida, sem especificação exata.",
     "hints": [
-      "Pode ser dado em datas especiais.",
-      "Expressa consideração ou afeto.",
-      "É comum em aniversários.",
-      "Surge como surpresa ou lembrança.",
-      "Representa um gesto de carinho."
+      "Alguma coisa.",
+      "Não específico.",
+      "Existe.",
+      "Indefinido.",
+      "Genérico."
     ],
     "active": true
   },
   {
-    "word": "SORRISO",
-    "meaning": "Expressão facial que demonstra alegria, simpatia ou satisfação.",
+    "word": "CADA",
+    "meaning": "Indica individualidade dentro de um grupo.",
     "hints": [
-      "Aparece naturalmente em momentos felizes.",
-      "Pode iluminar o rosto de alguém.",
-      "É uma forma silenciosa de comunicação.",
-      "Frequentemente acompanha risadas.",
-      "Pode transmitir simpatia instantânea."
+      "Um por um.",
+      "Separado.",
+      "Individual.",
+      "Parte de um grupo.",
+      "Cada um."
     ],
     "active": true
   },
   {
-    "word": "RISADA",
-    "meaning": "Manifestação espontânea de alegria expressa por meio do riso.",
+    "word": "QUAL",
+    "meaning": "Palavra usada para indicar escolha ou perguntar entre opções.",
     "hints": [
-      "Costuma surgir em momentos divertidos.",
-      "Pode ser contagiante entre pessoas próximas.",
-      "Aparece quando algo provoca humor.",
-      "É uma reação natural de alegria.",
-      "Frequentemente acompanha conversas descontraídas."
+      "Escolher.",
+      "Pergunta.",
+      "Opção.",
+      "Indicar.",
+      "Comparar."
     ],
     "active": true
   },
   {
-    "word": "ENCANTO",
-    "meaning": "Sensação de admiração ou fascínio diante de algo belo ou surpreendente.",
+    "word": "QUEM",
+    "meaning": "Palavra usada para perguntar sobre uma pessoa.",
     "hints": [
-      "Pode surgir diante de algo inesperadamente belo.",
-      "Está ligado à admiração profunda.",
-      "Pode ser causado por paisagens ou pessoas.",
-      "Frequentemente aparece em histórias mágicas.",
-      "Produz sensação de fascínio."
+      "Pergunta pessoa.",
+      "Identidade.",
+      "Alguém.",
+      "Descobrir quem.",
+      "Interrogação."
     ],
     "active": true
   },
   {
-    "word": "MAGICO",
-    "meaning": "Relacionado a magia, encantamento ou algo que parece extraordinário.",
+    "word": "ONDE",
+    "meaning": "Palavra usada para perguntar ou indicar um lugar.",
     "hints": [
-      "Está ligado ao impossível ou surpreendente.",
-      "Muitas histórias fantásticas utilizam esse conceito.",
-      "Pode transformar situações comuns em especiais.",
-      "Frequentemente aparece em narrativas de fantasia.",
-      "Sugere algo fora do comum."
+      "Lugar.",
+      "Localização.",
+      "Pergunta.",
+      "Posição.",
+      "Descobrir local."
     ],
     "active": true
   },
   {
-    "word": "GRIMORIO",
-    "meaning": "Livro antigo que reúne conhecimentos místicos ou mágicos.",
+    "word": "COMO",
+    "meaning": "Palavra usada para perguntar sobre a forma ou o modo de algo.",
     "hints": [
-      "Frequentemente aparece em histórias de magia.",
-      "Pode conter conhecimentos secretos.",
-      "Está ligado a rituais ou encantamentos.",
-      "Costuma ser retratado como antigo e raro.",
-      "Representa sabedoria misteriosa."
+      "Modo.",
+      "Jeito.",
+      "Pergunta.",
+      "Processo.",
+      "Forma de fazer."
     ],
     "active": true
   },
   {
-    "word": "ARCANO",
-    "meaning": "Algo oculto, misterioso ou reservado a poucos.",
+    "word": "GAME",
+    "meaning": "Atividade de entretenimento com regras, desafios e objetivos, podendo ser digital ou físico.",
     "hints": [
-      "Refere-se a conhecimentos difíceis de acessar.",
-      "Pode estar ligado a mistérios antigos.",
-      "Nem todos conseguem compreendê-lo facilmente.",
-      "Frequentemente aparece em temas esotéricos.",
-      "Sugere algo profundo e oculto."
+      "Tem regras.",
+      "Pode ter fases.",
+      "Pode ganhar ou perder.",
+      "Serve para diversão.",
+      "Pode ser digital."
     ],
     "active": true
   },
   {
-    "word": "RITUAL",
-    "meaning": "Conjunto de ações realizadas seguindo regras ou tradições específicas.",
+    "word": "FASE",
+    "meaning": "Etapa dentro de um jogo ou processo que deve ser concluída para avançar.",
     "hints": [
-      "Pode ocorrer em cerimônias ou tradições.",
-      "Segue uma sequência específica de ações.",
-      "Muitas culturas possuem os seus.",
-      "Pode ter significado simbólico.",
-      "Costuma ser repetido de forma semelhante."
+      "Parte do jogo.",
+      "Vem antes da próxima.",
+      "Tem desafio.",
+      "Progresso.",
+      "Avançar depende disso."
     ],
     "active": true
   },
   {
-    "word": "SIMBOLO",
-    "meaning": "Elemento que representa uma ideia, conceito ou significado.",
+    "word": "MENU",
+    "meaning": "Lista de opções disponíveis para escolha dentro de um sistema ou jogo.",
     "hints": [
-      "Pode representar algo maior do que sua forma.",
-      "Está presente em culturas e tradições.",
-      "Frequentemente aparece em bandeiras ou sinais.",
-      "Ajuda a comunicar ideias complexas.",
-      "Carrega significado além do visual."
+      "Tem opções.",
+      "Você escolhe.",
+      "Antes de jogar.",
+      "Interface.",
+      "Navegação."
     ],
     "active": true
   },
   {
-    "word": "AMULETO",
-    "meaning": "Objeto usado como proteção ou para atrair sorte.",
+    "word": "TEMA",
+    "meaning": "Assunto ou estilo principal que define algo.",
     "hints": [
-      "Algumas pessoas acreditam que traz proteção.",
-      "Pode ser carregado como objeto pessoal.",
-      "Está ligado a crenças antigas.",
-      "Frequentemente aparece em histórias místicas.",
-      "É associado à sorte."
+      "Define aparência.",
+      "Estilo.",
+      "Ideia central.",
+      "Pode mudar visual.",
+      "Base do design."
     ],
     "active": true
   },
   {
-    "word": "RELICA",
-    "meaning": "Objeto antigo preservado por seu valor histórico ou simbólico.",
+    "word": "DICA",
+    "meaning": "Informação que ajuda a resolver um problema ou encontrar uma resposta.",
     "hints": [
-      "Pode ter grande valor histórico.",
-      "É preservado por sua importância.",
-      "Muitas vezes está em museus.",
-      "Pode estar ligado ao passado.",
-      "Representa algo antigo e significativo."
+      "Ajuda o jogador.",
+      "Não entrega tudo.",
+      "Dá pista.",
+      "Facilita.",
+      "Orienta."
     ],
     "active": true
   },
   {
-    "word": "LENDAS",
-    "meaning": "Narrativas tradicionais transmitidas ao longo do tempo.",
+    "word": "ERRO",
+    "meaning": "Ação incorreta ou tentativa que não teve sucesso.",
     "hints": [
-      "São histórias passadas entre gerações.",
-      "Podem misturar realidade e imaginação.",
-      "Frequentemente fazem parte da cultura popular.",
-      "Algumas explicam origens de lugares ou eventos.",
-      "São contadas em diversas culturas."
+      "Não deu certo.",
+      "Falha.",
+      "Precisa tentar de novo.",
+      "Aprendizado.",
+      "Oposto de acerto."
     ],
     "active": true
   },
   {
-    "word": "MITICO",
-    "meaning": "Relacionado a mitos ou histórias lendárias.",
+    "word": "MODO",
+    "meaning": "Forma específica de funcionamento ou configuração de algo.",
     "hints": [
-      "Está ligado a narrativas antigas.",
-      "Frequentemente envolve personagens extraordinários.",
-      "Pode fazer parte de tradições culturais.",
-      "Aparece em histórias sobre deuses ou heróis.",
-      "Refere-se a algo lendário."
+      "Tipo de jogo.",
+      "Configuração.",
+      "Jeito de jogar.",
+      "Opção.",
+      "Muda experiência."
     ],
     "active": true
   },
   {
-    "word": "ORACULO",
-    "meaning": "Fonte de resposta ou orientação associada a sabedoria mística.",
+    "word": "SALA",
+    "meaning": "Espaço dentro de um ambiente ou área usada para reunir pessoas.",
     "hints": [
-      "Antigamente era consultado em busca de respostas.",
-      "Está ligado a previsões ou conselhos.",
-      "Frequentemente aparece em mitologias.",
-      "Pode orientar decisões importantes.",
-      "Era procurado em momentos de dúvida."
+      "Pode reunir pessoas.",
+      "Dentro de casa.",
+      "Pode ser virtual.",
+      "Tem espaço.",
+      "Ambiente."
     ],
     "active": true
   },
   {
-    "word": "ECLIPSE",
-    "meaning": "Fenômeno astronômico em que um corpo celeste encobre outro.",
+    "word": "RANK",
+    "meaning": "Sistema de classificação que organiza jogadores com base no desempenho.",
     "hints": [
-      "Ocorre quando astros se alinham.",
-      "Pode escurecer temporariamente o céu.",
-      "É observado com atenção por astrônomos.",
-      "Acontece em ocasiões específicas.",
-      "Pode envolver o sol ou a lua."
+      "Mostra posição.",
+      "Comparação.",
+      "Competição.",
+      "Pontuação.",
+      "Quem é melhor."
     ],
     "active": true
   },
   {
-    "word": "NOITADA",
-    "meaning": "Período prolongado passado acordado durante a noite.",
+    "word": "LIXO",
+    "meaning": "Material descartado que não tem mais utilidade.",
     "hints": [
-      "Pode acontecer em festas ou atividades noturnas.",
-      "Envolve permanecer acordado por muitas horas.",
-      "Frequentemente termina quando o dia começa.",
-      "Pode ser cansativa no dia seguinte.",
-      "Está ligada a longas horas durante a noite."
+      "Joga fora.",
+      "Não serve mais.",
+      "Pode sujar.",
+      "Vai para o lixo.",
+      "Descartar."
     ],
     "active": true
   },
   {
-    "word": "ESTRADA",
-    "meaning": "Caminho preparado para circulação de veículos ou pessoas.",
+    "word": "OBRA",
+    "meaning": "Construção ou criação de algo, como um prédio ou projeto.",
     "hints": [
-      "Liga diferentes lugares.",
-      "Pode atravessar cidades ou campos.",
-      "É usada em viagens.",
-      "Permite deslocamento entre regiões.",
-      "Pode ser longa e sinuosa."
+      "Construção.",
+      "Trabalho em andamento.",
+      "Pode ter máquinas.",
+      "Faz barulho.",
+      "Projeto."
     ],
     "active": true
   },
   {
-    "word": "NAVIO",
-    "meaning": "Grande embarcação usada para transporte marítimo.",
+    "word": "LOJA",
+    "meaning": "Local onde produtos são vendidos ao público.",
     "hints": [
-      "Viaja sobre grandes extensões de água.",
-      "Pode transportar pessoas ou cargas.",
-      "É muito maior que um barco comum.",
-      "Utiliza rotas marítimas.",
-      "Está ligado a viagens pelo mar."
+      "Comprar.",
+      "Vender.",
+      "Produtos.",
+      "Dinheiro troca.",
+      "Comércio."
     ],
     "active": true
   },
   {
-    "word": "VIOLAO",
-    "meaning": "Instrumento musical de cordas tocado com os dedos ou palheta.",
+    "word": "BANCO",
+    "meaning": "Instituição financeira ou objeto usado para sentar.",
     "hints": [
-      "Produz som ao vibrar cordas.",
-      "É comum em música popular.",
-      "Pode acompanhar canto.",
-      "É tocado segurando-se junto ao corpo.",
-      "Está presente em muitas rodas de música."
+      "Guarda dinheiro.",
+      "Pode sentar.",
+      "Conta.",
+      "Cartão.",
+      "Lugar ou objeto."
     ],
     "active": true
   },
   {
-    "word": "MELODIA",
-    "meaning": "Sequência organizada de notas musicais que formam uma música.",
+    "word": "POSTO",
+    "meaning": "Local onde serviços são prestados, como abastecimento de veículos.",
     "hints": [
-      "É a parte da música que geralmente se canta.",
-      "Pode ser simples ou complexa.",
-      "Ajuda a identificar uma canção.",
-      "É composta por notas em sequência.",
-      "Permanece na memória após ouvir."
-    ],
-    "active": true
-  },
-  {
-    "word": "ORQUESTRA",
-    "meaning": "Grupo de músicos que executa obras utilizando diversos instrumentos.",
-    "hints": [
-      "Reúne vários instrumentos diferentes.",
-      "Costuma se apresentar em concertos.",
-      "Possui organização entre os músicos.",
-      "Pode interpretar obras complexas.",
-      "Produz música coletiva."
-    ],
-    "active": true
-  },
-  {
-    "word": "CONCERTO",
-    "meaning": "Apresentação musical realizada para um público.",
-    "hints": [
-      "Reúne músicos e espectadores.",
-      "Pode ocorrer em teatros ou arenas.",
-      "As pessoas vão para ouvir música ao vivo.",
-      "Pode ter diferentes estilos musicais.",
-      "É uma apresentação pública."
-    ],
-    "active": true
-  },
-  {
-    "word": "ANIVERSARIO",
-    "meaning": "Data que marca a comemoração do nascimento de uma pessoa.",
-    "hints": [
-      "É comemorado uma vez por ano.",
-      "Pode envolver festas e reuniões.",
-      "Muitas pessoas recebem felicitações nessa data.",
-      "Frequentemente há bolo ou celebração.",
-      "Marca a passagem de mais um ano de vida."
-    ],
-    "active": true
-  },
-  {
-    "word": "COMUNIDADE",
-    "meaning": "Grupo de pessoas que compartilham um mesmo espaço ou interesses.",
-    "hints": [
-      "Pode viver em um mesmo lugar.",
-      "Compartilha experiências ou objetivos.",
-      "Pode colaborar para o bem comum.",
-      "Está ligada à convivência social.",
-      "Envolve relações entre pessoas."
-    ],
-    "active": true
-  },
-  {
-    "word": "CULTURA",
-    "meaning": "Conjunto de costumes, conhecimentos e expressões de um povo.",
-    "hints": [
-      "Inclui tradições e costumes.",
-      "Pode ser transmitida entre gerações.",
-      "Aparece em arte, linguagem e hábitos.",
-      "Ajuda a definir identidade de grupos.",
-      "Reflete modos de vida."
-    ],
-    "active": true
-  },
-  {
-    "word": "TRADICAO",
-    "meaning": "Costume ou prática transmitida ao longo das gerações.",
-    "hints": [
-      "É mantida por muito tempo.",
-      "Pode fazer parte de festas ou rituais.",
-      "Passa de geração para geração.",
-      "Representa costumes antigos.",
-      "Ajuda a preservar a cultura."
-    ],
-    "active": true
-  },
-  {
-    "word": "HERANCA",
-    "meaning": "Conjunto de bens, características ou valores transmitidos de uma geração para outra.",
-    "hints": [
-      "Pode envolver objetos, tradições ou conhecimentos.",
-      "Muitas vezes está ligada à família.",
-      "É transmitida ao longo do tempo.",
-      "Pode ter valor material ou simbólico.",
-      "Representa algo recebido do passado."
-    ],
-    "active": true
-  },
-  {
-    "word": "IDENTIDADE",
-    "meaning": "Conjunto de características que define quem alguém é.",
-    "hints": [
-      "Está ligada à forma como alguém se reconhece.",
-      "Pode envolver cultura, história e valores.",
-      "Ajuda a diferenciar uma pessoa ou grupo.",
-      "É construída ao longo da vida.",
-      "Reflete características únicas."
-    ],
-    "active": true
-  },
-  {
-    "word": "CIDADAO",
-    "meaning": "Pessoa que faz parte de uma sociedade e possui direitos e deveres.",
-    "hints": [
-      "Participa da vida em sociedade.",
-      "Possui direitos e responsabilidades.",
-      "Está ligado a um país ou comunidade.",
-      "Pode participar de decisões coletivas.",
-      "Faz parte de uma organização social."
-    ],
-    "active": true
-  },
-  {
-    "word": "ESTUDO",
-    "meaning": "Processo de aprendizado através de leitura, prática ou reflexão.",
-    "hints": [
-      "Ajuda a adquirir conhecimento.",
-      "Pode acontecer em escolas ou individualmente.",
-      "Exige dedicação e atenção.",
-      "É importante para desenvolvimento intelectual.",
-      "Está ligado ao aprendizado."
-    ],
-    "active": true
-  },
-  {
-    "word": "APRENDER",
-    "meaning": "Adquirir conhecimento ou habilidade através da experiência ou ensino.",
-    "hints": [
-      "Acontece ao longo da vida.",
-      "Pode ocorrer por observação ou prática.",
-      "Está ligado ao crescimento pessoal.",
-      "Frequentemente envolve tentativa e erro.",
-      "Leva à compreensão de algo novo."
-    ],
-    "active": true
-  },
-  {
-    "word": "ENSINAR",
-    "meaning": "Transmitir conhecimento ou habilidades a outra pessoa.",
-    "hints": [
-      "Ajuda outras pessoas a aprender.",
-      "Pode acontecer em escolas ou no cotidiano.",
-      "Exige clareza e paciência.",
-      "Está ligado ao compartilhamento de saber.",
-      "Muitos profissionais dedicam-se a isso."
-    ],
-    "active": true
-  },
-  {
-    "word": "BIBLIOTECA",
-    "meaning": "Lugar onde livros e materiais de leitura são organizados e disponibilizados ao público.",
-    "hints": [
-      "É um espaço dedicado ao conhecimento.",
-      "Possui grande quantidade de livros.",
-      "Muitas pessoas vão até lá para estudar.",
-      "Pode oferecer silêncio e concentração.",
-      "É um local importante para leitores."
-    ],
-    "active": true
-  },
-  {
-    "word": "PERGUNTA",
-    "meaning": "Expressão usada para buscar informação ou esclarecimento.",
-    "hints": [
-      "Surge quando alguém quer saber algo.",
-      "Pode iniciar uma conversa ou investigação.",
-      "É fundamental no aprendizado.",
-      "Ajuda a obter respostas.",
-      "Frequentemente começa um diálogo."
-    ],
-    "active": true
-  },
-  {
-    "word": "RESPOSTA",
-    "meaning": "Informação dada em reação a uma pergunta ou situação.",
-    "hints": [
-      "Surge após uma pergunta.",
-      "Pode esclarecer dúvidas.",
-      "É parte de uma conversa ou debate.",
-      "Pode confirmar ou explicar algo.",
-      "Completa um diálogo."
-    ],
-    "active": true
-  },
-  {
-    "word": "DESCOBERTA",
-    "meaning": "Ato de encontrar algo antes desconhecido.",
-    "hints": [
-      "Pode acontecer em ciência ou exploração.",
-      "Revela algo que antes era desconhecido.",
-      "Pode mudar o entendimento sobre algo.",
-      "Frequentemente exige investigação.",
-      "Marca o surgimento de um novo conhecimento."
-    ],
-    "active": true
-  },
-  {
-    "word": "NOTICIA",
-    "meaning": "Informação sobre acontecimentos recentes divulgada ao público.",
-    "hints": [
-      "É transmitida por meios de comunicação.",
-      "Relata fatos atuais.",
-      "Pode aparecer em jornais ou televisão.",
-      "Informa a sociedade sobre acontecimentos.",
-      "É parte da comunicação pública."
-    ],
-    "active": true
-  },
-  {
-    "word": "RELATO",
-    "meaning": "Descrição de um acontecimento feita por alguém que o presenciou ou conhece.",
-    "hints": [
-      "Pode contar algo que aconteceu.",
-      "Normalmente envolve narrativa pessoal.",
-      "Pode aparecer em textos ou conversas.",
-      "Ajuda a transmitir experiências.",
-      "Apresenta uma sequência de acontecimentos."
-    ],
-    "active": true
-  },
-  {
-    "word": "EXEMPLO",
-    "meaning": "Situação ou caso usado para explicar ou ilustrar algo.",
-    "hints": [
-      "Ajuda a entender uma ideia.",
-      "Pode tornar explicações mais claras.",
-      "Frequentemente acompanha ensinamentos.",
-      "Mostra como algo funciona na prática.",
-      "Facilita a compreensão."
-    ],
-    "active": true
-  },
-  {
-    "word": "TEATRO",
-    "meaning": "Arte de representar histórias diante de um público.",
-    "hints": [
-      "Envolve atuação de personagens.",
-      "Pode acontecer em palcos.",
-      "Utiliza cenários e figurinos.",
-      "Conta histórias por meio de interpretação.",
-      "É uma forma antiga de expressão artística."
-    ],
-    "active": true
-  },
-  {
-    "word": "MUSEU",
-    "meaning": "Instituição que preserva e expõe objetos de valor histórico, artístico ou científico.",
-    "hints": [
-      "Guarda peças importantes do passado.",
-      "Pode receber visitantes interessados em história.",
-      "Exibe objetos culturais ou científicos.",
-      "Ajuda a preservar memória coletiva.",
-      "É um espaço educativo."
-    ],
-    "active": true
-  },
-  {
-    "word": "PINTURA",
-    "meaning": "Arte de criar imagens utilizando tinta sobre uma superfície.",
-    "hints": [
-      "Pode expressar emoções ou ideias.",
-      "Utiliza cores e formas.",
-      "É uma das artes mais antigas.",
-      "Pode estar em telas ou paredes.",
-      "Muitos artistas dedicam-se a isso."
-    ],
-    "active": true
-  },
-  {
-    "word": "ESCULTURA",
-    "meaning": "Arte de criar formas tridimensionais esculpindo ou moldando materiais.",
-    "hints": [
-      "Pode ser feita em pedra, metal ou madeira.",
-      "Resulta em formas tridimensionais.",
-      "É apreciada em museus e praças.",
-      "Representa figuras ou ideias.",
-      "Exige habilidade artística."
-    ],
-    "active": true
-  },
-  {
-    "word": "CANCOES",
-    "meaning": "Composições musicais que combinam melodia e letra.",
-    "hints": [
-      "Podem expressar emoções ou histórias.",
-      "São cantadas por pessoas ou artistas.",
-      "Frequentemente acompanham instrumentos.",
-      "Podem marcar momentos especiais.",
-      "Fazem parte da cultura musical."
-    ],
-    "active": true
-  },
-  {
-    "word": "RITMOS",
-    "meaning": "Padrões organizados de tempo e batida na música.",
-    "hints": [
-      "Definem a cadência de uma música.",
-      "Podem variar entre estilos musicais.",
-      "São percebidos ao ouvir uma batida.",
-      "Influenciam o movimento ou dança.",
-      "Organizam a estrutura sonora."
-    ],
-    "active": true
-  },
-  {
-    "word": "TAMBORIM",
-    "meaning": "Instrumento musical de percussão pequeno usado em ritmos populares.",
-    "hints": [
-      "Produz som ao ser percutido.",
-      "É comum em apresentações musicais.",
-      "Possui formato pequeno e circular.",
-      "Participa de ritmos animados.",
-      "Está ligado à percussão."
-    ],
-    "active": true
-  },
-  {
-    "word": "CORAL",
-    "meaning": "Grupo de pessoas que canta em conjunto de forma organizada.",
-    "hints": [
-      "Envolve vozes trabalhando juntas.",
-      "Pode interpretar músicas em grupo.",
-      "Frequentemente aparece em eventos ou igrejas.",
-      "Exige harmonia entre participantes.",
-      "Produz música vocal coletiva."
-    ],
-    "active": true
-  },
-  {
-    "word": "BAIRRO",
-    "meaning": "Divisão de uma cidade formada por ruas e comunidades locais.",
-    "hints": [
-      "Faz parte de uma cidade maior.",
-      "Pode ter características próprias.",
-      "É onde muitas pessoas vivem.",
-      "Possui ruas, casas e comércio.",
-      "Forma comunidades locais."
+      "Combustível.",
+      "Carro.",
+      "Parada.",
+      "Serviço.",
+      "Abastecer."
     ],
     "active": true
   },
   {
     "word": "PRACA",
-    "meaning": "Espaço público aberto destinado ao convívio e lazer.",
+    "meaning": "Espaço público aberto usado para lazer e convivência.",
     "hints": [
-      "Pode ter bancos e árvores.",
-      "É frequentada por moradores da região.",
-      "Serve para descanso ou encontros.",
-      "Normalmente fica em áreas urbanas.",
-      "É um espaço de convivência."
+      "Ao ar livre.",
+      "Banco para sentar.",
+      "Cidade.",
+      "Descanso.",
+      "Público."
     ],
     "active": true
   },
   {
-    "word": "JARDIM",
-    "meaning": "Espaço cultivado com plantas, flores ou árvores para beleza ou descanso.",
+    "word": "PONTE",
+    "meaning": "Estrutura construída para ligar dois pontos separados.",
     "hints": [
-      "Pode estar em casas ou parques.",
-      "Costuma ter flores e vegetação.",
-      "É associado a tranquilidade e natureza.",
-      "Pode ser cuidado por pessoas que gostam de plantas.",
-      "Frequentemente é um lugar agradável para descansar."
+      "Liga lados.",
+      "Passagem.",
+      "Sobre água.",
+      "Estrutura.",
+      "Travessia."
     ],
     "active": true
   },
   {
-    "word": "POMAR",
-    "meaning": "Área cultivada com árvores frutíferas.",
+    "word": "TORRE",
+    "meaning": "Construção alta usada para observação ou comunicação.",
     "hints": [
-      "Produz alimentos diretamente das plantas.",
-      "Pode estar em áreas rurais ou fazendas.",
-      "Costuma ter árvores organizadas em fileiras.",
-      "É associado à produção de frutas.",
-      "Atrai pessoas e animais interessados nos frutos."
+      "Alta.",
+      "Fica de pé.",
+      "Pode observar.",
+      "Vertical.",
+      "Estrutura."
     ],
     "active": true
   },
   {
-    "word": "FRUTAS",
-    "meaning": "Alimentos naturais produzidos por plantas e geralmente consumidos frescos.",
+    "word": "PORTO",
+    "meaning": "Local onde embarcações param para carregar ou descarregar.",
     "hints": [
-      "Podem ser doces ou ácidas.",
-      "São parte importante da alimentação.",
-      "Crescem em árvores ou plantas.",
-      "Existem muitas variedades diferentes.",
-      "São consumidas em diversas culturas."
+      "Tem navios.",
+      "Fica na água.",
+      "Entrada e saída.",
+      "Transporte.",
+      "Carga."
     ],
     "active": true
   },
   {
-    "word": "LARANJA",
-    "meaning": "Fruta cítrica conhecida por seu sabor refrescante e suco abundante.",
+    "word": "FEIRA",
+    "meaning": "Local onde se vendem alimentos e produtos em barracas.",
     "hints": [
-      "É usada frequentemente para fazer bebidas naturais.",
-      "Possui sabor entre doce e ácido.",
-      "Sua cor é associada ao próprio nome.",
-      "Cresce em árvores frutíferas.",
-      "É muito consumida em diversas partes do mundo."
+      "Venda.",
+      "Barracas.",
+      "Comida.",
+      "Rua.",
+      "Comprar."
     ],
     "active": true
   },
   {
-    "word": "BANANA",
-    "meaning": "Fruta alongada muito consumida em diversas partes do mundo.",
+    "word": "AULA",
+    "meaning": "Período de ensino em que um conteúdo é explicado.",
     "hints": [
-      "É comum em muitas dietas.",
-      "Pode ser consumida crua ou em receitas.",
-      "Cresce em cachos.",
-      "Possui textura macia quando madura.",
-      "É conhecida por fornecer energia."
+      "Professor.",
+      "Aprender.",
+      "Escola.",
+      "Tempo curto.",
+      "Explicação."
     ],
     "active": true
   },
   {
-    "word": "MORANGO",
-    "meaning": "Fruta pequena e vermelha muito apreciada por seu sabor doce.",
+    "word": "PROVA",
+    "meaning": "Avaliação usada para medir o conhecimento de alguém.",
     "hints": [
-      "É usada em sobremesas e doces.",
-      "Possui pequenas sementes na superfície.",
-      "Tem sabor doce com leve acidez.",
-      "Cresce em plantas baixas.",
-      "É popular em receitas de sobremesa."
+      "Teste.",
+      "Nota.",
+      "Escola.",
+      "Perguntas.",
+      "Avaliar."
     ],
     "active": true
   },
   {
-    "word": "COCO",
-    "meaning": "Fruto tropical conhecido por sua água e polpa.",
+    "word": "VAGA",
+    "meaning": "Espaço disponível para ser ocupado, como em trabalho ou estacionamento.",
     "hints": [
-      "Cresce em palmeiras altas.",
-      "Possui casca dura.",
-      "Pode fornecer bebida natural.",
-      "É usado em diversas receitas.",
-      "É comum em regiões tropicais."
+      "Espaço livre.",
+      "Pode ocupar.",
+      "Disponível.",
+      "Trabalho ou carro.",
+      "Lugar vazio."
     ],
     "active": true
   },
   {
-    "word": "ABACAXI",
-    "meaning": "Fruta tropical de sabor marcante e levemente ácido.",
+    "word": "VALE",
+    "meaning": "Região baixa entre montanhas ou colinas.",
     "hints": [
-      "Possui casca espinhosa.",
-      "É muito usado em sucos e sobremesas.",
-      "Cresce em plantas próximas ao solo.",
-      "Tem sabor intenso e refrescante.",
-      "É comum em regiões tropicais."
+      "Entre montanhas.",
+      "Baixo.",
+      "Natureza.",
+      "Terreno.",
+      "Geografia."
     ],
     "active": true
   },
   {
-    "word": "MANDIOCA",
-    "meaning": "Raiz comestível muito utilizada na culinária de diversas regiões.",
+    "word": "VASO",
+    "meaning": "Recipiente usado para plantas ou decoração.",
     "hints": [
-      "É base de muitos pratos tradicionais.",
-      "Pode ser preparada de várias maneiras.",
-      "Cresce sob o solo.",
-      "É muito presente na culinária brasileira.",
-      "Pode gerar farinha usada em receitas."
+      "Coloca planta.",
+      "Decoração.",
+      "Casa.",
+      "Recipiente.",
+      "Flor."
     ],
     "active": true
   },
   {
-    "word": "BATATA",
-    "meaning": "Tubérculo muito consumido em diferentes formas culinárias.",
+    "word": "VELA",
+    "meaning": "Objeto que produz luz ao ser aceso ou usado em barcos.",
     "hints": [
-      "Pode ser cozida, frita ou assada.",
-      "Cresce sob a terra.",
-      "Está presente em muitos pratos populares.",
-      "É cultivada em diversas regiões do mundo.",
-      "Possui sabor suave e versátil."
+      "Fogo.",
+      "Ilumina.",
+      "Cera.",
+      "Pode derreter.",
+      "Luz."
     ],
     "active": true
   },
   {
-    "word": "CENOURA",
-    "meaning": "Raiz comestível conhecida por sua cor vibrante e valor nutricional.",
+    "word": "VEIA",
+    "meaning": "Canal do corpo por onde o sangue circula.",
     "hints": [
-      "Cresce enterrada no solo.",
-      "É usada em pratos doces e salgados.",
-      "Possui textura firme quando crua.",
-      "É conhecida por sua cor característica.",
-      "Pode ser consumida crua ou cozida."
+      "Corpo.",
+      "Sangue.",
+      "Circulação.",
+      "Interno.",
+      "Biologia."
     ],
     "active": true
   },
   {
-    "word": "TOMATE",
-    "meaning": "Fruto amplamente usado na culinária em molhos e saladas.",
+    "word": "VILA",
+    "meaning": "Pequena comunidade com casas próximas.",
     "hints": [
-      "É muito usado em pratos salgados.",
-      "Pode ser consumido cru ou cozido.",
-      "Tem sabor levemente ácido.",
-      "É ingrediente comum em molhos.",
-      "Está presente em muitas receitas."
+      "Pequeno lugar.",
+      "Casas.",
+      "Comunidade.",
+      "Cidade menor.",
+      "Moradia."
     ],
     "active": true
   },
   {
-    "word": "ESPINAFRE",
-    "meaning": "Planta de folhas verdes usada na alimentação.",
+    "word": "VIRA",
+    "meaning": "Ação de mudar de direção ou posição.",
     "hints": [
-      "É conhecido por seu valor nutricional.",
-      "Pode ser usado em pratos quentes ou frios.",
-      "Possui folhas verdes características.",
-      "É usado em diversas receitas.",
-      "Faz parte de dietas saudáveis."
+      "Girar.",
+      "Mudar direção.",
+      "Movimento.",
+      "Virar algo.",
+      "Ação."
     ],
     "active": true
   },
   {
-    "word": "FEIJAO",
-    "meaning": "Grão muito consumido na culinária de diversos países.",
+    "word": "VISA",
+    "meaning": "Ter como objetivo ou intenção alcançar algo.",
     "hints": [
-      "É ingrediente de muitos pratos tradicionais.",
-      "Costuma ser preparado cozido.",
-      "É fonte importante de nutrientes.",
-      "Existem diferentes variedades.",
-      "É comum em refeições diárias."
+      "Meta.",
+      "Objetivo.",
+      "Foco.",
+      "Planejar.",
+      "Alvo."
     ],
     "active": true
   },
   {
-    "word": "ARROZ",
-    "meaning": "Grão amplamente consumido como base alimentar em várias culturas.",
+    "word": "VOZ",
+    "meaning": "Som produzido pela fala humana ou canto.",
     "hints": [
-      "Acompanha muitos pratos.",
-      "É preparado geralmente cozido.",
-      "Está presente em diversas culturas culinárias.",
-      "É um alimento básico em muitos países.",
-      "Combina com muitos ingredientes."
+      "Som humano.",
+      "Falar.",
+      "Cantar.",
+      "Comunicar.",
+      "Ouvir."
     ],
     "active": true
   },
   {
-    "word": "QUEIJO",
-    "meaning": "Alimento produzido a partir do leite coagulado.",
+    "word": "MESA",
+    "meaning": "Móvel plano usado para apoiar objetos ou refeições.",
     "hints": [
-      "Pode ter diferentes texturas e sabores.",
-      "É consumido em várias formas.",
-      "Pode acompanhar pães e pratos diversos.",
-      "É produzido a partir do leite.",
-      "Possui grande variedade."
+      "Tem pernas.",
+      "Usada pra comer.",
+      "Fica na casa.",
+      "Apoia coisas.",
+      "É plana."
     ],
     "active": true
   },
   {
-    "word": "MANTEIGA",
-    "meaning": "Produto derivado do leite usado para cozinhar ou acompanhar alimentos.",
+    "word": "LIVRO",
+    "meaning": "Conjunto de páginas com texto ou imagens usado para leitura.",
     "hints": [
-      "É frequentemente usada no preparo de alimentos.",
-      "Pode ser espalhada sobre pães.",
-      "Deriva de um produto animal.",
-      "Tem textura cremosa.",
-      "É comum na culinária."
+      "Tem páginas.",
+      "Você lê.",
+      "Conta histórias.",
+      "Ensina coisas.",
+      "Feito de papel."
     ],
     "active": true
   },
   {
-    "word": "SUCO",
-    "meaning": "Bebida feita a partir do líquido extraído de frutas.",
+    "word": "TELA",
+    "meaning": "Superfície onde imagens são exibidas, como em celulares e TVs.",
     "hints": [
-      "Pode ser natural ou preparado.",
-      "É consumido para refrescar.",
-      "Geralmente deriva de frutas.",
-      "Pode ser doce ou ácido.",
-      "É comum em refeições ou lanches."
+      "Mostra imagens.",
+      "Tem no celular.",
+      "Tem na TV.",
+      "Pode tocar.",
+      "Mostra vídeos."
     ],
     "active": true
   },
   {
-    "word": "LIMONADA",
-    "meaning": "Bebida preparada com fruta cítrica, água e açúcar.",
+    "word": "REDE",
+    "meaning": "Estrutura de fios ou sistema de conexão entre pessoas ou dispositivos.",
     "hints": [
-      "É muito refrescante.",
-      "Costuma ser consumida gelada.",
-      "Possui sabor ácido equilibrado com açúcar.",
-      "É feita a partir de uma fruta cítrica.",
-      "É popular em dias quentes."
+      "Pode balançar.",
+      "Também é conexão.",
+      "Tem fios.",
+      "Pode descansar.",
+      "Liga coisas."
     ],
     "active": true
   },
   {
-    "word": "CANETA",
-    "meaning": "Instrumento usado para escrever com tinta.",
+    "word": "VENTO",
+    "meaning": "Movimento do ar que pode ser sentido, mas não visto.",
     "hints": [
-      "É comum em escolas e escritórios.",
-      "Permite registrar ideias em papel.",
-      "Utiliza tinta para marcar superfícies.",
-      "É usada para escrever ou desenhar.",
-      "Está presente no cotidiano."
+      "Move o ar.",
+      "Você sente.",
+      "Balança árvores.",
+      "Pode ser forte.",
+      "Não dá pra ver."
     ],
     "active": true
   },
   {
-    "word": "LAPIS",
-    "meaning": "Instrumento de escrita feito geralmente de madeira e grafite.",
+    "word": "CHUVA",
+    "meaning": "Água que cai das nuvens em forma de gotas.",
     "hints": [
-      "Pode ser apagado com facilidade.",
-      "É muito usado por estudantes.",
-      "Permite escrever ou desenhar.",
-      "Possui grafite em seu interior.",
-      "É comum em materiais escolares."
+      "Cai do céu.",
+      "Molha tudo.",
+      "Vem das nuvens.",
+      "Pode ser forte.",
+      "Forma poças."
     ],
     "active": true
   },
   {
-    "word": "BORRACHA",
-    "meaning": "Objeto usado para apagar marcas feitas por lápis.",
+    "word": "NEVE",
+    "meaning": "Forma de água congelada que cai do céu em regiões frias.",
     "hints": [
-      "Remove traços feitos em papel.",
-      "É comum em estojos escolares.",
-      "Ajuda a corrigir erros ao escrever.",
-      "Funciona com grafite.",
-      "É pequena e prática."
+      "É branca.",
+      "É fria.",
+      "Cai do céu.",
+      "Parece gelo.",
+      "Inverno."
     ],
     "active": true
   },
   {
-    "word": "REGUA",
-    "meaning": "Instrumento usado para medir ou traçar linhas retas.",
+    "word": "LAGO",
+    "meaning": "Grande quantidade de água parada cercada por terra.",
     "hints": [
-      "Ajuda a desenhar linhas precisas.",
-      "Pode medir comprimentos.",
-      "É usada em estudos e desenho.",
-      "Possui marcações de medida.",
-      "É comum em materiais escolares."
+      "Água parada.",
+      "Menor que mar.",
+      "Tem peixes.",
+      "Calmo.",
+      "Natureza."
     ],
     "active": true
   },
   {
-    "word": "MOEDA",
-    "meaning": "Peça metálica usada como forma de dinheiro.",
+    "word": "ILHA",
+    "meaning": "Porção de terra cercada por água em todos os lados.",
     "hints": [
-      "Possui valor monetário.",
-      "É usada em transações.",
-      "Pode ter diferentes valores.",
-      "É feita geralmente de metal.",
-      "Circula na economia."
+      "Tem água ao redor.",
+      "Fica isolada.",
+      "Pode ter praia.",
+      "No mar.",
+      "Terra cercada."
     ],
     "active": true
   },
   {
-    "word": "FORTUNA",
-    "meaning": "Grande quantidade de riqueza ou prosperidade.",
+    "word": "BARCO",
+    "meaning": "Veículo usado para se deslocar sobre a água.",
     "hints": [
-      "Muitas histórias falam sobre conquistá-la.",
-      "Pode representar riqueza acumulada.",
-      "Às vezes é associada à sorte.",
-      "Pode mudar completamente a vida de alguém.",
-      "Está ligada à ideia de prosperidade."
+      "Anda na água.",
+      "Flutua.",
+      "Pode ter motor.",
+      "Vai no mar.",
+      "Transporte."
     ],
     "active": true
   },
   {
-    "word": "ECONOMIA",
-    "meaning": "Conjunto de atividades relacionadas à produção, distribuição e consumo de bens.",
+    "word": "CARRO",
+    "meaning": "Veículo com rodas usado para transporte terrestre.",
     "hints": [
-      "Está ligada ao funcionamento financeiro de uma sociedade.",
-      "Envolve produção e comércio.",
-      "Pode influenciar o cotidiano das pessoas.",
-      "Governos e empresas dependem dela.",
-      "Refere-se à organização de recursos."
+      "Tem rodas.",
+      "Anda na rua.",
+      "Tem motor.",
+      "Leva pessoas.",
+      "Usa combustível."
     ],
     "active": true
   },
   {
-    "word": "NEGOCIO",
-    "meaning": "Atividade comercial realizada com objetivo de lucro ou troca.",
+    "word": "MOTO",
+    "meaning": "Veículo de duas rodas movido por motor.",
     "hints": [
-      "Envolve compra e venda.",
-      "Pode ser pequeno ou grande.",
-      "Frequentemente envolve planejamento.",
-      "Empresas e empreendedores participam disso.",
-      "Está ligado ao comércio."
+      "Duas rodas.",
+      "Rápido.",
+      "Precisa capacete.",
+      "Menor que carro.",
+      "Motor."
     ],
     "active": true
   },
   {
-    "word": "MERCADO",
-    "meaning": "Local ou sistema onde ocorre troca de produtos e serviços.",
+    "word": "TREM",
+    "meaning": "Transporte que se move sobre trilhos e possui vários vagões.",
     "hints": [
-      "É um espaço de compra e venda.",
-      "Pode ser físico ou virtual.",
-      "Reúne vendedores e consumidores.",
-      "Reflete oferta e demanda.",
-      "Está ligado ao comércio."
+      "Anda em trilhos.",
+      "Tem vagões.",
+      "É longo.",
+      "Leva pessoas.",
+      "Faz barulho."
     ],
     "active": true
   },
   {
-    "word": "CLIENTE",
-    "meaning": "Pessoa que adquire produtos ou serviços de uma empresa ou profissional.",
+    "word": "VIDA",
+    "meaning": "Condição de existir e crescer, presente em todos os seres vivos.",
     "hints": [
-      "Está presente em relações comerciais.",
-      "Recebe produtos ou serviços.",
-      "Pode voltar quando fica satisfeito.",
-      "É importante para qualquer negócio.",
-      "Participa de transações comerciais."
+      "Todos têm.",
+      "Começa e termina.",
+      "Cresce.",
+      "É importante.",
+      "Existe em seres."
     ],
     "active": true
   },
   {
-    "word": "SERVICO",
-    "meaning": "Atividade realizada para atender necessidades de outra pessoa.",
+    "word": "AMOR",
+    "meaning": "Sentimento de afeto profundo entre pessoas ou coisas.",
     "hints": [
-      "Pode ser oferecido por profissionais.",
-      "Nem sempre envolve um produto físico.",
-      "Atende necessidades específicas.",
-      "É comum em diversas profissões.",
-      "Faz parte da economia."
+      "Sentimento forte.",
+      "Liga pessoas.",
+      "Tem carinho.",
+      "Importante.",
+      "Oposto de ódio."
     ],
     "active": true
   },
   {
-    "word": "OFERTA",
-    "meaning": "Disponibilidade de produtos ou serviços para venda.",
+    "word": "NUVEM",
+    "meaning": "Conjunto de gotículas de água no céu que pode formar chuva.",
     "hints": [
-      "Está relacionada ao comércio.",
-      "Pode influenciar preços.",
-      "Aparece em mercados e negociações.",
-      "Depende da quantidade disponível.",
-      "Está ligada à venda de produtos."
+      "Fica no céu.",
+      "Pode ser branca ou escura.",
+      "Forma chuva.",
+      "Move com o vento.",
+      "Parece algodão."
     ],
     "active": true
   },
   {
-    "word": "QUALIDADE",
-    "meaning": "Conjunto de características que definem o valor ou excelência de algo.",
+    "word": "AREAL",
+    "meaning": "Grande área coberta por areia, comum em praias ou desertos.",
     "hints": [
-      "Pode diferenciar produtos ou serviços.",
-      "Está ligada à satisfação.",
-      "É buscada por consumidores.",
-      "Reflete cuidado na produção.",
-      "Representa nível de excelência."
+      "Tem muita areia.",
+      "Fica na natureza.",
+      "Pode ser quente.",
+      "Espaço aberto.",
+      "Grãos pequenos."
     ],
     "active": true
   },
   {
-    "word": "EFICIENCIA",
-    "meaning": "Capacidade de realizar algo da melhor maneira possível com menos esforço ou recursos.",
+    "word": "SELVA",
+    "meaning": "Região de floresta densa com muita vegetação e animais.",
     "hints": [
-      "Busca bons resultados com menos desperdício.",
-      "É valorizada em organizações.",
-      "Melhora processos e atividades.",
-      "Está ligada à produtividade.",
-      "Refere-se ao bom desempenho."
+      "Muita árvore.",
+      "Animais selvagens.",
+      "Difícil andar.",
+      "Natureza fechada.",
+      "Quente e úmido."
     ],
     "active": true
   },
   {
-    "word": "PROGRESSO",
-    "meaning": "Avanço ou melhoria ao longo do tempo.",
+    "word": "CAMPO",
+    "meaning": "Área aberta com vegetação baixa, comum em zonas rurais.",
     "hints": [
-      "Indica evolução em alguma área.",
-      "Pode ser observado em mudanças positivas.",
-      "Acontece gradualmente.",
-      "É resultado de esforço e desenvolvimento.",
-      "Refere-se a melhorias contínuas."
+      "Espaço aberto.",
+      "Tem grama.",
+      "Vacas podem estar lá.",
+      "Natureza.",
+      "Poucas árvores."
     ],
     "active": true
   },
   {
-    "word": "RESULTADO",
-    "meaning": "Consequência final de uma ação ou processo.",
+    "word": "TRIGO",
+    "meaning": "Planta usada para produzir farinha e alimentos como pão.",
     "hints": [
-      "Aparece após uma atividade ou esforço.",
-      "Pode ser positivo ou negativo.",
-      "Reflete o efeito de decisões.",
-      "É analisado após processos.",
-      "Mostra o que foi alcançado."
+      "Vira farinha.",
+      "Usado no pão.",
+      "Planta.",
+      "Agricultura.",
+      "Amarelo quando cresce."
     ],
     "active": true
   },
   {
-    "word": "OBJETIVO",
-    "meaning": "Meta ou propósito que alguém deseja alcançar.",
+    "word": "FOLGA",
+    "meaning": "Período de descanso sem trabalho ou obrigação.",
     "hints": [
-      "Orienta ações e decisões.",
-      "Pode exigir planejamento.",
-      "Serve como direção para esforços.",
-      "É algo que se busca atingir.",
-      "Está ligado a metas."
+      "Não trabalha.",
+      "Descanso.",
+      "Dia livre.",
+      "Relaxa.",
+      "Sem tarefas."
     ],
     "active": true
   },
   {
-    "word": "RANKING",
-    "meaning": "Classificação ordenada de pessoas ou resultados com base em desempenho.",
+    "word": "TURNO",
+    "meaning": "Período de tempo destinado a trabalho ou atividade.",
     "hints": [
-      "Organiza posições em uma lista.",
-      "Pode aparecer em jogos ou competições.",
-      "Indica desempenho comparado.",
-      "Mostra quem está à frente.",
-      "Classifica participantes."
+      "Horário de trabalho.",
+      "Divisão do dia.",
+      "Pode ser manhã ou noite.",
+      "Organização.",
+      "Tempo definido."
     ],
     "active": true
   },
   {
-    "word": "TORNEIO",
-    "meaning": "Competição organizada entre participantes em busca de vitória.",
+    "word": "PRAZO",
+    "meaning": "Tempo limite para realizar algo.",
     "hints": [
-      "Reúne competidores.",
-      "Pode ter várias etapas.",
-      "Define vencedores ao final.",
-      "É comum em esportes ou jogos.",
-      "Envolve disputa organizada."
+      "Tempo limite.",
+      "Data final.",
+      "Entrega.",
+      "Pressão.",
+      "Precisa cumprir."
     ],
     "active": true
   },
   {
-    "word": "MISSAO",
-    "meaning": "Tarefa importante atribuída a alguém ou assumida como propósito.",
+    "word": "PLANO",
+    "meaning": "Ideia organizada para atingir um objetivo.",
     "hints": [
-      "Pode envolver responsabilidade.",
-      "Às vezes exige dedicação especial.",
-      "Aparece em histórias e desafios.",
-      "Possui objetivo específico.",
-      "Representa uma tarefa significativa."
+      "Organiza ação.",
+      "Tem objetivo.",
+      "Pensado antes.",
+      "Estratégia.",
+      "Meta."
     ],
     "active": true
   },
   {
-    "word": "SUPERACAO",
-    "meaning": "Ato de vencer dificuldades ou limites pessoais.",
+    "word": "META",
+    "meaning": "Objetivo que se deseja alcançar.",
     "hints": [
-      "Acontece após enfrentar obstáculos.",
-      "Está ligada à força interior.",
-      "Pode inspirar outras pessoas.",
-      "Marca vitória sobre desafios.",
-      "Representa crescimento pessoal."
+      "Objetivo.",
+      "Alvo.",
+      "Quer atingir.",
+      "Direção.",
+      "Foco."
     ],
     "active": true
   },
   {
-    "word": "PERSISTIR",
-    "meaning": "Continuar tentando mesmo diante de dificuldades.",
+    "word": "FOCO",
+    "meaning": "Atenção concentrada em algo específico.",
     "hints": [
-      "Exige determinação.",
-      "Não desistir faz parte disso.",
-      "Aparece em histórias de conquista.",
-      "É essencial para alcançar metas.",
-      "Representa insistência positiva."
+      "Concentração.",
+      "Não distrair.",
+      "Objetivo claro.",
+      "Direção mental.",
+      "Importante para aprender."
     ],
     "active": true
   },
   {
-    "word": "DISCIPLINA",
-    "meaning": "Capacidade de manter controle e seguir regras ou hábitos com constância.",
+    "word": "RITMO",
+    "meaning": "Velocidade ou padrão de movimento ou ação.",
     "hints": [
-      "Ajuda a manter organização.",
-      "É importante para alcançar objetivos.",
-      "Envolve controle e consistência.",
-      "Pode ser desenvolvida com prática.",
-      "Está ligada à determinação."
+      "Pode acelerar.",
+      "Pode diminuir.",
+      "Ligado a música.",
+      "Padrão.",
+      "Movimento."
     ],
     "active": true
   },
   {
-    "word": "FOCADO",
-    "meaning": "Estado de concentração intensa em uma tarefa ou objetivo.",
+    "word": "PULSO",
+    "meaning": "Batimento percebido nas artérias, ligado ao coração.",
     "hints": [
-      "Evita distrações.",
-      "Ajuda a alcançar resultados.",
-      "Exige atenção total.",
-      "Está ligado à concentração.",
-      "Permite trabalhar com precisão."
+      "Coração.",
+      "Batimento.",
+      "Corpo.",
+      "Vida.",
+      "Pode sentir na mão."
     ],
     "active": true
   },
   {
-    "word": "EQUILIBRIO",
-    "meaning": "Estado de estabilidade ou harmonia entre diferentes forças ou aspectos.",
+    "word": "MENTE",
+    "meaning": "Parte responsável por pensamentos, ideias e decisões.",
     "hints": [
-      "Pode ser físico ou emocional.",
-      "Representa estabilidade.",
-      "Evita extremos.",
-      "Ajuda a manter harmonia.",
-      "Está ligado à estabilidade."
+      "Pensar.",
+      "Ideias.",
+      "Decidir.",
+      "Não é físico.",
+      "Consciência."
     ],
     "active": true
   },
   {
-    "word": "INSPIRAR",
-    "meaning": "Motivar ou estimular alguém a criar ou agir.",
+    "word": "CORPO",
+    "meaning": "Estrutura física de um ser vivo.",
     "hints": [
-      "Pode despertar criatividade.",
-      "Influência positiva em outras pessoas.",
-      "Frequentemente ligado a exemplos.",
-      "Pode gerar novas ideias.",
-      "Estimula ações ou pensamentos."
-    ],
-    "active": true
-  },
-  {
-    "word": "CRIATIVO",
-    "meaning": "Pessoa ou coisa que demonstra capacidade de criar ideias originais.",
-    "hints": [
-      "Produz ideias inovadoras.",
-      "Pensa de forma diferente.",
-      "Está ligado à imaginação.",
-      "É valorizado em arte e inovação.",
-      "Cria soluções originais."
-    ],
-    "active": true
-  },
-  {
-    "word": "INOVADOR",
-    "meaning": "Aquilo que introduz novidades ou mudanças significativas.",
-    "hints": [
-      "Traz ideias novas.",
-      "Rompe com padrões antigos.",
-      "Pode transformar áreas inteiras.",
-      "Está ligado ao progresso.",
-      "Cria algo diferente do comum."
-    ],
-    "active": true
-  },
-  {
-    "word": "SOLUCAO",
-    "meaning": "Resposta ou forma de resolver um problema.",
-    "hints": [
-      "Surge após análise de um problema.",
-      "Pode exigir criatividade.",
-      "Resolve dificuldades.",
-      "É buscada em desafios.",
-      "Traz respostas para situações."
-    ],
-    "active": true
-  },
-  {
-    "word": "CONSTRUCAO",
-    "meaning": "Ato de criar ou erguer algo físico ou conceitual.",
-    "hints": [
-      "Pode envolver planejamento e trabalho.",
-      "Resulta em algo novo.",
-      "Pode ser material ou simbólica.",
-      "Exige etapas organizadas.",
-      "Representa criação gradual."
-    ],
-    "active": true
-  },
-  {
-    "word": "FERRAMENTA",
-    "meaning": "Objeto utilizado para facilitar a realização de um trabalho ou tarefa.",
-    "hints": [
-      "Ajuda a executar atividades com mais facilidade.",
-      "É comum em oficinas e locais de trabalho.",
-      "Pode ser simples ou complexa.",
-      "Amplia a capacidade de quem a utiliza.",
-      "Serve para construir, reparar ou criar."
-    ],
-    "active": true
-  },
-  {
-    "word": "ESTRUTURA",
-    "meaning": "Forma de organização ou conjunto de partes que sustentam algo.",
-    "hints": [
-      "Define como elementos se organizam.",
-      "Pode sustentar algo físico ou conceitual.",
-      "É essencial para estabilidade.",
-      "Está presente em projetos e construções.",
-      "Dá suporte ao funcionamento de um sistema."
-    ],
-    "active": true
-  },
-  {
-    "word": "PADRAO",
-    "meaning": "Modelo ou forma que se repete e serve de referência.",
-    "hints": [
-      "Pode ser seguido como exemplo.",
-      "Aparece em repetições organizadas.",
-      "Ajuda a reconhecer regularidades.",
-      "É usado como referência.",
-      "Pode aparecer em design ou comportamento."
-    ],
-    "active": true
-  },
-  {
-    "word": "FORMATO",
-    "meaning": "Configuração ou forma como algo é apresentado ou organizado.",
-    "hints": [
-      "Define a aparência ou organização de algo.",
-      "Pode variar conforme a finalidade.",
-      "Está presente em documentos ou objetos.",
-      "Ajuda a organizar informações.",
-      "Representa a forma externa de algo."
-    ],
-    "active": true
-  },
-  {
-    "word": "SISTEMA",
-    "meaning": "Conjunto de elementos que funcionam juntos de maneira organizada.",
-    "hints": [
-      "Partes diferentes trabalham em conjunto.",
-      "Pode ter regras e funcionamento próprio.",
-      "Organiza processos ou estruturas.",
-      "É usado em diversas áreas.",
-      "Funciona como um conjunto integrado."
-    ],
-    "active": true
-  },
-  {
-    "word": "INTERFACE",
-    "meaning": "Meio de interação entre pessoas e sistemas ou dispositivos.",
-    "hints": [
-      "Permite comunicação entre usuário e tecnologia.",
-      "Pode envolver elementos visuais.",
-      "Facilita a interação com sistemas.",
-      "É importante em design digital.",
-      "Organiza formas de controle e acesso."
-    ],
-    "active": true
-  },
-  {
-    "word": "USUARIO",
-    "meaning": "Pessoa que utiliza um serviço, sistema ou produto.",
-    "hints": [
-      "Interage com ferramentas ou plataformas.",
-      "Pode acessar serviços ou produtos.",
-      "Está presente em sistemas digitais.",
-      "Utiliza recursos disponíveis.",
-      "Participa do funcionamento de um serviço."
-    ],
-    "active": true
-  },
-  {
-    "word": "SESSAO",
-    "meaning": "Período de tempo dedicado a uma atividade específica.",
-    "hints": [
-      "Possui início e fim definidos.",
-      "Pode ocorrer em reuniões ou sistemas.",
-      "Representa um período de participação.",
-      "É limitada por tempo ou atividade.",
-      "Marca duração de uma interação."
-    ],
-    "active": true
-  },
-  {
-    "word": "SEGURANCA",
-    "meaning": "Estado de proteção contra riscos ou perigos.",
-    "hints": [
-      "Busca evitar danos ou ameaças.",
-      "Pode envolver prevenção.",
-      "É importante em diversos ambientes.",
-      "Ajuda a proteger pessoas ou sistemas.",
-      "Está ligada à proteção e estabilidade."
-    ],
-    "active": true
-  },
-  {
-    "word": "VALIDACAO",
-    "meaning": "Processo de confirmar se algo está correto ou adequado.",
-    "hints": [
-      "Verifica se algo atende critérios.",
-      "Pode ocorrer antes de aprovar algo.",
-      "Ajuda a garantir qualidade.",
-      "Confirma informações ou resultados.",
-      "É parte importante de processos."
-    ],
-    "active": true
-  },
-  {
-    "word": "CONEXAO",
-    "meaning": "Ligação ou relação entre elementos, pessoas ou sistemas.",
-    "hints": [
-      "Permite comunicação ou interação.",
-      "Une diferentes pontos.",
-      "Pode ser física ou digital.",
-      "Facilita troca de informações.",
-      "Representa ligação entre partes."
-    ],
-    "active": true
-  },
-  {
-    "word": "SINTONIA",
-    "meaning": "Estado de harmonia ou entendimento entre pessoas ou ideias.",
-    "hints": [
-      "Pode ocorrer em comunicação ou relações.",
-      "Indica entendimento mútuo.",
-      "Está ligada à harmonia.",
-      "Facilita colaboração.",
-      "Representa alinhamento entre partes."
-    ],
-    "active": true
-  },
-  {
-    "word": "COESAO",
-    "meaning": "União forte entre partes de um grupo ou sistema.",
-    "hints": [
-      "Mantém elementos unidos.",
-      "Fortalece a estabilidade de um grupo.",
-      "Ajuda na cooperação.",
-      "Representa união consistente.",
-      "É importante para trabalho em equipe."
-    ],
-    "active": true
-  },
-  {
-    "word": "DEBATE",
-    "meaning": "Discussão organizada entre pessoas sobre um tema.",
-    "hints": [
-      "Envolve troca de argumentos.",
-      "Pode ocorrer em ambientes públicos.",
-      "Ajuda a analisar diferentes ideias.",
-      "Exige escuta e expressão.",
-      "Busca esclarecer pontos de vista."
-    ],
-    "active": true
-  },
-  {
-    "word": "REFLEXAO",
-    "meaning": "Processo de pensar profundamente sobre algo.",
-    "hints": [
-      "Envolve análise cuidadosa.",
-      "Pode levar a novas conclusões.",
-      "Acontece ao pensar sobre experiências.",
-      "Ajuda na compreensão de situações.",
-      "Está ligada ao pensamento crítico."
-    ],
-    "active": true
-  },
-  {
-    "word": "SENSATEZ",
-    "meaning": "Capacidade de agir com equilíbrio e bom senso.",
-    "hints": [
-      "Evita decisões impulsivas.",
-      "Valoriza a prudência.",
-      "É apreciada em situações difíceis.",
-      "Está ligada ao bom julgamento.",
-      "Representa equilíbrio nas escolhas."
-    ],
-    "active": true
-  },
-  {
-    "word": "PRIORIDADE",
-    "meaning": "Algo considerado mais importante em relação a outros.",
-    "hints": [
-      "Recebe atenção primeiro.",
-      "Define ordem de importância.",
-      "Ajuda a organizar decisões.",
-      "Pode orientar planejamento.",
-      "Indica o que vem antes de outros assuntos."
-    ],
-    "active": true
-  },
-  {
-    "word": "CRITERIO",
-    "meaning": "Regra ou princípio usado para tomar decisões ou avaliações.",
-    "hints": [
-      "Serve como base para julgamentos.",
-      "Ajuda a escolher entre opções.",
-      "Pode orientar avaliações.",
-      "Está ligado a padrões de análise.",
-      "Define como algo será avaliado."
-    ],
-    "active": true
-  },
-  {
-    "word": "PONDERAR",
-    "meaning": "Avaliar cuidadosamente diferentes aspectos antes de decidir.",
-    "hints": [
-      "Exige reflexão antes de agir.",
-      "Considera vários pontos de vista.",
-      "Ajuda a evitar decisões precipitadas.",
-      "Está ligado ao pensamento cuidadoso.",
-      "Busca equilíbrio na decisão."
-    ],
-    "active": true
-  },
-  {
-    "word": "CONFIAR",
-    "meaning": "Acreditar na honestidade ou capacidade de alguém ou algo.",
-    "hints": [
-      "Exige segurança emocional.",
-      "Pode fortalecer relações.",
-      "Está ligado à confiança mútua.",
-      "Permite acreditar em alguém.",
-      "É base para relações duradouras."
-    ],
-    "active": true
-  },
-  {
-    "word": "ESPERANCA",
-    "meaning": "Sentimento de acreditar em resultados positivos no futuro.",
-    "hints": [
-      "Surge mesmo em momentos difíceis.",
-      "Representa expectativa positiva.",
-      "Pode motivar ações.",
-      "Ajuda a manter otimismo.",
-      "Está ligada à fé no futuro."
-    ],
-    "active": true
-  },
-  {
-    "word": "FELICIDADE",
-    "meaning": "Estado duradouro de bem-estar e satisfação.",
-    "hints": [
-      "Muitas pessoas a buscam na vida.",
-      "Está ligada a momentos positivos.",
-      "Pode surgir de conquistas ou relações.",
-      "Representa satisfação profunda.",
-      "É associada ao bem-estar."
-    ],
-    "active": true
-  },
-  {
-    "word": "SAUDADE",
-    "meaning": "Sentimento de falta ou lembrança afetiva de algo ou alguém.",
-    "hints": [
-      "Surge quando algo importante está distante.",
-      "Está ligado à memória afetiva.",
-      "Pode trazer nostalgia.",
-      "Aparece em músicas e poesias.",
-      "Representa falta acompanhada de carinho."
-    ],
-    "active": true
-  },
-  {
-    "word": "LIBERDADE",
-    "meaning": "Estado de agir ou viver sem restrições injustas.",
-    "hints": [
-      "Está ligada à autonomia.",
-      "Permite escolher caminhos.",
-      "É valorizada em muitas sociedades.",
-      "Pode ser conquistada ou defendida.",
-      "Representa independência."
-    ],
-    "active": true
-  },
-  {
-    "word": "RESILIENCIA",
-    "meaning": "Capacidade de se recuperar e se adaptar após enfrentar dificuldades.",
-    "hints": [
-      "Surge quando alguém supera situações difíceis.",
-      "Permite continuar mesmo após falhas.",
-      "Está ligada à força emocional.",
-      "Aparece em histórias de superação.",
-      "Representa adaptação diante de desafios."
-    ],
-    "active": true
-  },
-  {
-    "word": "SENTIMENTO",
-    "meaning": "Estado emocional ou reação afetiva em relação a pessoas ou acontecimentos.",
-    "hints": [
-      "Pode ser positivo ou negativo.",
-      "Surge em resposta a experiências.",
-      "É parte da vida emocional humana.",
-      "Pode influenciar decisões.",
-      "Está ligado às emoções."
-    ],
-    "active": true
-  },
-  {
-    "word": "BONDADE",
-    "meaning": "Qualidade de quem demonstra generosidade e preocupação com os outros.",
-    "hints": [
-      "Aparece em gestos altruístas.",
-      "Está ligada à compaixão.",
-      "Pode ajudar outras pessoas.",
-      "É admirada em relações humanas.",
-      "Reflete atitude positiva com o próximo."
-    ],
-    "active": true
-  },
-  {
-    "word": "GENEROSO",
-    "meaning": "Pessoa que demonstra disposição em ajudar ou compartilhar com os outros.",
-    "hints": [
-      "Costuma dividir o que possui.",
-      "Age com preocupação pelo bem alheio.",
-      "Está ligado à solidariedade.",
-      "Pode ajudar sem esperar retorno.",
-      "Reflete atitude altruísta."
-    ],
-    "active": true
-  },
-  {
-    "word": "SOLIDARIO",
-    "meaning": "Pessoa que demonstra apoio ou ajuda aos outros em momentos difíceis.",
-    "hints": [
-      "Ajuda quem precisa.",
-      "Mostra apoio em momentos difíceis.",
-      "Valoriza cooperação entre pessoas.",
-      "Pode aparecer em ações coletivas.",
-      "Está ligado à empatia."
-    ],
-    "active": true
-  },
-  {
-    "word": "COOPERAR",
-    "meaning": "Trabalhar junto com outras pessoas para alcançar um objetivo comum.",
-    "hints": [
-      "Envolve colaboração.",
-      "Ajuda a alcançar resultados em grupo.",
-      "Exige comunicação entre pessoas.",
-      "Pode fortalecer relações.",
-      "Está ligado ao trabalho em equipe."
-    ],
-    "active": true
-  },
-  {
-    "word": "EQUIPE",
-    "meaning": "Grupo de pessoas que trabalha em conjunto para alcançar um objetivo.",
-    "hints": [
-      "Envolve cooperação entre membros.",
-      "Cada pessoa pode ter um papel diferente.",
-      "Busca alcançar metas coletivas.",
-      "Está presente em esportes e trabalho.",
-      "Depende da colaboração entre participantes."
-    ],
-    "active": true
-  },
-  {
-    "word": "COLABORAR",
-    "meaning": "Contribuir com outras pessoas para realizar algo em conjunto.",
-    "hints": [
-      "Envolve participação coletiva.",
-      "Ajuda a alcançar resultados melhores.",
-      "Pode acontecer em projetos.",
-      "Exige comunicação e cooperação.",
-      "Fortalece o trabalho em grupo."
-    ],
-    "active": true
-  },
-  {
-    "word": "CONSENSO",
-    "meaning": "Acordo geral alcançado após discussão ou análise entre várias pessoas.",
-    "hints": [
-      "Surge após troca de opiniões.",
-      "Indica concordância coletiva.",
-      "Pode acontecer em reuniões ou decisões.",
-      "Reflete entendimento comum.",
-      "É resultado de diálogo."
-    ],
-    "active": true
-  },
-  {
-    "word": "DIALOGO",
-    "meaning": "Conversa entre duas ou mais pessoas para troca de ideias.",
-    "hints": [
-      "Permite comunicação clara.",
-      "Ajuda a resolver conflitos.",
-      "Envolve escuta e expressão.",
-      "Pode aproximar diferentes pontos de vista.",
-      "É base para entendimento."
-    ],
-    "active": true
-  },
-  {
-    "word": "COMUNICAR",
-    "meaning": "Transmitir informações, ideias ou sentimentos para outras pessoas.",
-    "hints": [
-      "Permite compartilhar pensamentos.",
-      "Pode acontecer por fala ou escrita.",
-      "É essencial nas relações humanas.",
-      "Facilita entendimento entre pessoas.",
-      "Envolve transmissão de mensagens."
-    ],
-    "active": true
-  },
-  {
-    "word": "LINGUAGEM",
-    "meaning": "Sistema de comunicação usado para expressar ideias e sentimentos.",
-    "hints": [
-      "Permite troca de informações.",
-      "Pode ser verbal ou simbólica.",
-      "É fundamental para comunicação humana.",
-      "Possui regras e estrutura.",
-      "Ajuda a expressar pensamentos."
-    ],
-    "active": true
-  },
-  {
-    "word": "PALAVRA",
-    "meaning": "Unidade de linguagem usada para expressar ideias ou conceitos.",
-    "hints": [
-      "Forma frases e discursos.",
-      "É parte fundamental da comunicação.",
-      "Pode representar ideias ou objetos.",
-      "É usada em escrita e fala.",
-      "Constrói significado em textos."
-    ],
-    "active": true
-  },
-  {
-    "word": "HISTORIA",
-    "meaning": "Narrativa de acontecimentos reais ou imaginários.",
-    "hints": [
-      "Pode ser contada em livros ou filmes.",
-      "Possui início, meio e fim.",
-      "Pode envolver personagens.",
-      "Relata acontecimentos.",
-      "É forma de transmitir experiências."
-    ],
-    "active": true
-  },
-  {
-    "word": "NARRATIVA",
-    "meaning": "Forma de contar acontecimentos ou experiências em sequência.",
-    "hints": [
-      "Organiza eventos em sequência.",
-      "É usada em literatura e cinema.",
-      "Pode envolver personagens e cenários.",
-      "Conduz o desenvolvimento de uma história.",
-      "Apresenta acontecimentos conectados."
-    ],
-    "active": true
-  },
-  {
-    "word": "PERSONAGEM",
-    "meaning": "Figura que participa de uma história ou narrativa.",
-    "hints": [
-      "Pode ser real ou fictício.",
-      "Participa de acontecimentos em uma história.",
-      "Pode ter personalidade própria.",
-      "É parte central de narrativas.",
-      "Interage com outros elementos da história."
-    ],
-    "active": true
-  },
-  {
-    "word": "AVENTURAR",
-    "meaning": "Envolver-se em situações novas ou desafiadoras.",
-    "hints": [
-      "Pode levar a experiências inesperadas.",
-      "Exige coragem ou curiosidade.",
-      "Pode acontecer em viagens ou explorações.",
-      "Está ligado à descoberta.",
-      "Envolve enfrentar o desconhecido."
-    ],
-    "active": true
-  },
-  {
-    "word": "EXPLORAR",
-    "meaning": "Investigar ou descobrir algo desconhecido.",
-    "hints": [
-      "Pode envolver viagens ou pesquisa.",
-      "Busca descobrir novas informações.",
-      "Pode revelar lugares ou ideias.",
-      "Está ligado à curiosidade.",
-      "Envolve investigação."
-    ],
-    "active": true
-  },
-  {
-    "word": "DESCOBRIR",
-    "meaning": "Encontrar ou perceber algo que antes era desconhecido.",
-    "hints": [
-      "Pode ocorrer após investigação.",
-      "Revela algo novo.",
-      "Está ligado à curiosidade.",
-      "Pode acontecer em ciência ou exploração.",
-      "Traz novos conhecimentos."
-    ],
-    "active": true
-  },
-  {
-    "word": "INVESTIGAR",
-    "meaning": "Examinar cuidadosamente algo para obter informações.",
-    "hints": [
-      "Busca entender detalhes de uma situação.",
-      "Pode envolver análise profunda.",
-      "É comum em pesquisas ou estudos.",
-      "Ajuda a esclarecer dúvidas.",
-      "Requer observação e atenção."
-    ],
-    "active": true
-  },
-  {
-    "word": "OBSERVAR",
-    "meaning": "Prestar atenção em algo para compreender ou perceber detalhes.",
-    "hints": [
-      "Exige atenção ao redor.",
-      "Pode revelar detalhes importantes.",
-      "É parte do processo de aprendizagem.",
-      "Ajuda a compreender situações.",
-      "Envolve olhar ou analisar cuidadosamente."
-    ],
-    "active": true
-  },
-  {
-    "word": "PERCEBER",
-    "meaning": "Notar ou compreender algo através dos sentidos ou da mente.",
-    "hints": [
-      "Pode ocorrer ao notar mudanças.",
-      "Envolve compreensão ou atenção.",
-      "Pode surgir após observação.",
-      "Ajuda a entender situações.",
-      "Está ligado à consciência."
-    ],
-    "active": true
-  },
-  {
-    "word": "ENTENDER",
-    "meaning": "Compreender o significado ou funcionamento de algo.",
-    "hints": [
-      "Surge após aprendizado ou reflexão.",
-      "Permite interpretar ideias.",
-      "Está ligado ao conhecimento.",
-      "Ajuda a resolver dúvidas.",
-      "Representa compreensão."
-    ],
-    "active": true
-  },
-  {
-    "word": "APLICAR",
-    "meaning": "Colocar em prática um conhecimento ou método.",
-    "hints": [
-      "Transforma teoria em ação.",
-      "Pode ocorrer após aprendizado.",
-      "Utiliza conhecimento adquirido.",
-      "É comum em atividades práticas.",
-      "Permite testar ideias."
-    ],
-    "active": true
-  },
-  {
-    "word": "EVOLUIR",
-    "meaning": "Desenvolver-se gradualmente ao longo do tempo.",
-    "hints": [
-      "Indica mudança para melhor.",
-      "Pode ocorrer em pessoas ou ideias.",
-      "Acontece gradualmente.",
-      "Está ligado ao progresso.",
-      "Representa desenvolvimento contínuo."
-    ],
-    "active": true
-  },
-  {
-    "word": "TRANSFORMAR",
-    "meaning": "Modificar algo profundamente, mudando sua forma ou estado.",
-    "hints": [
-      "Pode alterar completamente algo existente.",
-      "Ocorre quando mudanças profundas acontecem.",
-      "Pode ser física ou simbólica.",
-      "Muitas histórias mostram personagens passando por isso.",
-      "Representa mudança significativa."
-    ],
-    "active": true
-  },
-  {
-    "word": "MUDANCA",
-    "meaning": "Ato ou efeito de alterar uma situação ou estado.",
-    "hints": [
-      "Pode acontecer ao longo do tempo.",
-      "Nem sempre é fácil de aceitar.",
-      "Pode trazer novas oportunidades.",
-      "Marca transições importantes.",
-      "Representa alteração de estado."
-    ],
-    "active": true
-  },
-  {
-    "word": "DECISAO",
-    "meaning": "Escolha feita após considerar diferentes possibilidades.",
-    "hints": [
-      "Define qual caminho seguir.",
-      "Pode ter consequências importantes.",
-      "Às vezes exige reflexão.",
-      "É parte constante da vida.",
-      "Representa escolha entre opções."
-    ],
-    "active": true
-  },
-  {
-    "word": "ESCOLHA",
-    "meaning": "Ato de selecionar uma opção entre várias possibilidades.",
-    "hints": [
-      "Pode influenciar o futuro.",
-      "Nem sempre é simples de fazer.",
-      "Depende de preferências ou valores.",
-      "Acontece em diferentes momentos da vida.",
-      "Define qual alternativa será seguida."
-    ],
-    "active": true
-  },
-  {
-    "word": "FUTURO",
-    "meaning": "Tempo que ainda está por vir.",
-    "hints": [
-      "Representa o que ainda não aconteceu.",
-      "Pode ser planejado ou imaginado.",
-      "Muitas decisões são tomadas pensando nele.",
-      "Está ligado a expectativas.",
-      "É o tempo que ainda virá."
-    ],
-    "active": true
-  },
-  {
-    "word": "PASSADO",
-    "meaning": "Tempo que já aconteceu anteriormente.",
-    "hints": [
-      "Guarda experiências vividas.",
-      "Pode ser lembrado através da memória.",
-      "Influencia o presente.",
-      "Está ligado à história.",
-      "Representa o que já aconteceu."
+      "Físico.",
+      "Tem partes.",
+      "Se move.",
+      "Vive.",
+      "Tem órgãos."
     ],
     "active": true
   },
   {
     "word": "TEMPO",
-    "meaning": "Dimensão que permite medir duração e sequência de acontecimentos.",
+    "meaning": "Medida que indica duração e passagem dos acontecimentos.",
     "hints": [
-      "Organiza passado, presente e futuro.",
-      "É percebido através de mudanças.",
-      "Pode parecer rápido ou lento.",
-      "É medido por relógios e calendários.",
-      "Está presente em toda experiência."
+      "Passa sempre.",
+      "Não volta.",
+      "Mede duração.",
+      "Relógio marca.",
+      "Importante."
     ],
     "active": true
   },
   {
-    "word": "IDEIA",
-    "meaning": "Pensamento ou concepção que surge na mente.",
+    "word": "LINHA",
+    "meaning": "Traço contínuo que liga pontos ou forma desenhos.",
     "hints": [
-      "Pode iniciar um projeto ou criação.",
-      "Surge da imaginação ou reflexão.",
-      "Pode resolver problemas.",
-      "Às vezes surge inesperadamente.",
-      "Representa um pensamento criativo."
+      "Reta.",
+      "Pode desenhar.",
+      "Tem começo e fim.",
+      "Simples.",
+      "Direção."
     ],
     "active": true
   },
   {
-    "word": "CRIAR",
-    "meaning": "Produzir algo novo a partir de ideias ou esforço.",
+    "word": "PONTO",
+    "meaning": "Marca pequena que indica posição ou finalização.",
     "hints": [
-      "Pode resultar em obras ou soluções.",
-      "Começa com uma ideia.",
-      "Está ligado à criatividade.",
-      "Pode envolver trabalho ou imaginação.",
-      "Dá origem a algo novo."
+      "Pequeno.",
+      "Final de frase.",
+      "Marca posição.",
+      "Simples.",
+      "Usa no texto."
     ],
     "active": true
   },
   {
-    "word": "INVENTAR",
-    "meaning": "Criar algo que não existia antes.",
+    "word": "GRUPO",
+    "meaning": "Conjunto de pessoas ou coisas reunidas.",
     "hints": [
-      "Pode resultar em inovação.",
-      "Surge da criatividade humana.",
-      "Pode facilitar a vida das pessoas.",
-      "Às vezes muda a história.",
-      "Representa criação original."
+      "Mais de um.",
+      "Juntos.",
+      "Equipe.",
+      "Organização.",
+      "Coletivo."
     ],
     "active": true
   },
   {
-    "word": "DESENHO",
-    "meaning": "Representação visual feita com linhas e formas.",
+    "word": "DUPLA",
+    "meaning": "Conjunto formado por duas pessoas ou elementos.",
     "hints": [
-      "Pode ser feito em papel ou digitalmente.",
-      "Usa traços para representar algo.",
-      "É uma forma de expressão artística.",
-      "Pode ilustrar ideias ou objetos.",
-      "Surge do uso de instrumentos de desenho."
+      "Dois.",
+      "Par.",
+      "Juntos.",
+      "Equipe pequena.",
+      "Ligação."
     ],
     "active": true
   },
   {
-    "word": "SURPRESA",
-    "meaning": "Acontecimento inesperado que provoca reação imediata.",
+    "word": "TOTAL",
+    "meaning": "Quantidade completa de algo.",
     "hints": [
-      "Pode causar espanto ou alegria.",
-      "Acontece quando algo não é esperado.",
-      "É comum em celebrações.",
-      "Pode mudar o rumo de eventos.",
-      "Representa algo inesperado."
+      "Tudo junto.",
+      "Completo.",
+      "Soma final.",
+      "Sem faltar.",
+      "Resultado."
     ],
     "active": true
   },
   {
-    "word": "MOMENTO",
-    "meaning": "Pequeno intervalo de tempo em que algo acontece.",
+    "word": "PARTE",
+    "meaning": "Uma fração ou pedaço de algo maior.",
     "hints": [
-      "Pode ser breve ou marcante.",
-      "Marca acontecimentos específicos.",
-      "Pode ser lembrado posteriormente.",
-      "Acontece dentro do fluxo do tempo.",
-      "Representa um instante."
+      "Não é inteiro.",
+      "Pedaço.",
+      "Divisão.",
+      "Parte de algo.",
+      "Menor."
     ],
     "active": true
   },
   {
-    "word": "OCASIAO",
-    "meaning": "Situação ou circunstância em que algo acontece.",
+    "word": "BASE",
+    "meaning": "Fundamento ou apoio principal de algo.",
     "hints": [
-      "Pode envolver eventos especiais.",
-      "Define contexto de acontecimentos.",
-      "Às vezes surge inesperadamente.",
-      "Pode marcar celebrações.",
-      "Representa uma circunstância específica."
+      "Sustenta.",
+      "Começo.",
+      "Fundação.",
+      "Importante.",
+      "Sem ela cai."
     ],
     "active": true
   },
   {
-    "word": "PROPOSITO",
-    "meaning": "Objetivo ou intenção que orienta ações e decisões.",
+    "word": "TOPO",
+    "meaning": "Parte mais alta de algo.",
     "hints": [
-      "Ajuda a definir direção na vida.",
-      "Motiva ações e escolhas.",
-      "Pode surgir após reflexão.",
-      "Relaciona-se com objetivos pessoais.",
-      "Dá sentido às atitudes."
+      "Mais alto.",
+      "Final superior.",
+      "Difícil alcançar.",
+      "Acima.",
+      "Ponto máximo."
     ],
     "active": true
   },
   {
-    "word": "PLANEJAR",
-    "meaning": "Organizar antecipadamente ações para alcançar um resultado.",
+    "word": "FUNDO",
+    "meaning": "Parte mais baixa ou profunda de algo.",
     "hints": [
-      "Ajuda a evitar improviso.",
-      "Envolve pensar antes de agir.",
-      "Pode definir etapas de execução.",
-      "É usado em projetos e decisões.",
-      "Permite organizar caminhos."
+      "Mais baixo.",
+      "Profundo.",
+      "Difícil ver.",
+      "Oposto de topo.",
+      "Base inferior."
     ],
     "active": true
   },
   {
-    "word": "ESTRATEGIA",
-    "meaning": "Plano elaborado para alcançar um objetivo específico.",
+    "word": "PORTA",
+    "meaning": "Estrutura usada para entrar ou sair de um ambiente.",
     "hints": [
-      "Pode envolver escolhas calculadas.",
-      "É usada em jogos ou negócios.",
-      "Busca melhorar resultados.",
-      "Exige análise de possibilidades.",
-      "Define como agir para alcançar algo."
+      "Entrada.",
+      "Abre e fecha.",
+      "Casa.",
+      "Passagem.",
+      "Ligação entre espaços."
     ],
     "active": true
   },
   {
-    "word": "PROCESSO",
-    "meaning": "Sequência de etapas que levam a um resultado.",
+    "word": "JANELA",
+    "meaning": "Abertura em paredes que permite entrada de luz e ar.",
     "hints": [
-      "Possui início e desenvolvimento.",
-      "Pode envolver várias fases.",
-      "Acontece ao longo do tempo.",
-      "Leva à realização de algo.",
-      "Representa evolução por etapas."
+      "Deixa entrar luz.",
+      "Pode abrir.",
+      "Vidro.",
+      "Casa.",
+      "Ventilação."
     ],
     "active": true
   },
   {
-    "word": "CONSEQUENCIA",
-    "meaning": "Efeito ou resultado causado por uma ação.",
+    "word": "CHAVE",
+    "meaning": "Objeto usado para abrir ou fechar algo.",
     "hints": [
-      "Aparece após decisões ou atitudes.",
-      "Pode ser positiva ou negativa.",
-      "Relaciona-se com causa e efeito.",
-      "Reflete resultados de escolhas.",
-      "Surge depois de ações."
+      "Abre porta.",
+      "Pequena.",
+      "Metal.",
+      "Segurança.",
+      "Gira."
     ],
     "active": true
   },
   {
-    "word": "EXPERIENCIA",
-    "meaning": "Conhecimento adquirido através da vivência de situações.",
+    "word": "SENHA",
+    "meaning": "Código usado para acessar sistemas ou informações.",
     "hints": [
-      "É construída ao longo do tempo.",
-      "Vem da prática ou vivência.",
-      "Ajuda a tomar decisões futuras.",
-      "Pode ser compartilhada com outros.",
-      "Resulta de acontecimentos vividos."
+      "Segurança.",
+      "Código.",
+      "Acesso.",
+      "Não compartilhar.",
+      "Privado."
     ],
     "active": true
   },
   {
-    "word": "ESCOLA",
-    "meaning": "Instituição dedicada ao ensino e aprendizagem.",
+    "word": "NIVEL",
+    "meaning": "Grau ou estágio de progresso em algo.",
     "hints": [
-      "É frequentada por estudantes.",
-      "Promove educação formal.",
-      "Possui professores e alunos.",
-      "Transmite conhecimentos diversos.",
-      "Representa espaço de aprendizado."
-    ],
-    "active": true
-  },
-  {
-    "word": "PROFESSOR",
-    "meaning": "Pessoa responsável por ensinar e orientar estudantes.",
-    "hints": [
-      "Transmite conhecimento.",
-      "Ajuda no aprendizado.",
-      "Trabalha em ambientes educacionais.",
-      "Explica conteúdos.",
-      "Orienta estudantes."
-    ],
-    "active": true
-  },
-  {
-    "word": "CIENCIA",
-    "meaning": "Sistema organizado de conhecimentos obtidos por estudo e observação.",
-    "hints": [
-      "Busca explicar fenômenos.",
-      "Usa investigação e análise.",
-      "Produz conhecimento estruturado.",
-      "Ajuda a compreender o mundo.",
-      "Baseia-se em observação e estudo."
-    ],
-    "active": true
-  },
-  {
-    "word": "CONHECER",
-    "meaning": "Tomar consciência ou adquirir informação sobre algo.",
-    "hints": [
-      "Pode acontecer ao aprender algo novo.",
-      "Permite entender melhor o mundo.",
-      "Surge após experiências ou estudos.",
-      "Ajuda a ampliar perspectivas.",
-      "Representa aquisição de informação."
-    ],
-    "active": true
-  },
-  {
-    "word": "SABEDORIA",
-    "meaning": "Capacidade de aplicar conhecimento com discernimento.",
-    "hints": [
-      "Vai além do simples conhecimento.",
-      "Envolve reflexão e experiência.",
-      "É associada a decisões equilibradas.",
-      "Pode surgir ao longo da vida.",
-      "Representa compreensão profunda."
-    ],
-    "active": true
-  },
-  {
-    "word": "PERSPECTIVA",
-    "meaning": "Forma particular de enxergar ou interpretar algo.",
-    "hints": [
-      "Pode variar entre pessoas.",
-      "Influenciada por experiências.",
-      "Define forma de interpretar situações.",
-      "Pode mudar com novos conhecimentos.",
-      "Representa ponto de vista."
-    ],
-    "active": true
-  },
-  {
-    "word": "VISUALIZAR",
-    "meaning": "Imaginar ou representar mentalmente algo.",
-    "hints": [
-      "Pode acontecer ao planejar algo.",
-      "Ajuda a imaginar resultados.",
-      "Está ligada à imaginação.",
-      "Permite antecipar cenários.",
-      "Representa criação mental de imagens."
-    ],
-    "active": true
-  },
-  {
-    "word": "INOVACAO",
-    "meaning": "Introdução de algo novo que melhora ou transforma uma prática existente.",
-    "hints": [
-      "Está ligada a ideias originais.",
-      "Pode surgir em tecnologia ou ciência.",
-      "Muitas vezes melhora algo que já existia.",
-      "Está associada ao progresso.",
-      "Representa novidade aplicada."
-    ],
-    "active": true
-  },
-  {
-    "word": "DESENVOLVER",
-    "meaning": "Fazer algo crescer, evoluir ou se tornar mais complexo.",
-    "hints": [
-      "Pode acontecer em projetos ou habilidades.",
-      "Exige tempo e dedicação.",
-      "Leva algo a um estágio mais avançado.",
-      "Pode envolver aprendizado.",
-      "Representa crescimento estruturado."
-    ],
-    "active": true
-  },
-  {
-    "word": "REFLETIR",
-    "meaning": "Pensar cuidadosamente sobre algo antes de agir.",
-    "hints": [
-      "Envolve análise interior.",
-      "Pode ajudar em decisões.",
-      "Acontece em momentos de pausa.",
-      "Leva a compreensão mais profunda.",
-      "Representa pensamento cuidadoso."
-    ],
-    "active": true
-  },
-  {
-    "word": "TRISTEZA",
-    "meaning": "Estado emocional associado a perda ou frustração.",
-    "hints": [
-      "Pode surgir após acontecimentos difíceis.",
-      "É uma emoção humana natural.",
-      "Pode levar à reflexão.",
-      "Aparece em momentos de despedida.",
-      "Representa emoção negativa."
-    ],
-    "active": true
-  },
-  {
-    "word": "AFETO",
-    "meaning": "Sentimento de carinho ou ligação emocional entre pessoas.",
-    "hints": [
-      "Pode aparecer em gestos simples.",
-      "Está presente em relações humanas.",
-      "Pode ser demonstrado por atitudes.",
-      "Relaciona-se com proximidade emocional.",
-      "Representa carinho."
-    ],
-    "active": true
-  },
-  {
-    "word": "TRANQUILO",
-    "meaning": "Estado de calma ou ausência de agitação.",
-    "hints": [
-      "Pode descrever pessoas ou ambientes.",
-      "Relaciona-se com paz.",
-      "Ocorre em momentos de descanso.",
-      "Evita conflitos ou tensão.",
-      "Representa calma."
-    ],
-    "active": true
-  },
-  {
-    "word": "CALMARIA",
-    "meaning": "Condição de tranquilidade ou ausência de agitação.",
-    "hints": [
-      "Pode surgir após momentos intensos.",
-      "Relaciona-se com descanso.",
-      "Pode ser percebida em ambientes silenciosos.",
-      "Ajuda a recuperar energia.",
-      "Representa tranquilidade."
-    ],
-    "active": true
-  },
-  {
-    "word": "RESPIRAR",
-    "meaning": "Ato de inspirar e expirar ar para manter a vida.",
-    "hints": [
-      "É essencial para o organismo.",
-      "Pode ser percebido em momentos de calma.",
-      "Relaciona-se com relaxamento.",
-      "Acontece continuamente.",
-      "Mantém o corpo funcionando."
-    ],
-    "active": true
-  },
-  {
-    "word": "MEDITAR",
-    "meaning": "Prática de concentrar a mente para alcançar clareza ou tranquilidade.",
-    "hints": [
-      "Relaciona-se com atenção interior.",
-      "Pode ajudar a reduzir estresse.",
-      "Envolve foco mental.",
-      "É praticada em diversas culturas.",
-      "Busca equilíbrio interior."
-    ],
-    "active": true
-  },
-  {
-    "word": "HARMONIA",
-    "meaning": "Estado de equilíbrio e concordância entre elementos.",
-    "hints": [
-      "Relaciona-se com paz e cooperação.",
-      "Pode aparecer em música ou relações.",
-      "Indica ausência de conflito.",
-      "Depende de equilíbrio.",
-      "Representa concordância."
-    ],
-    "active": true
-  },
-  {
-    "word": "JUSTICA",
-    "meaning": "Princípio que busca garantir tratamento justo e equilíbrio de direitos.",
-    "hints": [
-      "Relaciona-se com leis.",
-      "Busca igualdade de tratamento.",
-      "É defendida em debates sociais.",
-      "Pode resolver conflitos.",
-      "Representa equilíbrio entre direitos."
-    ],
-    "active": true
-  },
-  {
-    "word": "VALORES",
-    "meaning": "Princípios que orientam comportamentos e decisões.",
-    "hints": [
-      "Influenciam escolhas pessoais.",
-      "Podem ser ensinados em família.",
-      "Orientam atitudes.",
-      "Relacionam-se com ética.",
-      "Representam princípios fundamentais."
-    ],
-    "active": true
-  },
-  {
-    "word": "ETICA",
-    "meaning": "Conjunto de princípios que orientam o comportamento correto.",
-    "hints": [
-      "Relaciona-se com valores morais.",
-      "Orienta decisões justas.",
-      "Pode ser discutida em filosofia.",
-      "Ajuda a avaliar atitudes.",
-      "Representa princípios de conduta."
-    ],
-    "active": true
-  },
-  {
-    "word": "MORAL",
-    "meaning": "Conjunto de regras e valores que orientam o comportamento em sociedade.",
-    "hints": [
-      "Define o que é considerado correto.",
-      "Pode variar entre culturas.",
-      "Relaciona-se com ética.",
-      "Influencia atitudes humanas.",
-      "Representa normas de comportamento."
-    ],
-    "active": true
-  },
-  {
-    "word": "RESPONSAVEL",
-    "meaning": "Pessoa que assume deveres e responde por suas ações.",
-    "hints": [
-      "Cumpre compromissos assumidos.",
-      "Age com consciência das consequências.",
-      "É confiável em tarefas.",
-      "Demonstra maturidade.",
-      "Assume resultados de suas ações."
-    ],
-    "active": true
-  },
-  {
-    "word": "COMPROMISSO",
-    "meaning": "Acordo ou responsabilidade assumida com alguém ou algo.",
-    "hints": [
-      "Envolve responsabilidade.",
-      "Pode ser pessoal ou profissional.",
-      "Exige dedicação.",
-      "É baseado em confiança.",
-      "Representa promessa de ação."
-    ],
-    "active": true
-  },
-  {
-    "word": "DEDICACAO",
-    "meaning": "Entrega de esforço e atenção para alcançar um objetivo.",
-    "hints": [
-      "Exige esforço contínuo.",
-      "Pode levar a bons resultados.",
-      "Relaciona-se com disciplina.",
-      "Demonstra empenho.",
-      "Representa esforço constante."
-    ],
-    "active": true
-  },
-  {
-    "word": "ATITUDE",
-    "meaning": "Forma de agir ou reagir diante de situações.",
-    "hints": [
-      "Reflete personalidade.",
-      "Pode influenciar resultados.",
-      "Aparece em comportamentos.",
-      "Pode ser positiva ou negativa.",
-      "Representa modo de agir."
-    ],
-    "active": true
-  },
-  {
-    "word": "CONQUISTA",
-    "meaning": "Resultado alcançado após esforço ou luta.",
-    "hints": [
-      "Vem após dedicação.",
-      "Pode gerar satisfação.",
-      "Relaciona-se com objetivos.",
-      "Marca um sucesso alcançado.",
-      "Representa vitória pessoal."
-    ],
-    "active": true
-  },
-  {
-    "word": "VITORIA",
-    "meaning": "Resultado positivo obtido após competição ou desafio.",
-    "hints": [
-      "Representa sucesso em disputa.",
-      "Pode gerar comemoração.",
-      "Relaciona-se com esforço.",
-      "Marca superação de desafios.",
-      "Indica resultado favorável."
-    ],
-    "active": true
-  },
-  {
-    "word": "DESTINAR",
-    "meaning": "Direcionar algo para determinado fim ou propósito.",
-    "hints": [
-      "Relaciona-se com intenção.",
-      "Define finalidade de algo.",
-      "Pode ocorrer em planejamento.",
-      "Direciona recursos ou esforços.",
-      "Representa atribuição de propósito."
-    ],
-    "active": true
-  },
-  {
-    "word": "ORIENTAR",
-    "meaning": "Guiar ou indicar direção para alguém.",
-    "hints": [
-      "Ajuda a encontrar caminhos.",
-      "Pode envolver aconselhamento.",
-      "Relaciona-se com direção.",
-      "Pode acontecer em aprendizado.",
-      "Representa ato de guiar."
-    ],
-    "active": true
-  },
-  {
-    "word": "GUIAR",
-    "meaning": "Conduzir alguém ou algo em determinada direção.",
-    "hints": [
-      "Indica caminho a seguir.",
-      "Pode envolver liderança.",
-      "Relaciona-se com orientação.",
-      "Pode ocorrer em viagens.",
-      "Representa condução."
-    ],
-    "active": true
-  },
-  {
-    "word": "LIDERAR",
-    "meaning": "Conduzir ou influenciar um grupo de pessoas.",
-    "hints": [
-      "Exige responsabilidade.",
-      "Pode inspirar outras pessoas.",
-      "Relaciona-se com direção de equipes.",
-      "Implica tomada de decisões.",
-      "Representa comando ou influência."
-    ],
-    "active": true
-  },
-  {
-    "word": "UNIAO",
-    "meaning": "Ato de juntar elementos ou pessoas em conjunto.",
-    "hints": [
-      "Fortalece grupos.",
-      "Relaciona-se com cooperação.",
-      "Pode gerar força coletiva.",
-      "Une diferentes partes.",
-      "Representa ligação."
-    ],
-    "active": true
-  },
-  {
-    "word": "LEVEZA",
-    "meaning": "Sensação de tranquilidade ou ausência de peso emocional.",
-    "hints": [
-      "Pode surgir após resolver problemas.",
-      "Relaciona-se com bem-estar.",
-      "Pode descrever um estado emocional.",
-      "Contrasta com tensão.",
-      "Representa sensação de tranquilidade."
-    ],
-    "active": true
-  },
-  {
-    "word": "BEMESTAR",
-    "meaning": "Estado de conforto físico, mental e emocional.",
-    "hints": [
-      "Relaciona-se com qualidade de vida.",
-      "Pode envolver saúde e equilíbrio.",
-      "É buscado em hábitos saudáveis.",
-      "Está ligado ao conforto pessoal.",
-      "Representa sensação de estar bem."
-    ],
-    "active": true
-  },
-  {
-    "word": "SAUDE",
-    "meaning": "Estado de bom funcionamento físico e mental do organismo.",
-    "hints": [
-      "Relaciona-se com hábitos de vida.",
-      "Pode ser mantida com cuidados.",
-      "É essencial para o bem-estar.",
-      "Pode envolver prevenção.",
-      "Representa condição física e mental."
-    ],
-    "active": true
-  },
-  {
-    "word": "CUIDADO",
-    "meaning": "Ato de proteger ou tratar algo com atenção.",
-    "hints": [
-      "Relaciona-se com atenção e responsabilidade.",
-      "Pode envolver proteção.",
-      "É importante em relações humanas.",
-      "Evita danos ou problemas.",
-      "Representa atenção dedicada."
-    ],
-    "active": true
-  },
-  {
-    "word": "ATENCAO",
-    "meaning": "Estado de concentração ou foco em algo.",
-    "hints": [
-      "Ajuda a perceber detalhes.",
-      "Relaciona-se com concentração.",
-      "Pode evitar erros.",
-      "É importante no aprendizado.",
-      "Representa foco mental."
-    ],
-    "active": true
-  },
-  {
-    "word": "OBSERVACAO",
-    "meaning": "Ato de analisar algo cuidadosamente.",
-    "hints": [
-      "Exige atenção aos detalhes.",
-      "Pode levar a descobertas.",
-      "É comum em estudos científicos.",
-      "Ajuda a compreender fenômenos.",
-      "Representa análise cuidadosa."
-    ],
-    "active": true
-  },
-  {
-    "word": "ANALISE",
-    "meaning": "Estudo detalhado de algo para compreender sua natureza.",
-    "hints": [
-      "Pode envolver comparação.",
-      "Busca entender detalhes.",
-      "É comum em pesquisas.",
-      "Exige pensamento crítico.",
-      "Representa exame cuidadoso."
-    ],
-    "active": true
-  },
-  {
-    "word": "LOGICA",
-    "meaning": "Raciocínio estruturado baseado em relações coerentes.",
-    "hints": [
-      "Ajuda a resolver problemas.",
-      "Relaciona-se com pensamento racional.",
-      "É usada em matemática e filosofia.",
-      "Segue regras de coerência.",
-      "Representa raciocínio estruturado."
-    ],
-    "active": true
-  },
-  {
-    "word": "RAZAO",
-    "meaning": "Capacidade humana de pensar e compreender.",
-    "hints": [
-      "Relaciona-se com pensamento racional.",
-      "Ajuda a tomar decisões.",
-      "Contrasta com impulsividade.",
-      "É usada em debates filosóficos.",
-      "Representa capacidade de pensar."
-    ],
-    "active": true
-  },
-  {
-    "word": "INTUICAO",
-    "meaning": "Compreensão imediata sem necessidade de raciocínio consciente.",
-    "hints": [
-      "Surge de percepção interior.",
-      "Pode orientar decisões rápidas.",
-      "Nem sempre envolve lógica.",
-      "Relaciona-se com experiência acumulada.",
-      "Representa percepção imediata."
-    ],
-    "active": true
-  },
-  {
-    "word": "OFICINA",
-    "meaning": "Lugar ou atividade dedicada à prática e aprendizado.",
-    "hints": [
-      "Pode envolver atividades manuais.",
-      "Relaciona-se com aprendizado prático.",
-      "Pode reunir várias pessoas.",
-      "É comum em contextos educacionais.",
-      "Representa espaço de prática."
-    ],
-    "active": true
-  },
-  {
-    "word": "TRABALHO",
-    "meaning": "Atividade realizada para produzir algo ou alcançar objetivos.",
-    "hints": [
-      "Pode exigir esforço físico ou mental.",
-      "Está presente na vida adulta.",
-      "Pode gerar resultados concretos.",
-      "Relaciona-se com profissão.",
-      "Representa atividade produtiva."
+      "Progresso.",
+      "Subir ou descer.",
+      "Fases.",
+      "Dificuldade.",
+      "Etapa."
     ],
     "active": true
   }
