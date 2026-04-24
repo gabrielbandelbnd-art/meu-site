@@ -6274,6 +6274,80 @@ function setVisitorNameStatus(message = '', isError = false) {
     visitorNameStatus.style.color = isError ? 'var(--error)' : 'var(--warning)';
 }
 
+const VISITOR_NAME_LEET_MAP = {
+    '0': 'o',
+    '1': 'i',
+    '3': 'e',
+    '4': 'a',
+    '5': 's',
+    '6': 'g',
+    '7': 't',
+    '8': 'b',
+    '9': 'g',
+    '@': 'a',
+    '$': 's',
+    '!': 'i'
+};
+
+const VISITOR_NAME_BLOCKED_EXACT = new Set([
+    'cu',
+    'fdp'
+]);
+
+const VISITOR_NAME_BLOCKED_PARTIALS = [
+    'penis',
+    'pinto',
+    'puta',
+    'putaquepariu',
+    'buceta',
+    'xoxota',
+    'piroca',
+    'caralho',
+    'porra',
+    'foda',
+    'fodase',
+    'merda',
+    'arrombado',
+    'otario',
+    'otaria'
+];
+
+function normalizeVisitorNameForModeration(value = '') {
+    const base = String(value || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+
+    let expanded = '';
+    for (const char of base) {
+        expanded += VISITOR_NAME_LEET_MAP[char] || char;
+    }
+
+    const spaced = expanded
+        .replace(/[^a-z]+/g, ' ')
+        .trim();
+
+    return {
+        compact: expanded.replace(/[^a-z]/g, ''),
+        tokens: spaced ? spaced.split(/\s+/).filter(Boolean) : []
+    };
+}
+
+function containsBlockedVisitorName(rawName = '') {
+    const { compact, tokens } = normalizeVisitorNameForModeration(rawName);
+    if (!compact) return false;
+
+    if (VISITOR_NAME_BLOCKED_EXACT.has(compact)) {
+        return true;
+    }
+
+    if (tokens.some((token) => VISITOR_NAME_BLOCKED_EXACT.has(token))) {
+        return true;
+    }
+
+    return VISITOR_NAME_BLOCKED_PARTIALS.some((term) => compact.includes(term));
+}
+
 function normalizeVisitorName(name = '') {
     return sanitizeGameText(String(name || '').trim()).slice(0, 24);
 }
@@ -6289,10 +6363,17 @@ function requestVisitorName() {
 }
 
 function submitVisitorNameChoice() {
-    const name = normalizeVisitorName(visitorNameInput?.value || '');
+    const rawName = visitorNameInput?.value || '';
+    const name = normalizeVisitorName(rawName);
     if (name.length < 2) {
         setVisitorNameStatus('Escolha um nome com pelo menos 2 letras.', true);
         visitorNameInput?.focus();
+        return;
+    }
+    if (containsBlockedVisitorName(rawName)) {
+        setVisitorNameStatus('Esse nome nao pode ser usado. Escolha outro nome.', true);
+        visitorNameInput?.focus();
+        visitorNameInput?.select();
         return;
     }
     pendingVisitorName = name;
