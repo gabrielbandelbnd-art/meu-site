@@ -1925,6 +1925,7 @@ body.training-mode-active .training-hand {
 }
 
 .public-player-card {
+    --accent: #bb86fc;
     --player-theme-bg: radial-gradient(circle at top, rgba(187, 134, 252, 0.18), transparent 58%);
     --player-theme-surface: rgba(31, 31, 31, 0.95);
     --player-theme-surface-alt: rgba(45, 45, 45, 0.92);
@@ -1933,6 +1934,12 @@ body.training-mode-active .training-hand {
     --player-theme-button: linear-gradient(90deg, #8d5bf7, #c43fd8);
     --player-theme-button-text: #ffffff;
     --player-theme-soft: rgba(255, 255, 255, 0.05);
+    --mage-blue: #7c4dff;
+    --mage-dark-blue: #512da8;
+    --staff-color: #5b3b1f;
+    --staff-head-color: #8b5e34;
+    --gem-color: #bb86fc;
+    --gem-glow: #c9a5ff;
     width: min(94vw, 760px);
     overflow: hidden;
     border-color: var(--player-theme-border);
@@ -2526,6 +2533,15 @@ body.training-mode-active .training-hand {
     z-index: 7000;
     backdrop-filter: blur(3px);
 }
+
+#ranking-modal {
+    z-index: 7000;
+}
+
+#public-player-modal {
+    z-index: 7105;
+}
+
 .profile-card {
     position: relative;
     width: min(92vw, 520px);
@@ -7335,7 +7351,7 @@ body.training-mode-active .meaning-display {
         margin: 0 !important;
         max-height: none !important;
         min-height: 0 !important;
-        padding: 8px 10px !important;
+        padding: 10px 10px 14px !important;
         border-radius: 12px !important;
         overflow: visible !important;
     }
@@ -7369,8 +7385,8 @@ body.training-mode-active .meaning-display {
         order: 5 !important;
         flex: 0 0 auto !important;
         min-height: 0 !important;
-        max-height: 42px !important;
-        margin: 0 !important;
+        max-height: 48px !important;
+        margin: 6px 0 0 !important;
         overflow: hidden !important;
     }
 
@@ -7382,7 +7398,7 @@ body.training-mode-active .meaning-display {
 
     body.training-mode-active.mobile-gameplay-active .input-section {
         order: 6 !important;
-        margin: clamp(18px, 4vh, 34px) 0 0 !important;
+        margin: clamp(20px, 4.4vh, 38px) 0 0 !important;
     }
 
     body.training-mode-active.mobile-gameplay-active .input-controls {
