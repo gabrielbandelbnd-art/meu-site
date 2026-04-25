@@ -4634,6 +4634,8 @@ body.training-mode-active .training-hand {
         font-size: 0.88rem !important;
         padding: 9px 8px !important;
         line-height: 1.2 !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
     }
 
     body.mobile-gameplay-active .input-section {
@@ -4662,6 +4664,23 @@ body.training-mode-active .training-hand {
     body.mobile-gameplay-active .input-controls #validate-btn {
         min-height: 46px !important;
         height: 46px !important;
+    }
+
+    body.mobile-gameplay-active.training-mode-active .board-wrapper {
+        margin-top: 14px !important;
+    }
+
+    body.mobile-gameplay-active.training-mode-active .tutorial-message {
+        min-height: 74px !important;
+        padding: 12px 10px !important;
+    }
+
+    body.mobile-gameplay-active.training-mode-active .input-controls {
+        margin-top: 10px !important;
+    }
+
+    body.mobile-gameplay-active.training-mode-active #alphabet-drawer {
+        margin-top: 12px !important;
     }
 
     /* Mapa um pouco maior, ainda cabendo sem scroll */

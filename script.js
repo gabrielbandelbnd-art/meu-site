@@ -895,7 +895,7 @@ function startRandomChallenge(options = {}) {
 
     startChallengeEngine(selectedChallenge, {
         wordLength: selectedChallenge.word.length,
-        resetHistory: false
+        resetHistory: true
     });
 }
 
@@ -920,7 +920,7 @@ function startCampaignLevel(level, options = {}) {
 
     startChallengeEngine(challenge, {
         wordLength: level,
-        resetHistory: false
+        resetHistory: true
     });
 }
 
@@ -1105,6 +1105,7 @@ function highlight(id) {
 
 function render(showTutorial = false) {
     wordGrid.innerHTML = '';
+    updateMiniAlphabet();
     
     if (isFirstRound && currentWord.length === 0 && showTutorial) {
         const msgDiv = document.createElement('div');
@@ -1123,7 +1124,6 @@ function render(showTutorial = false) {
         wordGrid.appendChild(div);
     });
 
-    updateMiniAlphabet();
     if (isTrainingModeActive()) {
         requestAnimationFrame(updateTrainingUi);
     }
@@ -1287,7 +1287,7 @@ async function validate() {
             const data = await callDailyFunction('submitDailyGuess', { guess: word });
 
             if (data?.alreadyCompleted) {
-                feedback.innerText = 'Palavra do Dia j\u00E1 conclu\u00EDda hoje.';
+                feedback.innerText = 'Parabens, voce ja acertou a Palavra do Dia.';
                 feedback.style.color = 'var(--warning)';
                 startDailyHubCountdown();
                 return;
@@ -2604,6 +2604,30 @@ const TRAINING_LESSONS = [
         ],
         guidedCompleteText: 'Perfeito! A magia da vogal funcionou.',
         practiceIntroText: 'Agora tenta sozinho. Você consegue fazer LUA.'
+    },
+    {
+        title: 'Treinamento 3',
+        word: 'BOI',
+        clicks: ['B', 'O', 'H'],
+        guidedSteps: [
+            { click: 'B', text: 'Agora vamos formar BOI. Comece pelo B.' },
+            { click: 'O', text: 'Boa. Agora toque no O para preparar a transformação da próxima letra.' },
+            { click: 'H', text: 'Perfeito. Clique no H, porque depois da vogal ele avança e vira I.' }
+        ],
+        guidedCompleteText: 'Boa! BOI apareceu certinho.',
+        practiceIntroText: 'Agora tenta sozinho. Você consegue fazer BOI.'
+    },
+    {
+        title: 'Treinamento 4',
+        word: 'MAR',
+        clicks: ['N', 'Z', 'R'],
+        guidedSteps: [
+            { click: 'N', text: 'Agora vamos formar MAR. Comece pelo N para espelhar e criar o M.' },
+            { click: 'Z', text: 'Boa. Agora toque no Z para colocar o A no meio.' },
+            { click: 'R', text: 'Perfeito. Finalize com R para fechar MAR.' }
+        ],
+        guidedCompleteText: 'Excelente! MAR apareceu do jeito certo.',
+        practiceIntroText: 'Agora tenta sozinho. Você consegue fazer MAR.'
     }
 ];
 const TRAINING_FINAL_SEQUENCE = [
@@ -6078,6 +6102,8 @@ function setDailyHubStatus(message, blocked = false) {
     if (dailyHubStatusMobile) dailyHubStatusMobile.innerText = cleanMessage;
     if (hubDailyBtnDesktop) hubDailyBtnDesktop.disabled = blocked;
     if (hubDailyBtnMobile) hubDailyBtnMobile.disabled = blocked;
+    if (hubDailyBtnDesktop) hubDailyBtnDesktop.innerText = '▶ Jogar Palavra do Dia';
+    if (hubDailyBtnMobile) hubDailyBtnMobile.innerText = '▶ Jogar Palavra do Dia';
 }
 
 function stopDailyHubCountdown() {
@@ -6122,19 +6148,20 @@ function formatDailyHubCountdown(ms = 0) {
 
 function startDailyHubCountdown() {
     stopDailyHubCountdown();
-    const cleanMessage = sanitizeGameText(message || '');
     if (hubDailyBtnDesktop) hubDailyBtnDesktop.disabled = true;
     if (hubDailyBtnMobile) hubDailyBtnMobile.disabled = true;
 
     const render = () => {
         const remainingMs = getMsUntilNextSaoPauloMidnight();
-        const text = `Conclu\u00edda hoje. Liberada em ${formatDailyHubCountdown(remainingMs)} (S\u00e3o Paulo).`;
+        const countdown = formatDailyHubCountdown(remainingMs);
+        const text = `Parabens, voce ja acertou a Palavra do Dia. Volte em ${countdown}.`;
         if (dailyHubStatusDesktop) dailyHubStatusDesktop.innerText = text;
         if (dailyHubStatusMobile) dailyHubStatusMobile.innerText = text;
+        if (hubDailyBtnDesktop) hubDailyBtnDesktop.innerText = `Volte em ${countdown}`;
+        if (hubDailyBtnMobile) hubDailyBtnMobile.innerText = `Volte em ${countdown}`;
 
         if (remainingMs <= 0) {
             stopDailyHubCountdown();
-    const cleanMessage = sanitizeGameText(message || '');
             refreshDailyHubState();
         }
     };
@@ -6334,7 +6361,7 @@ async function refreshDailyHubState() {
         dailyHubPreviewRun = null;
         const info = normalizeCallableError(err);
         console.error('Erro refreshDailyHubState', info, err);
-        setDailyHubStatus(`Erro (${info.code}): ${info.message}`, false);
+        setDailyHubStatus('Palavra do Dia indisponivel no momento. Tente novamente.', false);
     }
 }
 function applyDailyRunData(data) {
@@ -6422,13 +6449,8 @@ async function startDailyModeFromHub() {
         setDailyHubStatus('Fa\u00e7a login para jogar.', true);
         return;
     }
-
-    if (!hasSeenDailyOnboarding()) {
-        openDailyOnboardingModal();
-        return;
-    }
-
-    runAfterFirstTutorial(() => startDailyModeDirectFromHub(), DAILY_MODE);
+    markDailyOnboardingSeen();
+    startDailyModeDirectFromHub();
 }
 
 async function startDailyModeDirectFromHub() {
@@ -6443,7 +6465,7 @@ async function startDailyModeDirectFromHub() {
 
         if (data?.blocked) {
             startDailyHubCountdown();
-            showFloatingMessage('Palavra do Dia j\u00e1 conclu\u00edda hoje.', 2500);
+            showFloatingMessage('Parabens, voce ja acertou a Palavra do Dia.', 2500);
             dailyHubPreviewRun = null;
             return;
         }
@@ -6458,7 +6480,7 @@ async function startDailyModeDirectFromHub() {
     } catch (err) {
         const info = normalizeCallableError(err);
         console.error('startDailyRun erro', info);
-        setDailyHubStatus(`Erro (${info.code}): ${info.message}`, false);
+        setDailyHubStatus('Palavra do Dia indisponivel no momento. Tente novamente.', false);
         showFloatingMessage('Erro ao iniciar Palavra do Dia.', 2500);
     }
 }
