@@ -7370,13 +7370,13 @@ body.training-mode-active .meaning-display {
         margin: 0 !important;
         max-height: none !important;
         min-height: 126px !important;
-        padding: 12px 12px 18px !important;
-        border-radius: 12px !important;
+        padding: 10px 12px !important;
+        border-radius: 14px !important;
         overflow: visible !important;
     }
 
     body.training-mode-active.mobile-gameplay-active .training-panel-top {
-        margin-bottom: 3px !important;
+        margin-bottom: 4px !important;
     }
 
     body.training-mode-active.mobile-gameplay-active .training-panel-kicker {
@@ -7389,19 +7389,27 @@ body.training-mode-active .meaning-display {
     }
 
     body.training-mode-active.mobile-gameplay-active .training-panel-target {
-        margin-bottom: 6px !important;
+        margin-bottom: 4px !important;
         font-size: 0.8rem !important;
         line-height: 1.2 !important;
     }
 
     body.training-mode-active.mobile-gameplay-active .training-panel-copy {
+        display: block !important;
+        background: rgba(9, 10, 18, 0.34) !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        border-radius: 12px !important;
+        margin-top: 8px !important;
         max-height: none !important;
         overflow: visible !important;
-        margin-bottom: 12px !important;
-        font-size: 0.85rem !important;
-        line-height: 1.28 !important;
+        margin-bottom: 14px !important;
+        padding: 10px 11px !important;
+        font-size: 0.84rem !important;
+        line-height: 1.32 !important;
         overflow-wrap: anywhere !important;
         word-break: break-word !important;
+        min-height: 72px !important;
+        white-space: normal !important;
     }
 
     body.training-mode-active.mobile-gameplay-active .board-wrapper {
@@ -7409,7 +7417,7 @@ body.training-mode-active .meaning-display {
         flex: 0 0 auto !important;
         min-height: 0 !important;
         max-height: 48px !important;
-        margin: 12px 0 0 !important;
+        margin: 4px 0 0 !important;
         overflow: hidden !important;
     }
 
@@ -7421,11 +7429,19 @@ body.training-mode-active .meaning-display {
 
     body.training-mode-active.mobile-gameplay-active .input-section {
         order: 6 !important;
-        margin: clamp(8px, 1.8vh, 14px) 0 0 !important;
+        margin: 8px 0 0 !important;
     }
 
     body.training-mode-active.mobile-gameplay-active .input-controls {
-        margin-bottom: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 2px !important;
+    }
+
+    body.training-mode-active.mobile-gameplay-active .input-controls #clear-board-btn,
+    body.training-mode-active.mobile-gameplay-active .input-controls #char-input,
+    body.training-mode-active.mobile-gameplay-active .input-controls #validate-btn {
+        height: 44px !important;
+        min-height: 44px !important;
     }
 
     body.training-mode-active.mobile-gameplay-active #mobile-rules-slot {
@@ -7482,19 +7498,6 @@ body.training-mode-active .meaning-display {
 
     body.training-mode-active.mobile-gameplay-active #mini-alphabet .mini-char .mirrored-letter {
         font-size: clamp(0.42rem, 1.9vw, 0.5rem) !important;
-    }
-
-    body.training-guided-active.mobile-gameplay-active .training-panel {
-        padding: 10px 12px !important;
-        border-radius: 14px !important;
-    }
-
-    body.training-guided-active.mobile-gameplay-active .training-panel-top {
-        margin-bottom: 4px !important;
-    }
-
-    body.training-guided-active.mobile-gameplay-active .training-panel-target {
-        margin-bottom: 4px !important;
     }
 
     body.training-guided-active.mobile-gameplay-active .training-panel-copy {
