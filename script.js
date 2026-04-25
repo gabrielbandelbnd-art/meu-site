@@ -481,6 +481,7 @@ const campaignCompleteNextLevel = document.getElementById('campaign-complete-nex
 const campaignCompleteFinalCopy = document.getElementById('campaign-complete-final-copy');
 const campaignCompleteNextBtn = document.getElementById('campaign-complete-next-btn');
 const campaignCompleteBooksBtn = document.getElementById('campaign-complete-books-btn');
+const campaignCompleteShareBtn = document.getElementById('campaign-complete-share-btn');
 const dailyOnboardingModal = document.getElementById('daily-onboarding-modal');
 const closeDailyOnboardingModalBtn = document.getElementById('close-daily-onboarding-modal');
 const dailyOnboardingCampaignBtn = document.getElementById('daily-onboarding-campaign-btn');
@@ -5783,6 +5784,13 @@ function buildJourneyShareText(iqValue) {
     return `Eu concluí minha jornada em MagicLexis e alcancei um QI Mágico de ${formatMagicIq(iqValue)}.`;
 }
 
+function buildCampaignBookShareText() {
+    const currentLevel = Number(pendingCampaignCompletion?.currentLevel || currentCampaignLevel || CAMPAIGN_LEVEL_START);
+    const nextLevel = Number(pendingCampaignCompletion?.nextLevel || 0) || null;
+    const nextCopy = nextLevel ? ` e desbloqueei o livro de ${nextLevel} letras` : '';
+    return `Avancei na campanha do MagicLexis ao concluir o livro de ${currentLevel} letras${nextCopy}. Jogue também: ${DAILY_SHARE_LINK}`;
+}
+
 function showJourneyFinaleScreen() {
     if (!journeyFinaleModal || journeyFinaleShown) return;
     journeyFinaleShown = true;
@@ -5818,6 +5826,28 @@ async function shareJourneyFinale() {
         renderJourneyFinaleStats();
     } catch (err) {
         console.log('Falha ao compartilhar jornada final:', err);
+    }
+}
+
+async function shareCampaignBookLink() {
+    const shareText = buildCampaignBookShareText();
+
+    try {
+        if (navigator.share) {
+            await navigator.share({
+                text: shareText,
+                url: DAILY_SHARE_LINK
+            });
+        } else if (navigator.clipboard) {
+            await navigator.clipboard.writeText(DAILY_SHARE_LINK);
+            showFloatingMessage('Link copiado para a área de transferência.', 2200);
+            return;
+        } else {
+            return;
+        }
+        showFloatingMessage('Link compartilhado!', 1800);
+    } catch (err) {
+        console.log('Falha ao compartilhar link da campanha:', err);
     }
 }
 
@@ -8314,6 +8344,7 @@ function bindAuthUiEvents() {
         goToCampaignBooks(pendingCampaignCompletion?.nextLevel || pendingCampaignCompletion?.currentLevel || null);
     });
     campaignCompleteNextBtn?.addEventListener('click', continueToNextCampaignBook);
+    campaignCompleteShareBtn?.addEventListener('click', shareCampaignBookLink);
     closeDailyOnboardingModalBtn?.addEventListener('click', closeDailyOnboardingModal);
     dailyOnboardingCampaignBtn?.addEventListener('click', chooseDailyOnboardingCampaign);
     dailyOnboardingTutorialBtn?.addEventListener('click', chooseDailyOnboardingTutorial);
