@@ -7463,6 +7463,27 @@ body.training-mode-active .meaning-display {
         margin-top: 4px !important;
     }
 
+    body.training-mode-active.mobile-gameplay-active #alphabet-drawer .alphabet-header,
+    body.training-mode-active.mobile-gameplay-active .alphabet-wrapper .alphabet-header {
+        padding: 4px 8px !important;
+        font-size: 0.68rem !important;
+    }
+
+    body.training-mode-active.mobile-gameplay-active #mini-alphabet.alphabet-content {
+        gap: 3px !important;
+        padding: 5px 3px 3px !important;
+    }
+
+    body.training-mode-active.mobile-gameplay-active #mini-alphabet .mini-char {
+        height: clamp(28px, 7.2vw, 31px) !important;
+        border-radius: 8px !important;
+        font-size: clamp(0.8rem, 3.8vw, 0.9rem) !important;
+    }
+
+    body.training-mode-active.mobile-gameplay-active #mini-alphabet .mini-char .mirrored-letter {
+        font-size: clamp(0.42rem, 1.9vw, 0.5rem) !important;
+    }
+
     body.training-guided-active.mobile-gameplay-active .training-panel {
         padding: 10px 12px !important;
         border-radius: 14px !important;
