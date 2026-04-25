@@ -1071,7 +1071,7 @@ alphabet.forEach((letter, index) => {
 });
 
 function updateMiniAlphabet() {
-    document.querySelectorAll('.mini-char').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.mini-char').forEach((el) => el.classList.remove('active'));
     currentWord.forEach(char => {
         const el = document.getElementById(`mini-${char.toUpperCase()}`);
         if(el) el.classList.add('active');
@@ -1103,6 +1103,34 @@ function highlight(id) {
     animateMage('cast');
 }
 
+function getTrainingClickedSequence() {
+    return historyList?.innerText?.trim().split(/\s+/).filter(Boolean) || [];
+}
+
+function resetTrainingBoardFeedback() {
+    if (!trainingState) return;
+    trainingState.confirmedPrefixCount = 0;
+    trainingState.flashIndex = -1;
+    trainingState.hasSequenceMismatch = false;
+    trainingState.comboActive = false;
+    if (trainingState.comboTimeout) {
+        clearTimeout(trainingState.comboTimeout);
+        trainingState.comboTimeout = null;
+    }
+    if (trainingState.flashTimeout) {
+        clearTimeout(trainingState.flashTimeout);
+        trainingState.flashTimeout = null;
+    }
+}
+
+function syncTrainingBoardFeedback(options = {}) {
+    if (!trainingState || !isTrainingModeActive()) return;
+    if (options.animate && currentWord.length > 0) {
+        showFloatingMessage('Boa! A magia está encaixando.', 520);
+    }
+    render();
+}
+
 function render(showTutorial = false) {
     wordGrid.innerHTML = '';
     updateMiniAlphabet();
@@ -1115,14 +1143,38 @@ function render(showTutorial = false) {
         return;
     }
 
-    currentWord.forEach((c, i) => {
+    const isTraining = isTrainingModeActive();
+    const totalSlots = isTraining ? Math.max(maxWordLength, currentWord.length) : currentWord.length;
+    const expectedWord = String(targetChallenge?.word || '').toUpperCase();
+
+    for (let i = 0; i < totalSlots; i += 1) {
+        const c = currentWord[i] || '';
         const div = document.createElement('div');
-        div.className = 'letter-box'; div.innerText = c;
-        if (currentWord.length >= maxWordLength && i === replaceIndex) {
+        div.className = 'letter-box';
+        div.innerText = c;
+
+        if (!c) {
+            div.classList.add('is-empty');
+            div.innerHTML = '&nbsp;';
+        }
+
+        if (c && expectedWord[i] && c.toUpperCase() === expectedWord[i]) {
+            div.classList.add('slot-correct');
+        }
+
+        if (isTraining) {
+            if (!c && i === currentWord.length && i < maxWordLength) {
+                div.classList.add('training-next-slot');
+            }
+            if (currentWord.length >= maxWordLength && i === replaceIndex) {
+                div.classList.add('training-cycle-focus');
+            }
+        } else if (currentWord.length >= maxWordLength && i === replaceIndex) {
             div.classList.add('next-to-change');
         }
+
         wordGrid.appendChild(div);
-    });
+    }
 
     if (isTrainingModeActive()) {
         requestAnimationFrame(updateTrainingUi);
@@ -1158,6 +1210,7 @@ function handleClearBoardAction() {
     currentWord = [];
     replaceIndex = 0;
     charInput.placeholder = "?";
+    resetTrainingBoardFeedback();
     render();
     saveGameSessionState();
     queueOnlineProgressSync();
@@ -1233,8 +1286,11 @@ function addChar(char) {
     }
     saveGameSessionState();
     queueOnlineProgressSync();
-    if (isTrainingModeActive() && trainingState?.phase === 'guided') {
-        handleTrainingGuidedProgress();
+    if (isTrainingModeActive()) {
+        syncTrainingBoardFeedback({ animate: true });
+        if (trainingState?.phase === 'guided') {
+            handleTrainingGuidedProgress();
+        }
     }
 }
 
@@ -2840,6 +2896,10 @@ function startTrainingPhase(phase) {
 
     trainingState.phase = phase;
     trainingState.stepIndex = 0;
+    trainingState.confirmedPrefixCount = 0;
+    trainingState.flashIndex = -1;
+    trainingState.hasSequenceMismatch = false;
+    trainingState.comboActive = false;
     currentGameMode = TRAINING_MODE;
     currentCampaignLevel = null;
     resetDailySession();
@@ -2861,6 +2921,7 @@ function startTrainingPhase(phase) {
     feedback.style.color = '';
     meaningBox.classList.add('hidden');
     meaningBox.innerText = '';
+    resetTrainingBoardFeedback();
     updateTrainingUi();
 }
 
@@ -2874,7 +2935,13 @@ function startTrainingMode() {
         phase: 'guided',
         stepIndex: 0,
         finalIndex: 0,
-        finalStreak: 0
+        finalStreak: 0,
+        confirmedPrefixCount: 0,
+        flashIndex: -1,
+        hasSequenceMismatch: false,
+        comboActive: false,
+        comboTimeout: null,
+        flashTimeout: null
     };
     startTrainingPhase('guided');
 }
