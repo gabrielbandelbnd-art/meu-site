@@ -7421,7 +7421,7 @@ body.training-mode-active .meaning-display {
 
     body.training-mode-active.mobile-gameplay-active .input-section {
         order: 6 !important;
-        margin: clamp(20px, 4.4vh, 38px) 0 0 !important;
+        margin: clamp(8px, 1.8vh, 14px) 0 0 !important;
     }
 
     body.training-mode-active.mobile-gameplay-active .input-controls {
@@ -7460,6 +7460,7 @@ body.training-mode-active .meaning-display {
     body.training-mode-active.mobile-gameplay-active #alphabet-drawer,
     body.training-mode-active.mobile-gameplay-active .alphabet-wrapper {
         order: 7 !important;
+        margin-top: 4px !important;
     }
 
     body.training-guided-active.mobile-gameplay-active .training-panel {
@@ -7501,7 +7502,7 @@ body.training-mode-active .meaning-display {
     }
 
     body.training-guided-active.mobile-gameplay-active .input-section {
-        margin: clamp(12px, 2.8vh, 22px) 0 0 !important;
+        margin: 8px 0 0 !important;
     }
 
     body.training-guided-active.mobile-gameplay-active .notification-area {
@@ -7561,7 +7562,7 @@ body.training-mode-active .meaning-display {
     }
 
     body.training-guided-active.mobile-gameplay-active #alphabet-drawer {
-        margin-top: 10px !important;
+        margin-top: 4px !important;
     }
 }
 
