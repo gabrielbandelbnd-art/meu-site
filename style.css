@@ -7388,24 +7388,35 @@ body.training-mode-active .meaning-display {
     }
 
     body.training-guided-active.mobile-gameplay-active .training-panel-copy {
+        display: block !important;
+        background: rgba(9, 10, 18, 0.34) !important;
+        border: 1px solid rgba(255,255,255,0.08) !important;
+        border-radius: 12px !important;
+        margin-top: 6px !important;
+        padding: 9px 10px !important;
         font-size: 0.84rem !important;
         line-height: 1.28 !important;
         padding-right: 2px !important;
+        min-height: 0 !important;
+        white-space: normal !important;
+        word-break: break-word !important;
     }
 
     body.training-guided-active.mobile-gameplay-active .tutorial-message {
-        padding: 10px 10px !important;
-        font-size: 0.82rem !important;
-        line-height: 1.16 !important;
-        border-radius: 13px !important;
+        display: none !important;
     }
 
     body.training-guided-active.mobile-gameplay-active .input-section {
         margin: clamp(12px, 2.8vh, 22px) 0 0 !important;
     }
 
+    body.training-guided-active.mobile-gameplay-active .notification-area {
+        display: none !important;
+    }
+
     body.training-guided-active.mobile-gameplay-active .input-controls {
         margin-top: 0 !important;
+        margin-bottom: 2px !important;
     }
 
     body.training-guided-active.mobile-gameplay-active .input-controls #clear-board-btn,
@@ -7416,14 +7427,34 @@ body.training-mode-active .meaning-display {
     }
 
     body.training-guided-active.mobile-gameplay-active #mobile-rules-slot .mobile-panel-body {
-        padding: 6px !important;
-        gap: 4px !important;
+        padding: 5px !important;
+        gap: 3px !important;
     }
 
     body.training-guided-active.mobile-gameplay-active #mobile-rules-slot .rule-card {
         padding: 5px 7px !important;
         margin-bottom: 3px !important;
         line-height: 1.08 !important;
+        opacity: 0.92 !important;
+    }
+
+    body.training-guided-active.mobile-gameplay-active #mobile-rules-slot .rule-card-copy {
+        display: none !important;
+    }
+
+    body.training-guided-active.mobile-gameplay-active #mobile-rules-slot .rule-info-btn {
+        min-height: 24px !important;
+        padding: 4px 8px !important;
+        font-size: 0.62rem !important;
+        opacity: 0.9 !important;
+    }
+
+    body.training-guided-active.mobile-gameplay-active .board-wrapper {
+        margin-top: 4px !important;
+    }
+
+    body.training-guided-active.mobile-gameplay-active #alphabet-drawer {
+        margin-top: 10px !important;
     }
 }
 
