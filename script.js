@@ -199,10 +199,10 @@ const challengesByLength = new Map();
 const AVAILABLE_THEMES = ['default', 'arcane-dark', 'mystic-nature', 'glacial-arcane', 'infernal'];
 const THEME_UNLOCK_REQUIREMENTS = {
     default: 0,
-    'arcane-dark': 2,
-    'mystic-nature': 15,
-    'glacial-arcane': 20,
-    infernal: 30
+    'arcane-dark': 0,
+    'mystic-nature': 0,
+    'glacial-arcane': 0,
+    infernal: 0
 };
 const THEME_LABELS = {
     default: 'Padrão',
@@ -7226,22 +7226,32 @@ function renderRankingEntries(entries = liveRankingEntries) {
         const meta = document.createElement('div');
         meta.className = 'ranking-player-meta';
 
+        const avatarButton = document.createElement('button');
+        avatarButton.type = 'button';
+        avatarButton.className = 'ranking-avatar-button';
+        avatarButton.setAttribute('aria-label', `Abrir perfil de ${getPublicPlayerName(u)}`);
+        avatarButton.addEventListener('click', () => {
+            openPublicPlayerProfile(u);
+        });
+
         const avatar = document.createElement('img');
         avatar.className = 'ranking-avatar';
         avatar.src = getPublicPlayerPhoto(u);
         avatar.alt = 'avatar';
+        avatarButton.appendChild(avatar);
 
         const nameWrap = document.createElement('div');
-        nameWrap.style.minWidth = '0';
+        nameWrap.className = 'ranking-name-wrap';
         nameWrap.appendChild(createPublicNameNode(u, {
             allowExternalLink: true,
             className: 'ranking-player-name'
         }));
 
         const points = document.createElement('strong');
+        points.className = 'ranking-player-points';
         points.textContent = String(u.points || 0);
 
-        meta.append(avatar, nameWrap);
+        meta.append(avatarButton, nameWrap);
         item.append(position, meta, points);
         rankingList.appendChild(item);
     });
