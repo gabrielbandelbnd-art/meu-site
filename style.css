@@ -7369,8 +7369,8 @@ body.training-mode-active .meaning-display {
         width: 100% !important;
         margin: 0 !important;
         max-height: none !important;
-        min-height: 0 !important;
-        padding: 10px 10px 14px !important;
+        min-height: 126px !important;
+        padding: 12px 12px 18px !important;
         border-radius: 12px !important;
         overflow: visible !important;
     }
@@ -7389,15 +7389,19 @@ body.training-mode-active .meaning-display {
     }
 
     body.training-mode-active.mobile-gameplay-active .training-panel-target {
-        margin-bottom: 3px !important;
-        font-size: 0.78rem !important;
+        margin-bottom: 6px !important;
+        font-size: 0.8rem !important;
+        line-height: 1.2 !important;
     }
 
     body.training-mode-active.mobile-gameplay-active .training-panel-copy {
         max-height: none !important;
         overflow: visible !important;
-        font-size: 0.82rem !important;
-        line-height: 1.22 !important;
+        margin-bottom: 12px !important;
+        font-size: 0.85rem !important;
+        line-height: 1.28 !important;
+        overflow-wrap: anywhere !important;
+        word-break: break-word !important;
     }
 
     body.training-mode-active.mobile-gameplay-active .board-wrapper {
@@ -7405,7 +7409,7 @@ body.training-mode-active .meaning-display {
         flex: 0 0 auto !important;
         min-height: 0 !important;
         max-height: 48px !important;
-        margin: 6px 0 0 !important;
+        margin: 12px 0 0 !important;
         overflow: hidden !important;
     }
 
@@ -7476,10 +7480,11 @@ body.training-mode-active .meaning-display {
         background: rgba(9, 10, 18, 0.34) !important;
         border: 1px solid rgba(255,255,255,0.08) !important;
         border-radius: 12px !important;
-        margin-top: 6px !important;
-        padding: 9px 10px !important;
+        margin-top: 8px !important;
+        margin-bottom: 14px !important;
+        padding: 10px 11px !important;
         font-size: 0.84rem !important;
-        line-height: 1.28 !important;
+        line-height: 1.32 !important;
         padding-right: 2px !important;
         min-height: 0 !important;
         white-space: normal !important;
